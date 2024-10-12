@@ -3,7 +3,8 @@ const bcrypt = require('bcryptjs');
 
 const UserSchema = new mongoose.Schema({
     username: { type: String, required: true, unique: true },
-    password: { type: String, required: true }
+    email:{ type: String, required: true,unique:true },
+    password: { type: String, required: true },
 });
 
 UserSchema.pre('save', async function(next) {
@@ -13,4 +14,6 @@ UserSchema.pre('save', async function(next) {
     next();
 });
 
-module.exports = mongoose.model('User', UserSchema);
+const User = mongoose.model('User', UserSchema); //this is the user that is logged in.
+module.exports = User;  //exports the user module, so it can be used throughout the application.
+
