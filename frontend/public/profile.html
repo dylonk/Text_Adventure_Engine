@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+</head>
+<body>
+    <nav>
+        <a href="index.html" class="navbtn">Home</a>
+        <a href="login.html" class="navbtn">Login or Register</a>
+        <a href="about.html" class="navbtn">About</a>
+        <a href="explore.html" class="navbtn">Explore</a>
+        <a href="profile.html" class="navbtn">My profile</a>
+    </nav>
+    
+    <h1>Welcome to Your Dashboard</h1>
+    <p id="user-info"></p>
+    <button id="logout-button">Logout</button>
+
+    <script>
+        // Check if the user is authenticated
+        const token = localStorage.getItem('token');
+        //finds user
+        const user = JSON.parse(localStorage.getItem('user'));
+
+        if (!token) {
+            // Redirect to login page if not authenticated
+            window.location.href = '/login.html';
+        } else {
+            // Fetch user data from the server
+            fetch('/auth/user', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('user-info').textContent = `Hello, ${data.username}!`;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to fetch user data');
+            });
+        }
+
+        // Logout function
+        document.getElementById('logout-button').addEventListener('click', () => {
+            localStorage.removeItem('token');
+            window.location.href = 'index.html';
+        });
+    </script>
+</body>
+</html>
