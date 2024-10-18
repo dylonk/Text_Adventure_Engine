@@ -9,10 +9,18 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, '..', 'frontend', 'public'))); // Serve static files from the 'public' directory
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+const cors = require('cors');
+
+app.use(cors({
+    origin: 'http://127.0.0.1:3000', // Your frontend URL
+    methods: ['POST', 'GET', 'PUT', 'DELETE'],
+    credentials: true
+}));
 
 // Include route files
 const usersRoute = require('./routes/users');
 const authRoutes = require('./routes/auth');
+console.log("Routing");
 
 app.get('/', (req, res) => {    //when root isa accessed, serve index.html from the public folder.
     console.log("displaying index.html");
@@ -45,7 +53,7 @@ app.get('/', (req, res) => {
 });
 
 // Example specifying the port and starting the server
-const port = process.env.PORT || 3000; // You can use environment variables for port configuration
+const port = process.env.PORT || 5000; // You can use environment variables for port configuration
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
