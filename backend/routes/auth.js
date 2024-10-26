@@ -51,15 +51,18 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
     const { username, password } = req.body;
     try {
+        console.log("attempting to find user");
         const user = await User.findOne({ username });//trys to find a user matching the username
         if (!user) return res.status(400).send('Invalid credentials');
-
+        console.log("attempting to encrypt password");
         const isMatch = await bcrypt.compare(password, user.password);  //tries to match the password
         if (!isMatch) return res.status(400).send('Invalid credentials');
-
+        console.log("attempting to create token");
         const token = jwt.sign({ id: user._id }, 'your_jwt_secret', { expiresIn: '1h' });
+        console.log("attempting to send json userdata response");
         res.json({ token, user: { username: user.username, email: user.email } });//sends a json response containing token and user data
     } catch (error) {
+        console.log("failed login attempt");
         res.status(400).send(error.message);
     }
 });
