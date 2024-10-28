@@ -49,6 +49,7 @@ router.post('/register', async (req, res) => {
 
 //takes username and password, and attemptsto find the user. Creates a JWT token with a 1 hour expiration time.
 router.post('/login', async (req, res) => {
+    console.log("login request send");
     const { username, password } = req.body;
     try {
         const user = await User.findOne({ username });//trys to find a user matching the username
@@ -60,6 +61,7 @@ router.post('/login', async (req, res) => {
         const token = jwt.sign({ id: user._id }, 'your_jwt_secret', { expiresIn: '1h' });
         res.json({ token, user: { username: user.username, email: user.email } });//sends a json response containing token and user data
     } catch (error) {
+        console.log("failed login attempt");
         res.status(400).send(error.message);
     }
 });
