@@ -6,7 +6,6 @@ import Toolbox from './Toolbox.js';
 import Canvas from './Canvas.js';
 import PropertiesTab from './PropertiesTab.js';
 
-
 function App() {
   const [selectedItem, setSelectedItem] = useState(null);
   const [items, setItems] = useState([]);
