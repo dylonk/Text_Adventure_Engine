@@ -1,9 +1,36 @@
-.navbtn
-{
-    border: none;
-    background-color: inherit;
-    padding: 14px 28px;
-    font-size: 16px;
-    cursor: pointer;
+#content {
+    font-size: 24px;
+    text-align: center;
+}
+
+#title {
+    font-size: 48px;
+    margin-top: 5%;
+}
+
+#explain {
+    margin-top: 5%;
+}
+
+#addFeat1 {
+    margin-top: 5%;
+}
+
+#addFeat2 {
+    margin-top: 5%;
+}
+
+#credits {
+    position: fixed;
+    bottom: 0%;
+    left: 50%;
+    transform: translate(-50%, 0%);
+    width: 100%;
+    border-top: solid black;
+    background-color: rgba(128, 128, 128, 0.534);
+}
+
+#creditsNames p {
+    margin-top: 0px;
     display: inline-block;
 }

@@ -1,0 +1,52 @@
+#section-bar {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    border-bottom: 2px solid black;
+    padding-left: 40%;
+    padding-top: 10px;
+    padding-bottom: 25px;
+    font-size: 24px;
+  }
+  
+  input[type=search] {
+    border: 2px solid black;
+    padding: 5px;
+    width: 30%;
+  }
+  
+  #game-lines {
+    position: relative;
+    display: grid;
+    grid-auto-flow: row;
+  }
+
+  #games {
+    position: relative;
+    display: grid;
+    grid-auto-flow: column;
+    grid-column-gap: 20%;
+    margin-top: 2.5%;
+    margin-left: 5%;
+    text-align: center;
+    width: 15%;
+    font-size: 24px;
+  }
+
+  #game1 {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .gametitle {
+    border: 2px solid black;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  img {
+    border: 2px solid black;
+    height: auto;
+    width: 230px;
+    object-fit: contain;
+  }
