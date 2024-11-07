@@ -15,22 +15,25 @@ import useDragAndDrop from './drag_drop.js';
 .toolbox{
     display:flex;
     flex-direction: column;
-    outline: 2px solid rgb(0, 0, 0);
     height:100%;
     background:rgb(225, 225, 225);
 }
 .toolbox>*{
-    margin:10px;
+    margin:20px;
 }
 
 .tb_title{
     padding:8px;
     text-align: center;
     margin: 0 auto;
+    margin-bottom:0px;
+
     width: 100%;
     height:min-content;
-    color:black;
-    font-weight:600;
+    color:rgb(255, 255, 255);
+    background:rgb(189, 189, 189);
+    font-weight:800;
     font-size:18px;
 }
+
 </style>

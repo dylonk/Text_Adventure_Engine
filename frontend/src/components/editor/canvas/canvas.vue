@@ -4,6 +4,7 @@
 import { ref } from 'vue'
 import { VueFlow, useVueFlow } from '@vue-flow/core'
 import CanvasBackground from './background.vue'
+import CanvasControls from './controls.vue'
 import useDragAndDrop from '../drag_drop.js';
 
 const { onConnect, addEdges } = useVueFlow()
@@ -22,7 +23,7 @@ onConnect(addEdges)
           backgroundColor: isDragOver ? '#e7f3ff' : 'transparent',
           transition: 'background-color 0.2s ease',
         }"/>
-
+        <CanvasControls></CanvasControls>
         </VueFlow>
     </div>
 
@@ -30,6 +31,8 @@ onConnect(addEdges)
 </template>
 
 <style>
+@import 'https://cdn.jsdelivr.net/npm/@vue-flow/core@1.41.4/dist/style.css';
+
 .canvas_container{
     background-color: transparent;
     width:100%;
