@@ -8,7 +8,8 @@ const props = defineProps({
     node_type:"Room",
     output_handle:Boolean,
     input_handle:Boolean,
-    items: { type: Array, default: () => [] } // Define items as an array prop with a default empty array
+    items: { type: Array, default: () => [] }, // Define items as an array prop with a default empty array
+    name:String// gotta have a name!
 })
 const emit = defineEmits(['showContextMenu']);//showcontext menu emit interacts with toolbox screen
 const { onDragStart } = useDragAndDrop();//uses the same drag and drop functionality as the "prompt". I still won't lie I don't know exactly what prompts are meant to be, even though its been explained
@@ -21,16 +22,22 @@ const handleRightClick = (event) => { //when right clicked, shows the context me
     console.log('Right-click detected on room node'); // Debugging
     emit('showContextMenu', { id: props.id, type: 'room', x: event.clientX, y: event.clientY }); //emits showcontextmeny, used below
 };
+
+const handleItemRightClick = (item, event) => { //handle item right click
+    event.preventDefault(); 
+    event.stopPropagation(); // Stop event propagation 
+    emit('showContextMenu', { id: item.id, type: 'item', x: event.clientX, y: event.clientY }); 
+    };
 </script>
 
 
 <template>
     <div class="component_container" :draggable="true" @dragstart="onDragStart($event, 'output')" @contextmenu="handleRightClick">
         <div class="component_title" @click="toggleDropdown">
-           a {{ props.node_type }}
+           {{ props.name }}
         </div>
         <ul v-if="isDropdownOpen">  <!---if the dropdown is open, displays the child items-->
-            <li v-for="item in props.items" :key="item.id"> 
+            <li v-for="item in props.items" :key="item.id" @contextmenu="handleItemRightClick(item, $event)">
                 <ItemNode :id="item.id" :name="item.name" :description="item.description" /> 
             </li>
         </ul>

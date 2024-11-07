@@ -23,25 +23,66 @@ const contextMenuVisible = ref(false); //the context menu is the right click men
 const contextMenuPosition = ref({ x: 0, y: 0 });
 const contextMenuType = ref('empty'); // Track the type of context menu (right now empty or room, but will include objects and maybe more in future)
 const selectedRoomId = ref(null); // Track the selected room for renaming
+const selectedItemId = ref(null); // Track the selected room for renaming
+
 
 const addRoom = () => {     //adds a room to the toolbox
+    const newName=(prompt('Enter new room name'));
     roomData.value.push({
         id: Date.now(),
         node_type: 'Room',
         output_handle: true,
         input_handle: false,
-        items: []
+        items: [],
+        name:newName
     });
     contextMenuVisible.value = false; // Hide context menu after creating a room
 };
 
-const renameRoom = (newName) => { //function for renaming a room
+const renameRoom = () => { //function for renaming a room
+    const newName=(prompt('Enter new room name'));
     const room = roomData.value.find(r => r.id === selectedRoomId.value); //
     if (room) { 
-        room.node_type = newName; 
+        room.name = newName; 
     } 
     contextMenuVisible.value = false; 
 };
+const deleteRoom = () => { // function for deleting a room
+    roomData.value = roomData.value.filter(r => r.id !== selectedRoomId.value); 
+    contextMenuVisible.value = false; 
+};
+
+const addItemToRoom = () => { 
+    const itemName = prompt('Enter item name'); 
+    if (itemName) { 
+        const room = roomData.value.find(r => r.id === selectedRoomId.value); 
+        if (room) { 
+            const newItemId = Date.now(); // Generate a unique ID for the new item 
+            room.items.push({ id: newItemId, name: itemName }); 
+        } 
+    } 
+    contextMenuVisible.value = false; 
+};
+
+const renameItem = (newName) => {
+    const room = roomData.value.find(r => r.id === selectedRoomId.value);
+    if (room) {
+        const item = room.items.find(i => i.id === selectedItemId.value);
+        if (item) {
+            item.name = newName;
+        }
+    }
+    contextMenuVisible.value = false;
+};
+
+const deleteItem = () => {
+    const room = roomData.value.find(r => r.id === selectedRoomId.value);
+    if (room) {
+        room.items = room.items.filter(i => i.id !== selectedItemId.value);
+    }
+    contextMenuVisible.value = false;
+};
+
 
 const handleRightClick = (event) => {//right click will open the context menu when the toolbox is clicked
     event.preventDefault();
@@ -68,6 +109,17 @@ const handleRoomRightClick = ({ id,type, x, y }) => {    //right click for openi
 
 };
 
+const handleItemRightClick = ({ id, type, x, y }) => { 
+    console.log('Right-clicked on item:', { id, type, x, y }); // Debugging 
+    if (type === 'item') 
+    { 
+        contextMenuPosition.value = { x, y }; 
+        contextMenuType.value = 'item'; 
+        selectedItemId.value = id; 
+        contextMenuVisible.value = true; 
+    } 
+};
+
 const closeContextMenu = () => {//context menu closing function.
     contextMenuVisible.value = false;
 };
@@ -88,14 +140,22 @@ const closeContextMenu = () => {//context menu closing function.
             :output_handle="room.output_handle"
             :input_handle="room.input_handle"
             :items="room.items"
+            :name="room.name"
             @showContextMenu="handleRoomRightClick"
+            @showItemContextMenu="handleItemRightClick"
         ></RoomNode>
         <div v-if="contextMenuVisible" :style="{ top: contextMenuPosition.y + 'px', left: contextMenuPosition.x + 'px' }" class="context-menu">
             <ul v-if="contextMenuType === 'empty'">
                 <li @click="addRoom">CREATE ROOM</li>
             </ul>
             <ul v-if="contextMenuType === 'room'"> 
-                <li @click="renameRoom(prompt('Enter new room name'))">RENAME ROOM</li> 
+                <li @click="renameRoom">RENAME ROOM</li> 
+                <li @click="deleteRoom">DELETE ROOM</li>
+                <li @click="addItemToRoom">ADD ITEM</li>
+            </ul>
+            <ul v-if="contextMenuType === 'item'"> 
+                <li @click="renameItem(prompt('Enter new item name'))">RENAME ITEM</li> 
+                <li @click="deleteItem">DELETE ITEM</li>
             </ul>
         </div>
     </div>
@@ -150,7 +210,6 @@ const closeContextMenu = () => {//context menu closing function.
     background: #f0f0f0;
 }
 </style>
-
 
 
 
