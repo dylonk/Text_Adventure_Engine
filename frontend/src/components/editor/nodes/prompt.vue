@@ -15,9 +15,10 @@ const { onDragStart } = useDragAndDrop();
 <template>
     <div class="component_container" :draggable="true" @dragstart="onDragStart($event, 'output')">
         <div class="component_title">
-           a {{ props.node_type }}
+             {{ props.node_type }}
         </div>
         <input>
+        <button>create room</button>
     </div>
 </template>
 
