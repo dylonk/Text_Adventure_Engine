@@ -3,25 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../src/CSS/login.css">
     <title>Login</title>
 </head>
 <body>
     <script src="../src/standardjs/navbar.js"></script>
     <nav-bar></nav-bar>
-
-    <form id="login-form" action="/auth/login" method="POST">
-        <input type="text" name="username" placeholder="Username" required>
-        <input type="password" name="password" placeholder="Password" required>
-        <button type="submit">Login</button>
-    </form>
-
-    <form id="registration-form" action="/auth/register" method="POST">
-        <input type="text" name="username" placeholder="Username" required>
-        <input type="text" name="email" placeholder="email" required>
-        <input type="password" name="password" placeholder="Password" required>
-        <input type="password" name="confirmPassword" placeholder="ConfirmPassword" required>
-        <button type="submit">Login</button>
-
-    <script src="../src/standardjs/login.js"></script>
+    <div id="page">
+        <div id="login-title">Login</div>
+        <form id="login-form" action="/auth/login" method="POST">
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Login</button>
+        </form>
+        <div class="separator"></div>
+        <div id="registration-title">Register</div>
+        <form id="registration-form" action="/auth/register" method="POST">
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="text" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <input type="password" name="confirmPassword" placeholder="Confirm Password" required>
+            <button type="submit">Register</button>
+        </form>
+    </div>
+<script src="../src/standardjs/login.js"></script>
 </body>
 </html>

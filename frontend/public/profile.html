@@ -4,14 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Dashboard</title>
+    <link rel="stylesheet" href="../src/CSS/profile.css">
 </head>
 <body>
     <script src="../src/standardjs/navbar.js"></script>
     <nav-bar></nav-bar>
 
     <h1>Welcome to Your Dashboard</h1>
-    <p id="user-info"></p>
-    <button id="logout-button">Logout</button>
+    <div id="user-infobox">
+        <div id="user-info">
+            <div class="profile-name">*Name*</div>
+            <div class="nickname">*Optional Nickname*</div>
+            <div class="account-stats">
+                <div class="account-stat1">*Other Account Stats - 1*</div>
+                <div class="account-stat2">*Other Account Stats - 2*</div>
+                <div class="account-stat3">*Other Account Stats - 3*</div>
+            </div>
+        </div>
+    </div>
+    <button id="logout-button">Log Out</button>
 
     <script>
         // Check if the user is authenticated

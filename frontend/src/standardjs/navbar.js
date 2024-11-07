@@ -8,9 +8,10 @@ class NavBar extends HTMLElement{
             }
             .navbar{
                 margin-top:0;
-                position:relative;
+                position:sticky;
                 width:100%;
                 height:min-content;
+                padding:10px 0px;
                 background-color:darkgrey;
                 min-height: max-content;
                 font-family: Arial, Helvetica, sans-serif;
@@ -32,11 +33,11 @@ class NavBar extends HTMLElement{
             </style>
             <p class="navbar">
                 <a href="index.html" class="navbtn">Home</a>
-                <a href="login.html" class="navbtn">Login or Register</a>
-                <a href="about.html" class="navbtn">About</a>
                 <a href="explore.html" class="navbtn">Explore</a>
-                <a href="profile.html" class="navbtn">My profile</a>
                 <a href="editor.html" class="navbtn">Create</a>
+                <a href="profile.html" class="navbtn">My Profile</a>
+                <a href="login.html" class="navbtn">Login/Register</a>
+                <a href="about.html" class="navbtn">About</a>
             </p>
         `
     }
