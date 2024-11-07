@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { saveAs } from 'file-saver'; // Import the file-saver package
-import Toolbox from 'Toolbox.js';
-import Canvas from 'Canvas.js';
-import PropertiesTab from 'PropertiesTab.js';
+import Toolbox from './Toolbox.js';
+import Canvas from './Canvas.js';
+import PropertiesTab from './PropertiesTab.js';
 
 function App() {
   const [selectedItem, setSelectedItem] = useState(null);

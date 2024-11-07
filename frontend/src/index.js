@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import '../CSS/index.css';
-import App from 'App.js';
-import reportWebVitals from '../js/reportWebVitals';
+import './CSS/index.css';
+import App from './React/App.js';
+import reportWebVitals from './standardjs/reportWebVitals';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById('root'));//inits react root to "root" div in index.html
 root.render(
   <React.StrictMode>
     <App />
