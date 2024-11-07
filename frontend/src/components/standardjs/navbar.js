@@ -32,12 +32,12 @@ class NavBar extends HTMLElement{
             }
             </style>
             <p class="navbar">
-                <a href="index.html" class="navbtn">Home</a>
-                <a href="explore.html" class="navbtn">Explore</a>
-                <a href="editor.html" class="navbtn">Create</a>
-                <a href="profile.html" class="navbtn">My Profile</a>
-                <a href="login.html" class="navbtn">Login/Register</a>
-                <a href="about.html" class="navbtn">About</a>
+                <a href="homepage.html" >Home</a>
+                <a href="explore.html" >Explore</a>
+                <a href="editor.html" >Create</a>
+                <a href="profile.html" >My Profile</a>
+                <a href="login.html" >Login/Register</a>
+                <a href="about.html" >About</a>
             </p>
         `
     }
