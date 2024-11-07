@@ -1,9 +1,11 @@
 <script setup>
-import Editor from '@/components/editor/Editor.vue'
+import Editor from '@/components/editor/editor.vue'
 </script>
 
 <template>
-<Editor/>
+<div id="app">
+    <main>
+        <Editor/>
+    </main>
+</div>
 </template>
-
-<style/>
