@@ -4,7 +4,10 @@ import { ref, defineProps } from 'vue';
 const props = defineProps({
     id: Number,
     name: { type: String, default: 'Item' },
-    description: { type: String, default: 'An interactable item.' }
+    description: { type: String, default: 'An interactable item.' },
+    roomId: Number  // Room ID passed from parent (RoomNode)
+
+
 });
 
 const interact = () => {

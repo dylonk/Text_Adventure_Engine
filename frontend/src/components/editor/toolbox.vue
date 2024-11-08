@@ -6,17 +6,8 @@ import { ref } from 'vue';
 import useDragAndDrop from './drag_drop.js';
 
 
-const roomData = ref([  //hoiw rooms are represented in the toolbox
-    {
-        id: 1,
-        node_type: 'Room',
-        output_handle: true,
-        input_handle: false,
-        items: [
-            { id: 1, name: 'Key' },
-            { id: 2, name: 'Lamp' }
-        ]
-    }
+const roomData = ref([
+    
 ]);
 
 const contextMenuVisible = ref(false); //the context menu is the right click menu, which in the future will be used for creating rooms or items.
@@ -58,22 +49,38 @@ const addItemToRoom = () => {
         const room = roomData.value.find(r => r.id === selectedRoomId.value); 
         if (room) { 
             const newItemId = Date.now(); // Generate a unique ID for the new item 
-            room.items.push({ id: newItemId, name: itemName }); 
+            room.items.push({ id: newItemId, name: itemName,roomId:room.id }); 
         } 
     } 
     contextMenuVisible.value = false; 
 };
 
-const renameItem = (newName) => {
+const renameItem = () => {
+    const newName = prompt('Enter new item name');
+    if (!newName) return;  // If user cancels or enters nothing, don't proceed
+
+    // Find the room using the selected room ID
     const room = roomData.value.find(r => r.id === selectedRoomId.value);
+
     if (room) {
+        console.log("found room:", room); // Debugging: Ensure room is found
+        // Find the item in that room
         const item = room.items.find(i => i.id === selectedItemId.value);
+
         if (item) {
-            item.name = newName;
+            item.name = newName;  // Rename the item
+            console.log("renamed item to", newName);  // Debugging: Ensure item is renamed
+        } else {
+            console.log('Item not found');
         }
+    } else {
+        console.log('Room not found');
     }
+
+    // Hide the context menu after renaming
     contextMenuVisible.value = false;
 };
+
 
 const deleteItem = () => {
     const room = roomData.value.find(r => r.id === selectedRoomId.value);
@@ -97,20 +104,20 @@ const handleRightClick = (event) => {//right click will open the context menu wh
 };
 
 const handleRoomRightClick = ({ id,type, x, y }) => {    //right click for opening the room context menu
-    console.log('Right-clicked on room:', { id, type, x, y }); // Debugging
+    selectedRoomId.value = id; //sets the id of the selected room to the id of the room clicked
     if(type==='room')
     {
         console.log('Right-clicked on room:', { id, type, x, y }); // Debugging
     contextMenuPosition.value = { x, y }; 
     contextMenuType.value = 'room'; 
-    selectedRoomId.value = id; 
     contextMenuVisible.value = true; 
     }   
 
 };
 
 const handleItemRightClick = ({ id, type, x, y }) => { 
-    console.log('Right-clicked on item:', { id, type, x, y }); // Debugging 
+    console.log('Right-clicked on item detected in toolbox.vue:', { id, type, x, y }); // Debugging 
+    
     if (type === 'item') 
     { 
         contextMenuPosition.value = { x, y }; 
@@ -154,7 +161,7 @@ const closeContextMenu = () => {//context menu closing function.
                 <li @click="addItemToRoom">ADD ITEM</li>
             </ul>
             <ul v-if="contextMenuType === 'item'"> 
-                <li @click="renameItem(prompt('Enter new item name'))">RENAME ITEM</li> 
+                <li @click="renameItem">RENAME ITEM</li> 
                 <li @click="deleteItem">DELETE ITEM</li>
             </ul>
         </div>
