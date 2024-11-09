@@ -1,14 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../src/CSS/styles.css">
-    <title>About</title>
-</head>
+<script setup>
+import globalNavBar from '@/components/standardjs/navbar.vue'
+
+function goToAbout() {
+      this.$router.push('/about')
+}
+</script>
+<template>
 <body>
-    <script src="../src/components/standardjs/navbar.js"></script>
-    <nav-bar></nav-bar>
+    <globalNavBar/>
     <div id="content">
         <div id="title">
             <p>*Name* is a site based around text adventure games.</p>
@@ -34,4 +33,7 @@
         </div>
     </div>
 </body>
-</html>
+</template>
+<style>
+
+</style>

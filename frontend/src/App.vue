@@ -1,11 +1,11 @@
 <script setup>
-import Editor from '@/components/editor/Editor.vue'
+import Editor from '@/components/editor/editor.vue'
 </script>
 
 <template>
 <div id="app">
     <main>
-        <Editor/>
+        <RouterView />
     </main>
 </div>
 </template>
