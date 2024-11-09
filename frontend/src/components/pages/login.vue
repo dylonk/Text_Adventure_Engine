@@ -4,7 +4,6 @@
         this.$router.push('/auth')
     }
 
-    import {} from '@/components/standardjs/login.js'
 
 
 
@@ -68,5 +67,5 @@
 </template>
 
 <style>
-    @import "../../CSS/login.css"
+    @import "../../CSS/login.css";
 </style>
