@@ -8,7 +8,8 @@ function goToAbout() {
 <template>
 <body>
     <globalNavBar/>
-    <div id="content">
+    <div class="content">
+    <div class="text-container">
         <div id="title">
             <p>MagiQuill is a site based around text adventure games.</p>
         </div>
@@ -27,6 +28,7 @@ function goToAbout() {
                 <p>Timothy Erbert, Jean Affa, Carson Viator, Dylan Snyder, Kyle Youngquist</p>
             </div>
         </div>
+</div>
     </div>
 
 </body>
@@ -39,10 +41,26 @@ function goToAbout() {
     font-family: 'Pixelify Sans';
 }
 
-#content {
+
+.content {
+    height:100%;
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     font-size: 24px;
     text-align: center;
+    backdrop-filter:blur(8px);
+    background-image:url(https://i.pinimg.com/564x/b0/2a/04/b02a04ffa8cd69e58435d7da7cae7979.jpg);
+    background-size: cover;
 }
+
+.text-container{
+    height:100%;
+    width:100%;
+        backdrop-filter:blur(4px);
+}
+
 
 #title {
     color:white;
@@ -51,20 +69,20 @@ function goToAbout() {
 }
 
 #about-text{
-    color:rgb(172, 172, 172);
-    margin-top: 5%;
+    color:rgb(255, 255, 255);
+    margin:2.5%;
 }
 
 #credits {
-    position: fixed;
-    bottom: 0%;
-    left: 50%;
-    transform: translate(-50%, 0%);
+    color:rgb(255, 255, 255);
+    margin-top:auto;
+    margin-bottom:20%;
+    text-align:center;
     width: 100%;
-    background-color: rgba(128, 128, 128, 0.534);
 }
 
 #creditsNames p {
+
     margin-top: 0px;
     display: inline-block;
 }

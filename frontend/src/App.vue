@@ -1,5 +1,4 @@
 <script setup>
-import Editor from '@/components/editor/editor.vue'
 </script>
 
 <template>

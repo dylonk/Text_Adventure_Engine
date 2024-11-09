@@ -8,13 +8,13 @@
     padding-bottom: 25px;
     font-size: 24px;
   }
-  
+
   input[type=search] {
     border: 2px solid black;
     padding: 5px;
     width: 30%;
   }
-  
+
   #game-lines {
     position: relative;
     display: grid;

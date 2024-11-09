@@ -4,7 +4,7 @@
 </script>
 
 <template>
-   <Controls position="bottom-right" showFitView=false>
+   <Controls position="bottom-right">
     </Controls>
 </template>
 <style>

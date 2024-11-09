@@ -3,7 +3,11 @@
 #app {
   width:100%;
   font-weight: normal;
+  display:flex;
+  min-height: 100vh;
 }
+
+
 
 a,
 .green {

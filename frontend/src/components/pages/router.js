@@ -22,6 +22,9 @@ const routes = [
 const router = createRouter({
     history: createMemoryHistory(),
     routes,
+    scrollBehavior(to, from, savedPosition){
+
+    }
 })
 
 export default router

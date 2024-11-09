@@ -7,9 +7,17 @@ function goToCreate() {
 }
 </script>
 <template>
+<body class="create-container">
     <globalNavBar/>
     <Editor/>
+</body>
 </template>
-<style>
+<style scoped>
+.create-container{
+    height:100vh;
+    width:100vw;
+    display:flex;
+    flex-direction: column;
+}
 
 </style>

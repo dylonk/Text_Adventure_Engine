@@ -7,7 +7,7 @@
     padding-bottom: 15px;
     font-size: 24px;
   }
-  
+
   .main {
     margin-right: 10%;
     border: 2px solid black;
@@ -15,7 +15,7 @@
     padding-top: 5px;
     padding-bottom: 5px;
   }
-  
+
   .op1 {
     margin-right: 10%;
     border: 2px solid black;
@@ -23,7 +23,7 @@
     padding-top: 5px;
     padding-bottom: 5px;
   }
-  
+
   .op2 {
     margin-right: 10%;
     border: 2px solid black;
@@ -31,7 +31,7 @@
     padding-top: 5px;
     padding-bottom: 5px;
   }
-  
+
   #game-lines {
     position: relative;
     display: grid;
