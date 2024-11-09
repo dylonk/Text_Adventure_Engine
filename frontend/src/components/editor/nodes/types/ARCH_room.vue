@@ -1,7 +1,7 @@
 <script setup>
 import { ref, defineProps } from 'vue';
-import useDragAndDrop from '../drag_drop.js';
-import ItemNode from './item.vue'; // Import the ItemNode component
+import useDragAndDrop from '../../drag_drop.js';
+import ObjectNode from './types/object.vue'; // Import the ItemNode component
 
 const props = defineProps({
     id:Number,
@@ -21,7 +21,7 @@ const selectedRoomId = ref(null); // Reactive reference to store the selected ro
 const toggleDropdown = () => { isDropdownOpen.value = !isDropdownOpen.value; };//toggles dropdown menu for the room
 
 const handleRightClick = (event) => { //when right clicked, shows the context menu of the room
-    event.preventDefault(); 
+    event.preventDefault();
     console.log('Right-click detected on room node'); // Debugging
     emit('showContextMenu', { id: props.id, type: 'room', x: event.clientX, y: event.clientY }); //emits showcontextmeny, used below
 };
@@ -37,7 +37,7 @@ const handleRoomRightClick = ({ id, type, x, y }) => {
 };
 
 const handleItemRightClick = (item, event) => {
-    event.preventDefault(); 
+    event.preventDefault();
     event.stopPropagation(); // Prevent propagation to the room's context menu
     selectedItemId.value = item.id;
     selectedRoomId.value = item.roomId; // Store the room ID of the item for later
@@ -54,7 +54,7 @@ const handleItemRightClick = (item, event) => {
         </div>
         <ul v-if="isDropdownOpen">  <!---if the dropdown is open, displays the child items-->
             <li v-for="item in props.items" :key="item.id" @contextmenu="handleItemRightClick(item, $event)">
-                <ItemNode :id="item.id" :name="item.name" :description="item.description" :roomId="props.id" /> 
+                <ItemNode :id="item.id" :name="item.name" :description="item.description" :roomId="props.id" />
             </li>
         </ul>
         <input>

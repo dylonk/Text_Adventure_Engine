@@ -6,6 +6,14 @@ import { VueFlow, useVueFlow } from '@vue-flow/core'
 import CanvasBackground from './background.vue'
 import CanvasControls from './controls.vue'
 import useDragAndDrop from '../drag_drop.js';
+import tbGlobal from '../nodes/tb_global.vue'
+// allll da fucking node imports
+import { PromptNode } from '../nodes/n-imports.js'
+
+    const nodeTypes = {
+        prompt: PromptNode,
+    }
+
 
 const { onConnect, addEdges } = useVueFlow()
 const { onDragOver, onDrop, onDragLeave, isDragOver } = useDragAndDrop()
@@ -17,7 +25,7 @@ onConnect(addEdges)
 
 <template>
     <div class="canvas_container">
-        <VueFlow :nodes="nodes" @dragover="onDragOver" @dragleave="onDragLeave" fit-view-on-init>
+        <VueFlow :nodes="nodes" :node-types="nodeTypes" dragover="onDragOver" @dragleave="onDragLeave" fit-view-on-init>
 
             <CanvasBackground        :style="{
           backgroundColor: isDragOver ? '#e7f3ff' : 'transparent',
@@ -32,10 +40,10 @@ onConnect(addEdges)
 
 <style>
 @import 'https://cdn.jsdelivr.net/npm/@vue-flow/core@1.41.4/dist/style.css';
+    .canvas_container{
+        background-color: transparent;
+        width:100%;
+        height:100%;
+    }
 
-.canvas_container{
-    background-color: transparent;
-    width:100%;
-    height:100%;
-}
 </style>

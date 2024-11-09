@@ -39,7 +39,7 @@
                 localStorage.setItem('token', result.token); // Store the token in local storage
 
                 // Redirect to a protected page or update the  UI
-                window.location.href = 'profile.html';//could send to a protected page.
+                this.$router.push('/user');//could send to a protected page.
             } catch (error) {
                 console.error('Error:', error);
                 alert('Login failed');

@@ -11,16 +11,16 @@ function goToAbout() {
     <div class="content">
     <div class="text-container">
         <div id="title">
-            <p>MagiQuill is a site based around text adventure games.</p>
+            <p>Forge your next adventure with MagiQuill!</p>
         </div>
         <div id="about-text">
-        <p>It includes free, web-based tools to play or create text adventure games as well as the ability to export games to standalone versions.</p>
+        <p>MagiQuill is a web based app focused on the creation and sharing of text based adventures</p>
         </div>
         <div id="about-text">
-            <p>Additional Features Go Here.</p>
+            <p>Construct your adventure visually with nodes in our comprehensive editing suite and export your game as a standalone project</p>
         </div>
         <div id="about-text">
-            <p>Some can go here too.</p>
+            <p>Play from a wide variety of user generated adventures</p>
         </div>
         <div id="credits">
             <p>Created by:</p>

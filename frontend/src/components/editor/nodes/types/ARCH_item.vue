@@ -1,4 +1,4 @@
-<script setup>
+<!-- <script setup>
 import { ref, defineProps } from 'vue';
 
 const props = defineProps({
@@ -6,8 +6,6 @@ const props = defineProps({
     name: { type: String, default: 'Item' },
     description: { type: String, default: 'An interactable item.' },
     roomId: Number  // Room ID passed from parent (RoomNode)
-
-
 });
 
 const interact = () => {
@@ -38,4 +36,4 @@ const interact = () => {
 .item_description {
     font-style: italic;
 }
-</style>
+</style> -->
