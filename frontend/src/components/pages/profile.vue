@@ -6,44 +6,45 @@ function goToProfile() {
 }
 </script>
 <template>
-    <globalNavBar/>
-    <div id="user-infobox">
-        <div id="user-info">
-            <div class="profile-name">*Name*</div>
-            <div class="nickname">*Optional Nickname*</div>
-            <div class="account-stats">
-                <div class="account-stat1">*Other Account Stats - 1*</div>
-                <div class="account-stat2">*Other Account Stats - 2*</div>
-                <div class="account-stat3">*Other Account Stats - 3*</div>
-            </div>
+    <div class="profile-container">
+        <globalNavBar/>
+        <div class="profile-sidebar">
+                <div class="profile-side-btn">User Profile</div>
+                <hr>
+                <div class="profile-side-btn">Settings</div>
+                <hr>
+                <button>Log Out</button>
         </div>
     </div>
-    <button id="logout-button">Log Out</button>
 </template>
+
 <style scoped>
-h1 {
-    font-size: 36px;
-    border-bottom: 2px solid black;
-    padding: 10%;
-    padding-top: 0;
-    padding-bottom: 0;
+.profile-container{
+    height:100vh;
+    width:100vw;
+    display:flex;
+    flex-direction: column;
 }
-
-button {
-    position: absolute;
-    right: 1%;
-    transform: scale(120%, 120%);
+.profile-sidebar{
+    color:rgb(165, 165, 165);
+    font-size: larger;
+    background:rgb(255, 255, 255);
+    height:100%;
+    display:flex;
+    width:max-content;
+    overflow:scroll;
+    flex-direction:column;
 }
-
-#user-infobox {
-    font-size: 24px;
-    border: 2px solid black;
-    width: min-content;
-    padding: 20px;
-    padding-top: 10px;
-    bottom: 1%;
+hr{
+    border-color:rgb(190, 190, 190);
 }
-
+.profile-side-btn{
+    padding:10px;
+}
+.profile-sidebar>button{
+    padding:10px;
+    margin-top:auto;
+}
 #user-info {
     position: relative;
     display: flex;
@@ -60,15 +61,5 @@ button {
     margin-top: 15%;
 }
 
-.account-stat1 {
-    padding-bottom: 10px;
-}
 
-.account-stat2 {
-    padding-bottom: 10px;
-}
-
-.account-stat3 {
-    padding-bottom: 10px;
-}
 </style>

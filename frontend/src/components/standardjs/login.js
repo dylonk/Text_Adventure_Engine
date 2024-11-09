@@ -6,7 +6,7 @@ document.getElementById('login-form').addEventListener('submit', async function(
         username: formData.get('username'),
         password: formData.get('password')
 
-        
+
     };
 
     try {
