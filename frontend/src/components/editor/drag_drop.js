@@ -33,6 +33,7 @@ export default function useDragAndDrop() {
     })
 
     function onDragStart(event, type) {
+        console.log(type, " node grabbed")
         if (event.dataTransfer) {
             event.dataTransfer.setData('application/vueflow', type)
             event.dataTransfer.effectAllowed = 'move'
@@ -78,18 +79,22 @@ export default function useDragAndDrop() {
      * @param {DragEvent} event
      */
     function onDrop(event) {
-        const position = screenToFlowCoordinate({
+        const pos = screenToFlowCoordinate({
             x: event.clientX,
             y: event.clientY,
         })
+        console.log('node dropped'); // Debugging
 
+        const nodeType = event.dataTransfer.getData('node')
         const nodeId = getId()
 
         const newNode = {
-            id: nodeId,
-            type: draggedType.value,
-            position,
-            data: { label: nodeId },
+            type: nodeType,
+            id:nodeId,
+            position: pos,
+            expandParent: true,
+            width:100,
+            height:100
         }
 
         /**

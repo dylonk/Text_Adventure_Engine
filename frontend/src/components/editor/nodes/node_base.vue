@@ -7,7 +7,7 @@ const props = defineProps({
     id:Number,
     node_type:String,
     node_family:String, //Global, Object, or Room. This is used to decide the toolbox type.
-    node_title:String, //9/10 times title and type should be the same. title is just aesthetic
+    node_title:String,
     bg_color:String,
     node_handles: { type: Array, default: () => [] }, // Define items as an array prop with a default empty array
     children: { type: Array, default: () => [] }, // Define items as an array prop with a default empty array
@@ -18,8 +18,9 @@ const props = defineProps({
 const { onDragStart } = useDragAndDrop();
 </script>
 <template>
-    <div class="node_container" :draggable="true" @dragstart="onDragStart($event, 'output')">
+    <div class="node_container" :draggable="true" @dragstart="onDragStart($event, props.node_type)" >
         <div class="node_title">{{ props.node_title }}</div>
+        <slot></slot>
     </div>
 </template>
 <style>
@@ -29,6 +30,8 @@ const { onDragStart } = useDragAndDrop();
     outline: 2px solid black;
     height:fit-content;
     width:fit-content;
+    display:flex;
+    flex-direction: column;
 }
 .node_title{
     padding:3px;
