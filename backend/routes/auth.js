@@ -23,57 +23,65 @@ const authenticateToken = (req, res, next) => {
 };
 
 // User registration route
+// User registration route
 router.post('/register', async (req, res) => {
     console.log("register request send");
     const { username, email, password, confirmPassword } = req.body;
 
     if (password !== confirmPassword) {
-        return res.status(400).send('Passwords do not match');
+        return res.status(400).json({ error: 'Passwords do not match' });  // Return JSON for error
     }
 
     try {
         // Check if username already exists
         const existingUser = await User.findOne({ username });
         if (existingUser) {
-            return res.status(400).send('Username already exists');
+            return res.status(400).json({ error: 'Username already exists' });  // Return JSON for error
         }
 
-        // Hash password before saving
-        const hashedPassword = await bcrypt.hash(password, 12);
-
+        // Hash password before saving 
+        //const hashedPassword = await bcrypt.hash(password, 12);
+        //console.log('Hashed password during registration:', hashedPassword);
+        hashedPassword=password;
         const user = new User({ username, email, password: hashedPassword });
 
         await user.save();
-        res.status(201).send('User registered');
+
+        // Send a JSON response with a success message
+        res.status(201).json({ message: 'User registered' });  // Return success in JSON format
     } catch (error) {
-        res.status(400).send(error.message);
+        res.status(400).json({ error: error.message });  // Return error as JSON
     }
 });
+
 
 // Login route (authentication)
 router.post('/login', async (req, res) => {
-    console.log("login request send");
     const { username, password } = req.body;
-
+  
     try {
-        console.log("attempting to find user");
-        const user = await User.findOne({ username }); // Try to find the user by username
-        if (!user) return res.status(400).send('Invalid credentials'); // User not found
+      const user = await User.findOne({ username });
+      if (!user) return res.status(400).send('Invalid credentials');
+  
+      // Compare the provided password with the hashed password in the database
+        //const isMatch = await bcrypt.compare(password, user.password); TEMP DISABLED HASHING
+        const isMatch = password === user.password;  // Compare plaintext passwords
 
-        console.log("attempting to verify password");
-        const isMatch = await bcrypt.compare(password, user.password); // Compare provided password with hashed password
-        if (!isMatch) return res.status(400).send('Invalid credentials'); // Password mismatch
-
-        console.log("creating token");
-        const token = jwt.sign({ id: user._id, username: user.username }, jwtSecret, { expiresIn: '1h' });
-
-        console.log("sending response with token");
-        res.json({ token, user: { username: user.username, email: user.email } }); // Send token and user data
+        console.log("Provided password:", password);
+        console.log("Stored hashed password:", user.password);
+        console.log("Password match result:", isMatch);
+      if (!isMatch) return res.status(400).send('nomatch');  // Passwords don't match
+  
+      const token = jwt.sign({ id: user._id, username: user.username }, jwtSecret, { expiresIn: '1h' });
+  
+      res.json({ token, user: { username: user.username, email: user.email } });
     } catch (error) {
-        console.log("failed login attempt");
-        res.status(400).send(error.message); // Send error message if login fails
+      console.log(error);
+      res.status(500).send('Server error');
     }
-});
+  });
+  
+
 
 // Protected route to get user data
 router.get('/user', authenticateToken, async (req, res) => {
