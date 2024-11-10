@@ -7,7 +7,7 @@ import CanvasBackground from './background.vue'
 import CanvasControls from './controls.vue'
 import useDragAndDrop from '../drag_drop.js';
 // allll da fucking node imports
-import { PromptNode } from '../nodes/n-imports.js'
+import { PromptNode, BaseNode } from '../nodes/n-imports.js'
 
     const nodeTypes = {
         prompt: markRaw(PromptNode),

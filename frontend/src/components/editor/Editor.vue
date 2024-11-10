@@ -2,12 +2,14 @@
     import { ref } from 'vue'
     import Toolbar  from './toolbox.vue'
     import Canvas from './canvas/canvas.vue'
+    import AssetBrowser from './asset_browser.vue'
 </script>
 <!---This is the outermost layer of the editor--->
 <template>
     <div class="editor-container">
         <Toolbar />
         <Canvas />
+        <AssetBrowser />
     </div>
 </template>
 

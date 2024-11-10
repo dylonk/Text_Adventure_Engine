@@ -10,8 +10,8 @@ import { Handle, Position } from '@vue-flow/core';
         node_title="Prompt"
         node_type="prompt">
             <textarea></textarea>
-
     </NodeBase>
+
 </template>
 
 

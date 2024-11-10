@@ -5,12 +5,15 @@ import { ref } from 'vue';
 import useDragAndDrop from './drag_drop.js';
 // Node imports again
 import tbGlobal from './nodes/tb_global.vue'
+import { PromptNode, BaseNode } from './nodes/n-imports.js'
+
 
 </script>
 <template>
     <div class="toolbox" @contextmenu="handleRightClick" @click="closeContextMenu">
         <a class="tb_title">Toolbox</a>
-        <tbGlobal></tbGlobal>
+        <PromptNode/>
+        <BaseNode/>
     </div>
 </template>
 

@@ -83,10 +83,10 @@ export default function useDragAndDrop() {
             x: event.clientX,
             y: event.clientY,
         })
-        console.log('node dropped'); // Debugging
 
-        const nodeType = event.dataTransfer.getData('node')
+        const nodeType = draggedType.value
         const nodeId = getId()
+        console.log(nodeType, 'node dropped'); // Debugging
 
         const newNode = {
             type: nodeType,

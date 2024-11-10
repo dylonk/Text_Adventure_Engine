@@ -6,10 +6,8 @@ import useDragAndDrop from '../drag_drop.js';
 const props = defineProps({
     id:Number,
     node_type:String,
-    node_family:String, //Global, Object, or Room. This is used to decide the toolbox type.
-    node_title:String,
+    node_title:String, //What displays on the node
     bg_color:String,
-    node_handles: { type: Array, default: () => [] }, // Define items as an array prop with a default empty array
     children: { type: Array, default: () => [] }, // Define items as an array prop with a default empty array
     node_properties: { type: Array, default: () => [] },
     associated_function: String, //For when we actually start programming the script stuff
