@@ -2,80 +2,85 @@ const express = require('express');
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-//const mongoSanatize = require('express-mongo-sanatize');
 
 const router = express.Router();
-//app.use(mongoSanatize());
 
-const authenticateToken = (req, res, next) => { //authenticates user
+// Get JWT secret from environment variable
+const jwtSecret = process.env.JWT_SECRET || 'default_jwt_secret';
+
+// Middleware to authenticate JWT token
+const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
 
-    if (token == null) return res.sendStatus(401); // If no token, return 401 Unauthorized
+    if (!token) return res.sendStatus(401); // If no token, return 401 Unauthorized
 
-    jwt.verify(token, 'your_jwt_secret', (err, user) => {
+    jwt.verify(token, jwtSecret, (err, user) => {
         if (err) return res.sendStatus(403); // If token is invalid, return 403 Forbidden
-        req.user = user;
+        req.user = user; // Attach user information to the request
         next(); // Proceed to the next middleware or route handler
     });
 };
 
-
-
-
-
-
-
-
-
-
-
-//user registration route, creates user and saves to database. request body is username and password
+// User registration route
 router.post('/register', async (req, res) => {
     console.log("register request send");
-    const { username, email, password, confirmPassword  } = req.body;
-    console.log(req.body);
+    const { username, email, password, confirmPassword } = req.body;
+
+    if (password !== confirmPassword) {
+        return res.status(400).send('Passwords do not match');
+    }
+
     try {
-        const user = new User({ username, email, password, confirmPassword });
-        if (password != confirmPassword) { //ensures no password matching
-            return res.status(400).send('Passwords do not match');
+        // Check if username already exists
+        const existingUser = await User.findOne({ username });
+        if (existingUser) {
+            return res.status(400).send('Username already exists');
         }
-        await user.save();  
+
+        // Hash password before saving
+        const hashedPassword = await bcrypt.hash(password, 12);
+
+        const user = new User({ username, email, password: hashedPassword });
+
+        await user.save();
         res.status(201).send('User registered');
     } catch (error) {
         res.status(400).send(error.message);
     }
 });
 
-//takes username and password, and attemptsto find the user. Creates a JWT token with a 1 hour expiration time.
+// Login route (authentication)
 router.post('/login', async (req, res) => {
     console.log("login request send");
     const { username, password } = req.body;
+
     try {
         console.log("attempting to find user");
-        const user = await User.findOne({ username });//trys to find a user matching the username
-        if (!user) return res.status(400).send('Invalid credentials');
-        console.log("attempting to encrypt password");
-        const isMatch = await bcrypt.compare(password, user.password);  //tries to match the password
-        if (!isMatch) return res.status(400).send('Invalid credentials');
-        console.log("attempting to create token");
-        const token = jwt.sign({ id: user._id }, 'your_jwt_secret', { expiresIn: '1h' });
-        console.log("attempting to send json userdata response");
-        res.json({ token, user: { username: user.username, email: user.email } });//sends a json response containing token and user data
+        const user = await User.findOne({ username }); // Try to find the user by username
+        if (!user) return res.status(400).send('Invalid credentials'); // User not found
+
+        console.log("attempting to verify password");
+        const isMatch = await bcrypt.compare(password, user.password); // Compare provided password with hashed password
+        if (!isMatch) return res.status(400).send('Invalid credentials'); // Password mismatch
+
+        console.log("creating token");
+        const token = jwt.sign({ id: user._id, username: user.username }, jwtSecret, { expiresIn: '1h' });
+
+        console.log("sending response with token");
+        res.json({ token, user: { username: user.username, email: user.email } }); // Send token and user data
     } catch (error) {
         console.log("failed login attempt");
-        res.status(400).send(error.message);
+        res.status(400).send(error.message); // Send error message if login fails
     }
 });
-
-
 
 // Protected route to get user data
 router.get('/user', authenticateToken, async (req, res) => {
     try {
-        const user = await User.findById(req.user.id).select('-password'); // Exclude the password field
+        const user = await User.findById(req.user.id).select('-password'); // Exclude password from response
         if (!user) return res.status(404).send('User not found');
-        res.json(user);
+        res.json(user); // Send user data
     } catch (error) {
         res.status(500).send('Server error');
     }

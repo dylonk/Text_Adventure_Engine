@@ -12,7 +12,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const cors = require('cors');
 
 app.use(cors({
-    origin: 'http://127.0.0.1:3000', // Your frontend URL
+    origin: 'http://localhost:5173', // Your frontend URL
     methods: ['POST', 'GET', 'PUT', 'DELETE'],
     credentials: true
 }));
@@ -38,11 +38,14 @@ app.use('/auth', authRoutes);
 
 //mongoose atlas connector
 const mongoURI = process.env.MONGO_URI;
+
 mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => console.log('MongoDB connected'))
-    .catch(err => console.log(err));
-
-
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => {
+    console.error('Error connecting to MongoDB:', err);
+    // You can log the error stack for more details
+    console.error(err.stack);
+  });
 
 
 
