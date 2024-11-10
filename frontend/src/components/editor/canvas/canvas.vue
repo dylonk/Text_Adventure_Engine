@@ -1,17 +1,16 @@
 
 <!---Each canvas is a component of an "Object". The world editor is a canvas that is a component of the global object-->
 <script setup>
-import { ref } from 'vue'
+import { ref, markRaw } from 'vue'
 import { VueFlow, useVueFlow } from '@vue-flow/core'
 import CanvasBackground from './background.vue'
 import CanvasControls from './controls.vue'
 import useDragAndDrop from '../drag_drop.js';
-import tbGlobal from '../nodes/tb_global.vue'
 // allll da fucking node imports
 import { PromptNode } from '../nodes/n-imports.js'
 
     const nodeTypes = {
-        prompt: PromptNode,
+        prompt: markRaw(PromptNode),
     }
 
 
@@ -24,8 +23,8 @@ onConnect(addEdges)
 </script>
 
 <template>
-    <div class="canvas_container">
-        <VueFlow :nodes="nodes" :node-types="nodeTypes" dragover="onDragOver" @dragleave="onDragLeave" fit-view-on-init>
+    <div class="canvas_container" @drop="onDrop" >
+        <VueFlow :nodes="nodes" :node-types="nodeTypes" @dragover="onDragOver" @dragleave="onDragLeave" fit-view-on-init>
 
             <CanvasBackground        :style="{
           backgroundColor: isDragOver ? '#e7f3ff' : 'transparent',
