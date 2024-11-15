@@ -13,7 +13,9 @@ const props = defineProps({
     children: { type: Array, default: () => [] }, // Define items as an array prop with a default empty array
     node_properties: { type: Array, default: () => [] },
     associated_function: String, //For when we actually start programming the script stuff
-    function_arguments: {type: Array, default: () => []}
+    function_arguments: {type: Array, default: () => []},    
+    parentId: { type: String, default: null },  // Add parentId to node properties. This may or may not only be useful for items.
+
 })
 const { onDragStart } = useDragAndDrop();
 </script>

@@ -8,9 +8,15 @@ import CanvasControls from './controls.vue'
 import useDragAndDrop from '../drag_drop.js';
 // allll da fucking node imports
 import { PromptNode } from '../nodes/n-imports.js'
+import { RoomNode } from '../nodes/n-imports.js'
+import { ItemNode } from '../nodes/n-imports.js'
+
+
 
     const nodeTypes = {
         prompt: markRaw(PromptNode),
+        room: markRaw(RoomNode),
+        item: markRaw(ItemNode)
     }
 
 

@@ -1,64 +1,52 @@
-import { useVueFlow } from '@vue-flow/core'
-import { ref, watch } from 'vue'
+    // drag_drop.js
+    import { useVueFlow } from '@vue-flow/core'
+    import { ref, watch } from 'vue'
+    import { useNodesStore } from './nodes/stores/node_store.js' // Import the Pinia store
 
-let id = 0
+    let id = 0
 
-/**
- * @returns {string} - A unique id.
- */
-function getId() {
+    function getId() {
     return `dndnode_${id++}`
-}
+    }
 
-/**
- * In a real world scenario you'd want to avoid creating refs in a global scope like this as they might not be cleaned up properly.
- * @type {{draggedType: Ref<string|null>, isDragOver: Ref<boolean>, isDragging: Ref<boolean>}}
- */
-const state = {
-    /**
-     * The type of the node being dragged.
-     */
+
+    const state = {
     draggedType: ref(null),
     isDragOver: ref(false),
     isDragging: ref(false),
-}
+    }
 
-export default function useDragAndDrop() {
+    export default function useDragAndDrop() {
     const { draggedType, isDragOver, isDragging } = state
-
-    const { addNodes, screenToFlowCoordinate, onNodesInitialized, updateNode } = useVueFlow()
+    const nodesStore = useNodesStore() // Access the Pinia store
+    const { addNodes, screenToFlowCoordinate, updateNode, onNodesInitialized } = useVueFlow()
 
     watch(isDragging, (dragging) => {
         document.body.style.userSelect = dragging ? 'none' : ''
     })
 
     function onDragStart(event, type) {
-        console.log(type, " node grabbed")
         if (event.dataTransfer) {
-            event.dataTransfer.setData('application/vueflow', type)
-            event.dataTransfer.effectAllowed = 'move'
+        event.dataTransfer.setData('application/vueflow', type)
+        event.dataTransfer.effectAllowed = 'move'
         }
 
         draggedType.value = type
         isDragging.value = true
+        console.log("dragging ", draggedType.value)
 
         document.addEventListener('drop', onDragEnd)
     }
 
-    /**
-     * Handles the drag over event.
-     *
-     * @param {DragEvent} event
-     */
     function onDragOver(event) {
         event.preventDefault()
 
         if (draggedType.value) {
-            isDragOver.value = true
+        isDragOver.value = true
 
-            if (event.dataTransfer) {
-                event.dataTransfer.dropEffect = 'move'
-            }
+        if (event.dataTransfer) {
+            event.dataTransfer.dropEffect = 'move'
+        }
         }
     }
 
@@ -73,41 +61,48 @@ export default function useDragAndDrop() {
         document.removeEventListener('drop', onDragEnd)
     }
 
-    /**
-     * Handles the drop event.
-     *
-     * @param {DragEvent} event
-     */
     function onDrop(event) {
         const pos = screenToFlowCoordinate({
-            x: event.clientX,
-            y: event.clientY,
+        x: event.clientX,
+        y: event.clientY,
         })
-        console.log('node dropped'); // Debugging
 
-        const nodeType = event.dataTransfer.getData('node')
+        const nodeType = draggedType.value;//nodeType is just draggedType
         const nodeId = getId()
 
         const newNode = {
-            type: nodeType,
-            id:nodeId,
-            position: pos,
-            expandParent: true,
-            width:100,
-            height:100
+        type: nodeType,
+        id: nodeId,
+        position: pos,
+        expandParent: true,
+        width: 100,
+        height: 100,
+        parentId: null,  // Ensure parentId is always defined
         }
 
-        /**
-         * Align node position after drop, so it's centered to the mouse
-         *
-         * We can hook into events even in a callback, and we can remove the event listener after it's been called.
-         */
-        const { off } = onNodesInitialized(() => {
-            updateNode(nodeId, (node) => ({
-                position: { x: node.position.x - node.dimensions.width / 2, y: node.position.y - node.dimensions.height / 2 },
-            }))
+        if (nodeType === 'room') {
+            newNode.node_title= 'Untitled Room' // Ensure the room has a title when created
 
-            off()
+            console.log("should add room to store")
+        }
+
+        // Check if it's an item and if it's dropped over a room
+        const roomId = event.dataTransfer.getData('roomId')
+        console.log("room id is", event.dataTransfer.getData('roomId'))
+        if (nodeType === 'item' && roomId) {
+        newNode.parentId = roomId
+        console.log("putting item in room", roomId)//debugging
+        nodesStore.setItemParent(nodeId, roomId) // Set the parent of the item
+        }
+
+        // Add node to the shared store
+        nodesStore.addNode(newNode)
+
+        const { off } = onNodesInitialized(() => {
+        updateNode(nodeId, (node) => ({
+            position: { x: node.position.x - node.dimensions.width / 2, y: node.position.y - node.dimensions.height / 2 },
+        }))
+        off()
         })
 
         addNodes(newNode)
@@ -122,4 +117,4 @@ export default function useDragAndDrop() {
         onDragOver,
         onDrop,
     }
-}
+    }

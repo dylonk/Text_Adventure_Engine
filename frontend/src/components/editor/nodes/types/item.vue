@@ -7,9 +7,8 @@ import { Handle, Position } from '@vue-flow/core';
 
 <template>
     <NodeBase
-        node_title="Prompt"
-        node_type="prompt">
-            <textarea></textarea>
+        node_title="Item"
+        node_type="item">
     </NodeBase>
 </template>
 
