@@ -11,6 +11,7 @@ import { Handle, Position } from '@vue-flow/core';
         node_type="prompt">
             <textarea></textarea>
     </NodeBase>
+
 </template>
 
 

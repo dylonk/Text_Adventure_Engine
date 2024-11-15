@@ -8,6 +8,8 @@ import ExploreView from './explore.vue'
 import CreateView from './create.vue'
 import LoginView from './login.vue'
 import ProfileView from './profile.vue'
+import Settings from './settings.vue'
+
 
 
 const routes = [
@@ -17,6 +19,12 @@ const routes = [
     { path: '/create', component: CreateView },
     { path: '/auth', component: LoginView },
     { path: '/user', component: ProfileView },
+    {
+        path: '/settings', 
+        name: 'Settings',   
+        component: Settings 
+    } 
+
 ]
 
 const router = createRouter({

@@ -69,6 +69,7 @@
 
         const nodeType = draggedType.value;//nodeType is just draggedType
         const nodeId = getId()
+        console.log(nodeType, 'node dropped'); // Debugging
 
         const newNode = {
         type: nodeType,
