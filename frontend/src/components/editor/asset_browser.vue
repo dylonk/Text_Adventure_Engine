@@ -1,82 +1,165 @@
 <script setup>
 import { useNodesStore } from './nodes/stores/node_store.js'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
+import ContextMenu from './context_menu.vue'
 
 const nodesStore = useNodesStore()
 
 // Use computed properties to observe the nodes in the store
 const rooms = computed(() => nodesStore.nodes.rooms)
 const items = computed(() => nodesStore.nodes.items)
+
+const isContextMenuVisible = ref(false)
+const contextMenuId = ref(null)
+const contextMenuPosition = ref({ x: 0, y: 0 })
+const contextMenuActions=ref()
+const newRoomName = ref('')
+const editingRoom = ref(null)
+
+// Show the context menu on right-click
+function showContextMenu(event, itemType, itemId) {
+  contextMenuId.value = itemId
+  contextMenuPosition.value = { x: event.clientX, y: event.clientY }
+  isContextMenuVisible.value = true
+  event.preventDefault()
+  
+  // Dynamically set actions based on itemType (e.g., rooms or items)
+  if (itemType === 'room') {
+    contextMenuActions.value = [
+      { label: 'Rename', action: () => startEditing(itemId) },//
+      { label: 'Delete', action: () => deleteRoom(itemId) },//
+
+      // Future actions can go here, e.g., 'Delete', etc.
+    ]
+  } else if (itemType === 'item') {
+    contextMenuActions.value = [
+      { label: 'Delete', action: () => deleteItem(itemId) },
+      // Add more item-specific actions here.
+    ]
+  }
+}
+
+function startEditing(roomId) {
+  console.log("Renaming room");
+  editingRoom.value = roomId;
+
+  // Find the current room
+  const currentRoom = nodesStore.nodes.rooms.find(r => r.id === roomId);
+
+  // Use a prompt to ask for a new room name, pre-filling with the current name
+  const userInput = prompt(
+    "Enter a new name for the room:",
+    currentRoom?.node_title || "Unnamed Room"
+  );
+
+  // If the user provides a new name (not null or empty), set it
+  if (userInput && userInput.trim()) {
+    currentRoom.node_title = userInput.trim(); // Update the name in the store immediately
+  }
+
+  // Reset editing state
+  editingRoom.value = null;
+  newRoomName.value = '';
+}
+
+
+
+
+
+
+// Handle action for context menu
+function handleContextMenuAction(action) {
+  action.action()
+  isContextMenuVisible.value = false
+}
+
+// Close the context menu
+function closeContextMenu() {
+  isContextMenuVisible.value = false
+}
+
+// Deleting an item (future functionality)
+function deleteItem(itemId) {
+  console.log("deleting item id", itemId)
+  nodesStore.deleteNode(itemId); // Remove from the store
+}
+function deleteRoom(roomId) {
+  console.log("deleting room id", roomId)
+  nodesStore.deleteNode(roomId); // Remove from the store
+}
 </script>
 
 <template>
   <div class="asset_browser">
     <h3>Rooms</h3>
-    <ul>
-      <li v-for="room in rooms" :key="room.id">
-        {{ room.node_title }}
-        <ul>
-          <li v-for="item in nodesStore.getItemsInRoom(room.id)" :key="item.id">
-            {{ item.node_title }} (Item)
-          </li>
-        </ul>
-      </li>
-    </ul>
-    <!-- If you still want to show all items outside of rooms, you can keep the "Items" section -->
+    <div v-if="rooms.length > 0">
+      <div 
+        v-for="room in rooms" 
+        :key="room.id" 
+        @contextmenu="showContextMenu($event, 'room', room.id)"
+      >
+        <details>
+          <summary>{{ room.node_title }}</summary>
+          <ul>
+            <li v-for="item in nodesStore.getItemsInRoom(room.id)" :key="item.id">
+              {{ item.node_title }} (Item)
+            </li>
+          </ul>
+        </details>
+      </div>
+    </div>
+    <p v-else>No rooms available</p>
+
     <h3>Items</h3>
-    <ul>
-      <li v-for="item in items" :key="item.id">
+    <ul v-if="items.length > 0">
+      <li v-for="item in items" :key="item.id" @contextmenu="showContextMenu($event, 'item', item.id)">
         {{ item.node_title || 'Unnamed Item' }}
       </li>
     </ul>
+    <p v-else>No items available</p>
+
+    <!-- Context Menu Component -->
+    <ContextMenu 
+      v-if="isContextMenuVisible" 
+      :position="contextMenuPosition" 
+      :actions="contextMenuActions"
+      @action="handleContextMenuAction" 
+      @hide-context-menu="closeContextMenu" 
+    />
   </div>
 </template>
-<style>
-.asset_browser{
-    display:flex;
-    flex-direction: column;
-    height:100%;
-    background:rgb(225, 225, 225);
-}
-.asset_browser  >*{
-    margin:20px;
+
+<style scoped>
+.asset_browser {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
 }
 
-.tb_title{
-    padding:8px;
-    text-align: center;
-    margin: 0 auto;
-    margin-bottom:0px;
-
-    width: 100%;
-    height:min-content;
-    color:rgb(255, 255, 255);
-    background:rgb(189, 189, 189);
-    font-weight:800;
-    font-size:18px;
+h3 {
+  margin-bottom: 10px;
+  font-size: 1.2em;
+  color: #333;
 }
 
-
-.context-menu {
-    position: absolute;
-    background: white;
-    border: 1px solid #ccc;
-    z-index: 1000;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+ul {
+  margin-left: 20px;
+  list-style-type: none;
+  padding: 0;
 }
 
-.context-menu ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+li {
+  margin: 5px 0;
+  font-size: 1em;
+  color: #444;
 }
 
-.context-menu li {
-    padding: 10px;
-    cursor: pointer;
+details {
+  margin-bottom: 10px;
 }
 
-.context-menu li:hover {
-    background: #f0f0f0;
+details summary {
+  cursor: pointer;
+  font-weight: bold;
 }
 </style>

@@ -3,10 +3,10 @@
     import { ref, watch } from 'vue'
     import { useNodesStore } from './nodes/stores/node_store.js' // Import the Pinia store
 
-    let id = 0
+    let id = 1
 
     function getId() {
-    return `dndnode_${id++}`
+    return id++
     }
 
 
@@ -30,7 +30,6 @@
         event.dataTransfer.setData('application/vueflow', type)
         event.dataTransfer.effectAllowed = 'move'
         }
-
         draggedType.value = type
         isDragging.value = true
         console.log("dragging ", draggedType.value)

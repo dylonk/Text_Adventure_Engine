@@ -1,11 +1,13 @@
 
 <!---Each canvas is a component of an "Object". The world editor is a canvas that is a component of the global object-->
 <script setup>
-import { ref, markRaw } from 'vue'
+import { ref, markRaw,computed } from 'vue'
 import { VueFlow, useVueFlow } from '@vue-flow/core'
 import CanvasBackground from './background.vue'
 import CanvasControls from './controls.vue'
 import useDragAndDrop from '../drag_drop.js';
+import { useNodesStore } from "../nodes/stores/node_store.js"
+
 // allll da fucking node imports
 import { PromptNode } from '../nodes/n-imports.js'
 import { RoomNode } from '../nodes/n-imports.js'
@@ -19,6 +21,12 @@ import { ItemNode } from '../nodes/n-imports.js'
         item: markRaw(ItemNode)
     }
 
+// Pinia store
+const nodesStore = useNodesStore();
+
+// Make nodes reactive using computed
+const canvasNodes = computed(() => nodesStore.getAllNodes());
+
 
 const { onConnect, addEdges } = useVueFlow()
 const { onDragOver, onDrop, onDragLeave, isDragOver } = useDragAndDrop()
@@ -30,7 +38,7 @@ onConnect(addEdges)
 
 <template>
     <div class="canvas_container" @drop="onDrop" >
-        <VueFlow :nodes="nodes" :node-types="nodeTypes" @dragover="onDragOver" @dragleave="onDragLeave" fit-view-on-init>
+        <VueFlow :nodes="canvasNodes" :node-types="nodeTypes" @dragover="onDragOver" @dragleave="onDragLeave" fit-view-on-init>
 
             <CanvasBackground        :style="{
           backgroundColor: isDragOver ? '#e7f3ff' : 'transparent',

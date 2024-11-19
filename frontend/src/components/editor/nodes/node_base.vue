@@ -12,7 +12,7 @@ const props = defineProps({
     node_properties: { type: Array, default: () => [] },
     associated_function: String, //For when we actually start programming the script stuff
     function_arguments: {type: Array, default: () => []},    
-    parentId: { type: String, default: null },  // Add parentId to node properties. This may or may not only be useful for items.
+    parentId: { type: Number, default: null },  // Add parentId to node properties. This may or may not only be useful for items.
 
 })
 const { onDragStart } = useDragAndDrop();
