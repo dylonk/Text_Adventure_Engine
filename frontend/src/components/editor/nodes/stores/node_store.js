@@ -1,14 +1,12 @@
-import { defineStore } from 'pinia';
 import { reactive } from 'vue';
 
-export const useNodesStore = defineStore('nodes', () => {
+export const useNodesStore = () => {
   const nodes = reactive({
     rooms: [],
     items: [],
     prompts: [],
   });
 
-  // Add a node to the store
   const addNode = (node) => {
     const nodeExists = [...nodes.rooms, ...nodes.items, ...nodes.prompts].find((n) => n.id === node.id);
     if (!node.id || nodeExists) {
@@ -25,31 +23,31 @@ export const useNodesStore = defineStore('nodes', () => {
     }
   };
 
-  // Delete a node by ID
-  const deleteNode = (id) => {
-    console.log("deleting node from node store id",id)
-    nodes.rooms = nodes.rooms.filter((node) => node.id !== id);
-    nodes.items = nodes.items.filter((node) => node.id !== id);
-    nodes.prompts = nodes.prompts.filter((node) => node.id !== id);
+  const getAllNodes = () => [...nodes.rooms, ...nodes.items, ...nodes.prompts];
+
+  const getChildNodes = (parentId) => {
+    return getAllNodes().filter((node) => node.parentId === parentId);
   };
 
-// Optional: Function to get all items in a room
+  const updateNodePosition = (nodeId, deltaX, deltaY) => {
+    const node = getAllNodes().find((n) => n.id === nodeId);
+    if (node) {
+      node.position.x += deltaX;
+      node.position.y += deltaY;
 
-
-  // Get all nodes for canvas
-  const getAllNodes = () => {
-    return [...nodes.rooms, ...nodes.items, ...nodes.prompts];
+      // Move child nodes recursively
+      const childNodes = getChildNodes(node.id);
+      childNodes.forEach((child) => updateNodePosition(child.id, deltaX, deltaY));
+    } else {
+      console.error(`Node with id ${nodeId} not found`);
+    }
   };
-
-  const getItemsInRoom = (roomId) => {
-    return nodes.items.filter(item => item.parentId === roomId)
-  }
 
   return {
     nodes,
     addNode,
-    deleteNode,
     getAllNodes,
-    getItemsInRoom
+    getChildNodes,
+    updateNodePosition,
   };
-});
+};
