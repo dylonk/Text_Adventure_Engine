@@ -1,7 +1,9 @@
 <!---FATHER CLASS OF ALL NODES-->
 <script setup>
-import { ref, defineProps } from 'vue';
+import { ref, defineProps, computed } from 'vue';
 import useDragAndDrop from '../drag_drop.js';
+import ContextMenu from '../context_menu.vue'
+
 
 const props = defineProps({
     id:Number,

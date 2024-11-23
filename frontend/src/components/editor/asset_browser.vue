@@ -13,53 +13,29 @@ const isContextMenuVisible = ref(false)
 const contextMenuId = ref(null)
 const contextMenuPosition = ref({ x: 0, y: 0 })
 const contextMenuActions=ref()
-const newRoomName = ref('')
-const editingRoom = ref(null)
+
 
 // Show the context menu on right-click
-function showContextMenu(event, itemType, itemId) {
-  contextMenuId.value = itemId
+function showContextMenu(event, nodeType, nodeId) {
+  contextMenuId.value = nodeId
   contextMenuPosition.value = { x: event.clientX, y: event.clientY }
   isContextMenuVisible.value = true
   event.preventDefault()
   
   // Dynamically set actions based on itemType (e.g., rooms or items)
-  if (itemType === 'room') {
+  if (nodeType === 'room') {
     contextMenuActions.value = [
-      { label: 'Rename', action: () => startEditing(itemId) },//
-      { label: 'Delete', action: () => deleteRoom(itemId) },//
+      { label: 'Rename', action: () => nodesStore.renameNode(nodeId) },//
+      { label: 'Delete', action: () => nodesStore.deleteNode(nodeId) },//
 
       // Future actions can go here, e.g., 'Delete', etc.
     ]
-  } else if (itemType === 'item') {
+  } else if (nodeType === 'item') {
     contextMenuActions.value = [
-      { label: 'Delete', action: () => deleteItem(itemId) },
+      { label: 'Delete', action: () => nodesStore.deleteNode(nodeId) },
       // Add more item-specific actions here.
     ]
   }
-}
-
-function startEditing(roomId) {
-  console.log("Renaming room");
-  editingRoom.value = roomId;
-
-  // Find the current room
-  const currentRoom = nodesStore.nodes.rooms.find(r => r.id === roomId);
-
-  // Use a prompt to ask for a new room name, pre-filling with the current name
-  const userInput = prompt(
-    "Enter a new name for the room:",
-    currentRoom?.node_title || "Unnamed Room"
-  );
-
-  // If the user provides a new name (not null or empty), set it
-  if (userInput && userInput.trim()) {
-    currentRoom.node_title = userInput.trim(); // Update the name in the store immediately
-  }
-
-  // Reset editing state
-  editingRoom.value = null;
-  newRoomName.value = '';
 }
 
 
@@ -78,15 +54,7 @@ function closeContextMenu() {
   isContextMenuVisible.value = false
 }
 
-// Deleting an item (future functionality)
-function deleteItem(itemId) {
-  console.log("deleting item id", itemId)
-  nodesStore.deleteNode(itemId); // Remove from the store
-}
-function deleteRoom(roomId) {
-  console.log("deleting room id", roomId)
-  nodesStore.deleteNode(roomId); // Remove from the store
-}
+
 </script>
 
 <template>

@@ -1,7 +1,7 @@
 
 <!---Each canvas is a component of an "Object". The world editor is a canvas that is a component of the global object-->
 <script setup>
-import { ref, markRaw,computed } from 'vue'
+import { ref, markRaw,computed, watch } from 'vue'
 import { VueFlow, useVueFlow } from '@vue-flow/core'
 import CanvasBackground from './background.vue'
 import CanvasControls from './controls.vue'
@@ -28,9 +28,9 @@ const nodesStore = useNodesStore();
 const canvasNodes = computed(() => nodesStore.getAllNodes());
 
 
+
 const { onConnect, addEdges } = useVueFlow()
 const { onDragOver, onDrop, onDragLeave, isDragOver } = useDragAndDrop()
-const nodes = ref([])
 const edges = ref([])
 onConnect(addEdges)
 

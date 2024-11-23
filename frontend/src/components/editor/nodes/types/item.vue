@@ -4,7 +4,7 @@ import { defineProps } from 'vue';
 
 // Define props for debugging purposes
 const props = defineProps({
-  id: { type: String, required: true },
+  id: { type: Number },
   node_title: { type: String, default: 'Unnamed Item' },
 });
 </script>

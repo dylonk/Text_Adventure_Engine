@@ -1,6 +1,5 @@
 <script setup>
-// import TBNode from './nodes/types/prompt.vue'
-// import RoomNode from './nodes/types/disabled_room.vue' // Import the RoomNode component
+
 import { ref } from 'vue';
 import useDragAndDrop from './drag_drop.js';
 // Node imports again

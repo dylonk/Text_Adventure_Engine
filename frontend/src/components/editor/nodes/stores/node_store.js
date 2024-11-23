@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { reactive } from 'vue';
 
-export const useNodesStore = defineStore('nodes', () => {
+export const useNodesStore = defineStore('nodes', () => {//nodes store seperates nodes by type
   const nodes = reactive({
     rooms: [],
     items: [],
@@ -25,31 +25,53 @@ export const useNodesStore = defineStore('nodes', () => {
     }
   };
 
+const renameNode = (id) => {
+    const nodeExists = [...nodes.rooms, ...nodes.items, ...nodes.prompts].find((n) => n.id === id);
+    if (!nodeExists) {
+      console.error(`Node with id ${id} does not exist`);
+      return;
+    }
+    const newName = prompt(`Enter a new name for node ${id}:`);
+    if (newName !== null) {
+      nodeExists.node_title = newName;
+    }  
+  };
+
+
   // Delete a node by ID
   const deleteNode = (id) => {
-    console.log("deleting node from node store id",id)
+    console.log("deleting node from node store id:",id)
     nodes.rooms = nodes.rooms.filter((node) => node.id !== id);
     nodes.items = nodes.items.filter((node) => node.id !== id);
     nodes.prompts = nodes.prompts.filter((node) => node.id !== id);
   };
 
-// Optional: Function to get all items in a room
-
-
+const getNode = (id) => {
+  console.log("getNode called", id)
+    const nodeExists = [...nodes.rooms, ...nodes.items, ...nodes.prompts].find((n) => n.id === id);
+    if (!nodeExists) {
+      console.error(`Node with id ${id} does not exist`);
+      return;
+    }
+    console.log("node exists", nodeExists)
+    return nodeExists
+}
   // Get all nodes for canvas
   const getAllNodes = () => {
     return [...nodes.rooms, ...nodes.items, ...nodes.prompts];
   };
-
+// Optional: Function to get all items in a room
   const getItemsInRoom = (roomId) => {
     return nodes.items.filter(item => item.parentId === roomId)
   }
 
-  return {
+  return {//exporting functions
     nodes,
     addNode,
     deleteNode,
     getAllNodes,
-    getItemsInRoom
+    getItemsInRoom,
+    renameNode,
+    getNode
   };
 });
