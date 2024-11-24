@@ -5,27 +5,30 @@
 
     let id = 1
 
-    function getId() {
+    function getId() {  //ids are just one after the other
     return id++
     }
 
 
     const state = {
     draggedType: ref(null),
+    draggingTB: ref(false),
     isDragOver: ref(false),
     isDragging: ref(false),
     }
 
     export default function useDragAndDrop() {
-    const { draggedType, isDragOver, isDragging } = state
+    const { draggedType, isDragOver, isDragging,draggingTB } = state
     const nodesStore = useNodesStore() // Access the Pinia store
     const { addNodes, screenToFlowCoordinate, updateNode, onNodesInitialized } = useVueFlow()
 
-    watch(isDragging, (dragging) => {
+    watch(isDragging, (dragging) => {   //when dragging
         document.body.style.userSelect = dragging ? 'none' : ''
     })
 
-    function onDragStart(event, type) {
+    function onDragStart(event, type,isToolbox) {
+        console.log('isToolbox is:', isToolbox)
+        draggingTB.value=isToolbox//is it a real node, or a toolbox node?
         if (event.dataTransfer) {
         event.dataTransfer.setData('application/vueflow', type)
         event.dataTransfer.effectAllowed = 'move'
@@ -61,52 +64,35 @@
     }
 
     function onDrop(event) {
+        console.log('draggingTB is:', draggingTB.value)
         const pos = screenToFlowCoordinate({
-        x: event.clientX,
-        y: event.clientY,
+          x: event.clientX,
+          y: event.clientY,
         })
-
-        const nodeType = draggedType.value;//nodeType is just draggedType
-        const nodeId = getId()
-        console.log(nodeType, 'node dropped'); // Debugging
-
-        const newNode = {
-        type: nodeType,
-        id: nodeId,
-        position: pos,
-        expandParent: true,
-        width: 100,
-        height: 100,
-        parentId: null,  // Ensure parentId is always defined
+      
+        if (draggingTB.value) {
+          // Create a new node
+          const newNode = {
+            type: draggedType.value,
+            id: getId(),
+            position: pos,
+            expandParent: true,
+            width: 100,
+            height: 100,
+            parentId: null,
+          }
+          nodesStore.addNode(newNode)
+          addNodes(newNode)
+          console.log("new node added!")
+        } 
+        else {
+          // Move an existing node
+          const nodeId = draggedType.value // assuming draggedType.value is the id of the node being moved
+          updateNode(nodeId, (node) => ({
+            position: pos,
+          }))
         }
-
-        if (nodeType === 'room') {
-            newNode.node_title= 'Untitled Room' // Ensure the room has a title when created
-
-            console.log("should add room to store")
-        }
-
-        // Check if it's an item and if it's dropped over a room
-        const roomId = event.dataTransfer.getData('roomId')
-        console.log("room id is", event.dataTransfer.getData('roomId'))
-        if (nodeType === 'item' && roomId) {
-        newNode.parentId = roomId
-        console.log("putting item in room", roomId)//debugging
-        nodesStore.setItemParent(nodeId, roomId) // Set the parent of the item
-        }
-
-        // Add node to the shared store
-        nodesStore.addNode(newNode)
-
-        const { off } = onNodesInitialized(() => {
-        updateNode(nodeId, (node) => ({
-            position: { x: node.position.x - node.dimensions.width / 2, y: node.position.y - node.dimensions.height / 2 },
-        }))
-        off()
-        })
-
-        addNodes(newNode)
-    }
+      }
 
     return {
         draggedType,

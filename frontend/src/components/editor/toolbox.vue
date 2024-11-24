@@ -1,20 +1,17 @@
 <script setup>
 
-import { ref } from 'vue';
 import useDragAndDrop from './drag_drop.js';
-// Node imports again
-import tbGlobal from './nodes/tb_global.vue'
-import { PromptNode, RoomNode,ItemNode } from './nodes/n-imports.js'
+
+import { TBPromptNode, TBRoomNode,TBItemNode } from './nodes/n-imports.js'
 
 
 </script>
 <template>
-    <div class="toolbox" @contextmenu="handleRightClick" @click="closeContextMenu">
+    <div class="toolbox">
         <a class="tb_title">Toolbox</a>
-        <PromptNode/>
-        <ItemNode/>
-        <RoomNode/>
-
+        <TBPromptNode/>
+        <TBRoomNode/>
+        <TBItemNode/>
     </div>
 </template>
 

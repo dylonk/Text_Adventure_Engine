@@ -15,12 +15,15 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store seperates
       console.error(`Node with id ${node.id} already exists`);
       return;
     }
-
+    //adds the default names    
     if (node.type === 'room') {
+      node.node_title = 'Unnamed Room';
       nodes.rooms.push(node);
     } else if (node.type === 'item') {
+      node.node_title = 'Unnamed Item';
       nodes.items.push(node);
     } else if (node.type === 'prompt') {
+      node.node_title = 'Unnamed Prompt';
       nodes.prompts.push(node);
     }
   };
@@ -47,13 +50,13 @@ const renameNode = (id) => {
   };
 
 const getNode = (id) => {
-  console.log("getNode called", id)
+  console.log("getNode called on id", id)
     const nodeExists = [...nodes.rooms, ...nodes.items, ...nodes.prompts].find((n) => n.id === id);
     if (!nodeExists) {
       console.error(`Node with id ${id} does not exist`);
       return;
     }
-    console.log("node exists", nodeExists)
+    console.log("node exists", nodeExists, "title is", nodeExists.node_title)
     return nodeExists
 }
   // Get all nodes for canvas

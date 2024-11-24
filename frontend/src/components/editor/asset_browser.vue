@@ -33,6 +33,7 @@ function showContextMenu(event, nodeType, nodeId) {
   } else if (nodeType === 'item') {
     contextMenuActions.value = [
       { label: 'Delete', action: () => nodesStore.deleteNode(nodeId) },
+      { label: 'Rename', action: () => nodesStore.renameNode(nodeId) },//
       // Add more item-specific actions here.
     ]
   }
@@ -67,10 +68,10 @@ function closeContextMenu() {
         @contextmenu="showContextMenu($event, 'room', room.id)"
       >
         <details>
-          <summary>{{ room.node_title }}</summary>
+          <summary>        {{ room.node_title || 'Unnamed Room' }}          </summary>
           <ul>
             <li v-for="item in nodesStore.getItemsInRoom(room.id)" :key="item.id">
-              {{ item.node_title }} (Item)
+              {{ item.node_title || 'Unnamed Item' }}        (Item)
             </li>
           </ul>
         </details>

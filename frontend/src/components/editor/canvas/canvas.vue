@@ -13,6 +13,11 @@ import { PromptNode } from '../nodes/n-imports.js'
 import { RoomNode } from '../nodes/n-imports.js'
 import { ItemNode } from '../nodes/n-imports.js'
 
+//toolbox "nodes"
+import { TBPromptNode } from '../nodes/n-imports.js'
+import { TBRoomNode } from '../nodes/n-imports.js'
+import { TBItemNode } from '../nodes/n-imports.js'
+
 
 
     const nodeTypes = {

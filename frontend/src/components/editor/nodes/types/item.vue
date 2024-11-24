@@ -1,19 +1,22 @@
 <script setup>
 import NodeBase from '../node_base.vue';
-import { defineProps } from 'vue';
-
+import { defineProps, computed } from 'vue';
+import { useNodesStore } from '../stores/node_store.js'
 // Define props for debugging purposes
 const props = defineProps({
   id: { type: Number },
   node_title: { type: String, default: 'Unnamed Item' },
 });
+
+const nodesStore = useNodesStore();
+const node = computed(() => nodesStore.getNode(Number(props.id)));
+
 </script>
 
 <template>
-  <NodeBase :node_title="node_title" node_type="item">
+  <NodeBase :node_title="node.node_title" node_type="item">
     <!-- Debug Info -->
     <div class="debug-info">
-      <p><strong>Name:</strong> {{ node_title }}</p>
       <p><strong>ID:</strong> {{ id }}</p>
     </div>
   </NodeBase>
