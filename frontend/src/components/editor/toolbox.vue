@@ -2,31 +2,39 @@
 
 import useDragAndDrop from './drag_drop.js';
 
-import { TBPromptNode, TBRoomNode,TBItemNode } from './nodes/n-imports.js'
+import { TBNode } from './nodes/n-imports.js'
 
 
 </script>
 <template>
     <div class="toolbox">
         <a class="tb_title">Toolbox</a>
-        <TBPromptNode/>
-        <TBRoomNode/>
-        <TBItemNode/>
+        <a class="tb_subtitle">Objects</a>
+        <TBNode node_type="prompt" display_type="Prompt" node_color="green"></TBNode>
+        <a class="tb_subtitle">Interactive</a>
+        <a class="tb_subtitle">Logic</a>
+
     </div>
 </template>
 
 <style>
+@import 'https://fonts.googleapis.com/css?family=Pixelify+Sans';
+
 .toolbox{
     display:flex;
     flex-direction: column;
     height:100%;
     background:rgb(225, 225, 225);
+    border-right: 2px solid black;
+    border-radius: 3px;
 }
 .toolbox>*{
     margin:20px;
 }
 
 .tb_title{
+
+    font-family: 'Pixelify Sans'; font-size: 22px;
     padding:8px;
     text-align: center;
     margin: 0 auto;
@@ -36,8 +44,22 @@ import { TBPromptNode, TBRoomNode,TBItemNode } from './nodes/n-imports.js'
     height:min-content;
     color:rgb(255, 255, 255);
     background:rgb(189, 189, 189);
+    background-image: linear-gradient(180deg, rgb(206, 206, 206), rgb(169, 169, 169));
     font-weight:800;
-    font-size:18px;
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+}
+
+.tb_subtitle{
+    font-family: 'Pixelify Sans';
+    padding:6px;
+    margin: 0 auto;
+    margin-bottom:0px;
+
+    width: 100%;
+    height:min-content;
+    color:rgb(128, 128, 128);
+    font-weight:600;
+    font-size:14px;
 }
 
 

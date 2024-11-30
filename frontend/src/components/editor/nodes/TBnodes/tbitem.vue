@@ -1,5 +1,5 @@
 <script setup>
-import TBNodeBase from '../TBnodes/TBnode_base.vue';
+import TBNodeBase from './tb_node.vue';
 import { defineProps } from 'vue';
 
 // NO props! you drag this thang and drop it!
