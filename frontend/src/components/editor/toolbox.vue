@@ -10,31 +10,37 @@ import { TBNode } from './nodes/n-imports.js'
     <div class="toolbox">
         <a class="tb_title">Toolbox</a>
         <a class="tb_subtitle">Objects</a>
-        <TBNode node_type="prompt" display_type="Prompt" node_color="green"></TBNode>
+                <TBNode node_type="room" display_type="Room" bg_color="red" stroke_color="black"></TBNode>
+                <TBNode node_type="item" display_type="Item" bg_color="red" stroke_color="black"></TBNode>
+
         <a class="tb_subtitle">Interactive</a>
+                <TBNode node_type="prompt" display_type="Prompt" bg_color="green" stroke_color="black"></TBNode>
         <a class="tb_subtitle">Logic</a>
 
     </div>
 </template>
 
 <style>
-@import 'https://fonts.googleapis.com/css?family=Pixelify+Sans';
+@import 'https://fonts.googleapis.com/css2?family=Syne+Mono&display=swap';
 
 .toolbox{
     display:flex;
     flex-direction: column;
     height:100%;
-    background:rgb(225, 225, 225);
-    border-right: 2px solid black;
-    border-radius: 3px;
+    background:rgb(209, 207, 216);
+    border-right: 1px solid rgb(68, 46, 110);
+    background-image: linear-gradient(180deg, rgb(197, 201, 179),rgb(214, 212, 199),rgb(214, 212, 199), rgb(214, 212, 199),rgb(215, 211, 185), rgb(191, 194, 179));
+
 }
+
 .toolbox>*{
-    margin:20px;
+    margin:6px;
 }
 
 .tb_title{
 
-    font-family: 'Pixelify Sans'; font-size: 22px;
+    font-family: 'Syne Mono', monospace;
+    font-size: 22px;
     padding:8px;
     text-align: center;
     margin: 0 auto;
@@ -42,22 +48,21 @@ import { TBNode } from './nodes/n-imports.js'
 
     width: 100%;
     height:min-content;
-    color:rgb(255, 255, 255);
+    color:rgb(78, 81, 76);
     background:rgb(189, 189, 189);
-    background-image: linear-gradient(180deg, rgb(206, 206, 206), rgb(169, 169, 169));
-    font-weight:800;
-    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+    background-image: linear-gradient(180deg, rgb(237, 248, 208),rgb(214, 212, 199),rgb(214, 212, 199), rgb(214, 212, 199),rgb(215, 211, 185), rgb(71, 70, 74));
+    font-weight:500;
 }
 
 .tb_subtitle{
-    font-family: 'Pixelify Sans';
-    padding:6px;
+    font-family: 'Syne Mono', monospace;
+    padding:4px;
     margin: 0 auto;
     margin-bottom:0px;
 
     width: 100%;
     height:min-content;
-    color:rgb(128, 128, 128);
+    color:rgb(78, 81, 76);
     font-weight:600;
     font-size:14px;
 }

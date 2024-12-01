@@ -21,7 +21,7 @@ function showContextMenu(event, nodeType, nodeId) {
   contextMenuPosition.value = { x: event.clientX, y: event.clientY }
   isContextMenuVisible.value = true
   event.preventDefault()
-  
+
   // Dynamically set actions based on itemType (e.g., rooms or items)
   if (nodeType === 'room') {
     contextMenuActions.value = [
@@ -62,9 +62,9 @@ function closeContextMenu() {
   <div class="asset_browser">
     <h3>Rooms</h3>
     <div v-if="rooms.length > 0">
-      <div 
-        v-for="room in rooms" 
-        :key="room.id" 
+      <div
+        v-for="room in rooms"
+        :key="room.id"
         @contextmenu="showContextMenu($event, 'room', room.id)"
       >
         <details>
@@ -88,12 +88,12 @@ function closeContextMenu() {
     <p v-else>No items available</p>
 
     <!-- Context Menu Component -->
-    <ContextMenu 
-      v-if="isContextMenuVisible" 
-      :position="contextMenuPosition" 
+    <ContextMenu
+      v-if="isContextMenuVisible"
+      :position="contextMenuPosition"
       :actions="contextMenuActions"
-      @action="handleContextMenuAction" 
-      @hide-context-menu="closeContextMenu" 
+      @action="handleContextMenuAction"
+      @hide-context-menu="closeContextMenu"
     />
   </div>
 </template>
@@ -103,12 +103,14 @@ function closeContextMenu() {
   display: flex;
   flex-direction: column;
   padding: 20px;
+  border-left: solid black 1px;
+  background: rgb(255, 255, 255)
 }
 
 h3 {
   margin-bottom: 10px;
   font-size: 1.2em;
-  color: #333;
+  color: #000000;
 }
 
 ul {

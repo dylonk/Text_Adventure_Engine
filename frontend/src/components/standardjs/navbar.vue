@@ -65,7 +65,7 @@ const router = useRouter(); // Access the Vue Router for navigation
 </template>
 
 <style>
-@import 'https://fonts.googleapis.com/css?family=Pixelify+Sans';
+@import 'https://fonts.googleapis.com/css2?family=Syne+Mono&display=swap';
 
 .navbar {
     display: flex;
@@ -81,14 +81,17 @@ const router = useRouter(); // Access the Vue Router for navigation
 }
 
 .nav_btn {
-    font-family: 'Pixelify Sans'; font-size: 22px;
+    font-family: 'Syne Mono', monospace;
+    font-size:22px;
     height: calc(min-content + 10px);
     margin-left: 10px;
     color: rgb(165, 165, 165);
 }
 
 .login_btn {
-    font-family: 'Pixelify Sans'; font-size: 22px;
+    font-family: 'Syne Mono', monospace;
+    font-size:22px;
+
     height: calc(min-content + 10px);
     margin-left: 10px;
     margin-left: auto;

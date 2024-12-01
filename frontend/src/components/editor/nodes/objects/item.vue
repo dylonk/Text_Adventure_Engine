@@ -26,7 +26,7 @@ const node = computed(() => nodesStore.getNode(Number(props.id)));
 .debug-info {
   margin-top: 5px;
   font-size: 12px;
-  color: #555;
+  color: #555555;
   background: #f9f9f9;
   padding: 5px;
   border: 1px solid #ddd;

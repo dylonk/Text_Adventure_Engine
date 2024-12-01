@@ -1,8 +1,8 @@
 
-import TBNode from './TBnodes/tb_node.vue'
-import PromptNode from './types/prompt.vue'
-import RoomNode from './types/room.vue'
-import ItemNode from './types/item.vue'
+import TBNode from './tb_node.vue'
+import PromptNode from './function/interaction/prompt.vue'
+import RoomNode from './objects/room.vue'
+import ItemNode from './objects/item.vue'
 
 
 export{ //exports both tb and real nodes

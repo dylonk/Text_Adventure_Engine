@@ -35,10 +35,10 @@ function goToAbout() {
 </template>
 
 <style scoped>
-@import 'https://fonts.googleapis.com/css?family=Pixelify Sans';
+@import 'https://fonts.googleapis.com/css2?family=Syne+Mono&display=swap';
 
 *{
-    font-family: 'Pixelify Sans';
+    font-family: 'Syne Mono', monospace;
 }
 
 
@@ -50,8 +50,8 @@ function goToAbout() {
     justify-content: center;
     font-size: 24px;
     text-align: center;
-    backdrop-filter:blur(8px);
-    background-image:url(https://i.pinimg.com/564x/b0/2a/04/b02a04ffa8cd69e58435d7da7cae7979.jpg);
+    backdrop-filter:blur(20px);
+    background-image:url(https://i.pinimg.com/736x/13/34/75/133475f2b4de23314a01df9a61f85436.jpg);
     background-size: cover;
 }
 

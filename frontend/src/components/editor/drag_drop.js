@@ -35,7 +35,7 @@
         }
         draggedType.value = type
         isDragging.value = true
-        console.log("dragging ", draggedType.value)
+        console.log("dragging", draggedType.value)
 
         document.addEventListener('drop', onDragEnd)
     }
@@ -69,7 +69,7 @@
           x: event.clientX,
           y: event.clientY,
         })
-      
+
         if (draggingTB.value) {
           // Create a new node
           const newNode = {
@@ -84,7 +84,7 @@
           nodesStore.addNode(newNode)
           addNodes(newNode)
           console.log("new node added!")
-        } 
+        }
         else {
           // Move an existing node
           const nodeId = draggedType.value // assuming draggedType.value is the id of the node being moved
