@@ -1,7 +1,7 @@
 <script setup>
 import NodeBase from '../node_base.vue';
 import { defineProps, computed } from 'vue';
-import { useNodesStore } from '../stores/node_store.js'
+import { useNodesStore } from '../node_store.js'
 // Define props for debugging purposes
 const props = defineProps({
   id: { type: Number },

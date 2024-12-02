@@ -14,7 +14,7 @@ import { TBNode } from './nodes/n-imports.js'
                 <TBNode node_type="item" display_type="Item" bg_color="red" stroke_color="black"></TBNode>
 
         <a class="tb_subtitle">Interactive</a>
-                <TBNode node_type="prompt" display_type="Prompt" bg_color="green" stroke_color="black"></TBNode>
+                <TBNode node_type="prompt" display_type="Prompt" bg_color="rgb(200, 245, 170)" stroke_color="rgb(50, 100, 50)"></TBNode>
         <a class="tb_subtitle">Logic</a>
 
     </div>

@@ -1,5 +1,5 @@
 <script setup>
-import { useNodesStore } from './nodes/stores/node_store.js'
+import { useNodesStore } from './nodes/node_store.js'
 import { computed, ref } from 'vue'
 import ContextMenu from './context_menu.vue'
 
