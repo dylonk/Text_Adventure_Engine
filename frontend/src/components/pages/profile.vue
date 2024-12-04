@@ -1,57 +1,73 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import globalNavBar from '@/components/standardjs/navbar.vue';
-
+import { fetchUserData } from '@/components/standardjs/fetchUserData';
 const username = ref('Felix');  // I  'Felix' as the default username for the avatar nothing to do with anyones name
 const showChangePassword = ref(false);
-const currentPassword = ref('');
+const currentPassword = ref('defaultPassword');
 const newPassword = ref('');
 const confirmPassword = ref('');
+const email=ref('');
 const showAvatarModal = ref(false); // Modal state for changing avatars
 const selectedAvatar = ref('Felix');
 
 
-// Function to fetch the user's profile data
-async function fetchUserProfile() {
-    const token = localStorage.getItem('token');  // Get the token from localStorage
-
-    if (!token) {
-        console.log('No token found. Please log in again.');
-        this.$router.push('/login');  // Redirect to login page if no token
-        return;
-    }
-
-    try {
-        const response = await fetch('http://localhost:5000/auth/user', {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`,  // Pass the JWT token in the Authorization header
-                'Content-Type': 'application/json'
-            }
-        });
-    }
-    finally {
-        // 
-    }
-}
-
-// Function to log out the user
-function logOut() {
-    localStorage.removeItem('token');  // Remove token from localStorage
-    this.$router.push('/');  // Redirect to the login page
-}
 
 // Function to change the password
-function changePassword() {
-    // I am still figuring out how to to this, 
-    showChangePassword.value = false;
+async function changePassword() {
+
+try {
+    const token = localStorage.getItem('token');  // Get the token from localStorage
+    const response = await fetch('http://localhost:5000/auth/changePassword', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+            currentPassword: currentPassword.value,
+            newPassword: newPassword.value,
+            confirmNewPassword: confirmPassword.value
+        })
+    });
+
+    if (response.ok) {
+        console.log('password updated successfully');
+    } else {
+        console.error('Failed to update password');
+    }
+} catch (error) {
+    console.error('Error updating password:', error);
+}
 }
 
+
 // Function to save the profile
-function saveProfile() {
-    // I haven't touched backend...
-    console.log('Saving profile...');
-}
+async function saveProfile() {
+
+    try {
+        const token = localStorage.getItem('token');  // Get the token from localStorage
+        const response = await fetch('http://localhost:5000/auth/update', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                username: username.value,
+                email: email.value
+            })
+        });
+
+        if (response.ok) {
+            console.log('Profile updated successfully');
+        } else {
+            console.error('Failed to update profile');
+        }
+    } catch (error) {
+        console.error('Error updating profile:', error);
+    }
+    }
 
 // Function to change avatar
 function selectAvatar(seed) {
@@ -60,8 +76,14 @@ function selectAvatar(seed) {
 }
 
 // Fetch user profile when the component is mounted
-onMounted(() => {
-    // No need to fetch the user's profile, as we're using 'Felix' as the default username
+onMounted(async() => {
+        username.value = await fetchUserData('username');
+        console.log("fetched username", username.value);
+        currentPassword.value = await fetchUserData('password');
+        console.log("fetched password", currentPassword.value);
+        email.value = await fetchUserData('email');
+        console.log("fetched email", email.value);
+
 });
 </script>
 <template>
@@ -79,11 +101,11 @@ onMounted(() => {
                 <div class="form-group">
                     <label for="username">Username</label>
                     <input type="text" id="username" v-model="username" />
-                </div>
+                </div>  
                 <div class="form-group">
                     <label for="email">Email</label>
                     <!-- Displaying the email instead of an input box -->
-                    <div class="email-display">jeanblaiseaffa@gmail.com</div>
+                    <div class="email-display">{{ email }}</div>
                 </div>
                 <div class="form-group">
                     <button @click="showChangePassword = true">Change Password</button>

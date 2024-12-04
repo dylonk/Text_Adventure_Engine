@@ -1,9 +1,10 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import {fetchUserData} from '@/components/standardjs/fetchUserData'
 
 // Reactive state to store the username
-const username = ref('');
+const displayUsername = ref('');
 
 // Function to log out the user
 function logOut() {
@@ -12,35 +13,14 @@ function logOut() {
 }
 
 // Function to fetch the user's username
-async function fetchUserProfile() {
-    const token = localStorage.getItem('token');  // Get the token from localStorage
 
-    if (!token) {
-        return; // If no token, do not proceed
-    }
-
-    try {
-        const response = await fetch('http://localhost:5000/auth/user', {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`,  // Pass the JWT token in the Authorization header
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to fetch user data');
-        }
-
-        const data = await response.json();
-        username.value = data.username;  // Store the username in the reactive variable
-    } catch (error) {
-        console.error('Error fetching user profile:', error);
-    }
-}
 
 // Call fetchUserProfile on mounted
-onMounted(fetchUserProfile);
+
+
+onMounted(async() => {           //on mounted (whenever a new page loads, properly set the displyed username)
+    displayUsername.value=await fetchUserData('username');
+})
 
 const router = useRouter(); // Access the Vue Router for navigation
 </script>
@@ -54,8 +34,8 @@ const router = useRouter(); // Access the Vue Router for navigation
         <RouterLink class="nav_btn" to="/about" active-class="active">About</RouterLink>
 
         <!-- Conditional rendering based on whether the user is logged in -->
-        <template v-if="username">
-            <span class="hello-user">Hello {{ username }}!</span>
+        <template v-if="displayUsername">
+            <span class="hello-user">Hello {{ displayUsername || "ERROR NO USER. SHOULD NOT BE SEEN" }}!</span>
             <button @click="logOut" class="logout-btn">Log Out</button>
         </template>
         <template v-else>
