@@ -3,12 +3,17 @@
 import useDragAndDrop from './drag_drop.js';
 import node_colors from './nodes/node-colors.js'
 import { TBNode } from './nodes/n-imports.js'
+import { useProjectStore } from './project_store.js';
 
 
 </script>
 <template>
     <div class="toolbox">
         <a class="tb_title">Toolbox</a>
+        <button class="tb_btn" @click="useProjectStore().initProject()">Init Project (temporary implementation)</button>
+        <button class="tb_btn" @click="useProjectStore().renameProject()">Rename Project</button>
+        <button class="tb_btn" @click="useProjectStore().exportProject()">Export Project</button>
+
         <a class="tb_subtitle">Objects</a>
                 <TBNode node_type="room" display_type="Room" :bg_color="node_colors.room_bg" :stroke_color="node_colors.room_stroke"></TBNode>
                 <TBNode node_type="item" display_type="Item" :bg_color="node_colors.item_bg " :stroke_color="node_colors.item_stroke"></TBNode>

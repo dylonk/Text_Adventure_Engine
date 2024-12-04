@@ -3,6 +3,7 @@
     import Toolbar  from './toolbox.vue'
     import Canvas from './canvas/canvas.vue'
     import Asset_Browser from './asset_browser.vue'
+    import editor_navbar from './editor_navbar.vue'
 </script>
 <!---This is the outermost layer of the editor--->
 <template>

@@ -1,6 +1,6 @@
 <script setup>
 import { defineProps, watch, computed, ref } from 'vue';
-import { useNodesStore } from '../node_store.js'
+import { useNodesStore } from '../../node_store.js'
 import NodeBase from '../node_base.vue'
 import { DebugInfo } from '../node_assets/n-component-imports';
 

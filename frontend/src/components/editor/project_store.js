@@ -1,7 +1,7 @@
   import { defineStore } from 'pinia';
   import { ref, computed } from 'vue';
   import { useNodesStore } from './node_store.js';  //imports from node store
-
+  import { v4 as uuidv4 } from 'uuid';
 
   export const useProjectStore = defineStore('project', () => {
     // Project metadata
@@ -78,6 +78,18 @@
       }
     }
 
+    function initProject()     //initializes the project. Only temporarily linked to a toolbar button. If project already initted, does nothing
+      {
+        console.log("initProject called");
+        if (!projectId.value) { //project has no id? not initted? init that thang
+          projectId.value = uuidv4();
+        }
+        if(!projectName.value) {
+          projectName.value = "New Project";
+        }
+        console.log("initted project with id", projectId.value, "and name", projectName.value);
+      }
+
     // Computed properties for project insights. Good idea but commenting out for now
     /*
     const nodeCount = computed(() => {
@@ -116,9 +128,11 @@
       projectId,
       renameProject,
       exportProject,
-      nodeCount,
-      roomCount,
-      itemCount,
-      promptCount
+      initProject,
+     // nodeCount,
+     // roomCount,
+     // itemCount,
+     // promptCount
     };
+
   });

@@ -6,7 +6,7 @@ import { VueFlow, useVueFlow } from '@vue-flow/core'
 import CanvasBackground from './background.vue'
 import CanvasControls from './controls.vue'
 import useDragAndDrop from '../drag_drop.js';
-import { useNodesStore } from "../nodes/node_store.js"
+import { useNodesStore } from "../node_store.js"
 
 // allll da fucking node imports REGISTER NODES HERE
 import { PromptNode, RoomNode, ItemNode, UnimplementedNode } from '../nodes/n-imports.js';
