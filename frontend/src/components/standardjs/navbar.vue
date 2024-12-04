@@ -69,13 +69,12 @@ const router = useRouter(); // Access the Vue Router for navigation
 
 .navbar {
     display: flex;
-    margin-top: 0;
     position: sticky;
+    top: 0;
     width: 100vw;
-    height: min-content;
-    padding: 10px 0px;
+    height: max-content;
+    padding: 1vh;
     background-color: rgb(64, 64, 64);
-    min-height: max-content;
     font-family: Arial, Helvetica, sans-serif;
     font-weight: bold;
 }
@@ -91,9 +90,7 @@ const router = useRouter(); // Access the Vue Router for navigation
 .login_btn {
     font-family: 'Syne Mono', monospace;
     font-size:22px;
-
     height: calc(min-content + 10px);
-    margin-left: 10px;
     margin-left: auto;
     margin-right: 10px;
     background: rgb(255, 255, 255);

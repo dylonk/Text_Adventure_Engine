@@ -163,6 +163,7 @@ body {
     overflow: hidden;
     border-radius: 0;
     margin: 0 auto 1rem; /* Center the avatar */
+    margin-top: 15px;
     border: 3px solid #f1f1f1;
 }
 

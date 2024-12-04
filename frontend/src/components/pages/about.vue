@@ -41,9 +41,14 @@ function goToAbout() {
     font-family: 'Syne Mono', monospace;
 }
 
+#body {
+    justify-content: center;
+    display: block;
+}
 
 .content {
-    height:100%;
+    width: 100vw;
+    height: calc(100vh * 0.922);
     display:flex;
     flex-direction: column;
     align-items: center;
@@ -52,13 +57,13 @@ function goToAbout() {
     text-align: center;
     backdrop-filter:blur(20px);
     background-image:url(https://i.pinimg.com/736x/13/34/75/133475f2b4de23314a01df9a61f85436.jpg);
-    background-size: cover;
+    background-size: 100% 100%;
 }
 
 .text-container{
-    height:100%;
-    width:100%;
-        backdrop-filter:blur(4px);
+    height:100vh;
+    width:100vw;
+    backdrop-filter:blur(3px);
 }
 
 
@@ -75,14 +80,10 @@ function goToAbout() {
 
 #credits {
     color:rgb(255, 255, 255);
-    margin-top:auto;
-    margin-bottom:20%;
     text-align:center;
-    width: 100%;
 }
 
 #creditsNames p {
-
     margin-top: 0px;
     display: inline-block;
 }
