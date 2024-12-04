@@ -2,6 +2,7 @@
 import NodeBase from '../node_base.vue';
 import { defineProps, computed } from 'vue';
 import { useNodesStore } from '../node_store.js'
+import ObjBase from './obj_base.vue'
 // Define props for debugging purposes
 const props = defineProps({
   id: { type: Number },
@@ -23,13 +24,5 @@ const node = computed(() => nodesStore.getNode(Number(props.id)));
 </template>
 
 <style scoped>
-.debug-info {
-  margin-top: 5px;
-  font-size: 12px;
-  color: #555555;
-  background: #f9f9f9;
-  padding: 5px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
+@import
 </style>

@@ -1,7 +1,7 @@
 <script setup>
 
 import useDragAndDrop from './drag_drop.js';
-
+import node_colors from './nodes/node-colors.js'
 import { TBNode } from './nodes/n-imports.js'
 
 
@@ -10,11 +10,11 @@ import { TBNode } from './nodes/n-imports.js'
     <div class="toolbox">
         <a class="tb_title">Toolbox</a>
         <a class="tb_subtitle">Objects</a>
-                <TBNode node_type="room" display_type="Room" bg_color="red" stroke_color="black"></TBNode>
-                <TBNode node_type="item" display_type="Item" bg_color="red" stroke_color="black"></TBNode>
+                <TBNode node_type="room" display_type="Room" :bg_color="node_colors.room_bg" :stroke_color="node_colors.room_stroke"></TBNode>
+                <TBNode node_type="item" display_type="Item" :bg_color="node_colors.item_bg " :stroke_color="node_colors.item_stroke"></TBNode>
 
         <a class="tb_subtitle">Interactive</a>
-                <TBNode node_type="prompt" display_type="Prompt" bg_color="rgb(200, 245, 170)" stroke_color="rgb(50, 100, 50)"></TBNode>
+                <TBNode node_type="prompt" display_type="Prompt" :bg_color="node_colors.prompt_bg" :stroke_color="node_colors.prompt_stroke"></TBNode>
         <a class="tb_subtitle">Logic</a>
 
     </div>

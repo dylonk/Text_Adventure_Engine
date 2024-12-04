@@ -2,11 +2,12 @@
 import { ref, defineProps } from 'vue';
 import NodeBase from '../../node_base.vue'
 import { Handle, Position } from '@vue-flow/core';
-
+import { SmallButton, HContainer, HandleIn, HandleOut } from '../../node_assets/n-component-imports';
+import node_colors from '../../node-colors';
 let response_id = 0;
 
-const prompt_stroke_color= "rgb(50, 100, 50)";
-const prompt_bg_color= "rgb(200, 245, 170)";
+const ext_stroke_color= node_colors.prompt_stroke;
+const ext_bg_color= node_colors.prompt_bg;
 
 const responses = ref([
 ])
@@ -15,7 +16,10 @@ function addResponse(){
     responses.value.push({id:response_id++, text:""})
 }
 function removeResponse(){
-    responses.value.push({id:response_id++, text:""})
+    if(response_id>0){
+        responses.value.pop()
+        response_id--;
+    }
 }
 function autoResize() {
     this.style.height = 'auto';
@@ -25,17 +29,22 @@ function autoResize() {
 
 
 <template>
+    <HandleIn></HandleIn>
+    <HandleOut></HandleOut>
     <NodeBase
         display_type="Prompt"
         node_type="prompt"
-        :bg_color="prompt_bg_color"
-        :stroke_color="prompt_stroke_color">
+        :bg_color="ext_bg_color"
+        :stroke_color="ext_stroke_color">
         <textarea class="console_response_text"></textarea>
         <div class="user_response_container" v-for="response in responses" :key="response.id">
         <div class="response_title">Response {{ response.id }}</div>
         <textarea class = "user_response_text" id="textbox"></textarea>
         </div>
-        <button @click="addResponse()" class="add_response_button">+</button>
+        <HContainer spacing="5px">
+        <SmallButton @click="addResponse()" button_text="+" :component_bg_color="ext_bg_color" :component_stroke_color="ext_stroke_color"></SmallButton>
+        <SmallButton @click="removeResponse()" button_text="-" :component_bg_color="ext_bg_color" :component_stroke_color="ext_stroke_color"></SmallButton>
+        </HContainer>
     </NodeBase>
 
 </template>
@@ -47,7 +56,7 @@ function autoResize() {
         width:200px;
         height:100px;
         background:rgb(255, 255, 255);
-        border:solid v-bind('prompt_stroke_color') 1px;
+        border:solid v-bind('ext_stroke_color') 1px;
         border-radius:3px;
     }
     .user_response_text{
@@ -56,25 +65,12 @@ function autoResize() {
         height:auto;
         color:black;
         background:rgb(255, 255, 255);
-        border:solid v-bind('prompt_stroke_color') 1px;
+        border:solid v-bind('ext_stroke_color') 1px;
         border-radius:3px;
     }
-    .add_response_button{
-        height:20px;
-        width:20px;
-        color: v-bind('prompt_stroke_color');
-        font-weight: 800;
-        border:v-bind('prompt_stroke_color') solid 1px;
-        border-radius: 3px;
-        background:white;
-        margin-top:10px;
-    }
-    .add_response_button:hover{
-        background-image: linear-gradient(180deg,white,white,v-bind(prompt_stroke_color));
-    }
     .user_response_container{
-        color: v-bind('prompt_stroke_color');
-        background:v-bind('prompt_bg_color');
+        color: v-bind('ext_stroke_color');
+        background:v-bind('ext_bg_color');
         margin: 0px;
         padding-left:10px;
         padding-bottom:5px;

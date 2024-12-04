@@ -77,8 +77,8 @@
             id: getId(),
             position: pos,
             expandParent: true,
-            width: 100,
-            height: 100,
+            width: 0,
+            height: 0,
             parentId: null,
           }
           nodesStore.addNode(newNode)
