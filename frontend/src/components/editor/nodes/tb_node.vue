@@ -3,6 +3,7 @@
 import useDragAndDrop from '../drag_drop.js';
 import { defineProps } from 'vue';
 import NodeBase from './node_base.vue'
+import { SmallButton } from './node_assets/n-component-imports.js';
 
 
 const props = defineProps({ //needs the tb_node_type prop so drag and drop knows whats up
@@ -15,15 +16,18 @@ const { onDragStart } = useDragAndDrop();
 </script>
 
 <template>
-    <div class="tb_node_container" :draggable="true" @dragstart="onDragStart($event, props.node_type, true)" :style="{'background': bg_color}" >
+    <div class="tb_node_container" :draggable=True @dragstart="onDragStart($event, props.node_type, true)" :style="{'background': bg_color}" >
         <NodeBase
             :node_type="node_type"
             :display_type="display_type"
             :bg_color="bg_color"
-            :stroke_color="stroke_color"/>
+            :stroke_color="stroke_color"
+            :containHelp="'True'"
+            >
+        </NodeBase>
     </div>
 </template>
-<style>
+<style scoped>
 @import 'https://fonts.googleapis.com/css2?family=Syne+Mono&display=swap';
 .tb_node_container{
     font-family: 'Syne Mono', monospace;

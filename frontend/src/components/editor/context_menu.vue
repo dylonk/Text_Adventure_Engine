@@ -1,7 +1,7 @@
 <template>
-    <div 
-      v-if="visible" 
-      class="context-menu" 
+    <div
+      v-if="visible"
+      class="context-menu"
       :style="{ top: `${position.y}px`, left: `${position.x}px` }"
     >
       <ul>
@@ -11,32 +11,32 @@
       </ul>
     </div>
   </template>
-  
+
   <script setup>
   import { ref } from 'vue'
-  
+
   const props = defineProps({
     position: { type: Object, required: true },
     actions: { type: Array, required: true },  // Accept actions as an array
   })
-  
+
   const emit = defineEmits(['action', 'hide-context-menu'])
-  
+
   const visible = ref(true)
-  
+
   function hide() {
     visible.value = false
     emit('hide-context-menu')
   }
-  
+
   function handleAction(action) {//handles the action for the contextmenu
     emit('action', action)
     hide()
   }
-  
+
   document.addEventListener('click', () => hide())  // Close the menu on outside click
   </script>
-  
+
   <style scoped>
   .context-menu {
     position: absolute;
@@ -47,20 +47,19 @@
     width: 150px;
     padding: 5px 0;
   }
-  
+
   .context-menu ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
   }
-  
+
   .context-menu li {
     padding: 8px;
     cursor: pointer;
   }
-  
+
   .context-menu li:hover {
     background-color: #f0f0f0;
   }
   </style>
-  

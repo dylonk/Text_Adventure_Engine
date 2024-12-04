@@ -6,8 +6,7 @@ import ContextMenu from './context_menu.vue'
 const nodesStore = useNodesStore()
 
 // Use computed properties to observe the nodes in the store
-const rooms = computed(() => nodesStore.nodes.rooms)
-const items = computed(() => nodesStore.nodes.items)
+const objects = computed(() => nodesStore.nodes.objects)
 
 const isContextMenuVisible = ref(false)
 const contextMenuId = ref(null)
@@ -22,22 +21,14 @@ function showContextMenu(event, nodeType, nodeId) {
   isContextMenuVisible.value = true
   event.preventDefault()
 
-  // Dynamically set actions based on itemType (e.g., rooms or items)
-  if (nodeType === 'room') {
-    contextMenuActions.value = [
-      { label: 'Rename', action: () => nodesStore.renameNode(nodeId) },//
-      { label: 'Delete', action: () => nodesStore.deleteNode(nodeId) },//
 
-      // Future actions can go here, e.g., 'Delete', etc.
-    ]
-  } else if (nodeType === 'item') {
     contextMenuActions.value = [
       { label: 'Delete', action: () => nodesStore.deleteNode(nodeId) },
       { label: 'Rename', action: () => nodesStore.renameNode(nodeId) },//
       // Add more item-specific actions here.
     ]
   }
-}
+
 
 
 
@@ -60,32 +51,32 @@ function closeContextMenu() {
 
 <template>
   <div class="asset_browser">
-    <h3>Rooms</h3>
-    <div v-if="rooms.length > 0">
+    <h3>Objects</h3>
+    <div v-if="objects.length > 0">
       <div
-        v-for="room in rooms"
-        :key="room.id"
-        @contextmenu="showContextMenu($event, 'room', room.id)"
+        v-for="object in objects"
+        :key="object.id"
+        @contextmenu="showContextMenu($event, 'object', object.id)"
       >
         <details>
-          <summary>        {{ room.node_title || 'Unnamed Room' }}          </summary>
+          <summary>        {{ object.object_name || 'ERR_UNNAMED_NODE' }}          </summary>
           <ul>
-            <li v-for="item in nodesStore.getItemsInRoom(room.id)" :key="item.id">
-              {{ item.node_title || 'Unnamed Item' }}        (Item)
-            </li>
+            <!-- <li v-for="item in nodesStore.getItemsInRoom(room.id)" :key="item.id">
+              {{ item.object_name || 'Unnamed Item' }}        (Item)
+            </li> -->
           </ul>
         </details>
       </div>
     </div>
-    <p v-else>No rooms available</p>
+    <p v-else>No objects in world</p>
 
-    <h3>Items</h3>
+    <!-- <h3>Items</h3>
     <ul v-if="items.length > 0">
       <li v-for="item in items" :key="item.id" @contextmenu="showContextMenu($event, 'item', item.id)">
-        {{ item.node_title || 'Unnamed Item' }}
+        {{ item.object_name || 'Unnamed Item' }}
       </li>
     </ul>
-    <p v-else>No items available</p>
+    <p v-else>No items available</p> -->
 
     <!-- Context Menu Component -->
     <ContextMenu

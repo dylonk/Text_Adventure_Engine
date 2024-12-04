@@ -21,6 +21,7 @@ function removeResponse(){
         response_id--;
     }
 }
+
 function autoResize() {
     this.style.height = 'auto';
     this.style.height = this.scrollHeight + 'px';
@@ -29,20 +30,22 @@ function autoResize() {
 
 
 <template>
-    <HandleIn></HandleIn>
-    <HandleOut></HandleOut>
+    <HandleIn/>
+    <HandleOut/>
+
     <NodeBase
         display_type="Prompt"
         node_type="prompt"
         :bg_color="ext_bg_color"
         :stroke_color="ext_stroke_color">
-        <textarea class="console_response_text"></textarea>
+        <textarea class="console_response_text" placeholder="Type your console output here."></textarea>
         <div class="user_response_container" v-for="response in responses" :key="response.id">
         <div class="response_title">Response {{ response.id }}</div>
-        <textarea class = "user_response_text" id="textbox"></textarea>
+        <textarea class = "user_response_text" id="textbox" placeholder="Type the expected user input here."></textarea>
+        <HandleOut :handleID="response_id" style="position:absolute"/>
         </div>
-        <HContainer spacing="5px">
-        <SmallButton @click="addResponse()" button_text="+" :component_bg_color="ext_bg_color" :component_stroke_color="ext_stroke_color"></SmallButton>
+        <HContainer spacing="5px" outerMargin="5px">
+        <SmallButton @click="addResponse()" button_text="+" :component_bg_color="ext_bg_color" :component_stroke_color="ext_stroke_color" style="margin-right:5px;"></SmallButton>
         <SmallButton @click="removeResponse()" button_text="-" :component_bg_color="ext_bg_color" :component_stroke_color="ext_stroke_color"></SmallButton>
         </HContainer>
     </NodeBase>

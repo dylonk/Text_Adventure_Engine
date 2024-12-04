@@ -12,11 +12,23 @@ import { TBNode } from './nodes/n-imports.js'
         <a class="tb_subtitle">Objects</a>
                 <TBNode node_type="room" display_type="Room" :bg_color="node_colors.room_bg" :stroke_color="node_colors.room_stroke"></TBNode>
                 <TBNode node_type="item" display_type="Item" :bg_color="node_colors.item_bg " :stroke_color="node_colors.item_stroke"></TBNode>
+                <TBNode node_type="unimplemented" display_type="NPC" :bg_color="node_colors.unimplemented_bg" :stroke_color="node_colors.unimplemented_stroke"></TBNode>
+                <TBNode node_type="unimplemented" display_type="Pathway" :bg_color="node_colors.unimplemented_bg" :stroke_color="node_colors.unimplemented_stroke"></TBNode>
+                <TBNode node_type="unimplemented" display_type="Custom" :bg_color="node_colors.unimplemented_bg" :stroke_color="node_colors.unimplemented_stroke"></TBNode>
 
         <a class="tb_subtitle">Interactive</a>
                 <TBNode node_type="prompt" display_type="Prompt" :bg_color="node_colors.prompt_bg" :stroke_color="node_colors.prompt_stroke"></TBNode>
-        <a class="tb_subtitle">Logic</a>
+                <TBNode node_type="unimplemented" display_type="Await" :bg_color="node_colors.unimplemented_bg" :stroke_color="node_colors.unimplemented_stroke"></TBNode>
+                <TBNode node_type="unimplemented" display_type="Action" :bg_color="node_colors.unimplemented_bg" :stroke_color="node_colors.unimplemented_stroke"></TBNode>
+                <TBNode node_type="unimplemented" display_type="AwaitAction" :bg_color="node_colors.unimplemented_bg" :stroke_color="node_colors.unimplemented_stroke"></TBNode>
+        <a class="tb_subtitle">Value</a>
+                <TBNode node_type="unimplemented" display_type="AlterProperty" :bg_color="node_colors.unimplemented_bg" :stroke_color="node_colors.unimplemented_stroke"></TBNode>
+        <a class="tb_subtitle">Path Control</a>
+                <TBNode node_type="unimplemented" display_type="If" :bg_color="node_colors.unimplemented_bg" :stroke_color="node_colors.unimplemented_stroke"></TBNode>
 
+        <a class="tb_subtitle">Visual</a>
+                <TBNode node_type="unimplemented" display_type="Time" :bg_color="node_colors.unimplemented_bg" :stroke_color="node_colors.unimplemented_stroke"></TBNode>
+                <TBNode node_type="unimplemented" display_type="Image" :bg_color="node_colors.unimplemented_bg" :stroke_color="node_colors.unimplemented_stroke"></TBNode>
     </div>
 </template>
 
@@ -26,11 +38,11 @@ import { TBNode } from './nodes/n-imports.js'
 .toolbox{
     display:flex;
     flex-direction: column;
+    width:max-content;
     height:100%;
     background:rgb(209, 207, 216);
     border-right: 1px solid rgb(68, 46, 110);
     background-image: linear-gradient(180deg, rgb(197, 201, 179),rgb(214, 212, 199),rgb(214, 212, 199), rgb(214, 212, 199),rgb(215, 211, 185), rgb(191, 194, 179));
-
 }
 
 .toolbox>*{

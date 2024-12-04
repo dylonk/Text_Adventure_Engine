@@ -1,15 +1,17 @@
 <!---FATHER CLASS OF ALL NODES-->
 <script setup>
-import { ref, defineProps, computed } from 'vue';
+import { ref, defineProps, computed, watch } from 'vue';
+import { HContainer, SmallButton, Tooltip } from './node_assets/n-component-imports.js';
 import useDragAndDrop from '../drag_drop.js';
+import help_msg from './help_btn_msg';
 import ContextMenu from '../context_menu.vue'
 import { Position } from '@vue-flow/core';
 
 
 const props = defineProps({
-    id:Number,
+    id:0,
     node_type:String, //NODE TYPE IS EXCLUSIVELY FOR COMMUNICATING, should not appear in finished product
-    display_type: { type: String, default: 'Unnamed Node' },
+    display_type: { type: String, default: 'UnnamedType' },
     bg_color: { type: String, default: '#FFF' },
     stroke_color: { type: String, default: '#000'},
     //children: { type: Array, default: () => [] }, // Define items as an array prop with a default empty array
@@ -17,20 +19,49 @@ const props = defineProps({
     //node_properties: { type: Array, default: () => [] },
     //associated_function: String, //For when we actually start programming the script stuff
     //function_arguments: {type: Array, default: () => []},
-    Position: {type: Object, default: () => ({ x: 0, y: 0 })} //position should be a prop, becuse we're gonna have to retrieve this stuff for project loading
-
+    Position: {type: Object, default: () => ({ x: 0, y: 0 })}, //position should be a prop, becuse we're gonna have to retrieve this stuff for project loading
+    containHelp: false, // Allows for the help button to appear on the topbar of a node. Used for TBNodes
 })
+let isDisplayTooltip = ref(false);
+
+function helpToggle(){
+    isDisplayTooltip = !isDisplayTooltip;
+    console.log("toggledTooltip " + isDisplayTooltip);
+}
+
+function helpMessage(){
+    let message = "";
+    for(const key in help_msg){
+        if(key==props.node_type){
+            console.log("Tooltip Message: "+help_msg[key]);
+            message=help_msg[key];
+        }
+    }
+    return message;
+}
+const tooltip = ref(helpMessage());
 
 const { onDragStart } = useDragAndDrop();
+if(props.containHelp){
+    watch(isDisplayTooltip);
+}
 </script>
 
 <template>
-    <div class="node_container" :draggable="true" @dragstart="onDragStart($event, props.node_type)" :style="{ 'background-color': bg_color, 'outline-color':stroke_color }">
-        <div class="node_title" :style="{ 'background-image': 'linear-gradient(180deg,' + bg_color + ',' + stroke_color + ')' }">{{ props.display_type }}</div>
+    <div class="node_container" :draggable="true" @dragstart="onDragStart($event, props.node_type)">
+        <div class="node_title" :style="{ 'background-image': 'linear-gradient(180deg,' + bg_color + ',' + stroke_color + ')' }">
+        <HContainer outerMargin="0px">
+        <div>
+        {{ props.display_type }}
+        </div>
+        <SmallButton @click="helpToggle()" v-if='containHelp' :component_bg_color="bg_color" :component_stroke_color="stroke_color" button_text="?" style="margin:5px; margin-right:0px;">
+        </SmallButton>
+        </HContainer>
+        </div>
+        <Tooltip v-if="isDisplayTooltip" :tooltip_info="tooltip"></Tooltip>
         <slot></slot>
     </div>
 </template>
-    background-image: linear-gradient(180deg, rgb(197, 201, 179),rgb(214, 212, 199),rgb(214, 212, 199), rgb(214, 212, 199),rgb(215, 211, 185), rgb(191, 194, 179));
 
 <style scoped>
 @import 'https://fonts.googleapis.com/css2?family=Syne+Mono&display=swap';
@@ -40,13 +71,16 @@ const { onDragStart } = useDragAndDrop();
 }
 .node_container{
     overflow:hidden;
-    background:var(--element-color);
-    outline: 1px solid;
+    background:v-bind(bg_color);
+    outline: 1px solid v-bind(stroke_color);
     height:fit-content;
     width:fit-content;
     display:flex;
     flex-direction: column;
     border-radius: 6px;
+}
+.node_container:active{
+    outline:2px rgb(0, 0, 255) solid;
 }
 .node_container>*{
     margin:10px;

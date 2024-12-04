@@ -5,11 +5,12 @@ import DebugInfo from './debug_info.vue'
 import HContainer from './horizontal_container.vue'
 import HandleIn from './handle_in.vue'
 import HandleOut from './handle_out.vue'
-
+import Tooltip from './tooltip.vue'
 export{
     SmallButton,
     DebugInfo,
     HContainer,
     HandleIn,
     HandleOut,
+    Tooltip,
 }
