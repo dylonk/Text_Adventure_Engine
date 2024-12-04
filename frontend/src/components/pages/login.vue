@@ -92,88 +92,109 @@ const onRegisterSubmit = async (event) => {
 <template>
   <globalNavBar />
   <div id="page">
-    <div id="login-title">Login</div>
-    <!-- Login Form -->
-    <form @submit.prevent="onLoginSubmit">
-      <input
-        type="text"
-        v-model="formData.username"
-        placeholder="Username"
-        required
-      />
-      <input
-        type="password"
-        v-model="formData.password"
-        placeholder="Password"
-        required
-      />
-      <button type="submit">Login</button>
-    </form>
+    <div id="login">
+      <div class="login-title">Login</div>
+      <!-- Login Form -->
+      <form @submit.prevent="onLoginSubmit">
+        <input
+          type="text"
+          v-model="formData.username"
+          placeholder="Username"
+          required
+        />
+        <input
+          type="password"
+          v-model="formData.password"
+          placeholder="Password"
+          required
+        />
+        <button type="submit">Login</button>
+      </form>
+    </div>
 
-    <div class="separator"></div>
+    <div id="separator"></div>
 
-    <div id="registration-title">Register</div>
-    <!-- Registration Form -->
-    <form @submit.prevent="onRegisterSubmit">
-      <input
-        type="text"
-        v-model="registrationData.username"
-        placeholder="Username"
-        required
-      />
-      <input
-        type="text"
-        v-model="registrationData.email"
-        placeholder="Email"
-        required
-      />
-      <input
-        type="password"
-        v-model="registrationData.password"
-        placeholder="Password"
-        required
-      />
-      <input
-        type="password"
-        v-model="registrationData.confirmPassword"
-        placeholder="Confirm Password"
-        required
-      />
-      <button type="submit">Register</button>
-    </form>
+    <div id="registration">
+      <div class="registration-title">Register</div>
+      <!-- Registration Form -->
+      
+      <form @submit.prevent="onRegisterSubmit">
+        <input
+          type="text"
+          v-model="registrationData.username"
+          placeholder="Username"
+          required
+        />
+        <input
+          type="text"
+          v-model="registrationData.email"
+          placeholder="Email"
+          required
+        />
+        <input
+          type="password"
+          v-model="registrationData.password"
+          placeholder="Password"
+          required
+        />
+        <input
+          type="password"
+          v-model="registrationData.confirmPassword"
+          placeholder="Confirm Password"
+          required
+        />
+        <button type="submit">Register</button>
+      </form>
+    </div>
   </div>
 </template>
 
 <style scoped>
   /* Styles for the page */
   #page {
-    position: relative;
+    display: flex;
+    flex-direction: row;
+    height: 90%;
   }
 
-  #login-title {
-    position: absolute;
-    margin-top: 7%;
-    margin-left: 34.5%;
+  #login {
+    width: 50%;
+    float: left;
+  }
+
+  .login-title {
+    text-align: center;
     font-size: 24px;
-    border-bottom: 2px solid black;
-    padding: 0px 30px;
+    margin-top: 20%;
   }
 
-  .separator {
-    position: absolute;
-    border-left: 2px solid black;
-    margin-left: 47.5%;
-    height: 10000px;
-    transform: translate(0px, -100px);
-    z-index: -1;
+  #separator {
+    width: 0%;
+    top: 0;
+    border: 2px solid black;
   }
 
-  #registration-title {
-    position: absolute;
-    margin-top: 7%;
-    margin-left: 54%;
+  #registration {
+    width: 50%;
+    float: right;
+  }
+
+  .registration-title {
+    text-align: center;
     font-size: 24px;
-    border-bottom: 2px solid black;
-    padding: 0px 30px;
+    margin-top: 20%;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 50%;
+    transform: translate(50%);
+    margin-top: 10px;
+  }
+
+  input {
+    margin-bottom: 7px;
   }
 </style>
