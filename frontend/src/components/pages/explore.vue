@@ -7,6 +7,9 @@ function goToHome() {
     
 <template>
     <globalNavBar/>
+    <form id="section-bar" action="placeholder" method="get">
+        <input type="search" name="search-bar" placeholder="Search">
+    </form>
         <div class="games-section">
             <div class="game">
                 <div class="gametitle">Fake Game 1</div>
