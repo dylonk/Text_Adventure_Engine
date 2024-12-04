@@ -12,13 +12,14 @@ const props = defineProps({
     display_type: { type: String, default: 'Unnamed Node' },
     bg_color: { type: String, default: '#FFF' },
     stroke_color: { type: String, default: '#000'},
-    //children: { type: Array, default: () => [] }, // Define items as an array prop with a default empty array
+    children: { type: Array, default: () => [] }, // Define items as an array prop with a default empty array
     // Moving these guys to their respective places
-    //node_properties: { type: Array, default: () => [] },
+    node_properties: { type: Array, default: () => [] },
     //associated_function: String, //For when we actually start programming the script stuff
-    //function_arguments: {type: Array, default: () => []},
-    Position: {type: Object, default: () => ({ x: 0, y: 0 })} //position should be a prop, becuse we're gonna have to retrieve this stuff for project loading
-
+    function_arguments: {type: Array, default: () => []},
+    Position: {type: Object, default: () => ({ x: 0, y: 0 })}, //position should be a prop, becuse we're gonna have to retrieve this stuff for project loading
+    parentNode: { type: String, default: null }, // Use parentNode
+    extent: { type: String, default: 'parent' },
 })
 
 const { onDragStart } = useDragAndDrop();
@@ -42,8 +43,8 @@ const { onDragStart } = useDragAndDrop();
     overflow:hidden;
     background:var(--element-color);
     outline: 1px solid;
-    height:fit-content;
-    width:fit-content;
+    height:150px;
+    width:150px;
     display:flex;
     flex-direction: column;
     border-radius: 6px;
