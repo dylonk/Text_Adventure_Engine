@@ -9,12 +9,15 @@ import useDragAndDrop from '../drag_drop.js';
 import { useNodesStore } from "../node_store.js"
 
 // allll da fucking node imports REGISTER NODES HERE
-import { PromptNode, RoomNode, ItemNode, UnimplementedNode } from '../nodes/n-imports.js';
+import { PromptNode, RoomNode, ItemNode, NpcNode, PathwayNode, UnimplementedNode, CustomNode} from '../nodes/n-imports.js';
 
     const nodeTypes = {
         prompt: markRaw(PromptNode),
         room: markRaw(RoomNode),
         item: markRaw(ItemNode),
+        npc: markRaw(NpcNode),
+        pathway: markRaw(PathwayNode),
+        custom: markRaw(CustomNode),
         unimplemented: markRaw(UnimplementedNode)
     }
 

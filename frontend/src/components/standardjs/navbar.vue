@@ -54,9 +54,10 @@ const router = useRouter(); // Access the Vue Router for navigation
     width: 100vw;
     height: max-content;
     padding: 1vh;
-    background-color: rgb(64, 64, 64);
+    background-color: rgba(64, 64, 64,1);
     font-family: Arial, Helvetica, sans-serif;
     font-weight: bold;
+    z-index: 100;
 }
 
 .nav_btn {
