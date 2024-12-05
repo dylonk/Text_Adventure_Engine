@@ -9,12 +9,13 @@ import { TBNode } from './nodes/n-imports.js'
 <template>
     <div class="toolbox">
         <a class="tb_title">Toolbox</a>
+        <div class="toolbox">
         <a class="tb_subtitle">Objects</a>
                 <TBNode node_type="room" display_type="Room" :bg_color="node_colors.room_bg" :stroke_color="node_colors.room_stroke"></TBNode>
                 <TBNode node_type="item" display_type="Item" :bg_color="node_colors.item_bg " :stroke_color="node_colors.item_stroke"></TBNode>
-                <TBNode node_type="unimplemented" display_type="NPC" :bg_color="node_colors.unimplemented_bg" :stroke_color="node_colors.unimplemented_stroke"></TBNode>
-                <TBNode node_type="unimplemented" display_type="Pathway" :bg_color="node_colors.unimplemented_bg" :stroke_color="node_colors.unimplemented_stroke"></TBNode>
-                <TBNode node_type="unimplemented" display_type="Custom" :bg_color="node_colors.unimplemented_bg" :stroke_color="node_colors.unimplemented_stroke"></TBNode>
+                <TBNode node_type="npc" display_type="NPC" :bg_color="node_colors.npc_bg" :stroke_color="node_colors.npc_stroke"></TBNode>
+                <TBNode node_type="pathway" display_type="Pathway" :bg_color="node_colors.pathway_bg" :stroke_color="node_colors.pathway_stroke"></TBNode>
+                <TBNode node_type="custom" display_type="Custom" :bg_color="node_colors.custom_bg" :stroke_color="node_colors.custom_stroke"></TBNode>
 
         <a class="tb_subtitle">Interactive</a>
                 <TBNode node_type="prompt" display_type="Prompt" :bg_color="node_colors.prompt_bg" :stroke_color="node_colors.prompt_stroke"></TBNode>
@@ -22,23 +23,32 @@ import { TBNode } from './nodes/n-imports.js'
                 <TBNode node_type="unimplemented" display_type="Action" :bg_color="node_colors.unimplemented_bg" :stroke_color="node_colors.unimplemented_stroke"></TBNode>
                 <TBNode node_type="unimplemented" display_type="AwaitAction" :bg_color="node_colors.unimplemented_bg" :stroke_color="node_colors.unimplemented_stroke"></TBNode>
         <a class="tb_subtitle">Value</a>
-                <TBNode node_type="unimplemented" display_type="AlterProperty" :bg_color="node_colors.unimplemented_bg" :stroke_color="node_colors.unimplemented_stroke"></TBNode>
+                <TBNode node_type="unimplemented" display_type="ChangeProperty" :bg_color="node_colors.unimplemented_bg" :stroke_color="node_colors.unimplemented_stroke"></TBNode>
+                <TBNode node_type="unimplemented" display_type="Evaluate" :bg_color="node_colors.unimplemented_bg" :stroke_color="node_colors.unimplemented_stroke"></TBNode>
         <a class="tb_subtitle">Path Control</a>
                 <TBNode node_type="unimplemented" display_type="If" :bg_color="node_colors.unimplemented_bg" :stroke_color="node_colors.unimplemented_stroke"></TBNode>
-
+                <TBNode node_type="unimplemented" display_type="Switch" :bg_color="node_colors.unimplemented_bg" :stroke_color="node_colors.unimplemented_stroke"></TBNode>
+                <TBNode node_type="unimplemented" display_type="OnPlayerEnter" :bg_color="node_colors.unimplemented_bg" :stroke_color="node_colors.unimplemented_stroke"></TBNode>
+                <TBNode node_type="unimplemented" display_type="OnPlayerNear" :bg_color="node_colors.unimplemented_bg" :stroke_color="node_colors.unimplemented_stroke"></TBNode>
+                <TBNode node_type="unimplemented" display_type="OnPlayerPossess" :bg_color="node_colors.unimplemented_bg" :stroke_color="node_colors.unimplemented_stroke"></TBNode>
+        <a class="tb_subtitle">Insertable Logic</a>
+                <TBNode node_type="unimplemented" display_type="And" :bg_color="node_colors.unimplemented_bg" :stroke_color="node_colors.unimplemented_stroke"></TBNode>
         <a class="tb_subtitle">Visual</a>
                 <TBNode node_type="unimplemented" display_type="Time" :bg_color="node_colors.unimplemented_bg" :stroke_color="node_colors.unimplemented_stroke"></TBNode>
                 <TBNode node_type="unimplemented" display_type="Image" :bg_color="node_colors.unimplemented_bg" :stroke_color="node_colors.unimplemented_stroke"></TBNode>
     </div>
+    </div>
 </template>
 
-<style>
+<style scoped>
 @import 'https://fonts.googleapis.com/css2?family=Syne+Mono&display=swap';
 
 .toolbox{
     display:flex;
     flex-direction: column;
-    width:max-content;
+    justify-content: start;
+    overflow-y: scroll;
+    min-width:fit-content;
     height:100%;
     background:rgb(209, 207, 216);
     border-right: 1px solid rgb(68, 46, 110);

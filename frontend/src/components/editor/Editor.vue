@@ -1,15 +1,21 @@
 <script setup>
-    import { ref } from 'vue'
+    import { ref, provide } from 'vue'
     import Toolbar  from './toolbox.vue'
     import Canvas from './canvas/canvas.vue'
-    import Asset_Browser from './asset_browser.vue'
+    import AssetBrowser from './asset_browser.vue'
+
+
+
+    function updateAssets(){
+    }
 </script>
 <!---This is the outermost layer of the editor--->
 <template>
+
     <div class="editor-container">
         <Toolbar />
         <Canvas />
-        <Asset_Browser/>                       
+        <AssetBrowser />
     </div>
 </template>
 
@@ -22,7 +28,8 @@
 
 .editor-container{
     width:100vw;
-    height:100%;
+    height:auto;
+    max-height: 100vh !important;
     display:flex;
     flex-direction:row;
     background:white;
