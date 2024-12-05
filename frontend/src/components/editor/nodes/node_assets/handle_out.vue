@@ -9,10 +9,15 @@ console.log(props.handleID);
 
 
 <template>
+<div class="handle_container">
     <Handle :id="'out'+handleID" class="vue-flow__handle" type="source" :position="Position.Right" />
+</div>
 
 </template>
 <style scoped>
+.handle_container{
+    padding:10px;
+}
 .vue-flow__handle{
     border: solid blue 2px;
     background:rgb(255, 255, 255);

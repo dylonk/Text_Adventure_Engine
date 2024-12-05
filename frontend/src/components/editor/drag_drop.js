@@ -1,7 +1,7 @@
     // drag_drop.js
     import { useVueFlow } from '@vue-flow/core'
     import { ref, watch } from 'vue'
-    import { useNodesStore } from './node_store.js' // Import the Pinia store
+    import { useNodesStore } from './nodes/node_store.js' // Import the Pinia store
 
     let id = 1
 

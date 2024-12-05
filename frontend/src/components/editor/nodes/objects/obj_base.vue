@@ -1,6 +1,6 @@
 <script setup>
 import { defineProps, watch, computed, ref } from 'vue';
-import { useNodesStore } from '../../node_store.js'
+import { useNodesStore } from '../node_store.js'
 import NodeBase from '../node_base.vue'
 import { DebugInfo } from '../node_assets/n-component-imports';
 
@@ -8,7 +8,9 @@ const props = defineProps({
   id: { default:-1},
   object_name: { type: String, default: 'UnnamedType' },
   stroke_color: { type: String, default: 'black' },
-  bg_color: { type: String, default: 'white' }
+  bg_color: { type: String, default: 'white' },
+  node_properties: { type: Array, default: () => [] },
+
 });
 
 const nodesStore = useNodesStore();

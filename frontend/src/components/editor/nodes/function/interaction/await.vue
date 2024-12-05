@@ -3,11 +3,11 @@ import { ref, defineProps } from 'vue';
 import NodeBase from '../../node_base.vue'
 import { Handle, Position } from '@vue-flow/core';
 import { SmallButton, HContainer, HandleIn, HandleOut } from '../../node_assets/n-component-imports.js';
-import node_colors from '../../node-colors';
+import node_colors from '../../node-colors.js';
 let response_id = 0;
 
-const ext_stroke_color= node_colors.prompt_stroke;
-const ext_bg_color= node_colors.prompt_bg;
+const ext_stroke_color= node_colors.await_stroke;
+const ext_bg_color= node_colors.await_bg;
 
 const responses = ref([
 ])
@@ -30,24 +30,14 @@ function autoResize() {
 
 
 <template>
-    <HandleIn/>
     <HandleOut/>
-
     <NodeBase
-        display_type="Prompt"
-        node_type="prompt"
+        display_type="Await"
+        node_type="await"
         :bg_color="ext_bg_color"
         :stroke_color="ext_stroke_color">
-        <textarea class="console_response_text" placeholder="Type your console output here."></textarea>
-        <div class="user_response_container" v-for="response in responses" :key="response.id">
-        <div class="response_title">Response {{ response.id }}</div>
+        <div class="response_title">User Input</div>
         <textarea class = "user_response_text" id="textbox" placeholder="Type the expected user input here."></textarea>
-        <HandleOut :handleID="response_id"/>
-        </div>
-        <HContainer spacing="5px" outerMargin="5px">
-        <SmallButton @click="addResponse()" button_text="+" :component_bg_color="ext_bg_color" :component_stroke_color="ext_stroke_color" style="margin-right:5px;"></SmallButton>
-        <SmallButton @click="removeResponse()" button_text="-" :component_bg_color="ext_bg_color" :component_stroke_color="ext_stroke_color"></SmallButton>
-        </HContainer>
     </NodeBase>
 
 </template>
@@ -63,6 +53,7 @@ function autoResize() {
         border-radius:3px;
     }
     .user_response_text{
+        margin-top:0px;
         resize:none;
         width:200px;
         height:auto;

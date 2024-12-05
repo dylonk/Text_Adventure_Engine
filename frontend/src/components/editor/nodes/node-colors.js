@@ -11,6 +11,8 @@ const node_colors = {
     pathway_stroke: "#2e1911",
     custom_bg: "#e6aaca",
     custom_stroke: "#110617",
+    await_bg: "#32a89b",
+    await_stroke: "#0c241d",
     unimplemented_bg:"#ff00f2",
     unimplemented_stroke:"black",
 };

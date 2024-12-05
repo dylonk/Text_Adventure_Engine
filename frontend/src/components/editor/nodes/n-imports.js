@@ -6,6 +6,7 @@ import ItemNode from './objects/item.vue'
 import NpcNode from './objects/npc.vue'
 import PathwayNode from './objects/pathway.vue'
 import CustomNode from './objects/custom.vue'
+import AwaitNode from './function/interaction/await.vue'
 import UnimplementedNode from './function/interaction/unimplemented.vue'
 
 
@@ -17,5 +18,6 @@ export{ //exports both tb and real nodes
     NpcNode,
     PathwayNode,
     CustomNode,
+    AwaitNode,
     UnimplementedNode,
 }
