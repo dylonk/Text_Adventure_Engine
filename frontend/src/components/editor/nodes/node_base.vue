@@ -6,7 +6,7 @@ import useDragAndDrop from '../drag_drop.js';
 import help_msg from './help_btn_msg';
 import ContextMenu from '../context_menu.vue'
 import { Position } from '@vue-flow/core';
-import { useNodesStore } from '../node_store.js'
+import { useNodesStore } from '../nodes/node_store.js'
 const nodesStore = useNodesStore()
 
 
