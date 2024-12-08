@@ -37,6 +37,7 @@ function autoResize() {
         display_type="Prompt"
         node_type="prompt"
         :bg_color="ext_bg_color"
+        :id="id"
         :stroke_color="ext_stroke_color">
         <textarea class="console_response_text" placeholder="Type your console output here."></textarea>
         <div class="user_response_container" v-for="response in responses" :key="response.id">

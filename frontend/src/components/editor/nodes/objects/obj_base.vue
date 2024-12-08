@@ -12,13 +12,14 @@ const props = defineProps({
 });
 
 const nodesStore = useNodesStore();
-const node = computed(() => nodesStore.getNode(Number(props.id)));
-const debug_message = "ID:"+props.id;
+const node = computed(() => nodesStore.getNode(Number(props.id)));//the node in question is always the one with the same id as the props.id
+const debug_message = "ID:"+props.id;   //whats displayed in the innermost part of the object on canvas
 </script>
 
-<template>
+<template>  
 <NodeBase :stroke_color="stroke_color"
-          :bg_color="bg_color">
+          :bg_color="bg_color"
+          :id="id">
 <div class="object-name-container">{{ node.object_name }}</div>
 <DebugInfo :info_text="debug_message"></DebugInfo>
 </NodeBase>

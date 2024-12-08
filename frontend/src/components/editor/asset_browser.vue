@@ -16,13 +16,20 @@ const contextMenuActions=ref()
 
 // Show the context menu on right-click
 function showContextMenu(event, nodeType, nodeId) {
-  contextMenuId.value = nodeId
+  console.log("Context Menu Triggered:", {
+    nodeId, 
+    nodeType, 
+    idType: typeof nodeId
+  });
+  
+  contextMenuId.value = nodeId //the id of the node
   contextMenuPosition.value = { x: event.clientX, y: event.clientY }
-  isContextMenuVisible.value = true
-  event.preventDefault()
+  isContextMenuVisible.value = true//what makes the menu visible
+  event.preventDefault()//prevents the default browser context menu from appearing
 
 
-    contextMenuActions.value = [
+  //if we're cool being a little messy, we could add a very long switch statement here that adds actions based off nodetype
+    contextMenuActions.value = [//these actions are what will be availible when anything is right clicked. 
       { label: 'Delete', action: () => nodesStore.deleteNode(nodeId) },
       { label: 'Rename', action: () => nodesStore.renameNode(nodeId) },//
       // Add more item-specific actions here.

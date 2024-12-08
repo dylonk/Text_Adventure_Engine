@@ -3,6 +3,7 @@
       v-if="visible"
       class="context-menu"
       :style="{ top: `${position.y}px`, left: `${position.x}px` }"
+      
     >
       <ul>
         <li v-for="(action, index) in actions" :key="index" @click="handleAction(action)">
@@ -15,7 +16,7 @@
   <script setup>
   import { ref } from 'vue'
 
-  const props = defineProps({
+  const props = defineProps({   //needs position and actions, the position is the position of the mouse
     position: { type: Object, required: true },
     actions: { type: Array, required: true },  // Accept actions as an array
   })

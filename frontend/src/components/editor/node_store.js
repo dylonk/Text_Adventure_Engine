@@ -25,7 +25,7 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store seperates
 
   // Add a node to the store
   const addNode = (node) => {
-    const nodeExists = [...nodes.objects, ...nodes.functions].find((n) => n.id === node.id);
+    const nodeExists = [...nodes.objects, ...nodes.functions].find((n) => n.id === Number(node.id));
     if (!node.id || nodeExists) {
       console.error(`Node with id ${node.id} already exists`);
       return;
@@ -41,7 +41,7 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store seperates
   };
 
 const renameNode = (id) => {
-    const nodeExists = [...nodes.objects].find((n) => n.id === id);
+    const nodeExists = [...nodes.objects].find((n) => n.id === Number(id));
     if (!nodeExists) {
       console.error(`Node with id ${id} does not exist`);
       return;
@@ -55,10 +55,17 @@ const renameNode = (id) => {
 
   // Delete a node by ID
   const deleteNode = (id) => {
-    console.log("deleting node from node store id:",id);
-    nodes.objects = nodes.objects.filter((node)=>node.id !== id);
-    nodes.functions = nodes.functions.filter((node) => node.id !== id);
-  };
+
+
+    const nodeExists = [...nodes.objects, ...nodes.functions].find((n) => n.id === Number(id));
+    if (!nodeExists) {
+      console.error(`Node with id ${id} does not exist`);
+      return;
+    }
+       console.log(`Node with id ${id} exists, deleting...`);
+      nodes.objects = nodes.objects.filter((node)=>node.id !== Number(id));
+      nodes.functions = nodes.functions.filter((node) => node.id !== Number(id));
+    };
 
 const getNode = (id) => {
   console.log("getNode called on id", id)

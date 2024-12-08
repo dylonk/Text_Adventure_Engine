@@ -6,10 +6,61 @@ import useDragAndDrop from '../drag_drop.js';
 import help_msg from './help_btn_msg';
 import ContextMenu from '../context_menu.vue'
 import { Position } from '@vue-flow/core';
+import { useNodesStore } from '../node_store.js'
+const nodesStore = useNodesStore()
+
+
+
+//contextmenu stuff
+const isContextMenuVisible = ref(false)
+const contextMenuId = ref(null)
+const contextMenuPosition = ref({ x: 0, y: 0 })
+const contextMenuActions=ref()
+
+
+// Show the context menu on right-click
+function showContextMenu(event, nodeType, nodeId) {
+    console.log("Context Menu Triggered:", {
+    nodeId, 
+    nodeType, 
+    idType: typeof nodeId
+  });
+  contextMenuId.value = nodeId //the id of the node
+  contextMenuPosition.value = { x: event.clientX, y: event.clientY }
+  isContextMenuVisible.value = true//what makes the menu visible
+  event.preventDefault()//prevents the default browser context menu from appearing
+  //if we're cool being a little messy, we could add a very long switch statement here that adds actions for specific nodes.
+    contextMenuActions.value = [//these actions are what will be availible when anything is right clicked. 
+      { label: 'Delete', action: () => nodesStore.deleteNode(nodeId) },
+      { label: 'Rename', action: () => nodesStore.renameNode(nodeId) },//
+      // Add more item-specific actions here.
+    ]
+  }
+
+// Handle action for context menu
+function handleContextMenuAction(action) {
+  action.action()
+  isContextMenuVisible.value = false
+}
+
+// Close the context menu
+function closeContextMenu() {
+  isContextMenuVisible.value = false
+}
+
+
+
+
+
+
+
+
+
+
 
 
 const props = defineProps({
-    id:0,
+    id:{ default:-1},
     node_type:String, //NODE TYPE IS EXCLUSIVELY FOR COMMUNICATING, should not appear in finished product
     display_type: { type: String, default: 'UnnamedType' },
     bg_color: { type: String, default: '#FFF' },
@@ -48,7 +99,8 @@ if(props.containHelp){
 </script>
 
 <template>
-    <div class="node_container" :draggable="true" @dragstart="onDragStart($event, props.node_type)">
+    <div class="node_container" :draggable="true" @dragstart="onDragStart($event, props.node_type)"
+        @contextmenu="showContextMenu($event, props.node_type, props.id)">
         <div class="node_title" :style="{ 'background-image': 'linear-gradient(180deg,' + bg_color + ',' + stroke_color + ')' }">
         <HContainer outerMargin="0px">
         <div>
@@ -59,6 +111,13 @@ if(props.containHelp){
         </HContainer>
         </div>
         <Tooltip v-if="isDisplayTooltip" :tooltip_info="tooltip"></Tooltip>
+        <ContextMenu
+      v-if="isContextMenuVisible"
+      :position="contextMenuPosition"
+      :actions="contextMenuActions"
+      @action="handleContextMenuAction"
+      @hide-context-menu="closeContextMenu"
+    />
         <slot></slot>
     </div>
 </template>
