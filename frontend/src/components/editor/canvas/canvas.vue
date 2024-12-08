@@ -6,15 +6,19 @@ import { VueFlow, useVueFlow } from '@vue-flow/core'
 import CanvasBackground from './background.vue'
 import CanvasControls from './controls.vue'
 import useDragAndDrop from '../drag_drop.js';
-import { useNodesStore } from "../node_store.js"
+import { useNodesStore } from "../nodes/node_store.js"
 
-// allll da fucking node imports REGISTER NODES HERE
-import { PromptNode, RoomNode, ItemNode, UnimplementedNode } from '../nodes/n-imports.js';
+// NEWNODEREQ
+import { PromptNode, RoomNode, ItemNode, NpcNode, PathwayNode, UnimplementedNode, CustomNode, AwaitNode} from '../nodes/n-imports';
 
     const nodeTypes = {
         prompt: markRaw(PromptNode),
         room: markRaw(RoomNode),
         item: markRaw(ItemNode),
+        npc: markRaw(NpcNode),
+        pathway: markRaw(PathwayNode),
+        custom: markRaw(CustomNode),
+        await: markRaw(AwaitNode),
         unimplemented: markRaw(UnimplementedNode)
     }
 

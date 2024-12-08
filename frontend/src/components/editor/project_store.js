@@ -1,6 +1,6 @@
   import { defineStore } from 'pinia';
   import { ref, computed } from 'vue';
-  import { useNodesStore } from './node_store.js';  //imports from node store
+  import { useNodesStore } from './nodes/node_store.js';  //imports from node store
   import { v4 as uuidv4 } from 'uuid';
 
   export const useProjectStore = defineStore('project', () => {
@@ -50,7 +50,7 @@
       const allNodes = nodesStore.getAllNodes();
 
       // Prepare project data
-      const projectData = {     
+      const projectData = {
         id: projectId.value,
         userId: userid.value,
         name: projectName.value,

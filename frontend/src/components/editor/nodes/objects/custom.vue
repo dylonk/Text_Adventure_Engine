@@ -8,10 +8,10 @@ import DebugInfo from '../node_assets/debug_info.vue';
 </script>
 
 <template>
-  <ObjBase display_type="Item"
-          node_type="item"
-          :bg_color="node_colors.item_bg"
-          :stroke_color="node_colors.item_stroke"
+  <ObjBase display_type="Custom"
+          node_type="custom"
+          :bg_color="node_colors.custom_bg"
+          :stroke_color="node_colors.custom_stroke"
           >
   </ObjBase>
 </template>
