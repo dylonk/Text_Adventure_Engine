@@ -1,9 +1,10 @@
 <script setup>
-import { ref, defineProps } from 'vue';
+import { ref, defineProps, computed } from 'vue';
 import NodeBase from '../../node_base.vue'
 import { Handle, Position } from '@vue-flow/core';
 import { SmallButton, HContainer, HandleIn, HandleOut } from '../../node_assets/n-component-imports.js';
 import node_colors from '../../node-colors';
+import FunctionBase from '../func_base.vue'
 let response_id = 0;
 
 const ext_stroke_color= node_colors.prompt_stroke;
@@ -12,6 +13,9 @@ const ext_bg_color= node_colors.prompt_bg;
 const responses = ref([
 ])
 
+const props = defineProps({
+    id: { default:-1},
+})
 function addResponse(){
     responses.value.push({id:response_id++, text:""})
 }
@@ -26,18 +30,21 @@ function autoResize() {
     this.style.height = 'auto';
     this.style.height = this.scrollHeight + 'px';
 }
+
+const validHandleID = computed(() => (props.id !== -1 ? props.id : null));//checks if propsvalid
+
 </script>
 
 
 <template>
-    <HandleIn/>
-    <HandleOut/>
+<HandleIn v-if="validHandleID" :handleID="validHandleID" />
+<HandleOut v-if="validHandleID" :handleID="validHandleID" />
 
-    <NodeBase
+
+    <FunctionBase
         display_type="Prompt"
         node_type="prompt"
         :bg_color="ext_bg_color"
-        :id="id"
         :stroke_color="ext_stroke_color">
         <textarea class="console_response_text" placeholder="Type your console output here."></textarea>
         <div class="user_response_container" v-for="response in responses" :key="response.id">
@@ -49,7 +56,9 @@ function autoResize() {
         <SmallButton @click="addResponse()" button_text="+" :component_bg_color="ext_bg_color" :component_stroke_color="ext_stroke_color" style="margin-right:5px;"></SmallButton>
         <SmallButton @click="removeResponse()" button_text="-" :component_bg_color="ext_bg_color" :component_stroke_color="ext_stroke_color"></SmallButton>
         </HContainer>
-    </NodeBase>
+    </FunctionBase>
+
+
 
 </template>
 

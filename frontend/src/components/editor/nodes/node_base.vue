@@ -73,6 +73,14 @@ const props = defineProps({
     Position: {type: Object, default: () => ({ x: 0, y: 0 })}, //position should be a prop, becuse we're gonna have to retrieve this stuff for project loading
     containHelp: false, // Allows for the help button to appear on the topbar of a node. Used for TBNodes
 })
+
+console.log('NodeBase received:', {//nodebase init for testing
+  id: props.id, 
+  type: props.node_type, 
+  idType: typeof props.id
+});
+
+
 let isDisplayTooltip = ref(false);
 
 function helpToggle(){

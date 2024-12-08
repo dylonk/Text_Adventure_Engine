@@ -6,6 +6,7 @@ const props = defineProps({
     handleID:0,
 })
 
+
 </script>
 <template>
     <Handle :id="'in'+handleID" class="vue-flow__handle" type="target" :position="Position.Left" />

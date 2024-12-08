@@ -4,7 +4,8 @@ import { ref, defineProps, computed } from 'vue';
 const props = defineProps({
     handleID:0
 })
-console.log(props.handleID);
+
+
 </script>
 
 

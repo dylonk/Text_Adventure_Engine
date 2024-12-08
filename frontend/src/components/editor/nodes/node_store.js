@@ -26,6 +26,11 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store seperates
   // Add a node to the store
   const addNode = (node) => {
     const nodeExists = [...nodes.objects, ...nodes.functions].find((n) => n.id === Number(node.id));
+    console.log("Adding node:", {
+      id: node.id,
+      type: node.type,
+      idType: typeof node.id
+    });
     if (!node.id || nodeExists) {
       console.error(`Node with id ${node.id} already exists`);
       return;
@@ -35,8 +40,9 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store seperates
       incrementCount(node.type);
       node.object_name = node.type + object_count[node.type];
       nodes.objects.push(node);
-    } else {
+    } else {  //if the node is a function
       nodes.functions.push(node);
+      console.log("function added with id", node.id);
     }
   };
 

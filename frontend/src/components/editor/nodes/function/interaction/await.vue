@@ -4,6 +4,7 @@ import NodeBase from '../../node_base.vue'
 import { Handle, Position } from '@vue-flow/core';
 import { SmallButton, HContainer, HandleIn, HandleOut } from '../../node_assets/n-component-imports.js';
 import node_colors from '../../node-colors.js';
+import FunctionBase from '../func_base.vue'
 let response_id = 0;
 
 const ext_stroke_color= node_colors.await_stroke;
@@ -31,14 +32,15 @@ function autoResize() {
 
 <template>
     <HandleOut/>
-    <NodeBase
+    <FunctionBase
         display_type="Await"
+        :id="id||-10"
         node_type="await"
         :bg_color="ext_bg_color"
         :stroke_color="ext_stroke_color">
         <div class="response_title">User Input</div>
         <textarea class = "user_response_text" id="textbox" placeholder="Type the expected user input here."></textarea>
-    </NodeBase>
+    </FunctionBase>
 
 </template>
 

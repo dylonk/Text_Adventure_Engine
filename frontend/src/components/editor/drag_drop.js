@@ -81,6 +81,7 @@
             height: 0,
             parentId: null,
           }
+          console.log('Passing node with ID:', newNode.id);
           nodesStore.addNode(newNode)
           addNodes(newNode)
           console.log("new node added!")
