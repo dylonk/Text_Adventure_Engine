@@ -31,21 +31,22 @@ function autoResize() {
     this.style.height = this.scrollHeight + 'px';
 }
 
-const validHandleID = computed(() => (props.id !== -1 ? props.id : null));//checks if propsvalid
 
 </script>
 
 
 <template>
-<HandleIn v-if="validHandleID" :handleID="validHandleID" />
-<HandleOut v-if="validHandleID" :handleID="validHandleID" />
+<HandleIn/>
+<HandleOut/>
 
 
     <FunctionBase
         display_type="Prompt"
         node_type="prompt"
         :bg_color="ext_bg_color"
+        :id="id||-10"
         :stroke_color="ext_stroke_color">
+        
         <textarea class="console_response_text" placeholder="Type your console output here."></textarea>
         <div class="user_response_container" v-for="response in responses" :key="response.id">
         <div class="response_title">Response {{ response.id }}</div>

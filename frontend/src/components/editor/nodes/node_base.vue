@@ -7,6 +7,13 @@ import help_msg from './help_btn_msg';
 import ContextMenu from '../context_menu.vue'
 import { Position } from '@vue-flow/core';
 import { useNodesStore } from '../nodes/node_store.js'
+import { useVueFlow } from '@vue-flow/core';
+
+
+const { screenToFlowCoordinate } = useVueFlow()
+
+
+
 const nodesStore = useNodesStore()
 
 
@@ -25,8 +32,13 @@ function showContextMenu(event, nodeType, nodeId) {
     nodeType, 
     idType: typeof nodeId
   });
+
   contextMenuId.value = nodeId //the id of the node
-  contextMenuPosition.value = { x: event.clientX, y: event.clientY }
+  const { realx, realy } = screenToFlowCoordinate({
+  realx: event.clientX,
+  realy: event.clientY,
+})
+  contextMenuPosition.value = { x: realx, y: realy }; // Update reactive state  console.log("context menu position is ",contextMenuPosition.value)
   isContextMenuVisible.value = true//what makes the menu visible
   event.preventDefault()//prevents the default browser context menu from appearing
   //if we're cool being a little messy, we could add a very long switch statement here that adds actions for specific nodes.
