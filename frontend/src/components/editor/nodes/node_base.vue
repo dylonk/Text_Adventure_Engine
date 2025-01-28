@@ -11,7 +11,7 @@ import { useVueFlow } from '@vue-flow/core';
 
 
 const { screenToFlowCoordinate } = useVueFlow()
-
+Position
 
 
 const nodesStore = useNodesStore()
@@ -83,6 +83,7 @@ const props = defineProps({
     //associated_function: String, //For when we actually start programming the script stuff
     //function_arguments: {type: Array, default: () => []},
     Position: {type: Object, default: () => ({ x: 0, y: 0 })}, //position should be a prop, becuse we're gonna have to retrieve this stuff for project loading
+    
     containHelp: false, // Allows for the help button to appear on the topbar of a node. Used for TBNodes
 })
 

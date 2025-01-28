@@ -8,6 +8,7 @@ import CanvasControls from './controls.vue'
 import useDragAndDrop from '../drag_drop.js';
 import { useNodesStore } from "../nodes/node_store.js"
 
+
 // NEWNODEREQ
 import { PromptNode, RoomNode, ItemNode, NpcNode, PathwayNode, UnimplementedNode, CustomNode, AwaitNode} from '../nodes/n-imports';
 
@@ -26,7 +27,7 @@ import { PromptNode, RoomNode, ItemNode, NpcNode, PathwayNode, UnimplementedNode
 const nodesStore = useNodesStore();
 
 // Make nodes reactive using computed
-const canvasNodes = computed(() => nodesStore.getAllNodes());
+//const canvasNodes = computed(() => nodesStore.getAllNodes());
 
 
 
@@ -39,7 +40,14 @@ onConnect(addEdges)
 
 <template>
     <div class="canvas_container" @drop="onDrop" >
-        <VueFlow :nodes="canvasNodes" :node-types="nodeTypes" @dragover="onDragOver" @dragleave="onDragLeave" fit-view-on-init>
+        <VueFlow 
+        :nodes=nodesStore.allNodes
+        :node-types="nodeTypes" 
+        :key=nodesStore.allNodes.length
+        class="pinia-flow"
+        @dragover="onDragOver" 
+        @dragleave="onDragLeave" 
+        fit-view-on-init>
 
             <CanvasBackground        :style="{
           backgroundColor: isDragOver ? '#e7f3ff' : 'transparent',

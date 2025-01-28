@@ -14,8 +14,10 @@ const responses = ref([
 ])
 
 
+
 const props = defineProps({ //this fixes the handleout ID error! by explicitly receiving the id as a prop, the id is correct from the moment of initialization! always define props!
   id: { default: -1 }, // Receives the ID from the parent
+  Position: { type: Object, default: () => ({ x: 0, y: 0 }) },
 });
 
 

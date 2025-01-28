@@ -89,6 +89,7 @@
         else {
           // Move an existing node
           const nodeId = draggedType.value // assuming draggedType.value is the id of the node being moved
+          console.log('Moving node with ID:', nodeId);
           updateNode(nodeId, (node) => ({
             position: pos,
           }))

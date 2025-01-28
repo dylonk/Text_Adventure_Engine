@@ -1,11 +1,19 @@
 import { defineStore } from 'pinia';
-import { reactive } from 'vue';
+import { reactive,computed } from 'vue';
+import { useVueFlow } from '@vue-flow/core'
+const { setNodes } = useVueFlow(); // Grab the setNodes method from VueFlow
+const vueflowInstance = useVueFlow(); 
+import { toRaw } from 'vue';
+const { removeNodes } = useVueFlow()
+
+
 
 export const useNodesStore = defineStore('nodes', () => {//nodes store seperates nodes by type
   const nodes = reactive({
     objects: [],
     functions: [],
   });
+  const allNodes = computed(() => [...nodes.objects, ...nodes.functions]);
 
   const object_count = reactive({ //For making unique object names
     total:0, //just using total for now reallym but if you want to make unique ones go ahead im lazy
@@ -25,6 +33,7 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store seperates
 
   // Add a node to the store
   const addNode = (node) => {
+    console.log("Before adding:", nodes.objects);
     const nodeExists = [...nodes.objects, ...nodes.functions].find((n) => n.id === Number(node.id));
     console.log("Adding node:", {
       id: node.id,
@@ -40,10 +49,14 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store seperates
       incrementCount(node.type);
       node.object_name = node.type + object_count[node.type];
       nodes.objects.push(node);
+      console.log("After adding:", nodes.objects);
+
     } else {  //if the node is a function
       nodes.functions.push(node);
       console.log("function added with id", node.id);
+
     }
+
   };
 
 const renameNode = (id) => {
@@ -53,26 +66,41 @@ const renameNode = (id) => {
       return;
     }
     const newName = prompt(`Enter a new name for node ${id}:`); // !!NEED TO IMPLEMENT CHECK FOR OBJECT NAME UNIQUENESS
-    if (newName !== null) {
+    if (newName !== null) { 
       nodeExists.object_name = newName;
     }
   };
 
+//delete a node by id
+const deleteNode = (id) => {
+      removeNodes([id]);
+       const nodeId = Number(id);
+    
+      // Check if the node exists in objects
+      const nodeInObjects = nodes.objects.find((node) => node.id === nodeId);
+      if (nodeInObjects) {
+        console.log(`Node with id ${id} exists in objects, deleting...`);
+        console.log("Before:", nodes.objects);
+        nodes.objects = nodes.objects.filter((node) => node.id !== nodeId);
+        console.log("After:", nodes.objects);
+        return; 
+      }
+    
+      // Check if the node exists in functions
+      const nodeInFunctions = nodes.functions.find((node) => node.id === nodeId);
+      if (nodeInFunctions) {
+        console.log(`Node with id ${id} exists in functions, deleting...`);
+        nodes.functions = nodes.functions.filter((node) => node.id !== nodeId);
 
-  // Delete a node by ID
-  const deleteNode = (id) => {
-
-
-    const nodeExists = [...nodes.objects, ...nodes.functions].find((n) => n.id === Number(id));
-    if (!nodeExists) {
+    
+        return;
+      }
+    
+      // If the node is not found in either store
       console.error(`Node with id ${id} does not exist`);
-      return;
-    }
-       console.log(`Node with id ${id} exists, deleting...`);
-      nodes.objects = nodes.objects.filter((node)=>node.id !== Number(id));
-      nodes.functions = nodes.functions.filter((node) => node.id !== Number(id));
-    };
 
+      return; 
+    }; 
 const getNode = (id) => {
   console.log("getNode called on id", id)
     const nodeExists = [...nodes.objects, ...nodes.functions].find((n) => n.id === id);
@@ -90,12 +118,10 @@ const getNode = (id) => {
 }
   // Get all nodes for canvas
   const getAllNodes = () => {
-    return [...nodes.objects, ...nodes.functions];
+    console.log("getAllNodes called");
+    console.log([...nodes.objects, ...nodes.functions]);
+   return [...nodes.objects, ...nodes.functions];
   };
-// // Optional: Function to get all items in a room
-//   const getItemsInRoom = (roomId) => {
-//     return nodes.items.filter(item => item.parentId === roomId)
-//   }
 
   return {//exporting functions
     nodes,
@@ -104,6 +130,7 @@ const getNode = (id) => {
     getAllNodes,
     // getItemsInRoom,
     renameNode,
-    getNode
+    getNode,
+    allNodes
   };
 });
