@@ -1,6 +1,5 @@
 import { defineStore } from "pinia";
 import { reactive, computed } from "vue";
-import { useVueFlow } from "@vue-flow/core";
 
 export const useNodesStore = defineStore("nodes", () => {
   //nodes store seperates nodes by type
