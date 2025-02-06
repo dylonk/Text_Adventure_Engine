@@ -83,18 +83,17 @@
           }
           console.log('Passing node with ID:', newNode.id);
           nodesStore.addNode(newNode)
-          addNodes(newNode)
           console.log("new node added!")
         }
-        else {
-          // Move an existing node
-          const nodeId = draggedType.value // assuming draggedType.value is the id of the node being moved
-          console.log('Moving node with ID:', nodeId);
-          updateNode(nodeId, (node) => ({
-            position: pos,
-          }))
-        }
-      }
+/*           else {
+            // Move an existing node
+            const nodeId = draggedType.value // assuming draggedType.value is the id of the node being moved
+            console.log('Moving node with ID:', nodeId);
+            updateNode(nodeId, (node) => ({
+              position: pos,
+            }))
+          } */
+      } 
 
     return {
         draggedType,

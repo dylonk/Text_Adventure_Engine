@@ -6,7 +6,7 @@ import NodeBase from './node_base.vue'
 import { SmallButton } from './node_assets/n-component-imports.js';
 
 
-const props = defineProps({ //needs the tb_node_type prop so drag and drop knows whats up
+const props = defineProps({ 
     node_type:String,
     display_type:String,
     bg_color:String,
@@ -18,11 +18,15 @@ const { onDragStart } = useDragAndDrop();
 <template>
     <div class="tb_node_container" :draggable=True @dragstart="onDragStart($event, props.node_type, true)" :style="{'background': bg_color}" >
         <NodeBase
-            :node_type="node_type"
-            :display_type="display_type"
-            :bg_color="bg_color"
-            :stroke_color="stroke_color"
-            :containHelp="'True'"
+        :id="id" 
+        :type="type"
+        :position="position" 
+        :data="{
+            bg_color,
+            stroke_color,
+            display_type,
+            containHelp: true, // Directly set to `true` instead of passing as a string
+    }"
             >
         </NodeBase>
     </div>

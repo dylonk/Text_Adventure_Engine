@@ -1,7 +1,5 @@
 <script setup>
 import { ref, defineProps } from 'vue';
-import NodeBase from '../../node_base.vue'
-import { Handle, Position } from '@vue-flow/core';
 import { SmallButton, HContainer, HandleIn, HandleOut } from '../../node_assets/n-component-imports.js';
 import node_colors from '../../node-colors.js';
 import FunctionBase from '../func_base.vue'
@@ -41,9 +39,10 @@ function autoResize() {
 <template>
     <HandleOut/>
     <FunctionBase
+        type="await"
         display_type="Await"
         :id="id||-10"
-        node_type="await"
+        :type="await"
         :bg_color="ext_bg_color"
         :stroke_color="ext_stroke_color">
         <div class="response_title">User Input</div>

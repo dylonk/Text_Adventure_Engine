@@ -30,7 +30,6 @@ function showContextMenu(event, nodeType, nodeId) {
     console.log("Context Menu Triggered:", {
     nodeId, 
     nodeType, 
-    idType: typeof nodeId
   });
 
   contextMenuId.value = nodeId //the id of the node
@@ -72,17 +71,19 @@ function closeContextMenu() {
 
 
 const props = defineProps({
-    id:{ default:-1},
+    id:{ default:-10},
+    type: { type: String, default: 'UnnamedType' },
     node_type:String, //NODE TYPE IS EXCLUSIVELY FOR COMMUNICATING, should not appear in finished product
     display_type: { type: String, default: 'UnnamedType' },
     bg_color: { type: String, default: '#FFF' },
     stroke_color: { type: String, default: '#000'},
-    //children: { type: Array, default: () => [] }, // Define items as an array prop with a default empty array
-    // Moving these guys to their respective places
-    //node_properties: { type: Array, default: () => [] },
-    //associated_function: String, //For when we actually start programming the script stuff
-    //function_arguments: {type: Array, default: () => []},
     Position: {type: Object, default: () => ({ x: 0, y: 0 })}, //position should be a prop, becuse we're gonna have to retrieve this stuff for project loading
+
+    //THIS IS WHERE ALL OUR NODE DATA BESIDES POSTION, TYPE AND ID SHOULD ACTUALLY GO
+    data: {
+    type: Object,
+    required: true,
+  },
     
     containHelp: false, // Allows for the help button to appear on the topbar of a node. Used for TBNodes
 })
@@ -121,7 +122,7 @@ if(props.containHelp){
 
 <template>
     <div class="node_container" :draggable="true" @dragstart="onDragStart($event, props.node_type)"
-        @contextmenu="showContextMenu($event, props.node_type, props.id)">
+        @contextmenu="showContextMenu($event, props.type, props.id)">
         <div class="node_title" :style="{ 'background-image': 'linear-gradient(180deg,' + bg_color + ',' + stroke_color + ')' }">
         <HContainer outerMargin="0px">
         <div>

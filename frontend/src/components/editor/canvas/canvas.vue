@@ -2,7 +2,7 @@
 <!---Each canvas is a component of an "Object". The world editor is a canvas that is a component of the global object-->
 <script setup>
 import { ref, markRaw,computed, watch } from 'vue'
-import { VueFlow, useVueFlow } from '@vue-flow/core'
+import { VueFlow, applyNodeChanges, applyEdgeChanges } from '@vue-flow/core';
 import CanvasBackground from './background.vue'
 import CanvasControls from './controls.vue'
 import useDragAndDrop from '../drag_drop.js';
@@ -26,27 +26,44 @@ import { PromptNode, RoomNode, ItemNode, NpcNode, PathwayNode, UnimplementedNode
 // Pinia store
 const nodesStore = useNodesStore();
 
-// Make nodes reactive using computed
-//const canvasNodes = computed(() => nodesStore.getAllNodes());
+const nodes = ref(nodesStore.nodes); // Local nodes array
+const edges = ref([]); // Local edges array
 
+watch(
+  () => nodesStore.nodes,
+  (newNodes) => {
+    nodes.value = newNodes;
+  },
+  { deep: true }
+);
 
+watch(
+  () => nodesStore.edges,
+  (newEdges) => {
+    edges.value = newEdges;
+  },
+  { deep: true }
+);
 
-const { onConnect, addEdges } = useVueFlow()
+//const { onConnect, addEdges } = useVueFlow()
 const { onDragOver, onDrop, onDragLeave, isDragOver } = useDragAndDrop()
-const edges = ref([])
-onConnect(addEdges)
+//const edges = ref([])
+//onConnect(addEdges)
 
 </script>
 
 <template>
     <div class="canvas_container" @drop="onDrop" >
         <VueFlow 
-        :nodes=nodesStore.allNodes
+        :apply-default="false"
+        v-model:nodes="nodes"
+        v-model:edges="edges"
         :node-types="nodeTypes" 
-        :key=nodesStore.allNodes.length
         class="pinia-flow"
         @dragover="onDragOver" 
         @dragleave="onDragLeave" 
+        @nodes-change="changes => applyNodeChanges(changes, nodes)"
+        @edges-change="changes => applyEdgeChanges(changes, edges)"
         fit-view-on-init>
 
             <CanvasBackground        :style="{

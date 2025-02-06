@@ -9,12 +9,10 @@ const props = defineProps({
   stroke_color: { type: String, default: 'black' },
   bg_color: { type: String, default: 'white' },
   node_properties: { type: Array, default: () => [] },
+  type: { type: String, default: 'UnnamedType' },
 
 });
 
-const nodesStore = useNodesStore();
-const node = computed(() => nodesStore.getNode(Number(props.id)));//the node in question is always the one with the same id as the props.id
-//the current bug is that the id really does just init to -1. It's not passed down, unlike with objects
 const debug_message = "ID:"+props.id;   //whats displayed in the innermost part of the object on canvas
 
 watch(() => props.id, (newId) => {  //this watcher statement watches 
@@ -26,13 +24,17 @@ watch(() => props.id, (newId) => {  //this watcher statement watches
 
 
 </script>
-
 <template>  
-<NodeBase :stroke_color="stroke_color"
-          :bg_color="bg_color"
-          :node_type="node_type"
-          :id="id"
-          :display_type="display_type">
+<NodeBase 
+:id="id"
+:type="type"
+:data="{    //now all the data is properly in the data object
+  bg_color,
+  stroke_color,
+  display_type, 
+  containHelp, 
+  node_properties,
+}">
 <DebugInfo :info_text="debug_message"></DebugInfo>
 
 <slot></slot>

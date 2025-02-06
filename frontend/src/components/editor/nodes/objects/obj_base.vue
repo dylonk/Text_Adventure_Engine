@@ -4,29 +4,37 @@ import { useNodesStore } from '../node_store.js'
 import NodeBase from '../node_base.vue'
 import { DebugInfo } from '../node_assets/n-component-imports';
 
-const props = defineProps({
+const props = defineProps({   //a lot of these are constructed into a data object and passed to node_base as seen below
   id: { default:-1},
-  object_name: { type: String, default: 'UnnamedType' },
+  object_name: { type: String, default: 'Unnamed object' },
   stroke_color: { type: String, default: 'black' },
   bg_color: { type: String, default: 'white' },
   node_properties: { type: Array, default: () => [] },
 
 });
 
-const nodesStore = useNodesStore();
-const node = computed(() => nodesStore.getNode(Number(props.id)));//the node in question is always the one with the same id as the props.id
+
 const debug_message = "ID:"+props.id;   //whats displayed in the innermost part of the object on canvas
 </script>
 
-<template>  
-<NodeBase :stroke_color="stroke_color"
-          :bg_color="bg_color"
-          :id="id">
-<div class="object-name-container">{{ node.object_name }}</div>
-
-<DebugInfo :info_text="debug_message"></DebugInfo>
-</NodeBase>
+<template>
+  <NodeBase
+    :id="id"
+    :data="{    //now all the data is properly in the data object
+      bg_color,
+      object_name,
+      stroke_color,
+      display_type, 
+      containHelp, 
+      node_properties,
+    }"
+  >
+    <div class="object-name-container">{{ object_name }}</div>
+    <DebugInfo :info_text="debug_message"></DebugInfo>
+  </NodeBase>
 </template>
+
+
 
 <style scoped>
 .object-name-container{
