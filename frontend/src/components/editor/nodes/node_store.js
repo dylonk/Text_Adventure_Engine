@@ -55,7 +55,8 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
   };
 
 const renameNode = (id) => {
-    const nodeExists = nodes.value.find((n) => n.id === Number(id));
+    const nodeExists = nodes.value.find((n) => n.id === (id));
+    console.log("this node exists at", nodeExists.position);
     if (!nodeExists) {
       console.error(`Node with id ${id} does not exist`);
       return;
@@ -69,7 +70,7 @@ const renameNode = (id) => {
 //delete a node by id
 const deleteNode = (id) => {
       //removeNodes([id]);
-       const nodeId = Number(id);
+       const nodeId = (id);
     
       // Check if the node exists
       const nodeInObjects = nodes.value.find((node) => node.id === nodeId);

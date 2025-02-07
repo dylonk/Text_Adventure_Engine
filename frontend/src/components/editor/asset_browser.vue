@@ -29,7 +29,8 @@ function showContextMenu(event, nodeType, nodeId) {
     nodeId, 
     nodeType, 
   });
-  
+  console.log("all nodes: ",nodesStore.nodes)
+
   contextMenuId.value = nodeId //the id of the node
   contextMenuPosition.value = { x: event.clientX, y: event.clientY }
   isContextMenuVisible.value = true//what makes the menu visible

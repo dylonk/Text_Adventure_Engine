@@ -83,6 +83,7 @@ const props = defineProps({
     data: {
     type: Object,
     required: true,
+
   },
     
     containHelp: false, // Allows for the help button to appear on the topbar of a node. Used for TBNodes

@@ -26,24 +26,8 @@ import { PromptNode, RoomNode, ItemNode, NpcNode, PathwayNode, UnimplementedNode
 // Pinia store
 const nodesStore = useNodesStore();
 
-const nodes = ref(nodesStore.nodes); // Local nodes array
-const edges = ref([]); // Local edges array
 
-watch(
-  () => nodesStore.nodes,
-  (newNodes) => {
-    nodes.value = newNodes;
-  },
-  { deep: true }
-);
 
-watch(
-  () => nodesStore.edges,
-  (newEdges) => {
-    edges.value = newEdges;
-  },
-  { deep: true }
-);
 
 //const { onConnect, addEdges } = useVueFlow()
 const { onDragOver, onDrop, onDragLeave, isDragOver } = useDragAndDrop()
@@ -56,14 +40,13 @@ const { onDragOver, onDrop, onDragLeave, isDragOver } = useDragAndDrop()
     <div class="canvas_container" @drop="onDrop" >
         <VueFlow 
         :apply-default="false"
-        v-model:nodes="nodes"
-        v-model:edges="edges"
+        v-model:nodes="nodesStore.nodes"
+        v-model:edges="nodesStore.edges"
         :node-types="nodeTypes" 
         class="pinia-flow"
         @dragover="onDragOver" 
         @dragleave="onDragLeave" 
-        @nodes-change="changes => applyNodeChanges(changes, nodes)"
-        @edges-change="changes => applyEdgeChanges(changes, edges)"
+        @nodes-change="changes => applyNodeChanges(changes  , nodesStore.nodes)"
         fit-view-on-init>
 
             <CanvasBackground        :style="{
