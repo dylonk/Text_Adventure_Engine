@@ -29,7 +29,7 @@
 
 .editor-container{
     width:100vw;
-    height:auto;
+    height:100vh;
     max-height: 100vh !important;
     display:flex;
     flex-direction:row;

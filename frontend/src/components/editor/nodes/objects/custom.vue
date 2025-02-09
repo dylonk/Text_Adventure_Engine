@@ -9,9 +9,9 @@ import DebugInfo from '../node_assets/debug_info.vue';
 
 <template>
   <ObjBase display_type="Custom"
-          node_type="custom"
+          type="custom"
           :bg_color="node_colors.custom_bg"
-          :stroke_color="node_colors.custom_stroke"
+          :fg_color="node_colors.custom_fg"
           >
   </ObjBase>
 </template>

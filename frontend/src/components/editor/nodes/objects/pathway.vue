@@ -9,7 +9,7 @@ import DebugInfo from '../node_assets/debug_info.vue';
 
 <template>
   <ObjBase display_type="Pathway"
-          node_type="pathway"
+          type="pathway"
           :bg_color="node_colors.pathway_bg"
           :stroke_color="node_colors.pathway_stroke"
           >

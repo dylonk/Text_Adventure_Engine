@@ -9,7 +9,7 @@ import DebugInfo from '../node_assets/debug_info.vue';
 
 <template>
   <ObjBase display_type="Item"
-          node_type="item"
+          type="item"
           :bg_color="node_colors.item_bg"
           :stroke_color="node_colors.item_stroke"
           >

@@ -9,7 +9,7 @@ import DebugInfo from '../node_assets/debug_info.vue';
 
 <template>
   <ObjBase display_type="NPC"
-          node_type="npc"
+          type="npc"
           :bg_color="node_colors.npc_bg"
           :stroke_color="node_colors.npc_stroke"
           >

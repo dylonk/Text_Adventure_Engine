@@ -6,22 +6,21 @@ import NodeBase from './node_base.vue'
 
 
 const props = defineProps({ 
-    node_type:String,
+    type:String,
     display_type:String,
     bg_color:String,
-    stroke_color:String,
+    fg_color:String,
 })
 const { onDragStart } = useDragAndDrop();
 </script>
 
 <template>
-    <div class="tb_node_container" :draggable=True @dragstart="onDragStart($event, props.node_type, true)" :style="{'background': bg_color}" >
+    <div class="tb_node_container" :draggable=True @dragstart="onDragStart($event, props.type, true)" :style="{'background': bg_color}" >
         <NodeBase
-        :node_type="node_type"
-        :position="position" 
+        :type="type"
         :data="{
             bg_color,
-            stroke_color,
+            fg_color,
             display_type,
             containHelp: true, // Directly set to `true` instead of passing as a string
     }"

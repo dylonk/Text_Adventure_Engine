@@ -4,7 +4,7 @@ import node_colors from '../../node-colors';
 </script>
 <template>
 <FunctionBase
-    node_type="unimplemented"
+    type="unimplemented"
     display_type="Unimplemented, please add functionality"
     :bg_color="node_colors.unimplemented_bg"
     :stroke_color="node_colors.unimplemented_stroke"

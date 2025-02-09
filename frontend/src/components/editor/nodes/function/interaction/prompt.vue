@@ -7,8 +7,6 @@ import node_colors from '../../node-colors';
 import FunctionBase from '../func_base.vue'
 let response_id = 0;
 
-const ext_stroke_color= node_colors.prompt_stroke;
-const ext_bg_color= node_colors.prompt_bg;
 
 const responses = ref([
 ])
@@ -42,10 +40,10 @@ function autoResize() {
 
     <FunctionBase
         display_type="Prompt"
-        node_type="prompt"
+        type="prompt"
         :bg_color="ext_bg_color"
         :id="id||-10"
-        :stroke_color="ext_stroke_color">
+        :fg_color="node_colors.prompt_fg">
         
         <textarea class="console_response_text" placeholder="Type your console output here."></textarea>
         <div class="user_response_container" v-for="response in responses" :key="response.id">
@@ -54,8 +52,6 @@ function autoResize() {
         <HandleOut :handleID="response_id"/>
         </div>
         <HContainer spacing="5px" outerMargin="5px">
-        <SmallButton @click="addResponse()" button_text="+" :component_bg_color="ext_bg_color" :component_stroke_color="ext_stroke_color" style="margin-right:5px;"></SmallButton>
-        <SmallButton @click="removeResponse()" button_text="-" :component_bg_color="ext_bg_color" :component_stroke_color="ext_stroke_color"></SmallButton>
         </HContainer>
     </FunctionBase>
 
@@ -70,7 +66,7 @@ function autoResize() {
         width:200px;
         height:100px;
         background:rgb(255, 255, 255);
-        border:solid v-bind('ext_stroke_color') 1px;
+        border:solid v-bind('node_colors.prompt_fg') 1px;
         border-radius:3px;
     }
     .user_response_text{
@@ -79,12 +75,12 @@ function autoResize() {
         height:auto;
         color:black;
         background:rgb(255, 255, 255);
-        border:solid v-bind('ext_stroke_color') 1px;
+        border:solid v-bind('node_colors.prompt_fg') 1px;
         border-radius:3px;
     }
     .user_response_container{
-        color: v-bind('ext_stroke_color');
-        background:v-bind('ext_bg_color');
+        color: v-bind('node_colors.prompt_fg');
+        background:v-bind('node_colors.prompt_bg');
         margin: 0px;
         padding-left:10px;
         padding-bottom:5px;

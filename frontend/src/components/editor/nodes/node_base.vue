@@ -8,7 +8,7 @@ import ContextMenu from '../context_menu.vue'
 import { Position } from '@vue-flow/core';
 import { useNodesStore } from '../nodes/node_store.js'
 import { useVueFlow } from '@vue-flow/core';
-
+import node_colors from './node-colors.js';
 
 const { screenToFlowCoordinate } = useVueFlow()
 Position
@@ -72,12 +72,11 @@ function closeContextMenu() {
 
 const props = defineProps({
     id:{ default:-10},
-    type: { type: String, default: 'UnnamedType' },
-    node_type:String, //NODE TYPE IS EXCLUSIVELY FOR COMMUNICATING, should not appear in finished product
-    display_type: { type: String, default: 'UnnamedType' },
+    type: { type: String, default: 'unimplemented' },
+    display_type: { type: String, default: 'BadNode' },
     bg_color: { type: String, default: '#FFF' },
-    stroke_color: { type: String, default: '#000'},
-    Position: {type: Object, default: () => ({ x: 0, y: 0 })}, //position should be a prop, becuse we're gonna have to retrieve this stuff for project loading
+    fg_color: { type: String, default: '#000'},
+    position: {type: Object, default: () => ({ x: 0, y: 0 })}, //position should be a prop, becuse we're gonna have to retrieve this stuff for project loading
 
     //THIS IS WHERE ALL OUR NODE DATA BESIDES POSTION, TYPE AND ID SHOULD ACTUALLY GO
     data: {
@@ -85,28 +84,22 @@ const props = defineProps({
     required: true,
 
   },
-    
-    containHelp: false, // Allows for the help button to appear on the topbar of a node. Used for TBNodes
-})
+    })
+
 
 console.log('NodeBase received:', {//nodebase init for testing
   id: props.id, 
-  type: props.node_type, 
+  type: props.type, 
   idType: typeof props.id
 });
 
 
-let isDisplayTooltip = ref(false);
 
-function helpToggle(){
-    isDisplayTooltip = !isDisplayTooltip;
-    console.log("toggledTooltip " + isDisplayTooltip);
-}
 
 function helpMessage(){
     let message = "";
     for(const key in help_msg){
-        if(key==props.node_type){
+        if(key==props.type){
             console.log("Tooltip Message: "+help_msg[key]);
             message=help_msg[key];
         }
@@ -122,18 +115,15 @@ if(props.containHelp){
 </script>
 
 <template>
-    <div class="node_container" :draggable="true" @dragstart="onDragStart($event, props.node_type)"
+    <div class="node_container" :draggable="true" @dragstart="onDragStart($event, props.type)"
         @contextmenu="showContextMenu($event, props.type, props.id)">
-        <div class="node_title" :style="{ 'background-image': 'linear-gradient(180deg,' + bg_color + ',' + stroke_color + ')' }">
+        <div class="node_title" :style="{ 'background-image': 'linear-gradient(180deg,' + bg_color + ',' + fg_color + ')' }">
         <HContainer outerMargin="0px">
         <div>
         {{ props.display_type }}
         </div>
-        <SmallButton @click="helpToggle()" v-if='containHelp' :component_bg_color="bg_color" :component_stroke_color="stroke_color" button_text="?" style="margin:5px; margin-right:0px;">
-        </SmallButton>
         </HContainer>
         </div>
-        <Tooltip v-if="isDisplayTooltip" :tooltip_info="tooltip"></Tooltip>
         <ContextMenu
       v-if="isContextMenuVisible"
       :position="contextMenuPosition"
@@ -154,7 +144,7 @@ if(props.containHelp){
 .node_container{
     overflow:hidden;
     background:v-bind(bg_color);
-    outline: 1px solid v-bind(stroke_color);
+    outline: 1px solid v-bind(fg_color);
     height:fit-content;
     width:fit-content;
     display:flex;
@@ -177,7 +167,8 @@ if(props.containHelp){
     padding:0px;
     padding-left:5px;
     padding-right:5px;
-    text-shadow: v-bind(stroke_color) -1px 1px, v-bind(stroke_color) -1px -1px,  v-bind(stroke_color) -2px 0px;
+    background-image: linear-gradient(180deg, v-bind(fg_color),v-bind(bg_color));
+    text-shadow: v-bind(fg_color) -1px 1px, v-bind(fg_color) -1px -1px,  v-bind(fg_color) -2px 0px;
 }
 textarea{
     color:blue;
