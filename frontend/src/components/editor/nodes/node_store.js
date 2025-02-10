@@ -27,7 +27,7 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
   // Add a node to the store
   const addNode = (node) => {
     console.log("Before adding:", nodes);
-    const nodeExists = nodes.value.find((n) => n.id === Number(node.id));
+    const nodeExists = nodes.value.find((n) => n.id === node.id);
     console.log("Adding node:", {
       id: node.id,
       type: node.type,
@@ -57,7 +57,7 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
   };
 
 const renameNode = (id) => {
-    const nodeExists = nodes.value.find((n) => Number(n.id) === (id));
+    const nodeExists = nodes.value.find((n) => n.id === id);
     if (!nodeExists) {
       console.error(`Node with id ${id} does not exist`);
       return;

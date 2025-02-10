@@ -74,7 +74,7 @@
           // Create a new node
           const newNode = {
             type: draggedType.value,
-            id: Number(getId()),
+            id: getId(),
             position: pos,
             data: {
               display_type:'BadDisplayName',

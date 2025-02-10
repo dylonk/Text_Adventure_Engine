@@ -9,14 +9,14 @@ import { DebugInfo } from '../node_assets/n-component-imports';
 import { useNodesStore } from '../node_store.js'
 import { defineEmits} from 'vue';
 const nodesStore = useNodesStore()
-const emit = defineEmits(['init-node-id'])
-function UpdateNodeId(n){
-  props.id = n;
-  console.log("obj_base.vue: ReferenceID is = " + props.id)
-  emit('init-node-id', n)
-  console.log("obj_base.vue: bg_color is " + nodesStore.getNode(props.id).object_name)
-  //nodesStore.contributeNodeData(n,props.data);
-}
+// const emit = defineEmits(['init-node-id'])
+// function UpdateNodeId(n){
+//   props.id = n;
+//   console.log("obj_base.vue: ReferenceID is = " + props.id)
+//   emit('init-node-id', n)
+//   console.log("obj_base.vue: bg_color is " + nodesStore.getNode(props.id).object_name)
+//   nodesStore.contributeNodeData(props.id,props.data);
+// }
 //----------------------------------------------------------------------------
 
 
@@ -25,6 +25,7 @@ const props = defineProps({   //a lot of these are constructed into a data objec
   id: {type:Number, default:-10}, // DO NOT SEND ID DOWNWARDS TO CHILD
   data:{
     object_name: 'NullObjectName',
+    test_property: 'please remove me whence u figure this out',
     node_properties: { type: Array, default: () => [] },
   },
 });
