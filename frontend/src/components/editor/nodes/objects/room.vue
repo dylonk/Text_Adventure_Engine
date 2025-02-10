@@ -10,8 +10,6 @@ const props = defineProps({
 </script>
 
 <template>
-  <div>    {{props.id }}
-</div>
   <ObjBase
     :id="id">
   </ObjBase>

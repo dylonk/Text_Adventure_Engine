@@ -78,7 +78,9 @@ const renameNode = (id) => {
       return;
     }
     console.log("ContributeNodeData: node exists");
-    nodeExists.data = Object.assign(nodeExists.data, inputData)
+    Object.assign(nodeExists.data, inputData)
+    console.log("Data to input", inputData)
+    console.log("New data of node:", nodeExists.data)
     return;
   };
 

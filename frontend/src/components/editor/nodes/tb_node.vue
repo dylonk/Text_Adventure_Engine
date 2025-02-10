@@ -6,6 +6,7 @@ import NodeBase from './node_base.vue'
 
 
 const props = defineProps({ 
+    tb_id:-1,
     type:String,
     display_type:String,
 })
@@ -15,6 +16,7 @@ const { onDragStart } = useDragAndDrop();
 <template>
     <div class="tb_node_container" :draggable=True @dragstart="onDragStart($event, props.type, true)" :style="{'background': bg_color}" >
         <NodeBase
+        id=-1
         :type="type"
         :data="{
             display_type,

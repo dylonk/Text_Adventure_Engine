@@ -87,7 +87,7 @@ console.log('NodeBase received:', {//nodebase init for testing
 
 const emit = defineEmits(['init-node-id'])
 function sendInitNodeId(){
-  emit('init-node-id', props.id)
+  emit('init-node-id')
 }
 
 // I suppose we shouldn't be using built in updateNode functions
@@ -116,12 +116,12 @@ if(props.containHelp){
 </script>
 
 <template>
-    <div v-cloak class="node_container" :draggable="true" @dragstart="onDragStart($event, props.type)"
+    <div class="node_container" :draggable="true" @dragstart="onDragStart($event, props.type)"
         @contextmenu="showContextMenu($event, props.type, props.id)">
         <div class="node_title" :style="{ 'background-image': 'linear-gradient(180deg,' + 'data.bg_color' + ',' + 'data.fg_color' + ')' }">
         <HContainer outerMargin="0px">
         <div>
-        {{ }}
+        {{ data.display_type}}
         </div>
         </HContainer>
         </div>
@@ -142,13 +142,11 @@ if(props.containHelp){
         font-family: 'Syne Mono', monospace;
 
 }
-[v-cloak] {
-  display: none;
-}
+
 .node_container{
     overflow:hidden;
-    background:v-bind(bg_color);
-    outline: 1px solid v-bind(fg_color);
+    background:v-bind('data.bg_color');
+    outline: 1px solid v-bind('data.fg_color');
     height:fit-content;
     width:fit-content;
     min-height: 4px;
