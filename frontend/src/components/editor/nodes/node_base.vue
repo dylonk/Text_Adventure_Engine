@@ -59,18 +59,12 @@ function closeContextMenu() {
 }
 
 const props = defineProps({
-    id:{ type: Number, default:-10},
+    id:-10,
     type: { type: String, default: 'unimplemented' },
     position: {type: Object, default: () => ({ x: 0, y: 0 })}, //position should be a prop, becuse we're gonna have to retrieve this stuff for project loading
 
     //THIS IS WHERE ALL OUR NODE DATA BESIDES POSTION, TYPE AND ID SHOULD ACTUALLY GO
     data: {
-      type: Object,
-      default: {
-        display_type: 'BadNode',
-        bg_color:'#FFF',
-        fg_color:'#000',
-      }
     },
   })
 

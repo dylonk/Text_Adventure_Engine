@@ -5,7 +5,7 @@ import ObjBase from './obj_base.vue'
 import node_colors from '../node-colors.js';
 import DebugInfo from '../node_assets/debug_info.vue';
 const props = defineProps({
-  id: Number,
+  id: -1,
 })
 </script>
 
