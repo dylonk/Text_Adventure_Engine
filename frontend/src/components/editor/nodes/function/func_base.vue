@@ -1,19 +1,24 @@
 <script setup>
 import { defineProps, watch, computed, ref } from 'vue';
-import { useNodesStore } from '../node_store.js'
 import NodeBase from '../node_base.vue'
 import { DebugInfo } from '../node_assets/n-component-imports';
 
 const props = defineProps({
-  id: { default:-1},
-  fg_color: { type: String, default: 'black' },
-  bg_color: { type: String, default: 'white' },
-  node_properties: { type: Array, default: () => [] },
-  display_type: {type:String,default:'FuncBase'},
-  type: { type: String, default: 'UnnamedType' },
-
+  id: -1,
 });
-
+//----------------------------!!IMPORTANT FOR NODE DATA MANIPULATION/FETCHING!!---------------------------------------------
+// ADD TO BE ABLE TO STORE OR RETRIEVE DYNAMIC INFORMATION FROM THE NODE ITSELF
+// Component MUST have props.id for this to work, and it needs to be passed down through each component
+// Parent component must also have @init-node-id listener
+import { useNodesStore } from '@/components/editor/nodes/node_store'
+const NS = useNodesStore()
+const defaultObjData =  { //This is the data that this component contributes. Any existing properties within the functional node data will be replaced
+    function_name: 'defaultFunction()',
+    function_params: [],
+  }
+  console.log("func_base.vue: ReferenceID is = " + props.id)
+  NS.contributeNodeData(props.id,defaultObjData,false);
+//------------------------------IMPORTANT END-------------------------------------------
 const debug_message = "ID:"+props.id;   //whats displayed in the innermost part of the object on canvas
 
 watch(() => props.id, (newId) => {  //this watcher statement watches 
@@ -28,8 +33,7 @@ watch(() => props.id, (newId) => {  //this watcher statement watches
 <template>  
 <NodeBase 
 :id="id"
-:type="type"
-:data="$props">
+>
 <DebugInfo :info_text="debug_message"></DebugInfo>
 
 <slot></slot>
@@ -37,13 +41,4 @@ watch(() => props.id, (newId) => {  //this watcher statement watches
 </template>
 
 <style scoped>
-.object-name-container{
-  font-size: 16px;
-  background: v-bind('stroke_color');
-  color:v-bind('bg_color');
-  margin:0px !important;
-  padding-left: 5px;
-  padding-bottom: 2px;
-  padding-right: 5px;
-}
 </style>

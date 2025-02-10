@@ -65,6 +65,7 @@ const props = defineProps({
 
     //THIS IS WHERE ALL OUR NODE DATA BESIDES POSTION, TYPE AND ID SHOULD ACTUALLY GO
     data: {
+      defineData:true,
     },
   })
 
@@ -102,9 +103,9 @@ function helpMessage(){
 const tooltip = ref(helpMessage());
 
 const { onDragStart } = useDragAndDrop();
-if(props.containHelp){
-    watch(isDisplayTooltip);
-}
+// if(props.containHelp){
+//     watch(isDisplayTooltip);
+// }
 
 
 </script>

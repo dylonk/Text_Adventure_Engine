@@ -1,4 +1,4 @@
-<script>
+<script setup>
 import { ref, defineProps, computed } from 'vue';
 const props = defineProps({
     spacing:{type:String,default:"5px"},

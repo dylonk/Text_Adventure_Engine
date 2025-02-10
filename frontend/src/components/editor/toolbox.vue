@@ -15,28 +15,18 @@ import { useProjectStore } from './project_store.js';
         <button class="tb_btn" @click="useProjectStore().exportProject()">Export Project</button>
 
         <a class="tb_subtitle">Objects</a>
-                <TBNode type="room" display_type="Room" :bg_color="node_colors.room_bg" :fg_color="node_colors.room_fg"></TBNode>
-                <TBNode type="item" display_type="Item" :bg_color="node_colors.item_bg " :fg_color="node_colors.item_fg"></TBNode>
-                <TBNode type="npc" display_type="NPC" :bg_color="node_colors.npc_bg" :fg_color="node_colors.npc_fg"></TBNode>
-                <TBNode type="pathway" display_type="Pathway" :bg_color="node_colors.pathway_bg" :fg_color="node_colors.pathway_fg"></TBNode>
-                <TBNode type="custom" display_type="Custom" :bg_color="node_colors.custom_bg" :fg_color="node_colors.custom_fg"></TBNode>
+                <TBNode type="room" display_type="Room"/>
+                <TBNode type="item" display_type="Item"/>
+                <TBNode type="npc" display_type="NPC"/>
+                <TBNode type="pathway" display_type="Pathway"/>
+                <TBNode type="custom" display_type="Custom"/>
         <a class="tb_subtitle">Interactive</a>
-                <TBNode type="prompt" display_type="Prompt" :bg_color="node_colors.prompt_bg" :fg_color="node_colors.prompt_fg"></TBNode>
-                <TBNode type="await" display_type="Await" :bg_color="node_colors.await_bg" :fg_color="node_colors.await_fg"></TBNode>
-                <TBNode type="unimplemented" display_type="Action" :bg_color="node_colors.unimplemented_bg" :fg_color="node_colors.unimplemented_fg"></TBNode>
-                <TBNode type="unimplemented" display_type="OnPlayerEnter" :bg_color="node_colors.unimplemented_bg" :fg_color="node_colors.unimplemented_fg"></TBNode>
-                <TBNode type="unimplemented" display_type="OnPlayerNear" :bg_color="node_colors.unimplemented_bg" :fg_color="node_colors.unimplemented_fg"></TBNode>
-                <TBNode type="unimplemented" display_type="OnPlayerPossess" :bg_color="node_colors.unimplemented_bg" :fg_color="node_colors.unimplemented_fg"></TBNode>
+                <TBNode type="prompt" display_type="Prompt"/>
+                <TBNode type="await" display_type="Await"/>
+                <TBNode type="unimplemented" display_type="Action"/>
         <a class="tb_subtitle">Value</a>
-                <TBNode type="unimplemented" display_type="ChangeProperty" :bg_color="node_colors.unimplemented_bg" :fg_color="node_colors.unimplemented_fg"></TBNode>
-                <TBNode type="unimplemented" display_type="ChangeLocation" :bg_color="node_colors.unimplemented_bg" :fg_color="node_colors.unimplemented_fg"></TBNode>
-                <TBNode type="unimplemented" display_type="Evaluate" :bg_color="node_colors.unimplemented_bg" :fg_color="node_colors.unimplemented_fg"></TBNode>
         <a class="tb_subtitle">Path Control</a>
-                <TBNode type="unimplemented" display_type="If" :bg_color="node_colors.unimplemented_bg" :fg_color="node_colors.unimplemented_fg"></TBNode>
-                <TBNode type="unimplemented" display_type="Switch" :bg_color="node_colors.unimplemented_bg" :fg_color="node_colors.unimplemented_fg"></TBNode>
         <a class="tb_subtitle">Visual</a>
-                <TBNode type="unimplemented" display_type="Time" :bg_color="node_colors.unimplemented_bg" :fg_color="node_colors.unimplemented_fg"></TBNode>
-                <TBNode type="unimplemented" display_type="Image" :bg_color="node_colors.unimplemented_bg" :fg_color="node_colors.unimplemented_fg"></TBNode>
     </div>
 </template>
 

@@ -70,7 +70,7 @@ const renameNode = (id) => {
     }
   };
 
-  const contributeNodeData = (id, inputData) => {
+  const contributeNodeData = (id, inputData, OverwriteExistingData=true) => {
     console.log("ContributeNodeData Called");
     const nodeExists = getNode(id);
     if (!nodeExists) {
@@ -78,7 +78,12 @@ const renameNode = (id) => {
       return;
     }
     console.log("ContributeNodeData: node exists");
+    if(OverwriteExistingData==true){
     Object.assign(nodeExists.data, inputData)
+    }
+    if(OverwriteExistingData==false){
+      nodeExists.data=Object.assign(inputData,nodeExists.data )
+    }
     console.log("Data to input", inputData)
     console.log("New data of node:", nodeExists.data)
     return;
