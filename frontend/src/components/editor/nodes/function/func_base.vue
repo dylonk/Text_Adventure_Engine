@@ -6,9 +6,10 @@ import { DebugInfo } from '../node_assets/n-component-imports';
 
 const props = defineProps({
   id: { default:-1},
-  stroke_color: { type: String, default: 'black' },
+  fg_color: { type: String, default: 'black' },
   bg_color: { type: String, default: 'white' },
   node_properties: { type: Array, default: () => [] },
+  display_type: {type:String,default:'FuncBase'},
   type: { type: String, default: 'UnnamedType' },
 
 });
@@ -28,13 +29,7 @@ watch(() => props.id, (newId) => {  //this watcher statement watches
 <NodeBase 
 :id="id"
 :type="type"
-:data="{    //now all the data is properly in the data object
-  bg_color,
-  stroke_color,
-  display_type, 
-  containHelp, 
-  node_properties,
-}">
+:data="$props">
 <DebugInfo :info_text="debug_message"></DebugInfo>
 
 <slot></slot>

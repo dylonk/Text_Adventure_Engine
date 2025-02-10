@@ -10,9 +10,9 @@ import { useNodesStore } from '../node_store.js'
 import { defineEmits} from 'vue';
 
 const nodesStore = useNodesStore()
-const emit = defineEmits(['init-node-id'])
+// const emit = defineEmits(['init-node-id'])
 
-function UpdateNodeId(){
+function UpdateNodeWithData(){
   const defaultObjData =  {
     isObject: true,
     test_property: 'please remove me whence u figure this out',
@@ -20,7 +20,7 @@ function UpdateNodeId(){
   console.log("obj_base.vue: ReferenceID is = " + props.id)
   console.log("obj_base.vue: bg_color is " + nodesStore.getNode(props.id).object_name)
   nodesStore.contributeNodeData(props.id,defaultObjData);
-}
+ }
 //----------------------------------------------------------------------------
 
 
@@ -28,7 +28,8 @@ function UpdateNodeId(){
 const props = defineProps({   //a lot of these are constructed into a data object and passed to node_base as seen below
   id: { default:-1},  
   isObject: true,
-  test_property: 'option2'
+  test_property: 'option2',
+  display_type: 'ObjBase'
 });
 
 
@@ -36,7 +37,14 @@ const debug_message = "ID:"+props.id;   //whats displayed in the innermost part 
 </script>
 
 <template>
-  <NodeBase @init-node-id="UpdateNodeId">
+  <NodeBase 
+  @init-node-id="UpdateNodeId"
+  :id="id"
+  :data="{
+    isObject,
+    test_property,
+    display_type,
+  }">
     <div class="object-name-container">{{ nodesStore.getNode(props.id).data.object_name }}</div>
     <DebugInfo :info_text="debug_message"></DebugInfo>
   </NodeBase>
