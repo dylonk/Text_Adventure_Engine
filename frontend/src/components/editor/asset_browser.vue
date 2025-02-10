@@ -75,7 +75,7 @@ function closeContextMenu() {
         @contextmenu="showContextMenu($event, object.type, object.id)"
       >
         <details>
-          <summary>        {{ object.object_name || 'ERR_UNNAMED_NODE' }}          </summary>
+          <summary>        {{ object.data.object_name || 'ERR_UNNAMED_NODE' }}          </summary>
           <ul>
             <!-- <li v-for="item in nodesStore.getItemsInRoom(room.id)" :key="item.id">
               {{ item.object_name || 'Unnamed Item' }}        (Item)

@@ -6,6 +6,7 @@ import { reactive,computed, ref } from 'vue';
 export const useNodesStore = defineStore('nodes', () => {//nodes store will no longer seperate nodes by type
   const nodes = ref([
   ]);
+  const edges = ref([]) // No implementation atm
 
   const object_count = reactive({ //For making unique object names
     total:0, //just using total for now reallym but if you want to make unique ones go ahead im lazy
@@ -30,7 +31,8 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
     console.log("Adding node:", {
       id: node.id,
       type: node.type,
-      idType: typeof node.id
+      idType: typeof node.id,
+      data: node.data
     });
 
     if (!node.id || nodeExists) {   //this should not happen. it's an error message
@@ -42,7 +44,7 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
     if (node.type == 'room' || node.type == 'item' || node.type == 'pathway' || node.type == 'player' || node.type == 'npc' || node.type == 'custom') {
       incrementCount(node.type);
       console.log("object name shoudl be", node.type + object_count[node.type]);
-      node.object_name = node.type + object_count[node.type];
+      node.data.object_name = node.type + object_count[node.type];
       nodes.value.push(node);
       console.log("After adding:", nodes);
 
@@ -55,16 +57,29 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
   };
 
 const renameNode = (id) => {
-    const nodeExists = nodes.value.find((n) => n.id === (id));
-    console.log("this node exists at", nodeExists.position);
+    const nodeExists = nodes.value.find((n) => Number(n.id) === (id));
     if (!nodeExists) {
       console.error(`Node with id ${id} does not exist`);
       return;
     }
+
+    console.log("this node exists at", nodeExists.position);
     const newName = prompt(`Enter a new name for node ${id}:`); // !!NEED TO IMPLEMENT CHECK FOR OBJECT NAME UNIQUENESS
     if (newName !== null) { 
-      nodeExists.object_name = newName;
+      nodeExists.data.object_name = newName;
     }
+  };
+
+  const contributeNodeData = (id, inputData) => {
+    console.log("ContributeNodeData Called");
+    const nodeExists = getNode(id);
+    if (!nodeExists) {
+      console.error(`ContributeNodeData: Node with id ${id} does not exist`);
+      return;
+    }
+    console.log("ContributeNodeData: node exists");
+    nodeExists.data = Object.assign(nodeExists.data, inputData)
+    return;
   };
 
 //delete a node by id
@@ -99,13 +114,13 @@ const deleteNode = (id) => {
     }; 
 const getNode = (id) => {
   console.log("getNode called on id", id)
-    const nodeExists = nodes.find((n) => n.id === id);
+    const nodeExists = nodes.value.find((n) => n.id === id);
     if (!nodeExists) {
       console.error(`Node with id ${id} does not exist`);
       return;
     }
   if (nodeExists.type == 'room' || nodeExists.type == 'item' || nodeExists.type == 'pathway' || nodeExists.type == 'player' || nodeExists.type == 'npc' || nodeExists.type == 'custom'){
-    console.log("node exists", nodeExists, "title is", nodeExists.object_name);
+    console.log("node exists", nodeExists, "title is", nodeExists.data.object_name);
   }
   else {
     console.log("function node exists", nodeExists);
@@ -119,5 +134,6 @@ const getNode = (id) => {
     deleteNode,
     renameNode,
     getNode,
+    contributeNodeData,
   };
 });

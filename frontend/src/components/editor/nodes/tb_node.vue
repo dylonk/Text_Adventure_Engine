@@ -8,8 +8,6 @@ import NodeBase from './node_base.vue'
 const props = defineProps({ 
     type:String,
     display_type:String,
-    bg_color:String,
-    fg_color:String,
 })
 const { onDragStart } = useDragAndDrop();
 </script>
@@ -19,10 +17,7 @@ const { onDragStart } = useDragAndDrop();
         <NodeBase
         :type="type"
         :data="{
-            bg_color,
-            fg_color,
             display_type,
-            containHelp: true, // Directly set to `true` instead of passing as a string
     }"
             >
         </NodeBase>
