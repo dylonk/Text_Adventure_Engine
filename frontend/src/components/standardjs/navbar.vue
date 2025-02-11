@@ -19,7 +19,7 @@ function logOut() {
 
 
 onMounted(async() => {           //on mounted (whenever a new page loads, properly set the displyed username)
-    displayUsername.value=await fetchUserData('username');
+    displayUsername.value = await fetchUserData('username');
 })
 
 const router = useRouter(); // Access the Vue Router for navigation
@@ -28,8 +28,8 @@ const router = useRouter(); // Access the Vue Router for navigation
 <template>
     <p class="navbar">
         <RouterLink class="nav_btn" to="/" active-class="active">Home</RouterLink>
-        <RouterLink class="nav_btn" to="/explore" active-class="active">Explore</RouterLink>
-        <RouterLink class="nav_btn" to="/create" active-class="active">Create</RouterLink>
+        <RouterLink class="nav_btn" to="/explore" active-class="active">Explore</RouterLink> 
+        <RouterLink class="nav_btn" to="/create" active-class="active">Create</RouterLink><!-- I think they should be rendered conditionally-->
         <RouterLink class="nav_btn" to="/user" active-class="active">Profile</RouterLink>
         <RouterLink class="nav_btn" to="/about" active-class="active">About</RouterLink>
 
@@ -60,22 +60,33 @@ const router = useRouter(); // Access the Vue Router for navigation
     z-index: 100;
 }
 
+
+.nav_btn:first-child {
+    margin-left: auto; 
+}   
 .nav_btn {
     font-family: 'Syne Mono', monospace;
-    font-size:22px;
+    font-size: 22px;
     height: calc(min-content + 10px);
     margin-left: 10px;
     color: rgb(165, 165, 165);
+    transition: color 0.2s;
+}
+
+.nav_btn:hover {
+    color: #e74c3c; /* Change color on hover */
 }
 
 .login_btn {
     font-family: 'Syne Mono', monospace;
-    font-size:22px;
+    font-size: 22px;
     height: calc(min-content + 10px);
     margin-left: auto;
     margin-right: 10px;
     background: rgb(255, 255, 255);
+    border: 2px solid #e0e0e0; /* Added for consistency */
     border-radius: 5px;
+    box-shadow: 2px 2px 0 #000; /* Added for brutal morphic style */
     color: rgb(188, 188, 188);
 }
 
@@ -93,7 +104,9 @@ const router = useRouter(); // Access the Vue Router for navigation
     height: calc(min-content + 10px);
     margin-left: 10px;
     background: rgb(255, 255, 255);
+    border: 2px solid #e0e0e0; /* Added for consistency */
     border-radius: 5px;
+    box-shadow: 2px 2px 0 #000; /* Added for brutal morphic style */
     color: rgb(188, 188, 188);
 }
 </style>

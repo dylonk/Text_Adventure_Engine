@@ -8,14 +8,15 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
   ]);
   const edges = ref([]) // No implementation atm
 
-  const object_count = reactive({ //For making unique object names
-    total:0, //just using total for now reallym but if you want to make unique ones go ahead im lazy
-    room:0,
-    item:0,
+  const object_count = reactive({
+    //For making unique object names
+    total: 0, //just using total for now reallym but if you want to make unique ones go ahead im lazy
+    room: 0,
+    item: 0,
     npc: 0,
     pathway: 0,
     custom: 0,
-  })
+  });
   function incrementCount(key) {
     if (key in object_count) {
       object_count[key]++;
@@ -41,7 +42,14 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
     }
 
     //adds the default names
-    if (node.type == 'room' || node.type == 'item' || node.type == 'pathway' || node.type == 'player' || node.type == 'npc' || node.type == 'custom') {
+    if (
+      node.type == "room" ||
+      node.type == "item" ||
+      node.type == "pathway" ||
+      node.type == "player" ||
+      node.type == "npc" ||
+      node.type == "custom"
+    ) {
       incrementCount(node.type);
       console.log("object name shoudl be", node.type + object_count[node.type]);
       node.data.object_name = node.type + object_count[node.type];
@@ -51,9 +59,7 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
     } else {  //if the node is a function
       nodes.value.push(node);
       console.log("function added with id", node.id);
-
     }
-
   };
 
 const renameNode = (id) => {
@@ -167,7 +173,8 @@ const getNode = (id) => {
     return nodeExists
 }
 
-  return {//exporting functions
+  return {
+    //exporting functions
     nodes,
     addNode,
     deleteNode,
