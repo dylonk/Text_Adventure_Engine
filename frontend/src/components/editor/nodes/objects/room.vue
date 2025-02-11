@@ -11,7 +11,7 @@ const NS = useNodesStore()
 const defaultObjData =  { //This is the data that this component contributes. Any existing properties within the functional node data will be replaced
     display_type:"Room",
     properties: {
-      aliases: "prison cell",
+      aliases: "tavern lobby, atrium",
       roomEnabled: true,
     }
   }

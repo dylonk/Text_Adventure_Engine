@@ -3,7 +3,7 @@ import { defineProps, watch, computed, ref } from 'vue';
 import NodeBase from '../node_base.vue'
 import { DebugInfo } from '../node_assets/n-component-imports';
 
-
+const listSelection = ref(-1)
 const props = defineProps({   //a lot of these are constructed into a data object and passed to node_base as seen below
   id: -1,  
 });
@@ -27,8 +27,15 @@ const debug_message = "ID:"+props.id;   //whats displayed in the innermost part 
 function addProperty(){
   console.log("addProperty called")
   const propertyKey = prompt("Type your new property name");
+  if(propertyKey==null||propertyKey==""){
+    return;
+  }
   const propertyValue = prompt("Type initial value");
   NS.setNodeProperty(props.id,propertyKey,propertyValue)
+}
+function setProperty(inputKey,inputValue){
+  console.log("setProperty called")
+  NS.setNodeProperty(props.id,inputKey,inputValue)
 }
 function removeProperty(propertyKey){
   console.log("removeProperty called")
@@ -44,18 +51,27 @@ function removeProperty(propertyKey){
 
 </script>
 
-<template>
+<template >
   <NodeBase 
   :id="id"
   >
     <div class="object-name-container">{{ NS.getNode(props.id).data.object_name }}</div>
     <div class="object-properties-container">
-    <div class="property" style="font-weight:bold">
+    <div class="property-title" style="font-weight:bold"   @click="listSelection=-1"
+    >
       Properties
       <button @click="addProperty()" class="property-list-button">+</button>
     </div>
-    <div v-for="(property,title)  in NS.getNode(props.id).data.properties" @click="removeProperty(title)" class="property">{{ title +":" + property }}</div>
+    <div v-for="(property,title,index)  in NS.getNode(props.id).data.properties" @click="listSelection=index">
+      <div v-if="index==listSelection" class="property-selected">
+        <button @click="removeProperty(title)" class="property-list-delete" style="margin-right:3px;">x</button>
+          {{ title+" " }}
+        <input class="property-input" @input="setProperty(title,$event.target.value)" :value="property" @keyup.enter="listSelection=-1">
+      </div>
+      <div v-else class="property">{{ title +":" + property }}</div>
     </div>
+    
+  </div>
   </NodeBase>
 </template>
 
@@ -69,9 +85,18 @@ function removeProperty(propertyKey){
   margin-left:auto;
   font-size:small;
   border: white 1px solid;
-  background: black;
+  background: none;
   border-radius: 2px;
   color: white;
+
+}
+.property-list-delete{
+  margin:0px;
+  font-size:small;
+  font-weight: bold;
+  background: red;
+  border:none;
+  color: rgb(255, 255, 255);
 
 }
 .property-list-button:active{
@@ -105,5 +130,40 @@ function removeProperty(propertyKey){
   padding-top:0px;
   border-top:white solid 1px;
 
+}
+.property-title{
+  display:flex;
+  background: black;
+  font-family:Verdana, Geneva, Tahoma, sans-serif;
+  font-weight: lighter;
+  color:white;
+  padding:3px;
+  padding-top:0px;
+  border-top:white solid 1px;
+
+}
+.property:hover{
+  background: rgb(41, 41, 41);
+}
+.property-selected{
+  display:flex;
+  background: rgb(215, 215, 215);
+  font-family:Verdana, Geneva, Tahoma, sans-serif;
+  font-weight: bold;
+  color:rgb(0, 0, 0);
+  padding:3px;
+  padding:0px;
+  border-top:rgb(66, 66, 66) solid 1px;
+
+}
+.property-input{
+  height:auto;
+  border:none;
+  margin:none;
+  margin-left:4px;
+  margin-right:0px
+}
+.property-input:focus{
+  border:none;
 }
 </style>
