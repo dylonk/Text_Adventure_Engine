@@ -5,8 +5,15 @@ import ContextMenu from './context_menu.vue'
 
 const nodesStore = useNodesStore()
 
+<<<<<<< Updated upstream
 // Use computed properties to observe the nodes in the store
 const objects = computed(() => nodesStore.nodes.objects)
+=======
+// Use computed properties to observe the nodes in the store. Any with object_type_list will be displayed
+const objects = computed(() => {
+  return nodesStore.getAllObjects();
+});
+>>>>>>> Stashed changes
 
 const isContextMenuVisible = ref(false)
 const contextMenuId = ref(null)
@@ -58,12 +65,17 @@ function closeContextMenu() {
 
 <template>
   <div class="asset_browser">
-    <h3>Objects</h3>
+    <h3 @click="nodesStore.switchCanvas(0)">Objects</h3>
     <div v-if="objects.length > 0">
       <div
         v-for="object in objects"
         :key="object.id"
+<<<<<<< Updated upstream
         @contextmenu="showContextMenu($event, 'object', object.id)"
+=======
+        @contextmenu="showContextMenu($event, object.type, object.id)"
+        @click="nodesStore.switchCanvas(object.id)"
+>>>>>>> Stashed changes
       >
         <details>
           <summary>        {{ object.object_name || 'ERR_UNNAMED_NODE' }}          </summary>

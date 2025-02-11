@@ -36,6 +36,7 @@ const { onDragOver, onDrop, onDragLeave, isDragOver } = useDragAndDrop()
 const edges = ref([])
 onConnect(addEdges)
 
+
 </script>
 
 <template>
@@ -47,6 +48,11 @@ onConnect(addEdges)
         class="pinia-flow"
         @dragover="onDragOver" 
         @dragleave="onDragLeave" 
+<<<<<<< Updated upstream
+=======
+        @nodes-change="changes => applyNodeChanges(changes  , nodesStore.nodes)"
+
+>>>>>>> Stashed changes
         fit-view-on-init>
 
             <CanvasBackground        :style="{
