@@ -3,7 +3,7 @@
     "folder-color.pathColors": [
         {
             "folderPath": "Text_Adventure_Engine\\frontend\\src\\components\\editor\\nodes\\objects\\",
-            "color": "foldercolorizer.color_ff0000"
+            "color": "foldercolorizer.color_9966cc"
         },
         {
             "folderPath": "Text_Adventure_Engine\\frontend\\src\\components\\editor\\nodes\\",
@@ -20,6 +20,14 @@
         {
             "folderPath": "Text_Adventure_Engine\\frontend\\src\\components\\editor\\drag_drop.js\\",
             "color": "foldercolorizer.color_0066ff"
+        },
+        {
+            "folderPath": "Text_Adventure_Engine\\frontend\\src\\components\\editor\\nodes\\function\\",
+            "color": "foldercolorizer.color_ff6600"
+        },
+        {
+            "folderPath": "Text_Adventure_Engine\\frontend\\src\\components\\editor\\nodes\\node_assets\\",
+            "color": "foldercolorizer.color_00ccff"
         }
     ]
 }

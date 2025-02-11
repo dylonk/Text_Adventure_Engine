@@ -9,12 +9,12 @@ const props = defineProps({
 import { useNodesStore } from '@/components/editor/nodes/node_store'
 const NS = useNodesStore()
 const defaultObjData =  { //This is the data that this component contributes. Any existing properties within the functional node data will be replaced
-    display_type:"Prompt",
+    display_type:"Room",
     properties: {
+      aliases: "prison cell",
       roomEnabled: true,
     }
   }
-  console.log("func_base.vue: ReferenceID is = " + props.id)
   NS.contributeNodeData(props.id,defaultObjData);
 </script>
 

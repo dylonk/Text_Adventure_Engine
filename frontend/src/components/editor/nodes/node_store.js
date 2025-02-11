@@ -88,7 +88,39 @@ const renameNode = (id) => {
     console.log("New data of node:", nodeExists.data)
     return;
   };
-
+  // ONLY FOR USE IN OBJECTS, SETS DATA.PROPERTIES
+  const setNodeProperty = (id, inputKey, inputValue) => {
+    console.log("setNodeProperty Called");
+    const nodeExists = getNode(id);
+    if (!nodeExists) {
+      console.error(`setNodeProperty: Node with id ${id} does not exist`);
+      return;
+    }
+    if(!(nodeExists.data.hasOwnProperty('properties'))){
+      console.error(`setNodeProperty: Node with ${id} does not have properties`)
+      return;
+    }
+    console.log("Key/Value to input", inputKey,inputValue)
+    nodeExists.data.properties[inputKey]=inputValue
+    console.log("New data of properties:", nodeExists.data.properties)
+    return;
+  };
+  const removeNodeProperty = (id, inputKey) => {
+    console.log("setNodeProperty Called");
+    const nodeExists = getNode(id);
+    if (!nodeExists) {
+      console.error(`removeNodeProperty: Node with id ${id} does not exist`);
+      return;
+    }
+    if(!(nodeExists.data.hasOwnProperty('properties'))){
+      console.error(`removeNodeProperty: Node with ${id} does not have properties`)
+      return;
+    }
+    console.log("Key to remove", inputKey)
+    delete nodeExists.data.properties[inputKey]
+    console.log("New data of properties:", nodeExists.data.properties)
+    return;
+  };
 //delete a node by id
 const deleteNode = (id) => {
       //removeNodes([id]);
@@ -142,5 +174,7 @@ const getNode = (id) => {
     renameNode,
     getNode,
     contributeNodeData,
+    setNodeProperty,
+    removeNodeProperty,
   };
 });

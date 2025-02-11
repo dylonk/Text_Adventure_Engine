@@ -34,8 +34,6 @@ watch(() => props.id, (newId) => {  //this watcher statement watches
 <NodeBase 
 :id="id"
 >
-<DebugInfo :info_text="debug_message"></DebugInfo>
-
 <slot></slot>
 </NodeBase>
 </template>

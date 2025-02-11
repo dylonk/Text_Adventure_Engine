@@ -3,6 +3,7 @@ import { defineProps, watch, computed, ref } from 'vue';
 import NodeBase from '../node_base.vue'
 import { DebugInfo } from '../node_assets/n-component-imports';
 
+
 const props = defineProps({   //a lot of these are constructed into a data object and passed to node_base as seen below
   id: -1,  
 });
@@ -14,7 +15,7 @@ import { useNodesStore } from '@/components/editor/nodes/node_store'
 const NS = useNodesStore()
 const defaultObjData =  { //This is the data that this component contributes. Any existing properties within the functional node data will be replaced
     isObject: true, // These properties are distinct to ObjectBase, !!dont copy them!!
-    properties: {},
+    properties: {aliases: "ObjectName,ObjectName2",},
     display_type: 'ObjectBase'
   }
   console.log("obj_base.vue: ReferenceID is = " + props.id)
@@ -22,6 +23,25 @@ const defaultObjData =  { //This is the data that this component contributes. An
   NS.contributeNodeData(props.id,defaultObjData,false);
 //------------------------------IMPORTANT END-------------------------------------------
 const debug_message = "ID:"+props.id;   //whats displayed in the innermost part of the object on canvas
+
+function addProperty(){
+  console.log("addProperty called")
+  const propertyKey = prompt("Type your new property name");
+  const propertyValue = prompt("Type initial value");
+  NS.setNodeProperty(props.id,propertyKey,propertyValue)
+}
+function removeProperty(propertyKey){
+  console.log("removeProperty called")
+  const acceptRemoval = confirm(`Are you sure you would like to delete ${propertyKey}?`)
+  if(acceptRemoval){
+    NS.removeNodeProperty(props.id,propertyKey)
+  }
+  else{
+    return;
+  }
+}
+
+
 </script>
 
 <template>
@@ -29,13 +49,34 @@ const debug_message = "ID:"+props.id;   //whats displayed in the innermost part 
   :id="id"
   >
     <div class="object-name-container">{{ NS.getNode(props.id).data.object_name }}</div>
-    <DebugInfo :info_text="debug_message"></DebugInfo>
+    <div class="object-properties-container">
+    <div class="property" style="font-weight:bold">
+      Properties
+      <button @click="addProperty()" class="property-list-button">+</button>
+    </div>
+    <div v-for="(property,title)  in NS.getNode(props.id).data.properties" @click="removeProperty(title)" class="property">{{ title +":" + property }}</div>
+    </div>
   </NodeBase>
 </template>
 
 
 
 <style scoped>
+.property-list-button{
+  margin-top: 3px;
+  margin-bottom: 0px;
+  margin-right:0px;
+  margin-left:auto;
+  font-size:small;
+  border: white 1px solid;
+  background: black;
+  border-radius: 2px;
+  color: white;
+
+}
+.property-list-button:active{
+  background: rgb(101, 101, 101);
+}
 .object-name-container{
   font-size: 16px;
   background: v-bind('NS.getNode(props.id).data.fg_color');
@@ -44,5 +85,25 @@ const debug_message = "ID:"+props.id;   //whats displayed in the innermost part 
   padding-left: 5px;
   padding-bottom: 2px;
   padding-right: 5px;
+}
+.object-properties-container{
+  color: v-bind('NS.getNode(props.id).data.bg_color');
+  height: min-content;
+  margin: 0px;
+  display:flex;
+  flex-direction: column;
+  background: white;
+
+}
+.property{
+  display:flex;
+  background: black;
+  font-family:Verdana, Geneva, Tahoma, sans-serif;
+  font-weight: lighter;
+  color:white;
+  padding:3px;
+  padding-top:0px;
+  border-top:white solid 1px;
+
 }
 </style>

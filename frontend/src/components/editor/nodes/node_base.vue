@@ -1,7 +1,7 @@
 <!---FATHER CLASS OF ALL NODES-->
 <script setup>
 import { ref, defineProps, computed, watch, defineEmits } from 'vue';
-import { HContainer, SmallButton, Tooltip } from './node_assets/n-component-imports.js';
+import { HContainer, SmallButton, Tooltip, DebugInfo} from './node_assets/n-component-imports.js';
 import useDragAndDrop from '../drag_drop.js';
 import help_msg from './help_btn_msg';
 import ContextMenu from '../context_menu.vue'
@@ -115,8 +115,12 @@ const { onDragStart } = useDragAndDrop();
         @contextmenu="showContextMenu($event, props.type, props.id)">
         <div class="node_title" :style="{ 'background-image': 'linear-gradient(180deg,' + 'data.bg_color' + ',' + 'data.fg_color' + ')' }">
         <HContainer outerMargin="0px">
+
         <div>
-        {{ data.display_type}}
+        {{ data.display_type }}
+        <div v-if="props.id!=-1">
+        {{" ID:" + props.id}}
+        </div>
         </div>
         </HContainer>
         </div>
