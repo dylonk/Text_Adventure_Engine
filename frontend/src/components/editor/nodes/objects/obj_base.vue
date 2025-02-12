@@ -66,7 +66,9 @@ function removeProperty(propertyKey){
       <div v-if="index==listSelection" class="property-selected">
         <button @click="removeProperty(title)" class="property-list-delete" style="margin-right:3px;">x</button>
           {{ title+" " }}
-        <input class="property-input" @input="setProperty(title,$event.target.value)" :value="property" @keyup.enter="listSelection=-1">
+        <div class="nodrag">
+          <input class="property-input" @input="setProperty(title,$event.target.value)" :value="property" @keyup.enter="listSelection=-1">
+        </div>
       </div>
       <div v-else class="property">{{ title +":" + property }}</div>
     </div>

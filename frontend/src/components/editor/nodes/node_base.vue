@@ -62,6 +62,7 @@ const props = defineProps({
     id:-10,
     type: { type: String, default: 'unimplemented' },
     position: {type: Object, default: () => ({ x: 0, y: 0 })}, //position should be a prop, becuse we're gonna have to retrieve this stuff for project loading
+    draggable: false,
 
     //THIS IS WHERE ALL OUR NODE DATA BESIDES POSTION, TYPE AND ID SHOULD ACTUALLY GO
     data: {
@@ -111,7 +112,7 @@ const { onDragStart } = useDragAndDrop();
 </script>
 
 <template>
-    <div class="node_container" :draggable="true" @dragstart="onDragStart($event, props.type)"
+    <div class="node_container" :draggable="draggable" @dragstart="onDragStart($event, props.type)"
         @contextmenu="showContextMenu($event, props.type, props.id)">
         <div class="node_title" :style="{ 'background-image': 'linear-gradient(180deg,' + 'data.bg_color' + ',' + 'data.fg_color' + ')' }">
         <HContainer outerMargin="0px">

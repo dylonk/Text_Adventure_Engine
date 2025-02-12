@@ -17,6 +17,7 @@ const { onDragStart } = useDragAndDrop();
         <NodeBase
         id=-1
         :type="type"
+        draggable="true"
         :data="{
             display_type,
             bg_color:node_colors[type+'_bg'],
