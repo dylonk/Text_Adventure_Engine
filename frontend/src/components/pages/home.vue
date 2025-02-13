@@ -1,7 +1,41 @@
 <script setup>
-import globalNavBar from '@/components/standardjs/navbar.vue'
-function goToHome() {
-      this.$router.push('/')
+import { useRouter } from 'vue-router';
+import globalNavBar from '@/components/standardjs/navbar.vue';
+import clickSound from '@/assets/sounds/click.wav';
+import moreSound from '@/assets/sounds/more.wav';
+import explorer from'@/assets/Images/More.jpg';
+
+const router = useRouter();
+
+// Play sound function
+function playClickSound(soundType = 'click') {
+  const sound = new Audio(soundType === 'more' ? moreSound : clickSound);
+  sound.volume = 0.5; // Adjust volume
+  sound.play().catch((e) => console.warn("Sound play blocked", e));
+}
+
+// Navigate to explore page
+function goToExplore() {
+  playClickSound();
+  router.push('/explore');
+}
+
+// Dummy data for popular games
+const games = [
+  { id: 1, title: 'Fake Game 1', image: 'https://i.pinimg.com/736x/13/34/75/133475f2b4de23314a01df9a61f85436.jpg' },
+  { id: 2, title: 'Fake Game 2', image: 'https://i.pinimg.com/736x/13/34/75/133475f2b4de23314a01df9a61f85436.jpg' },
+  { id: 3, title: 'Fake Game 3', image: 'https://i.pinimg.com/736x/13/34/75/133475f2b4de23314a01df9a61f85436.jpg' },
+  { id: 4, title: 'Fake Game 4', image: 'https://i.pinimg.com/736x/13/34/75/133475f2b4de23314a01df9a61f85436.jpg' },
+  { id: 5, title: 'Fake Game 5', image: 'https://i.pinimg.com/736x/13/34/75/133475f2b4de23314a01df9a61f85436.jpg' },
+  { id: 6, title: 'More Games?', image: explorer}
+];
+
+function onGameClick(index) {
+  playClickSound(index < 5 ? 'click' : 'more');
+  if(index < 5)
+    router.push({name: 'GamePage', params: { info: `testData${index}`} });
+  else
+    router.push({name: 'Explore'});
 }
 </script>
 
