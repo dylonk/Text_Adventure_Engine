@@ -17,6 +17,7 @@ const nodesStore = useNodesStore()
 
 
 
+
 //contextmenu stuff
 const isContextMenuVisible = ref(false)
 const contextMenuId = ref(null)
@@ -70,10 +71,13 @@ const props = defineProps({
     },
   })
 
+  const defaultObjData =  { //This is the data that this component contributes. Any existing properties within the functional node data will be replaced
+    isObject: true, // These properties are distinct to ObjectBase, !!dont copy them!!
+    properties: {initialized:true},
+    display_type: 'ObjectBase'
+  }
+  nodesStore.contributeNodeData(props.id,defaultObjData,false);
 
-// UNFINISHED
-
-// END UNFINISHED
 console.log('NodeBase received:', {//nodebase init for testing
   id: props.id, 
   type: props.type, 
