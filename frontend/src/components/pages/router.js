@@ -8,6 +8,7 @@ import ExploreView from './explore.vue'
 import CreateView from './create.vue'
 import LoginView from './login.vue'
 import ProfileView from './profile.vue'
+import gamePageView from './gamePage.vue'
 import ProjectView from './project.vue'
 
 
@@ -19,14 +20,21 @@ const routes = [
     { path: '/create', component: CreateView },
     { path: '/auth', component: LoginView },
     { path: '/user', component: ProfileView },
+    { path: '/gamePage', component: gamePageView },
     { path: '/project', component: ProjectView },
-
-
 ]
 
 const router = createRouter({
     history: createMemoryHistory(),
-    routes,
+    routes: [
+        { path: '/', name: 'Home', component: HomeView },
+        { path: '/about', name: 'About', component: AboutView },
+        { path: '/explore', name: 'Explore', component: ExploreView },
+        { path: '/create', name: 'Create', component: CreateView },
+        { path: '/auth', name: 'Auth', component: LoginView },
+        { path: '/user', name: 'User', component: ProfileView },
+        { path: '/gamePage/:info', name: 'GamePage', component: gamePageView },
+    ],
     scrollBehavior(to, from, savedPosition){
 
     }
