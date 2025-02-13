@@ -33,6 +33,7 @@ const router = createRouter({
         { path: '/create', name: 'Create', component: CreateView },
         { path: '/auth', name: 'Auth', component: LoginView },
         { path: '/user', name: 'User', component: ProfileView },
+        { path: '/project', component: ProjectView },
         { path: '/gamePage/:info', name: 'GamePage', component: gamePageView },
     ],
     scrollBehavior(to, from, savedPosition){
