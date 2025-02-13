@@ -1,8 +1,9 @@
 <script setup>
 import { ref } from 'vue';
 import globalNavBar from '@/components/standardjs/navbar.vue';
-import { useRouter } from 'vue-router';
+import { useRouter } from 'vue-router'; // import useRouter from Vue
 
+// Create refs to store form data
 const formData = ref({
   username: '',
   password: ''
@@ -15,56 +16,72 @@ const registrationData = ref({
   confirmPassword: ''
 });
 
+// Access the router to redirect after login
 const router = useRouter();
 
+// Function to handle login submission
 const onLoginSubmit = async (event) => {
-  event.preventDefault();
+  event.preventDefault(); // Prevent default form submission
+
+  // Make a shallow copy of the form data to avoid sending reactive objects
   const plainFormData = { ...formData.value };
-  console.log('Form data being sent for login:', plainFormData);
+
+  console.log('Form data being sent for login:', plainFormData);  // Log the plain form data for debugging
+
   try {
     const response = await fetch('http://localhost:5000/auth/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(plainFormData)
+      body: JSON.stringify(plainFormData) // Send the plain object (no reactivity)
     });
+
     if (!response.ok) {
-      const errorDetail = await response.text();
+      const errorDetail = await response.text();  // Get error response details
       throw new Error(`Login failed: ${errorDetail}`);
     }
-    const result = await response.json();
-    localStorage.setItem('token', result.token);
-    router.push('/user');
+
+    const result = await response.json(); // Parse the JSON response from the server
+    localStorage.setItem('token', result.token); // Store the token in local storage
+    router.push('/user'); // Redirect to a protected page
   } catch (error) {
-    console.error('Error:', error.message);
-    alert(`Error: ${error.message}`);
+    console.error('Error:', error.message); // Show detailed error message
+    alert(`Error: ${error.message}`); // Display the error
   }
 };
 
+
+// Function to handle registration submission
 const onRegisterSubmit = async (event) => {
-  event.preventDefault();
-  console.log('Form data being sent for registration:', registrationData.value);
+  event.preventDefault(); // Prevent default form submission
+  
+  console.log('Form data being sent for registration:', registrationData.value);  // Log the form data to ensure it's correct
+
+  // Check if passwords match before proceeding
   if (registrationData.value.password !== registrationData.value.confirmPassword) {
     alert("Passwords do not match!");
     return;
   }
+
   try {
     const response = await fetch('http://localhost:5000/auth/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(registrationData.value)
+      body: JSON.stringify(registrationData.value) // Send the form data as JSON
     });
+
     if (!response.ok) {
-      const errorData = await response.json();
+      const errorData = await response.json(); // Parse the error response as JSON
       throw new Error(errorData.error || 'Registration failed');
     }
-    const result = await response.json();
-    console.log(result.message);
-    alert('Registration successful!');
-    router.push('/login');
+
+    const result = await response.json();  // Parse the JSON response from the server
+    console.log(result.message);  // Success message or response from the server
+    alert('Registration successful!');  // Show success message
+    router.push('/login');  // Redirect to login page after successful registration
   } catch (error) {
     console.error('Error:', error);
     alert('Registration failed');
@@ -77,6 +94,7 @@ const onRegisterSubmit = async (event) => {
   <div id="page">
     <div id="login">
       <div class="login-title">Login</div>
+      <!-- Login Form -->
       <form @submit.prevent="onLoginSubmit">
         <input
           type="text"
@@ -98,6 +116,8 @@ const onRegisterSubmit = async (event) => {
 
     <div id="registration">
       <div class="registration-title">Register</div>
+      <!-- Registration Form -->
+      
       <form @submit.prevent="onRegisterSubmit">
         <input
           type="text"
@@ -130,80 +150,51 @@ const onRegisterSubmit = async (event) => {
 </template>
 
 <style scoped>
-/* For demonstration only. For a site-wide font, move the @import and body font-family
-   rules to a global CSS file (e.g., frontend/src/assets/base.css or a global style in App.vue). */
-@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@700&display=swap');
+  /* Styles for the page */
+  #page {
+    display: flex;
+    flex-direction: row;
+    height: 90%;
+  }
 
-#page {
-  display: flex;
-  flex-direction: row;
-  height: 90vh;
-  background: #1d1f21;
-  color: #e0e0e0;
-  font-family: 'Pixelify Sans', sans-serif;
-  padding: 20px;
-}
+  #login {
+    width: 50%;
+    float: left;
+  }
 
-#login,
-#registration {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin: 10px;
-  background: #2c2f33;
-  border: 2px solid #e0e0e0;
-  box-shadow: 6px 6px 0 #000;
-  padding: 20px;
-  border-radius: 8px;
-}
+  .login-title {
+    text-align: center;
+    font-size: 24px;
+    margin-top: 20%;
+  }
 
-.login-title,
-.registration-title {
-  font-size: 2rem;
-  margin-bottom: 1rem;
-  text-shadow: 2px 2px 0 #000;
-}
+  #separator {
+    width: 0%;
+    top: 0;
+    border: 2px solid black;
+  }
 
-form {
-  display: flex;
-  flex-direction: column;
-  width: 80%;
-}
+  #registration {
+    width: 50%;
+    float: right;
+  }
 
-input {
-  margin-bottom: 10px;
-  padding: 10px;
-  background: #1d1f21;
-  border: 2px solid #e0e0e0;
-  color: #e0e0e0;
-  font-size: 1rem;
-  border-radius: 4px;
-  box-shadow: inset 2px 2px 0 #000;
-}
+  .registration-title {
+    text-align: center;
+    font-size: 24px;
+    margin-top: 20%;
+  }
 
-button {
-  padding: 10px;
-  background: #e74c3c;
-  border: none;
-  color: #fff;
-  font-size: 1rem;
-  font-weight: bold;
-  cursor: pointer;
-  border: 2px solid #e0e0e0;
-  box-shadow: 4px 4px 0 #000;
-  border-radius: 4px;
-  transition: background 0.2s;
-}
+  form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 50%;
+    transform: translate(50%);
+    margin-top: 10px;
+  }
 
-button:hover {
-  background: #c0392b;
-}
-
-#separator {
-  width: 2px;
-  background: #e0e0e0;
-  margin: 0 10px;
-}
+  input {
+    margin-bottom: 7px;
+  }
 </style>

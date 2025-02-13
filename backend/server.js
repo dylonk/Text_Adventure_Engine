@@ -20,7 +20,6 @@ app.use(cors({
 // Include route files
 const usersRoute = require('./routes/users');
 const authRoutes = require('./routes/auth');
-const projectRoutes = require('./routes/projects');
 console.log("Routing");
 
 app.get('/', (req, res) => {    //when root isa accessed, serve index.html from the public folder.
@@ -32,7 +31,6 @@ app.get('/', (req, res) => {    //when root isa accessed, serve index.html from 
 // Set Up routes
 app.use('/users', usersRoute);  
 app.use('/auth', authRoutes);
-app.use('/projects', projectRoutes);
 //use bodyParser
 
 

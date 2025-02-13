@@ -3,19 +3,11 @@ import { useNodesStore } from './nodes/node_store.js'
 import { computed, ref } from 'vue'
 import ContextMenu from './context_menu.vue'
 
-const object_type_list = [
-  'room',
-  'item',
-  'npc',
-  'pathway',
-]
-
 const nodesStore = useNodesStore()
 
-// Use computed properties to observe the nodes in the store. Any with object_type_list will be displayed
-const objects = computed(() => {
-  return nodesStore.nodes.filter(node => object_type_list.includes(node.type));
-});
+// Use computed properties to observe the nodes in the store
+const rooms = computed(() => nodesStore.nodes.rooms)
+const items = computed(() => nodesStore.nodes.items)
 
 const isContextMenuVisible = ref(false)
 const contextMenuId = ref(null)
@@ -25,26 +17,27 @@ const contextMenuActions=ref()
 
 // Show the context menu on right-click
 function showContextMenu(event, nodeType, nodeId) {
-  console.log("Context Menu Triggered:", {
-    nodeId, 
-    nodeType, 
-  });
-  console.log("all nodes: ",nodesStore.nodes)
-
-  contextMenuId.value = nodeId //the id of the node
+  contextMenuId.value = nodeId
   contextMenuPosition.value = { x: event.clientX, y: event.clientY }
-  isContextMenuVisible.value = true//what makes the menu visible
-  event.preventDefault()//prevents the default browser context menu from appearing
+  isContextMenuVisible.value = true
+  event.preventDefault()
 
+  // Dynamically set actions based on itemType (e.g., rooms or items)
+  if (nodeType === 'room') {
+    contextMenuActions.value = [
+      { label: 'Rename', action: () => nodesStore.renameNode(nodeId) },//
+      { label: 'Delete', action: () => nodesStore.deleteNode(nodeId) },//
 
-  //if we're cool being a little messy, we could add a very long switch statement here that adds actions based off nodetype
-    contextMenuActions.value = [//these actions are what will be availible when anything is right clicked. 
+      // Future actions can go here, e.g., 'Delete', etc.
+    ]
+  } else if (nodeType === 'item') {
+    contextMenuActions.value = [
       { label: 'Delete', action: () => nodesStore.deleteNode(nodeId) },
       { label: 'Rename', action: () => nodesStore.renameNode(nodeId) },//
       // Add more item-specific actions here.
     ]
   }
-
+}
 
 
 
@@ -67,32 +60,32 @@ function closeContextMenu() {
 
 <template>
   <div class="asset_browser">
-    <h3>Objects</h3>
-    <div v-if="objects.length > 0">
+    <h3>Rooms</h3>
+    <div v-if="rooms.length > 0">
       <div
-        v-for="object in objects"
-        :key="object.id"
-        @contextmenu="showContextMenu($event, object.type, object.id)"
+        v-for="room in rooms"
+        :key="room.id"
+        @contextmenu="showContextMenu($event, 'room', room.id)"
       >
         <details>
-          <summary>        {{ object.data.object_name || 'ERR_UNNAMED_NODE' }}          </summary>
+          <summary>        {{ room.node_title || 'Unnamed Room' }}          </summary>
           <ul>
-            <!-- <li v-for="item in nodesStore.getItemsInRoom(room.id)" :key="item.id">
-              {{ item.object_name || 'Unnamed Item' }}        (Item)
-            </li> -->
+            <li v-for="item in nodesStore.getItemsInRoom(room.id)" :key="item.id">
+              {{ item.node_title || 'Unnamed Item' }}        (Item)
+            </li>
           </ul>
         </details>
       </div>
     </div>
-    <p v-else>No objects in world</p>
+    <p v-else>No rooms available</p>
 
-    <!-- <h3>Items</h3>
+    <h3>Items</h3>
     <ul v-if="items.length > 0">
       <li v-for="item in items" :key="item.id" @contextmenu="showContextMenu($event, 'item', item.id)">
-        {{ item.object_name || 'Unnamed Item' }}
+        {{ item.node_title || 'Unnamed Item' }}
       </li>
     </ul>
-    <p v-else>No items available</p> -->
+    <p v-else>No items available</p>
 
     <!-- Context Menu Component -->
     <ContextMenu
