@@ -4,6 +4,7 @@ import { reactive,computed, ref } from 'vue';
 
 
 export const useNodesStore = defineStore('nodes', () => {//nodes store will no longer seperate nodes by type
+
   const nodes = ref([
   ]);
   const edges = ref([]) // No implementation atm
@@ -84,12 +85,16 @@ const renameNode = (id) => {
       return;
     }
     console.log("ContributeNodeData: node exists");
+    if(nodeExists.data.hasOwnProperty('initialized')){
+      return;
+    }
     if(OverwriteExistingData==true){
     Object.assign(nodeExists.data, inputData)
     }
     if(OverwriteExistingData==false){
       nodeExists.data=Object.assign(inputData,nodeExists.data )
     }
+    if(nodeExists.data.hasOwnProperty('initialized'))
     console.log("Data to input", inputData)
     console.log("New data of node:", nodeExists.data)
     return;
