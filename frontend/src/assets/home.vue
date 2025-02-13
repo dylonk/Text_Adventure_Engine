@@ -32,10 +32,7 @@ const games = [
 
 function onGameClick(index) {
   playClickSound(index < 5 ? 'click' : 'more');
-  if(index < 5)
-    router.push({name: 'GamePage', params: { info: `testData${index}`} });
-  else
-    router.push({name: 'Explore'});
+  router.push({name: 'GamePage', params: { info: `testData${index}`} });
 }
 </script>
 
