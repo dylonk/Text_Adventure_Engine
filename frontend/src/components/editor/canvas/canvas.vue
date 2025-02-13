@@ -2,41 +2,52 @@
 <!---Each canvas is a component of an "Object". The world editor is a canvas that is a component of the global object-->
 <script setup>
 import { ref, markRaw,computed, watch } from 'vue'
-import { VueFlow, useVueFlow } from '@vue-flow/core'
+import { VueFlow, applyNodeChanges, applyEdgeChanges } from '@vue-flow/core';
 import CanvasBackground from './background.vue'
 import CanvasControls from './controls.vue'
 import useDragAndDrop from '../drag_drop.js';
 import { useNodesStore } from "../nodes/node_store.js"
 
-// allll da fucking node imports REGISTER NODES HERE
-import { PromptNode } from '../nodes/n-imports.js'
-import { RoomNode } from '../nodes/n-imports.js'
-import { ItemNode } from '../nodes/n-imports.js'
+
+// NEWNODEREQ
+import { PromptNode, RoomNode, ItemNode, NpcNode, PathwayNode, UnimplementedNode, CustomNode, AwaitNode} from '../nodes/n-imports';
 
     const nodeTypes = {
         prompt: markRaw(PromptNode),
         room: markRaw(RoomNode),
-        item: markRaw(ItemNode)
+        item: markRaw(ItemNode),
+        npc: markRaw(NpcNode),
+        pathway: markRaw(PathwayNode),
+        custom: markRaw(CustomNode),
+        await: markRaw(AwaitNode),
+        unimplemented: markRaw(UnimplementedNode)
     }
 
 // Pinia store
 const nodesStore = useNodesStore();
 
-// Make nodes reactive using computed
-const canvasNodes = computed(() => nodesStore.getAllNodes());
 
 
 
-const { onConnect, addEdges } = useVueFlow()
+//const { onConnect, addEdges } = useVueFlow()
 const { onDragOver, onDrop, onDragLeave, isDragOver } = useDragAndDrop()
-const edges = ref([])
-onConnect(addEdges)
+//const edges = ref([])
+//onConnect(addEdges)
 
 </script>
 
 <template>
     <div class="canvas_container" @drop="onDrop" >
-        <VueFlow :nodes="canvasNodes" :node-types="nodeTypes" @dragover="onDragOver" @dragleave="onDragLeave" fit-view-on-init>
+        <VueFlow 
+        :apply-default="false"
+        v-model:nodes="nodesStore.nodes"
+        v-model:edges="nodesStore.edges"
+        :node-types="nodeTypes" 
+        class="pinia-flow"
+        @dragover="onDragOver" 
+        @dragleave="onDragLeave" 
+        @nodes-change="changes => applyNodeChanges(changes  , nodesStore.nodes)"
+        fit-view-on-init>
 
             <CanvasBackground        :style="{
           backgroundColor: isDragOver ? '#e7f3ff' : 'transparent',

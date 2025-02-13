@@ -1,6 +1,6 @@
 <script setup>
 import globalNavBar from '@/components/standardjs/navbar.vue'
-import Editor from '@/components/editor/editor.vue'
+import Editor from '@/components/editor/Editor.vue'
 
 function goToCreate() {
       this.$router.push('/create')
@@ -8,7 +8,7 @@ function goToCreate() {
 </script>
 <template>
 <body class="create-container">
-    <globalNavBar/>
+    <globalNavBar></globalNavBar>
     <Editor/>
 </body>
 </template>

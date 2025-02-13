@@ -1,22 +1,32 @@
 <script setup>
 
 import useDragAndDrop from './drag_drop.js';
-
+import node_colors from './nodes/node-colors.js'
 import { TBNode } from './nodes/n-imports.js'
+import { useProjectStore } from './project_store.js';
 
 
 </script>
 <template>
     <div class="toolbox">
         <a class="tb_title">Toolbox</a>
+        <button class="tb_btn" @click="useProjectStore().initProject()">Init Project (temporary implementation)</button>
+        <button class="tb_btn" @click="useProjectStore().renameProject()">Rename Project</button>
+        <button class="tb_btn" @click="useProjectStore().exportProject()">Export Project</button>
+
         <a class="tb_subtitle">Objects</a>
-                <TBNode node_type="room" display_type="Room" bg_color="red" stroke_color="black"></TBNode>
-                <TBNode node_type="item" display_type="Item" bg_color="red" stroke_color="black"></TBNode>
-
+                <TBNode type="room" display_type="Room"/>
+                <TBNode type="item" display_type="Item"/>
+                <TBNode type="npc" display_type="NPC"/>
+                <TBNode type="pathway" display_type="Pathway"/>
+                <TBNode type="custom" display_type="Custom"/>
         <a class="tb_subtitle">Interactive</a>
-                <TBNode node_type="prompt" display_type="Prompt" bg_color="rgb(200, 245, 170)" stroke_color="rgb(50, 100, 50)"></TBNode>
-        <a class="tb_subtitle">Logic</a>
-
+                <TBNode type="prompt" display_type="Prompt"/>
+                <TBNode type="await" display_type="Await"/>
+                <TBNode type="unimplemented" display_type="Action"/>
+        <a class="tb_subtitle">Value</a>
+        <a class="tb_subtitle">Path Control</a>
+        <a class="tb_subtitle">Visual</a>
     </div>
 </template>
 
@@ -26,11 +36,12 @@ import { TBNode } from './nodes/n-imports.js'
 .toolbox{
     display:flex;
     flex-direction: column;
+    width:auto;
     height:100%;
     background:rgb(209, 207, 216);
     border-right: 1px solid rgb(68, 46, 110);
     background-image: linear-gradient(180deg, rgb(197, 201, 179),rgb(214, 212, 199),rgb(214, 212, 199), rgb(214, 212, 199),rgb(215, 211, 185), rgb(191, 194, 179));
-
+    overflow-y:scroll;
 }
 
 .toolbox>*{

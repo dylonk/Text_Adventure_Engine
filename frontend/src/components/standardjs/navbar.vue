@@ -1,9 +1,10 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import {fetchUserData} from '@/components/standardjs/fetchUserData'
 
 // Reactive state to store the username
-const username = ref('');
+const displayUsername = ref('');
 
 // Function to log out the user
 function logOut() {
@@ -12,35 +13,14 @@ function logOut() {
 }
 
 // Function to fetch the user's username
-async function fetchUserProfile() {
-    const token = localStorage.getItem('token');  // Get the token from localStorage
 
-    if (!token) {
-        return; // If no token, do not proceed
-    }
-
-    try {
-        const response = await fetch('http://localhost:5000/auth/user', {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`,  // Pass the JWT token in the Authorization header
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to fetch user data');
-        }
-
-        const data = await response.json();
-        username.value = data.username;  // Store the username in the reactive variable
-    } catch (error) {
-        console.error('Error fetching user profile:', error);
-    }
-}
 
 // Call fetchUserProfile on mounted
-onMounted(fetchUserProfile);
+
+
+onMounted(async() => {           //on mounted (whenever a new page loads, properly set the displyed username)
+    displayUsername.value = await fetchUserData('username');
+})
 
 const router = useRouter(); // Access the Vue Router for navigation
 </script>
@@ -48,14 +28,14 @@ const router = useRouter(); // Access the Vue Router for navigation
 <template>
     <p class="navbar">
         <RouterLink class="nav_btn" to="/" active-class="active">Home</RouterLink>
-        <RouterLink class="nav_btn" to="/explore" active-class="active">Explore</RouterLink>
-        <RouterLink class="nav_btn" to="/create" active-class="active">Create</RouterLink>
+        <RouterLink class="nav_btn" to="/explore" active-class="active">Explore</RouterLink> 
+        <RouterLink class="nav_btn" to="/project" active-class="active">Create</RouterLink><!-- I think they should be rendered conditionally-->
         <RouterLink class="nav_btn" to="/user" active-class="active">Profile</RouterLink>
         <RouterLink class="nav_btn" to="/about" active-class="active">About</RouterLink>
 
         <!-- Conditional rendering based on whether the user is logged in -->
-        <template v-if="username">
-            <span class="hello-user">Hello {{ username }}!</span>
+        <template v-if="displayUsername">
+            <span class="hello-user">Hello {{ displayUsername || "ERROR NO USER. SHOULD NOT BE SEEN" }}!</span>
             <button @click="logOut" class="logout-btn">Log Out</button>
         </template>
         <template v-else>
@@ -74,27 +54,39 @@ const router = useRouter(); // Access the Vue Router for navigation
     width: 100vw;
     height: max-content;
     padding: 1vh;
-    background-color: rgb(64, 64, 64);
+    background-color: rgba(64, 64, 64,1);
     font-family: Arial, Helvetica, sans-serif;
     font-weight: bold;
+    z-index: 100;
 }
 
+
+.nav_btn:first-child {
+    margin-left: auto; 
+}   
 .nav_btn {
     font-family: 'Syne Mono', monospace;
-    font-size:22px;
+    font-size: 22px;
     height: calc(min-content + 10px);
     margin-left: 10px;
     color: rgb(165, 165, 165);
+    transition: color 0.2s;
+}
+
+.nav_btn:hover {
+    color: #e74c3c; /* Change color on hover */
 }
 
 .login_btn {
     font-family: 'Syne Mono', monospace;
-    font-size:22px;
+    font-size: 22px;
     height: calc(min-content + 10px);
     margin-left: auto;
     margin-right: 10px;
     background: rgb(255, 255, 255);
+    border: 2px solid #e0e0e0; /* Added for consistency */
     border-radius: 5px;
+    box-shadow: 2px 2px 0 #000; /* Added for brutal morphic style */
     color: rgb(188, 188, 188);
 }
 
@@ -112,7 +104,9 @@ const router = useRouter(); // Access the Vue Router for navigation
     height: calc(min-content + 10px);
     margin-left: 10px;
     background: rgb(255, 255, 255);
+    border: 2px solid #e0e0e0; /* Added for consistency */
     border-radius: 5px;
+    box-shadow: 2px 2px 0 #000; /* Added for brutal morphic style */
     color: rgb(188, 188, 188);
 }
 </style>

@@ -9,6 +9,7 @@ import CreateView from './create.vue'
 import LoginView from './login.vue'
 import ProfileView from './profile.vue'
 import gamePageView from './gamePage.vue'
+import ProjectView from './project.vue'
 
 
 
@@ -20,8 +21,7 @@ const routes = [
     { path: '/auth', component: LoginView },
     { path: '/user', component: ProfileView },
     { path: '/gamePage', component: gamePageView },
-
-
+    { path: '/project', component: ProjectView },
 ]
 
 const router = createRouter({

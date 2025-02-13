@@ -1,8 +1,8 @@
     // drag_drop.js
     import { useVueFlow } from '@vue-flow/core'
-    import { ref, watch } from 'vue'
+    import { ref, watch, computed } from 'vue'
     import { useNodesStore } from './nodes/node_store.js' // Import the Pinia store
-
+    import node_colors from './nodes/node-colors.js'
     let id = 1
 
     function getId() {  //ids are just one after the other
@@ -74,25 +74,30 @@
           // Create a new node
           const newNode = {
             type: draggedType.value,
-            id: getId(),
+            id: Number(getId()),
             position: pos,
+            data: {
+              display_type:'DnDNoDisplayNameGiven',
+              bg_color:computed(()=>node_colors[newNode.type+'_bg'] || 'red'),
+              fg_color:computed(()=>node_colors[newNode.type+'_fg'] || 'blue'),
+            },
             expandParent: true,
-            width: 100,
-            height: 100,
             parentId: null,
           }
+
+          console.log('Passing node with ID:', newNode.id);
           nodesStore.addNode(newNode)
-          addNodes(newNode)
           console.log("new node added!")
         }
-        else {
-          // Move an existing node
-          const nodeId = draggedType.value // assuming draggedType.value is the id of the node being moved
-          updateNode(nodeId, (node) => ({
-            position: pos,
-          }))
-        }
-      }
+/*           else {
+            // Move an existing node
+            const nodeId = draggedType.value // assuming draggedType.value is the id of the node being moved
+            console.log('Moving node with ID:', nodeId);
+            updateNode(nodeId, (node) => ({
+              position: pos,
+            }))
+          } */
+      } 
 
     return {
         draggedType,

@@ -1,43 +1,28 @@
 <script setup>
-import NodeBase from '../node_base.vue';
-import { defineProps, watch, computed, ref } from 'vue';
-import { useNodesStore } from '../node_store.js'
-
-
-
-// Define props for debugging purposes
+import { defineProps, computed } from 'vue';
+import ObjBase from './obj_base.vue'
+import node_colors from '../node-colors.js';
+import DebugInfo from '../node_assets/debug_info.vue';
 const props = defineProps({
-  node_title: { type: String, default: 'Unnamed Room' },
-  id: { type: Number },
-});
-
-const nodesStore = useNodesStore();
-const node = computed(() => nodesStore.getNode(Number(props.id)));
-
-
-
+  id: -1,
+})
+import { useNodesStore } from '@/components/editor/nodes/node_store'
+const NS = useNodesStore()
+const defaultObjData =  { //This is the data that this component contributes. Any existing properties within the functional node data will be replaced
+    display_type:"Room",
+    properties: {
+      aliases: "tavern lobby, atrium",
+      roomEnabled: true,
+    }
+  }
+  NS.contributeNodeData(props.id,defaultObjData);
 </script>
 
-
-
-
 <template>
-<NodeBase :node_title="node.node_title" node_type="room">
-  <!-- Debug Info, this is wht is disoplayed with a real node -->
-  <div class="debug-info">
-    <p><strong>ID:</strong> {{ id }}</p>
-  </div>
-</NodeBase>
+  <ObjBase
+    :id="id">
+  </ObjBase>
 </template>
 
 <style scoped>
-.debug-info {
-  margin-top: 5px;
-  font-size: 12px;
-  color: #555;
-  background: #f9f9f9;
-  padding: 5px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
 </style>

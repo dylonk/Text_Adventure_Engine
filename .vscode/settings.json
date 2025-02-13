@@ -1,3 +1,33 @@
 {
-    "CodeGPT.apiKey": "CodeGPT Plus Beta"
+    "CodeGPT.apiKey": "CodeGPT Plus Beta",
+    "folder-color.pathColors": [
+        {
+            "folderPath": "Text_Adventure_Engine\\frontend\\src\\components\\editor\\nodes\\objects\\",
+            "color": "foldercolorizer.color_9966cc"
+        },
+        {
+            "folderPath": "Text_Adventure_Engine\\frontend\\src\\components\\editor\\nodes\\",
+            "color": "foldercolorizer.color_33cc33"
+        },
+        {
+            "folderPath": "Text_Adventure_Engine\\frontend\\src\\components\\editor\\",
+            "color": "foldercolorizer.color_006633"
+        },
+        {
+            "folderPath": "Text_Adventure_Engine\\frontend\\src\\components\\editor\\nodes\\node_store.js\\",
+            "color": "foldercolorizer.color_330099"
+        },
+        {
+            "folderPath": "Text_Adventure_Engine\\frontend\\src\\components\\editor\\drag_drop.js\\",
+            "color": "foldercolorizer.color_0066ff"
+        },
+        {
+            "folderPath": "Text_Adventure_Engine\\frontend\\src\\components\\editor\\nodes\\function\\",
+            "color": "foldercolorizer.color_ff6600"
+        },
+        {
+            "folderPath": "Text_Adventure_Engine\\frontend\\src\\components\\editor\\nodes\\node_assets\\",
+            "color": "foldercolorizer.color_00ccff"
+        }
+    ]
 }

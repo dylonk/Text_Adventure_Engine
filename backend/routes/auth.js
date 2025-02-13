@@ -10,6 +10,7 @@ const jwtSecret = process.env.JWT_SECRET || 'default_jwt_secret';
 
 // Middleware to authenticate JWT token
 const authenticateToken = (req, res, next) => {
+    console.log("authenticating token");
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
 
@@ -18,6 +19,7 @@ const authenticateToken = (req, res, next) => {
     jwt.verify(token, jwtSecret, (err, user) => {
         if (err) return res.sendStatus(403); // If token is invalid, return 403 Forbidden
         req.user = user; // Attach user information to the request
+        console.log("authenticated token");
         next(); // Proceed to the next middleware or route handler
     });
 };
@@ -80,12 +82,59 @@ router.post('/login', async (req, res) => {
       res.status(500).send('Server error');
     }
   });
+
+router.post('/update', authenticateToken, async (req, res) => { //this updates the user profile non password fields
+    const { username, email } = req.body;   //right now just updates username and email. But we'll make it update everything
   
+    try {
+      const user = await User.findById(req.user.id);
+      if (!user) return res.status(404).send('User not found');
+  
+      user.username = username;
+      user.email = email;
+  
+      await user.save();
+  
+      res.json({ message: 'User updated' });
+    } catch (error) {
+      console.log(error);
+      res.status(500).send('Server error');
+    }
+  });
+
+  router.post('/changePassword', authenticateToken, async (req, res) => {   //seperate route for changing the password
+    const { currentPassword, newPassword, confirmNewPassword } = req.body;
+    console.log("currentPassword", currentPassword);
+    console.log("newPassword", newPassword);
+    console.log("confirmNewPassword", confirmNewPassword);
+  
+    try {
+      const user = await User.findById(req.user.id);
+      if (!user) return res.status(404).send('User not found');
+  
+      // Compare the provided current password with the pssword in database
+      const isMatch = (currentPassword === user.password);      //
+  
+      if (!isMatch) return res.status(400).send('Current password is incorrect');
+  
+      if (newPassword !== confirmNewPassword) return res.status(400).send('Passwords do not match');
+  
+      user.password = newPassword;
+  
+      await user.save();
+  
+      res.json({ message: 'Password updated' });
+    } catch (error) {
+      console.log(error);
+      res.status(500).send('Server error');
+    }
+  });
 
 
 // Protected route to get user data
 router.get('/user', authenticateToken, async (req, res) => {
     try {
+        console.log("user route accessed");
         const user = await User.findById(req.user.id).select('-password'); // Exclude password from response
         if (!user) return res.status(404).send('User not found');
         res.json(user); // Send user data
@@ -93,5 +142,6 @@ router.get('/user', authenticateToken, async (req, res) => {
         res.status(500).send('Server error');
     }
 });
+
 
 module.exports = router;
