@@ -10,7 +10,7 @@ import { useNodesStore } from "../nodes/node_store.js"
 
 
 // NEWNODEREQ
-import { PromptNode, RoomNode, ItemNode, NpcNode, PathwayNode, UnimplementedNode, CustomNode, AwaitNode} from '../nodes/n-imports';
+import { PromptNode, RoomNode, ItemNode, NpcNode, PathwayNode, UnimplementedNode, CustomNode, AwaitNode, ActionNode} from '../nodes/n-imports';
 
     const nodeTypes = {
         prompt: markRaw(PromptNode),
@@ -20,6 +20,7 @@ import { PromptNode, RoomNode, ItemNode, NpcNode, PathwayNode, UnimplementedNode
         pathway: markRaw(PathwayNode),
         custom: markRaw(CustomNode),
         await: markRaw(AwaitNode),
+        action: markRaw(ActionNode),
         unimplemented: markRaw(UnimplementedNode)
     }
 
@@ -47,6 +48,7 @@ const { onDragOver, onDrop, onDragLeave, isDragOver } = useDragAndDrop()
         @dragover="onDragOver" 
         @dragleave="onDragLeave" 
         @nodes-change="changes => applyNodeChanges(changes  , nodesStore.nodes)"
+        @edges-change="changes => applyEdgeChanges(changes, nodesStore.edges)"
         fit-view-on-init>
 
             <CanvasBackground        :style="{

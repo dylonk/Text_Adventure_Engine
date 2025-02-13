@@ -6,6 +6,7 @@ import HContainer from './horizontal_container.vue'
 import HandleIn from './handle_in.vue'
 import HandleOut from './handle_out.vue'
 import Tooltip from './tooltip.vue'
+import Textboxes from './textbox.vue'
 export{
     SmallButton,
     DebugInfo,
@@ -13,4 +14,5 @@ export{
     HandleIn,
     HandleOut,
     Tooltip,
+    Textboxes,
 }

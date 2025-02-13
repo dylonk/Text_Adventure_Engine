@@ -23,7 +23,7 @@ import { useProjectStore } from './project_store.js';
         <a class="tb_subtitle">Interactive</a>
                 <TBNode type="prompt" display_type="Prompt"/>
                 <TBNode type="await" display_type="Await"/>
-                <TBNode type="unimplemented" display_type="Action"/>
+                <TBNode type="action" display_type="Action"/>
         <a class="tb_subtitle">Value</a>
         <a class="tb_subtitle">Path Control</a>
         <a class="tb_subtitle">Visual</a>

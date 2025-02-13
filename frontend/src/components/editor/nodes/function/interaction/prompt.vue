@@ -2,7 +2,7 @@
 import { ref, defineProps, computed } from 'vue';
 import NodeBase from '../../node_base.vue'
 import { Handle, Position } from '@vue-flow/core';
-import { SmallButton, HContainer, HandleIn, HandleOut } from '../../node_assets/n-component-imports.js';
+import { SmallButton, HContainer, HandleIn, HandleOut, Textboxes } from '../../node_assets/n-component-imports.js';
 import node_colors from '../../node-colors';
 import FunctionBase from '../func_base.vue'
 let response_id = 0;
@@ -18,7 +18,6 @@ import { useNodesStore } from '@/components/editor/nodes/node_store'
 const NS = useNodesStore()
 const defaultObjData =  { //This is the data that this component contributes. Any existing properties within the functional node data will be replaced
     display_type:"Prompt",
-    textBoxes:[]
   }
   console.log("prompt.vue: ReferenceID is = " + props.id)
   NS.contributeNodeData(props.id,defaultObjData,true);
@@ -50,6 +49,14 @@ function autoResize() {
     <FunctionBase
         :id="id"
         >
+        <HContainer outerMargin="0px">
+        <Textboxes style="margin-top: 0px;" :id="id" startingQuantity=1 allowButtons=false title="Console Output"></Textboxes>
+        <HandleIn :handleId="id"></HandleIn>
+        </HContainer>
+        <HContainer outerMargin="0px">
+        <HandleOut :handleId="id"></HandleOut>
+        <Textboxes style="margin-top: 0px;" :id="id" startingQuantity=1 allowButtons=true title="Response"></Textboxes>
+        </HContainer>
     </FunctionBase>
 
 

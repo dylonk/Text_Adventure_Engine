@@ -72,9 +72,8 @@ const props = defineProps({
   })
 
   const defaultObjData =  { //This is the data that this component contributes. Any existing properties within the functional node data will be replaced
-    isObject: true, // These properties are distinct to ObjectBase, !!dont copy them!!
-    properties: {initialized:true},
-    display_type: 'ObjectBase'
+    properties: {},
+    initialized:true
   }
   nodesStore.contributeNodeData(props.id,defaultObjData,false);
 

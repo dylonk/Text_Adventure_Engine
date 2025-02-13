@@ -7,7 +7,7 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
 
   const nodes = ref([
   ]);
-  const edges = ref([]) // No implementation atm
+  const edges = ref([]); // No implementation atm
 
   const object_count = reactive({
     //For making unique object names
@@ -85,9 +85,9 @@ const renameNode = (id) => {
       return;
     }
     console.log("ContributeNodeData: node exists");
-    if(nodeExists.data.hasOwnProperty('initialized')){
-      return;
-    }
+    // if(nodeExists.data.hasOwnProperty('initialized')){
+    //   return;
+    // }
     if(OverwriteExistingData==true){
     Object.assign(nodeExists.data, inputData)
     }
@@ -114,6 +114,30 @@ const renameNode = (id) => {
     console.log("Key/Value to input", inputKey,inputValue)
     nodeExists.data.properties[inputKey]=inputValue
     console.log("New data of properties:", nodeExists.data.properties)
+    return;
+  };
+  const setNodeData = (id, inputKey, inputValue) => {
+    console.log("setNodeData Called");
+    const nodeExists = getNode(id);
+    if (!nodeExists) {
+      console.error(`setNodeData: Node with id ${id} does not exist`);
+      return;
+    }
+    console.log("Key/Value to input", inputKey,inputValue)
+    nodeExists.data[inputKey]=inputValue
+    console.log("New data of node:", nodeExists.data)
+    return;
+  };
+  const removeNodeData = (id, inputKey) => {
+    console.log("removeNodeData Called");
+    const nodeExists = getNode(id);
+    if (!nodeExists) {
+      console.error(`removeNodeData: Node with id ${id} does not exist`);
+      return;
+    }
+    console.log("Key to remove", inputKey)
+    delete nodeExists.data[inputKey]
+    console.log("New data of node:", nodeExists.data)
     return;
   };
   const removeNodeProperty = (id, inputKey) => {
@@ -181,11 +205,14 @@ const getNode = (id) => {
   return {
     //exporting functions
     nodes,
+    edges,
     addNode,
     deleteNode,
     renameNode,
     getNode,
     contributeNodeData,
+    setNodeData,
+    removeNodeData,
     setNodeProperty,
     removeNodeProperty,
   };

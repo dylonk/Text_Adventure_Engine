@@ -15,6 +15,8 @@ const node_colors = {
     await_fg: "#0c241d",
     unimplemented_bg:"#ff00f2",
     unimplemented_fg:"black",
+    action_bg: "#fcba03",
+    action_fg: "#fc4e03",
 };
 
 export default node_colors;
