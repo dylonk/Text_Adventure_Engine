@@ -8,6 +8,7 @@ import ExploreView from './explore.vue'
 import CreateView from './create.vue'
 import LoginView from './login.vue'
 import ProfileView from './profile.vue'
+import ProjectView from './project.vue'
 
 
 
@@ -18,6 +19,7 @@ const routes = [
     { path: '/create', component: CreateView },
     { path: '/auth', component: LoginView },
     { path: '/user', component: ProfileView },
+    { path: '/project', component: ProjectView },
 
 
 ]
