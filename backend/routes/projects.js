@@ -34,4 +34,23 @@ const router = express.Router();
     }
   });
 
+
+
+
+  //route to get all projects by user id
+  router.get('/', async (req, res) => {
+    try {
+      const { userId } = req.query; // Get the userId from the query parameters
+      if (!userId) {
+        return res.status(400).json({ message: 'userId is required' });
+      }
+  
+      // Fetch all projects where userId matches
+      const projects = await Project.find({ userId: userId });
+      res.json(projects); // Send the found projects as the response
+    } catch (error) {
+      console.error('Error fetching projects:', error);
+      res.status(500).json({ message: 'Error fetching projects', error });
+    }
+  });
   module.exports = router;  //gotta export the router

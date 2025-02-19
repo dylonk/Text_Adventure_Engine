@@ -1,9 +1,10 @@
 <script setup>
     import { ref, provide } from 'vue'
-    import Toolbar  from './toolbox.vue'
+    import Toolbox  from './toolbox.vue'
     import Canvas from './canvas/canvas.vue'
     import AssetBrowser from './asset_browser.vue'
     import globalNavBar from '@/components/standardjs/navbar.vue'
+    import Toolbar from './toolbar.vue'
 
 
 
@@ -12,9 +13,9 @@
 </script>
 <!---This is the outermost layer of the editor--->
 <template>
-
+        <Toolbar/>
     <div class="editor-container">
-        <Toolbar />
+        <Toolbox />
         <Canvas />
         <AssetBrowser />
     </div>

@@ -1,18 +1,60 @@
 <script setup>
 import { useRouter } from 'vue-router';
-import { ref } from 'vue';
+import { ref,onMounted } from 'vue';
 import globalNavBar from '@/components/standardjs/navbar.vue';
 import clickSound from '@/assets/sounds/click.wav';
 import moreSound from '@/assets/sounds/more.wav';
+import { useProjectStore } from '../editor/project_store';
+import axios from 'axios';//I'm using axios here to simplify the http. We don't necessarily need to use it with evreything.
 
 const router = useRouter();
-const recentProjects = ref([
-  { id: 1, title: 'Fake Project 1', image: 'https://i.pinimg.com/736x/13/34/75/133475f2b4de23314a01df9a61f85436.jpg' },
-  { id: 2, title: 'Fake Project 2', image: 'https://i.pinimg.com/736x/13/34/75/133475f2b4de23314a01df9a61f85436.jpg' },
-  { id: 3, title: 'Fake Project 3', image: 'https://i.pinimg.com/736x/13/34/75/133475f2b4de23314a01df9a61f85436.jpg' },
-  { id: 4, title: 'Fake Project 4', image: 'https://i.pinimg.com/736x/13/34/75/133475f2b4de23314a01df9a61f85436.jpg' },
-  { id: 5, title: 'Fake Project 5', image: 'https://i.pinimg.com/736x/13/34/75/133475f2b4de23314a01df9a61f85436.jpg' }
-]);
+
+
+const recentProjects = ref([]);
+const userId = ref('');
+// Fetch the projects for the logged-in user
+const fetchProjects = async () => {
+  try {
+    const token = localStorage.getItem('token');  //gotta get the token to make sure user logged in
+        const response = await fetch('http://localhost:5000/auth/user', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,  // Pass the JWT token in the Authorization header
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch user data');
+        }
+
+        const userData = await response.json();
+        userId.value = userData._id;  // all this just to get the users id. If only i was less lazy and made this more modular.
+
+    } catch (error) {
+        console.error('Error fetching user profile:', error);
+    }
+
+  try {
+    console.log('Fetching projects for user:', userId.value);
+    const response = await axios.get(`http://localhost:5000/projects?userId=${userId.value}`);
+    console.log(response.data);
+    // Assuming response.data is an array of projects
+    recentProjects.value = response.data.map(project => ({
+      id: project.id,
+      title: project.name,  // Assuming project.name corresponds to the title
+      image: 'https://via.placeholder.com/150'  // Add the actual image URL or placeholder
+    }));
+  } catch (error) {
+    console.error('Error fetching projects:', error);
+  }
+};
+
+//when mounted, uses the above code to get all the user's projects. we can always edit it to only get the 6 most recently edited.
+onMounted(() => {
+  fetchProjects();
+});
+
 
 // Play sound function
 function playClickSound(soundType = 'click') {
@@ -25,6 +67,7 @@ function playClickSound(soundType = 'click') {
 function newProject() {
   playClickSound();
   router.push('/create');
+  useProjectStore().initProject();
 }
 
 // Load project from file explorer
