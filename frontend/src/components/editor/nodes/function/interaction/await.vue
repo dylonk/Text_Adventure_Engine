@@ -49,10 +49,7 @@ function autoResize() {
     <FunctionBase
         :id="id"
         >
-        <HContainer outerMargin="0px">
         <Textboxes style="margin-top: 0px;" :id="id" startingQuantity=1 allowButtons=false title="Expected Phrase"></Textboxes>
-        <HandleOut :handleId="id"></HandleOut>
-        </HContainer>
 
     </FunctionBase>
 

@@ -135,8 +135,8 @@ const { onDragStart } = useDragAndDrop();
       @action="handleContextMenuAction"
       @hide-context-menu="closeContextMenu"
     />
-        <slot></slot>
-    </div>
+      <slot></slot>
+  </div>
 </template>
 
 <style scoped>
@@ -160,8 +160,10 @@ const { onDragStart } = useDragAndDrop();
 .node_container:active{
     outline:2px rgb(0, 0, 255) solid;
 }
-.node_container>*{
-    margin:10px;
+.node-content{
+  display:flex;
+  flex-direction: column;
+  padding:5px;
 }
 .node_title{
     font-family: 'Syne Mono', monospace;

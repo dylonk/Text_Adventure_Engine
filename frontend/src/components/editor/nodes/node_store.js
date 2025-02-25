@@ -5,6 +5,7 @@ import { reactive,computed, ref } from 'vue';
 
 export const useNodesStore = defineStore('nodes', () => {//nodes store will no longer seperate nodes by type
 
+  const currentCanvas = ref(0);
   const nodes = ref([
   ]);
   const edges = ref([]); // No implementation atm
@@ -36,11 +37,13 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
       idType: typeof node.id,
       data: node.data
     });
+    
 
     if (!node.id || nodeExists) {   //this should not happen. it's an error message
       console.error(`Node with id ${node.id} already exists`);
       return;
     }
+    node.data.parentID = currentCanvas.value;
 
     //adds the default names
     if (
@@ -62,6 +65,14 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
       console.log("function added with id", node.id);
     }
   };
+
+const swapCanvas = () =>{
+  //Hide all nodes
+    
+  //Show all nodes with parent == new canvas
+
+  //new canvas = current canvas
+};
 
 const renameNode = (id) => {
     const nodeExists = nodes.value.find((n) => n.id === id);

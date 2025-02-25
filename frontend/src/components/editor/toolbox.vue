@@ -9,9 +9,6 @@ import { useProjectStore } from './project_store.js';
 </script>
 <template>
     <div class="toolbox">
-        <a class="tb_title">Toolbox</a>
-
-
         <a class="tb_subtitle">Objects</a>
                 <TBNode type="room" display_type="Room"/>
                 <TBNode type="item" display_type="Item"/>

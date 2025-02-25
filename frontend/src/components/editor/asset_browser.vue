@@ -66,58 +66,93 @@ function closeContextMenu() {
 </script>
 
 <template>
-  <div class="asset_browser">
-    <h3>Objects</h3>
-    <div v-if="objects.length > 0">
-      <div
-        v-for="object in objects"
-        :key="object.id"
-        @contextmenu="showContextMenu($event, object.type, object.id)"
-      >
+    <div class="asset_browser">
+      <h3>Asset Browser</h3>
+      <div class="objects-container">
         <details>
-          <summary>        {{ object.data.object_name || 'ERR_UNNAMED_NODE' }}          </summary>
-          <ul>
-            <!-- <li v-for="item in nodesStore.getItemsInRoom(room.id)" :key="item.id">
-              {{ item.object_name || 'Unnamed Item' }}        (Item)
-            </li> -->
-          </ul>
+            <summary class="sum-light">Global</summary>
         </details>
+        <div style="height: 0;width: 0; position:relative;left:-28px;top:-31px;">
+          <img onload="this.width*=0.45" class="canvas-selector" src="@/assets/Images/editor/canvasselector.png">
+        </div>
+        <div
+          v-for="(object,index) in objects"
+          :key="object.id"
+          @contextmenu="showContextMenu($event, object.type, object.id)"
+        >
+          <details>
+            <summary v-if="index%2==0" class="sum-dark">        {{ object.data.object_name || 'ERR_UNNAMED_NODE' }}          </summary>
+            <summary v-else class="sum-light">        {{ object.data.object_name || 'ERR_UNNAMED_NODE' }}          </summary>
+          </details>
+          <div v-if="index==-1" style="height: 0;width: 0; position:relative;left:-28px;top:-31px;">
+            <img onload="this.width*=0.45" class="canvas-selector" src="@/assets/Images/editor/canvasselector.png">
+          </div>
+        </div>
       </div>
+
+      <!-- <h3>Items</h3>
+      <ul v-if="items.length > 0">
+        <li v-for="item in items" :key="item.id" @contextmenu="showContextMenu($event, 'item', item.id)">
+          {{ item.object_name || 'Unnamed Item' }}
+        </li>
+      </ul>
+      <p v-else>No items available</p> -->
+
+      <!-- Context Menu Component -->
+      <ContextMenu
+        v-if="isContextMenuVisible"
+        :position="contextMenuPosition"
+        :actions="contextMenuActions"
+        @action="handleContextMenuAction"
+        @hide-context-menu="closeContextMenu"
+      />
     </div>
-    <p v-else>No objects in world</p>
-
-    <!-- <h3>Items</h3>
-    <ul v-if="items.length > 0">
-      <li v-for="item in items" :key="item.id" @contextmenu="showContextMenu($event, 'item', item.id)">
-        {{ item.object_name || 'Unnamed Item' }}
-      </li>
-    </ul>
-    <p v-else>No items available</p> -->
-
-    <!-- Context Menu Component -->
-    <ContextMenu
-      v-if="isContextMenuVisible"
-      :position="contextMenuPosition"
-      :actions="contextMenuActions"
-      @action="handleContextMenuAction"
-      @hide-context-menu="closeContextMenu"
-    />
-  </div>
 </template>
 
 <style scoped>
+@import url("https://fonts.googleapis.com/css2?family=Scada");
 .asset_browser {
+  height:auto;
   display: flex;
   flex-direction: column;
-  padding: 20px;
-  border-left: solid black 1px;
-  background: rgb(255, 255, 255)
+  background: rgb(74, 74, 74)
+}
+.asset-browser-hr{
+  margin-top:5px;
+  margin-bottom:5px;
+}
+details summary{
+  color:white;
+  text-shadow: 0px 1.4px black;
+}
+.sum-dark{
+  background:rgb(100, 100, 100);
+  padding:3px;
+  padding-left:5px;
+  padding-right:5px;
+}
+.sum-light{
+  background:gray;
+  padding:3px;
+  padding-left:5px;
+  padding-right:5px;
 }
 
 h3 {
-  margin-bottom: 10px;
+  font-family: "Scada", serif;  
   font-size: 1.2em;
-  color: #000000;
+  color: rgb(180, 180, 180);
+  margin-left:8px;
+  margin-right:8px;
+  margin-top:5px;
+  margin-bottom:5px;
+  padding-right:10px;
+  padding-left:10px;
+  text-align: center;
+  width:max-content;
+  border-radius: 5px;
+  border: rgb(46, 46, 46) 1.7px solid;
+
 }
 
 ul {
@@ -132,12 +167,21 @@ li {
   color: #444;
 }
 
-details {
-  margin-bottom: 10px;
+.objects-container {
+  height: 100%;
+  overflow:hidden;
+  border-top: solid rgb(47, 47, 47) 1.5px;
+  background: rgb(100, 100, 100);
+
 }
 
 details summary {
   cursor: pointer;
   font-weight: bold;
+}
+
+.canvas-selector{
+  position:fixed;
+  pointer-events: none;
 }
 </style>
