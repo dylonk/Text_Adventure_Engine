@@ -30,10 +30,23 @@ const nodesStore = useNodesStore();
 
 
 
-//const { onConnect, addEdges } = useVueFlow()
 const { onDragOver, onDrop, onDragLeave, isDragOver } = useDragAndDrop()
-//const edges = ref([])
-//onConnect(addEdges)
+const onConnect = (connection) => {
+    console.log('Connection made:', connection);
+    // Add the new edge to the store
+    nodesStore.addEdge({
+        id: `e-${connection.source}-${connection.target}`,
+        source: connection.source,
+        target: connection.target,
+        // You can add additional properties as needed
+        sourceHandle: connection.sourceHandle,
+        targetHandle: connection.targetHandle,
+        // Optional custom styling
+        style: { stroke: '#555', strokeWidth: 2 },
+        animated: false,
+        // Any other edge properties you need
+    });
+};
 
 </script>
 
@@ -47,6 +60,7 @@ const { onDragOver, onDrop, onDragLeave, isDragOver } = useDragAndDrop()
         class="pinia-flow"
         @dragover="onDragOver" 
         @dragleave="onDragLeave" 
+        @connect="onConnect"
         @nodes-change="changes => applyNodeChanges(changes  , nodesStore.nodes)"
         @edges-change="changes => applyEdgeChanges(changes, nodesStore.edges)"
         fit-view-on-init>

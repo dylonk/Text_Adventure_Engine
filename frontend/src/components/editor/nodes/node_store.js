@@ -5,8 +5,7 @@ import { reactive,computed, ref } from 'vue';
 
 export const useNodesStore = defineStore('nodes', () => {//nodes store will no longer seperate nodes by type
 
-  const nodes = ref([
-  ]);
+  const nodes = ref([]);
   const edges = ref([]); // No implementation atm
 
   const object_count = reactive({
@@ -201,6 +200,63 @@ const getNode = (id) => {
   }
     return nodeExists
 }
+  // NEW: Add an edge to the store
+  const addEdge = (edge) => {
+    console.log("Adding edge:", edge);
+    // Check if the edge already exists
+    const edgeExists = edges.value.find(
+      (e) => e.id === edge.id || (e.source === edge.source && e.target === edge.target)
+    );
+    
+    if (edgeExists) {
+      console.error(`Edge from ${edge.source} to ${edge.target} already exists`);
+      return;
+    }
+    
+    // Ensure the edge has a unique ID if not provided
+    if (!edge.id) {
+      edge.id = `e-${edge.source}-${edge.target}`;
+    }
+    
+    // Add any default edge properties if needed
+    if (!edge.type) {
+      edge.type = 'default';
+    }
+    
+    // Add the edge
+    edges.value.push(edge);
+    console.log("After adding edge:", edges.value);
+  };
+
+  // NEW: Update an edge
+  const updateEdge = (id, newData) => {
+    const edgeIndex = edges.value.findIndex(e => e.id === id);
+    if (edgeIndex === -1) {
+      console.error(`Edge with id ${id} does not exist`);
+      return;
+    }
+    
+    edges.value[edgeIndex] = { ...edges.value[edgeIndex], ...newData };
+    console.log("Edge updated:", edges.value[edgeIndex]);
+  };
+
+  // NEW: Delete an edge
+  const deleteEdge = (id) => {
+    const edgeExists = edges.value.find(e => e.id === id);
+    if (!edgeExists) {
+      console.error(`Edge with id ${id} does not exist`);
+      return;
+    }
+    
+    edges.value = edges.value.filter(e => e.id !== id);
+    console.log("Edge deleted. Remaining edges:", edges.value);
+  };
+
+  // NEW: Get an edge
+  const getEdge = (id) => {
+    return edges.value.find(e => e.id === id);
+  };
+
 
   return {
     //exporting functions
@@ -215,5 +271,9 @@ const getNode = (id) => {
     removeNodeData,
     setNodeProperty,
     removeNodeProperty,
+    addEdge,
+    updateEdge,
+    deleteEdge,
+    getEdge
   };
 });
