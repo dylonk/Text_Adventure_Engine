@@ -78,14 +78,7 @@ const onConnect = (connection) => {
 
 <style>
 @import 'https://cdn.jsdelivr.net/npm/@vue-flow/core@1.41.4/dist/style.css';
-vue-flow__nodesselection-rect{
-    width: 450px;
-    height: 336px; 
-    top: 0px; 
-    left: 100px; 
-    touch-action: none;
 
-}
     .canvas_container{
         background-color: transparent;
         width:100%;
