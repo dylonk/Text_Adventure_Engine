@@ -9,45 +9,49 @@ import { useProjectStore } from './project_store.js';
 </script>
 <template>
     <div class="toolbox">
-        <a class="tb_subtitle">Objects</a>
-                <TBNode type="room" display_type="Room"/>
-                <TBNode type="item" display_type="Item"/>
-                <TBNode type="npc" display_type="NPC"/>
-                <TBNode type="pathway" display_type="Pathway"/>
-                <TBNode type="custom" display_type="Custom"/>
-        <a class="tb_subtitle">Interactive</a>
-                <TBNode type="prompt" display_type="Prompt"/>
-                <TBNode type="await" display_type="Await"/>
-                <TBNode type="action" display_type="Action"/>
-        <a class="tb_subtitle">Value</a>
-        <a class="tb_subtitle">Path Control</a>
-        <a class="tb_subtitle">Visual</a>
+        <img onload="this.width*=0.8" src="@/assets/Images/editor/toolbox-top.png" class="tb-scroll-image-top">
+        <a class="tb_title">Toolbox</a>
+        <div class="tb-items">
+            <a class="tb_subtitle">Objects</a>
+                    <TBNode type="room" display_type="Room"/>
+                    <TBNode type="item" display_type="Item"/>
+                    <TBNode type="npc" display_type="NPC"/>
+                    <TBNode type="pathway" display_type="Pathway"/>
+                    <TBNode type="custom" display_type="Custom"/>
+            <a class="tb_subtitle">Interactive</a>
+                    <TBNode type="prompt" display_type="Prompt"/>
+                    <TBNode type="await" display_type="Await"/>
+                    <TBNode type="action" display_type="Action"/>
+            <a class="tb_subtitle">Value</a>
+            <a class="tb_subtitle">Path Control</a>
+            <a class="tb_subtitle">Visual</a>
+        </div>
+        <img onload="this.width*=0.8" src="@/assets/Images/editor/toolbox-bottom.png" class="tb-scroll-image-bottom">
     </div>
 </template>
 
 <style>
 @import 'https://fonts.googleapis.com/css2?family=Syne+Mono&display=swap';
+@import 'https://fonts.googleapis.com/css2?family=Hurricane';
 
 .toolbox{
     display:flex;
     flex-direction: column;
-    width:auto;
+    width:11.2%;
+    min-width:min-content;
     height:100%;
-    background:rgb(209, 207, 216);
-    border-right: 1px solid rgb(68, 46, 110);
-    background-image: linear-gradient(180deg, rgb(197, 201, 179),rgb(214, 212, 199),rgb(214, 212, 199), rgb(214, 212, 199),rgb(215, 211, 185), rgb(191, 194, 179));
-    overflow-y:scroll;
+    background:rgb(208, 169, 115);
 }
 
-.toolbox>*{
+.tb-items>*{
     margin:6px;
 }
 
 .tb_title{
 
-    font-family: 'Syne Mono', monospace;
-    font-size: 22px;
-    padding:8px;
+    font-family: "Hurricane", serif;    
+    font-size: xx-large;
+    padding:0px;
     text-align: center;
     margin: 0 auto;
     margin-bottom:0px;
@@ -55,24 +59,44 @@ import { useProjectStore } from './project_store.js';
     width: 100%;
     height:min-content;
     color:rgb(78, 81, 76);
-    background:rgb(189, 189, 189);
-    background-image: linear-gradient(180deg, rgb(237, 248, 208),rgb(214, 212, 199),rgb(214, 212, 199), rgb(214, 212, 199),rgb(215, 211, 185), rgb(71, 70, 74));
     font-weight:500;
 }
 
+.tb-scroll-image-top{
+    position:relative;
+    margin:0px;
+    width:106%;
+    z-index:1;
+    pointer-events: none;
+}
+.tb-scroll-image-bottom{
+    margin:0px;
+    width:106%;
+    margin-top:auto;
+    z-index:1;
+    pointer-events: none;
+
+}
 .tb_subtitle{
-    font-family: 'Syne Mono', monospace;
+    font-family: "Hurricane", serif;    
+    font-size:x-large;
     padding:4px;
+    width:max-content;
     margin: 0 auto;
     margin-bottom:0px;
 
     width: 100%;
     height:min-content;
     color:rgb(78, 81, 76);
-    font-weight:600;
-    font-size:14px;
 }
-
+.tb-items{
+    display:flex;
+    flex-direction: column;
+    min-width:min-content;
+    margin: 6px;
+    border: 4px double rgb(111, 100, 71);
+    overflow:auto;
+}
 
 .context-menu {
     position: absolute;

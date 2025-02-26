@@ -30,7 +30,6 @@ const { onDragStart } = useDragAndDrop();
 @import 'https://fonts.googleapis.com/css2?family=Syne+Mono&display=swap';
 .tb_node_container{
     font-family: 'Syne Mono', monospace;
-    outline: 1px solid rgb(67, 67, 67);
     height:fit-content;
     width:fit-content;
     display:flex;

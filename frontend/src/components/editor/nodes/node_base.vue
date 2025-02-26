@@ -115,18 +115,20 @@ const { onDragStart } = useDragAndDrop();
 </script>
 
 <template>
+  <div class="outline">
     <div class="node_container" :draggable="draggable" @dragstart="onDragStart($event, props.type)"
         @contextmenu="showContextMenu($event, props.type, props.id)">
         <div class="node_title" :style="{ 'background-image': 'linear-gradient(180deg,' + 'data.bg_color' + ',' + 'data.fg_color' + ')' }">
-        <HContainer outerMargin="0px">
 
+        
         <div>
-        {{ data.display_type }}
-        <div v-if="props.id!=-1">
+        <HContainer outer-margin="">
+          {{ data.display_type }}
+        <div v-if="props.id!=-1" class="node-id">
         {{" ID:" + props.id}}
         </div>
-        </div>
         </HContainer>
+        </div>
         </div>
         <ContextMenu
       v-if="isContextMenuVisible"
@@ -136,6 +138,7 @@ const { onDragStart } = useDragAndDrop();
       @hide-context-menu="closeContextMenu"
     />
       <slot></slot>
+    </div>
   </div>
 </template>
 
@@ -149,7 +152,6 @@ const { onDragStart } = useDragAndDrop();
 .node_container{
     overflow:hidden;
     background:v-bind('data.bg_color');
-    outline: 1px solid v-bind('data.fg_color');
     height:fit-content;
     width:fit-content;
     min-height: 4px;
@@ -157,13 +159,23 @@ const { onDragStart } = useDragAndDrop();
     flex-direction: column;
     border-radius: 6px;
 }
-.node_container:active{
-    outline:2px rgb(0, 0, 255) solid;
+.outline:active{
+  background: blue;
 }
-.node-content{
-  display:flex;
-  flex-direction: column;
-  padding:5px;
+.node_container:active{
+  outline:4px blue solid;
+}
+
+.outline{
+  border-radius: 7px;
+  background:v-bind('data.fg_color');
+  padding:2px;
+}
+.node-id{
+  margin-left:auto;
+  text-shadow:none;
+  color:white;
+  margin-right:0px;
 }
 .node_title{
     font-family: 'Syne Mono', monospace;
