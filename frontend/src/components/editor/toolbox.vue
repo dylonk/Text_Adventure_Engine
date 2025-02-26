@@ -96,6 +96,7 @@ import { useProjectStore } from './project_store.js';
     margin: 6px;
     border: 4px double rgb(111, 100, 71);
     overflow:auto;
+    height:100%;
 }
 
 .context-menu {

@@ -104,11 +104,12 @@ const projectStore = useProjectStore();
   }
   
   .dropdown-content {
+    border: black 1px solid;
     display: none;
     position: absolute;
     background-color: #f1f1f1;
     min-width: 160px;
-    z-index: 1;
+    z-index: 10;
   }
   
   .dropdown-content a {
