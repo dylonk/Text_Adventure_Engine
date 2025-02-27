@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { reactive,computed, ref } from 'vue';
+import { reactive,computed, ref, toRaw } from 'vue';
 
 
 
@@ -36,8 +36,8 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
   const globalSync = () => {
     // Store current nodes and edges in canvas object
     const canvas = {
-      n: nodes.value,
-      e: edges.value,
+      n: JSON.parse(JSON.stringify(toRaw(nodes.value))),
+      e: JSON.parse(JSON.stringify(toRaw(edges.value))),
     }
     // push to map
     globalNodes.value.set(canvasID.value,canvas);
@@ -93,20 +93,17 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
 const swapCanvas = (newid) =>{
   globalSync();
 
-  // Clear existing nodes and edges
   nodes.value = [];
   edges.value = [];
 
-  // Retrieve stored data safely
   const canvas = globalNodes.value.get(newid);
   if (canvas) {
-    nodes.value = structuredClone(canvas.n); 
-    edges.value = structuredClone(canvas.e);
+    nodes.value = structuredClone(toRaw(canvas.n)); 
+    edges.value = structuredClone(toRaw(canvas.e));
   } else {
     console.warn(`swapCanvas: No nodes found for canvas ${newid}`);
   }
 
-  // Update canvas ID
   canvasID.value = newid;
 };
 
@@ -126,6 +123,7 @@ const renameNode = (id) => {
   };
 
   const contributeNodeData = (id, inputData, OverwriteExistingData=true) => {
+    if(true){}
     if(id==-1){
       console.log("contributeNodeData called on toolbox node")
       return;
@@ -166,6 +164,7 @@ const renameNode = (id) => {
     console.log("Key/Value to input", inputKey,inputValue)
     nodeExists.data.properties[inputKey]=inputValue
     console.log("New data of properties:", nodeExists.data.properties)
+    globalSync();
     return;
   };
   const setNodeData = (id, inputKey, inputValue) => {
@@ -266,14 +265,14 @@ const getNode = (id, doGlobal=false) => {
       const nodeExistsGlobal = globalNodesArray.find((n) => n.id == id)
       console.log("removeNode(global): node to remove",nodeExistsGlobal)
       if (!nodeExistsGlobal) {
-        console.error(`Node with id ${id} does not exist`);
+        console.warn(`Node with id ${id} does not exist`);
         return false;
       }
       return nodeExistsGlobal;
     }
 
     if (!nodeExists) {
-      console.error(`Node with id ${id} does not exist`);
+      console.warn(`Node with id ${id} does not exist`);
       return false;
     }
   if (nodeExists.type == 'room' || nodeExists.type == 'item' || nodeExists.type == 'pathway' || nodeExists.type == 'player' || nodeExists.type == 'npc' || nodeExists.type == 'custom'){
