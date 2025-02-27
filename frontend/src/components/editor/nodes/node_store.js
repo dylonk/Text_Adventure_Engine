@@ -36,8 +36,8 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
   const globalSync = () => {
     // Store current nodes and edges in canvas object
     const canvas = {
-      n: JSON.parse(JSON.stringify(toRaw(nodes.value))),
-      e: JSON.parse(JSON.stringify(toRaw(edges.value))),
+      n: JSON.parse(JSON.stringify(nodes.value)),
+      e: JSON.parse(JSON.stringify(edges.value)),
     }
     // push to map
     globalNodes.value.set(canvasID.value,canvas);
@@ -98,8 +98,8 @@ const swapCanvas = (newid) =>{
 
   const canvas = globalNodes.value.get(newid);
   if (canvas) {
-    nodes.value = structuredClone(toRaw(canvas.n)); 
-    edges.value = structuredClone(toRaw(canvas.e));
+    nodes.value = structuredClone(JSON.parse(JSON.stringify(canvas.n))); 
+    edges.value = structuredClone(JSON.parse(JSON.stringify(canvas.e)));
   } else {
     console.warn(`swapCanvas: No nodes found for canvas ${newid}`);
   }
@@ -108,7 +108,7 @@ const swapCanvas = (newid) =>{
 };
 
 const renameNode = (id) => {
-    const nodeExists = nodes.value.find((n) => n.id === id);
+    const nodeExists = getNode(id,true);
     if (!nodeExists) {
       console.error(`Node with id ${id} does not exist`);
       return;
@@ -261,9 +261,9 @@ const getNode = (id, doGlobal=false) => {
     if(doGlobal){
       globalSync();
       const globalNodesArray = getAllNodes()
-      console.log("removeNode(global): globalNodesArray",globalNodesArray)
+      console.log("getNode(global): globalNodesArray",globalNodesArray)
       const nodeExistsGlobal = globalNodesArray.find((n) => n.id == id)
-      console.log("removeNode(global): node to remove",nodeExistsGlobal)
+      console.log("getNode(global): node to return",nodeExistsGlobal)
       if (!nodeExistsGlobal) {
         console.warn(`Node with id ${id} does not exist`);
         return false;
