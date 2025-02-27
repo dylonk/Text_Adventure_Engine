@@ -13,11 +13,11 @@ const { onDragStart } = useDragAndDrop();
 </script>
 
 <template>
-    <div class="tb_node_container" :draggable=True @dragstart="onDragStart($event, props.type, true)">
+    <div class="tb_node_container" :draggable=true @dragstart="onDragStart($event, props.type, true)">
         <NodeBase
         id=-1
         :type="type"
-        draggable="true"
+        draggable=true
         :data="{
             display_type,
             bg_color:node_colors[type+'_bg'],

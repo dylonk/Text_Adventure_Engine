@@ -8,7 +8,10 @@ const object_type_list = [
   'item',
   'npc',
   'pathway',
+  'custom',
 ]
+
+
 
 const nodesStore = useNodesStore()
 

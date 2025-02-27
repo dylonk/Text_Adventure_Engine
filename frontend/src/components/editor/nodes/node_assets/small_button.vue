@@ -28,7 +28,7 @@ const NS = useNodesStore()
         text-shadow: 1px 1px white; 
     }
     .small_button:hover{
-        filter: brightness(80%);
+        filter: brightness(140%);
     }
     .small_button_s1{
         height:20px;

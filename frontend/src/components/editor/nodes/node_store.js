@@ -5,10 +5,19 @@ import { reactive,computed, ref } from 'vue';
 
 export const useNodesStore = defineStore('nodes', () => {//nodes store will no longer seperate nodes by type
 
-  const currentCanvas = ref(0);
+
+  const canvasID = ref(0);
   const nodes = ref([
   ]);
   const edges = ref([]); // No implementation atm
+  let canvas = { // Combination of nodes and edges
+    n: nodes.value,
+    e: edges.value,
+  }
+  // Collection of all nodes. Must be synced on any node or edge change
+  const globalNodes = ref(new Map([ 
+    [0,canvas] // Pop in global canvas because it's technically not a node with an id
+  ]))
 
   const object_count = reactive({
     //For making unique object names
@@ -27,6 +36,17 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
     }
   }
 
+  const globalSync = () => {
+    // Store current nodes and edges in canvas object
+    canvas = {
+      n: nodes.value,
+      e: edges.value,
+    }
+    // push to map
+    globalNodes.value.set(canvasID.value,canvas);
+    console.log(`globalSync: `,globalNodes,`updated globalNodes at canvasID `,globalNodes.value.get(canvasID.value).n,`, nodes: `,nodes.value)
+    // 
+  }
   // Add a node to the store
   const addNode = (node) => {
     console.log("Before adding:", nodes);
@@ -43,7 +63,13 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
       console.error(`Node with id ${node.id} already exists`);
       return;
     }
-    node.data.parentID = currentCanvas.value;
+    node.data.parentID = canvasID.value;
+    
+    // node.data.nodeDepth = 1;
+    // if(canvasID.value != 0){
+    //   node.data.nodeDepth = getNode(canvasID.value).data.nodeDepth + 1
+    // }
+    
 
     //adds the default names
     if (
@@ -64,14 +90,19 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
       nodes.value.push(node);
       console.log("function added with id", node.id);
     }
+    globalSync();
   };
 
-const swapCanvas = () =>{
+const swapCanvas = (newid) =>{
+  globalSync();
   //Hide all nodes
-    
+  nodes.value = [];
+  edges.value = [];
   //Show all nodes with parent == new canvas
-
+  nodes.value = globalNodes.value.get(canvasID.value).n
+  edges.value = globalNodes.value.get(canvasID.value).e
   //new canvas = current canvas
+  canvasID.value = newid;
 };
 
 const renameNode = (id) => {
@@ -89,6 +120,10 @@ const renameNode = (id) => {
   };
 
   const contributeNodeData = (id, inputData, OverwriteExistingData=true) => {
+    if(id==-1){
+      console.log("contributeNodeData called on toolbox node")
+      return;
+    }
     console.log("ContributeNodeData Called");
     const nodeExists = getNode(id);
     if (!nodeExists) {
@@ -137,6 +172,7 @@ const renameNode = (id) => {
     console.log("Key/Value to input", inputKey,inputValue)
     nodeExists.data[inputKey]=inputValue
     console.log("New data of node:", nodeExists.data)
+    globalSync();
     return;
   };
   const removeNodeData = (id, inputKey) => {
@@ -149,6 +185,7 @@ const renameNode = (id) => {
     console.log("Key to remove", inputKey)
     delete nodeExists.data[inputKey]
     console.log("New data of node:", nodeExists.data)
+    globalSync();
     return;
   };
   const removeNodeProperty = (id, inputKey) => {
@@ -165,44 +202,69 @@ const renameNode = (id) => {
     console.log("Key to remove", inputKey)
     delete nodeExists.data.properties[inputKey]
     console.log("New data of properties:", nodeExists.data.properties)
+    globalSync();
     return;
   };
 //delete a node by id
 const deleteNode = (id) => {
       //removeNodes([id]);
-       const nodeId = (id);
+      const nodeId = (id);
     
       // Check if the node exists
-      const nodeInObjects = nodes.value.find((node) => node.id === nodeId);
-      if (nodeInObjects) {
+      
+      const nodeExists = getNode(id,true);
+      if (nodeExists) {
         console.log(`Node with id ${id} exists in objects, deleting...`);
         console.log("Before:", nodes);
-        nodes.value = nodes.value.filter((node) => node.id !== nodeId);
+        //delete the key, and delete the index within the parents key
+        globalNodes.value.delete(id)
+        if(nodeExists.data.parentID != canvasID.value){ 
+          const parentNodes = globalNodes.value.get(nodeExists.data.parentID).n.filter((node) => node.id != nodeId)
+          const parentEdges = globalNodes.value.get(nodeExists.data.parentID).e
+          canvas = {
+            n: parentNodes,
+            e: parentEdges,
+          }
+          globalNodes.value.set(nodeExists.data.parentID, canvas)
+          console.log("deleteNode: Node removed from parent. Parent: ", globalNodes.value[nodeExists.data.parentID].n)
+        }
+        else{
+          nodes.value = nodes.value.filter((node) => node.id != nodeId); //may not always delete a node          
+        }
         console.log("After:", nodes);
+        globalSync();
         return; 
       }
-    
-      // Check if the node exists in functions
-      const nodeInFunctions = nodes.value.find((node) => node.id === nodeId);
-      if (nodeInFunctions) {
-        console.log(`Node with id ${id} exists in functions, deleting...`);
-        nodes.value = nodes.value.filter((node) => node.id !== nodeId);
-
-    
-        return;
-      }
-    
-      // If the node is not found in either store
-      console.error(`Node with id ${id} does not exist`);
-
+      console.error(`deleteNode: Node with id ${id} does not exist`);
       return; 
     }; 
-const getNode = (id) => {
-  console.log("getNode called on id", id)
-    const nodeExists = nodes.value.find((n) => n.id === id);
+const getNode = (id, doGlobal=false) => {
+  if(id<-1){
+    console.error(`getNode called with invalid id, id is ${id}`)
+    return false;
+  }
+  if(id==-1){
+    console.log("getNode called on toolbox node")
+    return;
+  }
+    console.log("getNode called on id", id, ". doGlobal=", doGlobal)
+    const nodeExists = nodes.value.find((n) => n.id == id);
+    if(doGlobal){
+      globalSync();
+      const globalNodesArray = Array.from(globalNodes.value.values()).flatMap(canv => canv.n)
+      console.log("removeNode(global): globalNodesArray",globalNodesArray)
+      const nodeExistsGlobal = globalNodesArray.find((n) => n.id == id)
+      console.log("removeNode(global): node to remove",nodeExistsGlobal)
+      if (!nodeExistsGlobal) {
+        console.error(`Node with id ${id} does not exist`);
+        return false;
+      }
+      return nodeExistsGlobal;
+    }
+
     if (!nodeExists) {
       console.error(`Node with id ${id} does not exist`);
-      return;
+      return false;
     }
   if (nodeExists.type == 'room' || nodeExists.type == 'item' || nodeExists.type == 'pathway' || nodeExists.type == 'player' || nodeExists.type == 'npc' || nodeExists.type == 'custom'){
     console.log("node exists", nodeExists, "title is", nodeExists.data.object_name);
@@ -210,6 +272,7 @@ const getNode = (id) => {
   else {
     console.log("function node exists", nodeExists);
   }
+    //globalSync(); // might be necessary? SHAKY
     return nodeExists
 }
   // NEW: Add an edge to the store
@@ -238,6 +301,7 @@ const getNode = (id) => {
     // Add the edge
     edges.value.push(edge);
     console.log("After adding edge:", edges.value);
+    globalSync();
   };
 
   // NEW: Update an edge
@@ -250,6 +314,7 @@ const getNode = (id) => {
     
     edges.value[edgeIndex] = { ...edges.value[edgeIndex], ...newData };
     console.log("Edge updated:", edges.value[edgeIndex]);
+    globalSync();
   };
 
   // NEW: Delete an edge
@@ -262,6 +327,7 @@ const getNode = (id) => {
     
     edges.value = edges.value.filter(e => e.id !== id);
     console.log("Edge deleted. Remaining edges:", edges.value);
+    globalSync();
   };
 
   // NEW: Get an edge
@@ -274,6 +340,8 @@ const getNode = (id) => {
     //exporting functions
     nodes,
     edges,
+    globalSync,
+    swapCanvas,
     addNode,
     deleteNode,
     renameNode,
