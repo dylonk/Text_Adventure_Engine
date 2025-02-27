@@ -10,13 +10,10 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
   const nodes = ref([
   ]);
   const edges = ref([]); // No implementation atm
-  let canvas = { // Combination of nodes and edges
-    n: nodes.value,
-    e: edges.value,
-  }
+
   // Collection of all nodes. Must be synced on any node or edge change
   const globalNodes = ref(new Map([ 
-    [0,canvas] // Pop in global canvas because it's technically not a node with an id
+    [0,{e:[],n:[]}] // Pop in global canvas because it's technically not a node with an id
   ]))
 
   const object_count = reactive({
@@ -38,7 +35,7 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
 
   const globalSync = () => {
     // Store current nodes and edges in canvas object
-    canvas = {
+    const canvas = {
       n: nodes.value,
       e: edges.value,
     }
@@ -95,13 +92,21 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
 
 const swapCanvas = (newid) =>{
   globalSync();
-  //Hide all nodes
+
+  // Clear existing nodes and edges
   nodes.value = [];
   edges.value = [];
-  //Show all nodes with parent == new canvas
-  nodes.value = globalNodes.value.get(canvasID.value).n
-  edges.value = globalNodes.value.get(canvasID.value).e
-  //new canvas = current canvas
+
+  // Retrieve stored data safely
+  const canvas = globalNodes.value.get(newid);
+  if (canvas) {
+    nodes.value = structuredClone(canvas.n); 
+    edges.value = structuredClone(canvas.e);
+  } else {
+    console.warn(`swapCanvas: No nodes found for canvas ${newid}`);
+  }
+
+  // Update canvas ID
   canvasID.value = newid;
 };
 
@@ -117,6 +122,7 @@ const renameNode = (id) => {
     if (newName !== null) { 
       nodeExists.data.object_name = newName;
     }
+    globalSync();
   };
 
   const contributeNodeData = (id, inputData, OverwriteExistingData=true) => {
@@ -221,7 +227,7 @@ const deleteNode = (id) => {
         if(nodeExists.data.parentID != canvasID.value){ 
           const parentNodes = globalNodes.value.get(nodeExists.data.parentID).n.filter((node) => node.id != nodeId)
           const parentEdges = globalNodes.value.get(nodeExists.data.parentID).e
-          canvas = {
+          const canvas = {
             n: parentNodes,
             e: parentEdges,
           }
@@ -238,6 +244,10 @@ const deleteNode = (id) => {
       console.error(`deleteNode: Node with id ${id} does not exist`);
       return; 
     }; 
+
+const getAllNodes = () => {
+  return Array.from(globalNodes.value.values()).flatMap(canv => canv.n)
+}
 const getNode = (id, doGlobal=false) => {
   if(id<-1){
     console.error(`getNode called with invalid id, id is ${id}`)
@@ -251,7 +261,7 @@ const getNode = (id, doGlobal=false) => {
     const nodeExists = nodes.value.find((n) => n.id == id);
     if(doGlobal){
       globalSync();
-      const globalNodesArray = Array.from(globalNodes.value.values()).flatMap(canv => canv.n)
+      const globalNodesArray = getAllNodes()
       console.log("removeNode(global): globalNodesArray",globalNodesArray)
       const nodeExistsGlobal = globalNodesArray.find((n) => n.id == id)
       console.log("removeNode(global): node to remove",nodeExistsGlobal)
@@ -338,10 +348,12 @@ const getNode = (id, doGlobal=false) => {
 
   return {
     //exporting functions
+    getAllNodes,
     nodes,
     edges,
     globalSync,
     swapCanvas,
+    canvasID,
     addNode,
     deleteNode,
     renameNode,

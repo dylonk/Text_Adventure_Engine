@@ -17,7 +17,12 @@ const nodesStore = useNodesStore()
 
 // Use computed properties to observe the nodes in the store. Any with object_type_list will be displayed
 const objects = computed(() => {
-  return nodesStore.nodes.filter(node => object_type_list.includes(node.type));
+  nodesStore.globalNodes;
+  return nodesStore.getAllNodes().filter(node => object_type_list.includes(node.type))
+});
+
+const currentCanvasID = computed(() => {
+  return nodesStore.canvasID
 });
 
 const isContextMenuVisible = ref(false)
@@ -32,7 +37,7 @@ function showContextMenu(event, nodeType, nodeId) {
     nodeId, 
     nodeType, 
   });
-  console.log("all nodes: ",nodesStore.nodes)
+  console.log("all nodes: ",nodesStore.globalNodes)
 
   contextMenuId.value = nodeId //the id of the node
   contextMenuPosition.value = { x: event.clientX, y: event.clientY }
@@ -64,7 +69,10 @@ function handleContextMenuAction(action) {
 function closeContextMenu() {
   isContextMenuVisible.value = false
 }
-
+function switchCanvas(id){
+  console.log("asset_browser.vue: swapping canvas" ,nodesStore.getAllNodes())
+  nodesStore.swapCanvas(Number(id));
+}
 
 </script>
 
@@ -72,18 +80,20 @@ function closeContextMenu() {
     <div class="asset_browser">
       <h3>Asset Browser</h3>
       <div class="objects-container">
-        <details>
-            <summary class="sum-light">Global</summary>
-        </details>
-        <div style="height: 0;width: 0; position:relative;left:-28px;top:-31px;">
+        <div class="current-canvas">{{ nodesStore.getNode(nodesStore.canvasID,true).data?.object_name||"Global" }}</div>
+        <div style="height: 0;width: 0; position:relative;left:-28px;top:-37px;">
           <img onload="this.width*=0.45" class="canvas-selector" src="@/assets/Images/editor/canvasselector.png">
         </div>
+        <details>
+            <summary class="sum-light" @click="switchCanvas(0)">Global</summary>
+        </details>
+
         <div
           v-for="(object,index) in objects"
           :key="object.id"
           @contextmenu="showContextMenu($event, object.type, object.id)"
         >
-          <details>
+          <details @click="switchCanvas(object.id)">
             <summary v-if="index%2==0" class="sum-dark">        {{ object.data.object_name || 'ERR_UNNAMED_NODE' }}          </summary>
             <summary v-else class="sum-light">        {{ object.data.object_name || 'ERR_UNNAMED_NODE' }}          </summary>
           </details>
@@ -132,6 +142,15 @@ details summary{
   background:rgb(100, 100, 100);
   padding:3px;
   padding-left:5px;
+  padding-right:5px;
+}
+.current-canvas{
+  background:rgb(231, 232, 219);
+  color:goldenrod;
+  font-size: large;
+  text-shadow: 0px 1px rgb(94, 75, 48);
+  padding:3px;
+  padding-left:20px;
   padding-right:5px;
 }
 .sum-light{
