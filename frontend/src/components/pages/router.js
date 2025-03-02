@@ -1,4 +1,3 @@
-
 // Responsible for creating html like page navigation
 import { createMemoryHistory, createRouter } from 'vue-router'
 
@@ -8,6 +7,7 @@ import ExploreView from './explore.vue'
 import CreateView from './create.vue'
 import LoginView from './login.vue'
 import ProfileView from './profile.vue'
+import GamePage from './GamePage.vue'
 import gamePageView from './gamePage.vue'
 import ProjectView from './project.vue'
 
@@ -20,6 +20,7 @@ const routes = [
     { path: '/create', component: CreateView },
     { path: '/auth', component: LoginView },
     { path: '/user', component: ProfileView },
+    { path: '/game', component: GamePage },
     { path: '/gamePage', component: gamePageView },
     { path: '/project', component: ProjectView },
 ]
