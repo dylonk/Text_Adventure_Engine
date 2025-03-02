@@ -3,10 +3,19 @@ import { useNodesStore } from './nodes/node_store.js'
 import { computed, ref } from 'vue'
 import ContextMenu from './context_menu.vue'
 
+const object_type_list = [
+  'room',
+  'item',
+  'npc',
+  'pathway',
+]
+
 const nodesStore = useNodesStore()
 
-// Use computed properties to observe the nodes in the store
-const objects = computed(() => nodesStore.nodes.objects)
+// Use computed properties to observe the nodes in the store. Any with object_type_list will be displayed
+const objects = computed(() => {
+  return nodesStore.nodes.filter(node => object_type_list.includes(node.type));
+});
 
 const isContextMenuVisible = ref(false)
 const contextMenuId = ref(null)
@@ -19,9 +28,9 @@ function showContextMenu(event, nodeType, nodeId) {
   console.log("Context Menu Triggered:", {
     nodeId, 
     nodeType, 
-    idType: typeof nodeId
   });
-  
+  console.log("all nodes: ",nodesStore.nodes)
+
   contextMenuId.value = nodeId //the id of the node
   contextMenuPosition.value = { x: event.clientX, y: event.clientY }
   isContextMenuVisible.value = true//what makes the menu visible
@@ -63,10 +72,10 @@ function closeContextMenu() {
       <div
         v-for="object in objects"
         :key="object.id"
-        @contextmenu="showContextMenu($event, 'object', object.id)"
+        @contextmenu="showContextMenu($event, object.type, object.id)"
       >
         <details>
-          <summary>        {{ object.object_name || 'ERR_UNNAMED_NODE' }}          </summary>
+          <summary>        {{ object.data.object_name || 'ERR_UNNAMED_NODE' }}          </summary>
           <ul>
             <!-- <li v-for="item in nodesStore.getItemsInRoom(room.id)" :key="item.id">
               {{ item.object_name || 'Unnamed Item' }}        (Item)

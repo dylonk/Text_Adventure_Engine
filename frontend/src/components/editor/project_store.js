@@ -19,6 +19,7 @@
 
     // Export project method
     async function exportProject() {  //important function! exports/saves the project. Async because it needs to wait for user profile to be fetched
+      console.log("exportProject called");
       const token = localStorage.getItem('token');  //gotta get the token to make sure user logged in
       if (!token) {
         console.log('No token found. Cannot save project');
@@ -45,9 +46,6 @@
         console.error('Error fetching user profile:', error);
     }
 
-      // Get the nodes from the nodes store
-      const nodesStore = useNodesStore();
-      const allNodes = nodesStore.getAllNodes();
 
       // Prepare project data
       const projectData = {
@@ -63,7 +61,7 @@
         const response = await fetch('http://localhost:5000/projects/save', {  //tries to POST the data to the project save route in backend
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json'  //json
           },
           body: JSON.stringify(projectData)   //json stringifies this data
                 });

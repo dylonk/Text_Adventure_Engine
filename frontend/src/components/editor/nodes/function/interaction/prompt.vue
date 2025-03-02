@@ -2,28 +2,35 @@
 import { ref, defineProps, computed } from 'vue';
 import NodeBase from '../../node_base.vue'
 import { Handle, Position } from '@vue-flow/core';
-import { SmallButton, HContainer, HandleIn, HandleOut } from '../../node_assets/n-component-imports.js';
+import { SmallButton, HContainer, HandleIn, HandleOut, Textboxes } from '../../node_assets/n-component-imports.js';
 import node_colors from '../../node-colors';
 import FunctionBase from '../func_base.vue'
 let response_id = 0;
-
-const ext_stroke_color= node_colors.prompt_stroke;
-const ext_bg_color= node_colors.prompt_bg;
-
-const responses = ref([
-])
-
 const props = defineProps({
     id: { default:-1},
 })
+
+//----------------------------!!IMPORTANT FOR NODE DATA MANIPULATION/FETCHING!!---------------------------------------------
+// ADD TO BE ABLE TO STORE OR RETRIEVE DYNAMIC INFORMATION FROM THE NODE ITSELF
+// Component MUST have props.id for this to work, and it needs to be passed down through each component
+// Parent component must also have @init-node-id listener
+import { useNodesStore } from '@/components/editor/nodes/node_store'
+const NS = useNodesStore()
+const defaultObjData =  { //This is the data that this component contributes. Any existing properties within the functional node data will be replaced
+    display_type:"Prompt",
+  }
+  console.log("prompt.vue: ReferenceID is = " + props.id)
+  NS.contributeNodeData(props.id,defaultObjData,true);
+//------------------------------IMPORTANT END-------------------------------------------
+
 function addResponse(){
-    responses.value.push({id:response_id++, text:""})
+    // responses.value.push({id:response_id++, text:""})
 }
 function removeResponse(){
-    if(response_id>0){
-        responses.value.pop()
-        response_id--;
-    }
+    // if(response_id>0){
+    //     responses.value.pop()
+    //     response_id--;
+    // }
 }
 
 function autoResize() {
@@ -36,26 +43,19 @@ function autoResize() {
 
 
 <template>
-<HandleIn/>
-<HandleOut/>
+
 
 
     <FunctionBase
-        display_type="Prompt"
-        node_type="prompt"
-        :bg_color="ext_bg_color"
-        :id="id||-10"
-        :stroke_color="ext_stroke_color">
-        
-        <textarea class="console_response_text" placeholder="Type your console output here."></textarea>
-        <div class="user_response_container" v-for="response in responses" :key="response.id">
-        <div class="response_title">Response {{ response.id }}</div>
-        <textarea class = "user_response_text" id="textbox" placeholder="Type the expected user input here."></textarea>
-        <HandleOut :handleID="response_id"/>
-        </div>
-        <HContainer spacing="5px" outerMargin="5px">
-        <SmallButton @click="addResponse()" button_text="+" :component_bg_color="ext_bg_color" :component_stroke_color="ext_stroke_color" style="margin-right:5px;"></SmallButton>
-        <SmallButton @click="removeResponse()" button_text="-" :component_bg_color="ext_bg_color" :component_stroke_color="ext_stroke_color"></SmallButton>
+        :id="id"
+        >
+        <HContainer outerMargin="0px">
+        <Textboxes style="margin-top: 0px;" :id="id" startingQuantity=1 allowButtons=false title="Console Output"></Textboxes>
+        <HandleIn :handleId="id"></HandleIn>
+        </HContainer>
+        <HContainer outerMargin="0px">
+        <HandleOut :handleId="id"></HandleOut>
+        <Textboxes style="margin-top: 0px;" :id="id" startingQuantity=1 allowButtons=true title="Response"></Textboxes>
         </HContainer>
     </FunctionBase>
 
@@ -70,7 +70,7 @@ function autoResize() {
         width:200px;
         height:100px;
         background:rgb(255, 255, 255);
-        border:solid v-bind('ext_stroke_color') 1px;
+        /* border:solid v-bind('node_colors.prompt_fg') 1px; */
         border-radius:3px;
     }
     .user_response_text{
@@ -79,12 +79,12 @@ function autoResize() {
         height:auto;
         color:black;
         background:rgb(255, 255, 255);
-        border:solid v-bind('ext_stroke_color') 1px;
+        /* border:solid v-bind('node_colors.prompt_fg') 1px; */
         border-radius:3px;
     }
     .user_response_container{
-        color: v-bind('ext_stroke_color');
-        background:v-bind('ext_bg_color');
+        /* color: v-bind('node_colors.prompt_fg'); */
+        /* background:v-bind('node_colors.prompt_bg'); */
         margin: 0px;
         padding-left:10px;
         padding-bottom:5px;

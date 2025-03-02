@@ -1,54 +1,61 @@
 <script setup>
-import { ref, defineProps } from 'vue';
+import { ref, defineProps, computed } from 'vue';
 import NodeBase from '../../node_base.vue'
 import { Handle, Position } from '@vue-flow/core';
-import { SmallButton, HContainer, HandleIn, HandleOut } from '../../node_assets/n-component-imports.js';
-import node_colors from '../../node-colors.js';
+import { SmallButton, HContainer, HandleIn, HandleOut, Textboxes } from '../../node_assets/n-component-imports.js';
+import node_colors from '../../node-colors';
 import FunctionBase from '../func_base.vue'
 let response_id = 0;
+const props = defineProps({
+    id: { default:-1},
+})
 
-const ext_stroke_color= node_colors.await_stroke;
-const ext_bg_color= node_colors.await_bg;
-
-const responses = ref([
-])
-
-
-
-const props = defineProps({ //this fixes the handleout ID error! by explicitly receiving the id as a prop, the id is correct from the moment of initialization! always define props!
-  id: { default: -1 }, // Receives the ID from the parent
-  Position: { type: Object, default: () => ({ x: 0, y: 0 }) },
-});
-
+//----------------------------!!IMPORTANT FOR NODE DATA MANIPULATION/FETCHING!!---------------------------------------------
+// ADD TO BE ABLE TO STORE OR RETRIEVE DYNAMIC INFORMATION FROM THE NODE ITSELF
+// Component MUST have props.id for this to work, and it needs to be passed down through each component
+// Parent component must also have @init-node-id listener
+import { useNodesStore } from '@/components/editor/nodes/node_store'
+const NS = useNodesStore()
+const defaultObjData =  { //This is the data that this component contributes. Any existing properties within the functional node data will be replaced
+    display_type:"Await",
+  }
+  console.log("Await.vue: ReferenceID is = " + props.id)
+  NS.contributeNodeData(props.id,defaultObjData,true);
+//------------------------------IMPORTANT END-------------------------------------------
 
 function addResponse(){
-    responses.value.push({id:response_id++, text:""})
+    // responses.value.push({id:response_id++, text:""})
 }
 function removeResponse(){
-    if(response_id>0){
-        responses.value.pop()
-        response_id--;
-    }
+    // if(response_id>0){
+    //     responses.value.pop()
+    //     response_id--;
+    // }
 }
 
 function autoResize() {
     this.style.height = 'auto';
     this.style.height = this.scrollHeight + 'px';
 }
+
+
 </script>
 
 
 <template>
-    <HandleOut/>
+
+
+
     <FunctionBase
-        display_type="Await"
-        :id="id||-10"
-        node_type="await"
-        :bg_color="ext_bg_color"
-        :stroke_color="ext_stroke_color">
-        <div class="response_title">User Input</div>
-        <textarea class = "user_response_text" id="textbox" placeholder="Type the expected user input here."></textarea>
+        :id="id"
+        >
+        <HContainer outerMargin="0px">
+        <Textboxes style="margin-top: 0px;" :id="id" startingQuantity=1 allowButtons=false title="Expected Phrase"></Textboxes>
+        <HandleOut :handleId="id"></HandleOut>
+        </HContainer>
+
     </FunctionBase>
+
 
 
 </template>
@@ -60,22 +67,21 @@ function autoResize() {
         width:200px;
         height:100px;
         background:rgb(255, 255, 255);
-        border:solid v-bind('ext_stroke_color') 1px;
+        /* border:solid v-bind('node_colors.prompt_fg') 1px; */
         border-radius:3px;
     }
     .user_response_text{
-        margin-top:0px;
         resize:none;
         width:200px;
         height:auto;
         color:black;
         background:rgb(255, 255, 255);
-        border:solid v-bind('ext_stroke_color') 1px;
+        /* border:solid v-bind('node_colors.prompt_fg') 1px; */
         border-radius:3px;
     }
     .user_response_container{
-        color: v-bind('ext_stroke_color');
-        background:v-bind('ext_bg_color');
+        /* color: v-bind('node_colors.prompt_fg'); */
+        /* background:v-bind('node_colors.prompt_bg'); */
         margin: 0px;
         padding-left:10px;
         padding-bottom:5px;

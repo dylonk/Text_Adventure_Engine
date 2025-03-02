@@ -29,7 +29,7 @@ const router = useRouter(); // Access the Vue Router for navigation
     <p class="navbar">
         <RouterLink class="nav_btn" to="/" active-class="active">Home</RouterLink>
         <RouterLink class="nav_btn" to="/explore" active-class="active">Explore</RouterLink> 
-        <RouterLink class="nav_btn" to="/create" active-class="active">Create</RouterLink><!-- I think they should be rendered conditionally-->
+        <RouterLink class="nav_btn" to="/project" active-class="active">Create</RouterLink><!-- I think they should be rendered conditionally-->
         <RouterLink class="nav_btn" to="/user" active-class="active">Profile</RouterLink>
         <RouterLink class="nav_btn" to="/about" active-class="active">About</RouterLink>
         <RouterLink class="nav_btn" to="/game" active-class="active">Game</RouterLink>

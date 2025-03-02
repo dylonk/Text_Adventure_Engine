@@ -1,7 +1,7 @@
 <!---FATHER CLASS OF ALL NODES-->
 <script setup>
-import { ref, defineProps, computed, watch } from 'vue';
-import { HContainer, SmallButton, Tooltip } from './node_assets/n-component-imports.js';
+import { ref, defineProps, computed, watch, defineEmits } from 'vue';
+import { HContainer, SmallButton, Tooltip, DebugInfo} from './node_assets/n-component-imports.js';
 import useDragAndDrop from '../drag_drop.js';
 import help_msg from './help_btn_msg';
 import ContextMenu from '../context_menu.vue'
@@ -9,12 +9,12 @@ import { Position } from '@vue-flow/core';
 import { useNodesStore } from '../nodes/node_store.js'
 import { useVueFlow } from '@vue-flow/core';
 
-
-const { screenToFlowCoordinate } = useVueFlow()
+const { screenToFlowCoordinate, updateNodeData, updateNode, findNode } = useVueFlow()
 Position
 
 
 const nodesStore = useNodesStore()
+
 
 
 
@@ -30,7 +30,6 @@ function showContextMenu(event, nodeType, nodeId) {
     console.log("Context Menu Triggered:", {
     nodeId, 
     nodeType, 
-    idType: typeof nodeId
   });
 
   contextMenuId.value = nodeId //the id of the node
@@ -60,51 +59,45 @@ function closeContextMenu() {
   isContextMenuVisible.value = false
 }
 
-
-
-
-
-
-
-
-
-
-
-
 const props = defineProps({
-    id:{ default:-1},
-    node_type:String, //NODE TYPE IS EXCLUSIVELY FOR COMMUNICATING, should not appear in finished product
-    display_type: { type: String, default: 'UnnamedType' },
-    bg_color: { type: String, default: '#FFF' },
-    stroke_color: { type: String, default: '#000'},
-    //children: { type: Array, default: () => [] }, // Define items as an array prop with a default empty array
-    // Moving these guys to their respective places
-    //node_properties: { type: Array, default: () => [] },
-    //associated_function: String, //For when we actually start programming the script stuff
-    //function_arguments: {type: Array, default: () => []},
-    Position: {type: Object, default: () => ({ x: 0, y: 0 })}, //position should be a prop, becuse we're gonna have to retrieve this stuff for project loading
-    
-    containHelp: false, // Allows for the help button to appear on the topbar of a node. Used for TBNodes
-})
+    id:-10,
+    type: { type: String, default: 'unimplemented' },
+    position: {type: Object, default: () => ({ x: 0, y: 0 })}, //position should be a prop, becuse we're gonna have to retrieve this stuff for project loading
+    draggable: false,
+
+    //THIS IS WHERE ALL OUR NODE DATA BESIDES POSTION, TYPE AND ID SHOULD ACTUALLY GO
+    data: {
+      defineData:true,
+    },
+  })
+
+  const defaultObjData =  { //This is the data that this component contributes. Any existing properties within the functional node data will be replaced
+    properties: {},
+    initialized:true
+  }
+  nodesStore.contributeNodeData(props.id,defaultObjData,false);
 
 console.log('NodeBase received:', {//nodebase init for testing
   id: props.id, 
-  type: props.node_type, 
-  idType: typeof props.id
+  type: props.type, 
+  idType: typeof props.id,
+  data: props.data,
 });
 
-
-let isDisplayTooltip = ref(false);
-
-function helpToggle(){
-    isDisplayTooltip = !isDisplayTooltip;
-    console.log("toggledTooltip " + isDisplayTooltip);
+const emit = defineEmits(['init-node-id'])
+function sendInitNodeId(){
+  emit('init-node-id')
 }
+
+// I suppose we shouldn't be using built in updateNode functions
+// updateNode(props.id, {data:{bg_color: temp_bg_color, fg_color:temp_fg_color}})
+// updateNodeData(props.id, props.data); // This is how data is stored within the node itself. Everything in the data object gets eaten
+sendInitNodeId();
 
 function helpMessage(){
     let message = "";
     for(const key in help_msg){
-        if(key==props.node_type){
+        if(key==props.type){
             console.log("Tooltip Message: "+help_msg[key]);
             message=help_msg[key];
         }
@@ -114,24 +107,27 @@ function helpMessage(){
 const tooltip = ref(helpMessage());
 
 const { onDragStart } = useDragAndDrop();
-if(props.containHelp){
-    watch(isDisplayTooltip);
-}
+// if(props.containHelp){
+//     watch(isDisplayTooltip);
+// }
+
+
 </script>
 
 <template>
-    <div class="node_container" :draggable="true" @dragstart="onDragStart($event, props.node_type)"
-        @contextmenu="showContextMenu($event, props.node_type, props.id)">
-        <div class="node_title" :style="{ 'background-image': 'linear-gradient(180deg,' + bg_color + ',' + stroke_color + ')' }">
+    <div class="node_container" :draggable="draggable" @dragstart="onDragStart($event, props.type)"
+        @contextmenu="showContextMenu($event, props.type, props.id)">
+        <div class="node_title" :style="{ 'background-image': 'linear-gradient(180deg,' + 'data.bg_color' + ',' + 'data.fg_color' + ')' }">
         <HContainer outerMargin="0px">
+
         <div>
-        {{ props.display_type }}
+        {{ data.display_type }}
+        <div v-if="props.id!=-1">
+        {{" ID:" + props.id}}
         </div>
-        <SmallButton @click="helpToggle()" v-if='containHelp' :component_bg_color="bg_color" :component_stroke_color="stroke_color" button_text="?" style="margin:5px; margin-right:0px;">
-        </SmallButton>
+        </div>
         </HContainer>
         </div>
-        <Tooltip v-if="isDisplayTooltip" :tooltip_info="tooltip"></Tooltip>
         <ContextMenu
       v-if="isContextMenuVisible"
       :position="contextMenuPosition"
@@ -149,12 +145,14 @@ if(props.containHelp){
         font-family: 'Syne Mono', monospace;
 
 }
+
 .node_container{
     overflow:hidden;
-    background:v-bind(bg_color);
-    outline: 1px solid v-bind(stroke_color);
+    background:v-bind('data.bg_color');
+    outline: 1px solid v-bind('data.fg_color');
     height:fit-content;
     width:fit-content;
+    min-height: 4px;
     display:flex;
     flex-direction: column;
     border-radius: 6px;
@@ -175,7 +173,8 @@ if(props.containHelp){
     padding:0px;
     padding-left:5px;
     padding-right:5px;
-    text-shadow: v-bind(stroke_color) -1px 1px, v-bind(stroke_color) -1px -1px,  v-bind(stroke_color) -2px 0px;
+    background-image: linear-gradient(180deg, v-bind('data.bg_color'),v-bind('data.fg_color'));
+    text-shadow: v-bind('data.fg_color') -1px 1px, v-bind('data.fg_color') -1px -1px,  v-bind('data.fg_color') -2px 0px;
 }
 textarea{
     color:blue;

@@ -1,29 +1,28 @@
 <!---FATHER CLASS OF ALL TBNODES-->
 <script setup>
 import useDragAndDrop from '../drag_drop.js';
-import { defineProps } from 'vue';
+import { defineProps, computed } from 'vue';
 import NodeBase from './node_base.vue'
-import { SmallButton } from './node_assets/n-component-imports.js';
+import node_colors from './node-colors.js';
 
-
-const props = defineProps({ //needs the tb_node_type prop so drag and drop knows whats up
-    node_type:String,
+const props = defineProps({ 
+    type:String,
     display_type:String,
-    bg_color:String,
-    stroke_color:String,
 })
 const { onDragStart } = useDragAndDrop();
 </script>
 
 <template>
-    <div class="tb_node_container" :draggable=True @dragstart="onDragStart($event, props.node_type, true)" :style="{'background': bg_color}" >
+    <div class="tb_node_container" :draggable=True @dragstart="onDragStart($event, props.type, true)">
         <NodeBase
-            :node_type="node_type"
-            :display_type="display_type"
-            :bg_color="bg_color"
-            :stroke_color="stroke_color"
-            :containHelp="'True'"
-            >
+        id=-1
+        :type="type"
+        draggable="true"
+        :data="{
+            display_type,
+            bg_color:node_colors[type+'_bg'],
+            fg_color:node_colors[type+'_fg'],
+        }"
         </NodeBase>
     </div>
 </template>
@@ -31,7 +30,6 @@ const { onDragStart } = useDragAndDrop();
 @import 'https://fonts.googleapis.com/css2?family=Syne+Mono&display=swap';
 .tb_node_container{
     font-family: 'Syne Mono', monospace;
-    background:rgb(255, 255, 255);
     outline: 1px solid rgb(67, 67, 67);
     height:fit-content;
     width:fit-content;
