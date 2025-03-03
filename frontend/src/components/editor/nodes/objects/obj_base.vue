@@ -7,6 +7,7 @@ const listSelection = ref(-1)
 const props = defineProps({   //a lot of these are constructed into a data object and passed to node_base as seen below
   id: -1,  
 });
+
 //----------------------------!!IMPORTANT FOR NODE DATA MANIPULATION/FETCHING!!---------------------------------------------
 // ADD TO BE ABLE TO STORE OR RETRIEVE DYNAMIC INFORMATION FROM THE NODE ITSELF
 // Component MUST have props.id for this to work, and it needs to be passed down through each component
@@ -19,13 +20,16 @@ const defaultObjData =  { //This is the data that this component contributes. An
     display_type: 'ObjectBase'
   }
   console.log("obj_base.vue: ReferenceID is = " + props.id)
-  console.log("obj_base.vue: bg_color is " + NS.getNode(props.id).data.object_name)
+  console.log("obj_base.vue: bg_color is " + NS.getNodeData(props.id,"bg_color"))
   NS.contributeNodeData(props.id,defaultObjData,false);
+  //IMPORTANT AS WELL, MAKE SURE TO BE CONSIDERATE OF HOW OFTEN THE REACTIVITY IS UPDATED, CAN LEAD TO VERY SLOW CODE. Call ND.subproperty directly if using v-for on it.
+  import { dataHas } from '@/components/editor/nodes/n-utils';
+  const ND = computed(() => {
+  return NS.getNode(props.id).data;
+});
 //------------------------------IMPORTANT END-------------------------------------------
-const debug_message = "ID:"+props.id;   //whats displayed in the innermost part of the object on canvas
 
 function addProperty(){
-  console.log("addProperty called")
   const propertyKey = prompt("Type your new property name");
   if(propertyKey==null||propertyKey==""){
     return;
@@ -34,11 +38,9 @@ function addProperty(){
   NS.setNodeProperty(props.id,propertyKey,propertyValue)
 }
 function setProperty(inputKey,inputValue){
-  console.log("setProperty called")
   NS.setNodeProperty(props.id,inputKey,inputValue)
 }
 function removeProperty(propertyKey){
-  console.log("removeProperty called")
   const acceptRemoval = confirm(`Are you sure you would like to delete ${propertyKey}?`)
   if(acceptRemoval){
     NS.removeNodeProperty(props.id,propertyKey)
@@ -55,14 +57,14 @@ function removeProperty(propertyKey){
   <NodeBase 
   :id="id"
   >
-    <div class="object-name-container">{{ NS.getNode(props.id).data.object_name }}</div>
+    <div class="object-name-container">{{ ND.object_name }}</div>
     <div class="object-properties-container">
     <div class="property-title" style="font-weight:bold"   @click="listSelection=-1"
     >
       Properties
       <button @click="addProperty()" class="property-list-button">+</button>
     </div>
-    <div v-for="(property,title,index)  in NS.getNode(props.id).data.properties" @click="listSelection=index">
+    <div v-for="(property,title,index) in ND.properties" @click="listSelection=index">
       <div v-if="index==listSelection" class="property-selected">
         <button @click="removeProperty(title)" class="property-list-delete" style="margin-right:3px;">x</button>
           {{ title+" " }}
@@ -106,15 +108,15 @@ function removeProperty(propertyKey){
 }
 .object-name-container{
   font-size: 16px;
-  background: v-bind('NS.getNode(props.id).data.fg_color');
-  color:v-bind('NS.getNode(props.id).data.bg_color');
+  background: v-bind('dataHas(ND,"fg_color")');
+  color:v-bind('dataHas(ND,"bg_color")');
   margin:0px !important;
   padding-left: 5px;
   padding-bottom: 2px;
   padding-right: 5px;
 }
 .object-properties-container{
-  color: v-bind('NS.getNode(props.id).data.bg_color');
+  color: v-bind('dataHas(ND,"bg_color")');
   height: min-content;
   margin: 0px;
   display:flex;

@@ -25,8 +25,14 @@ const defaultObjData =  { //This is the data that this component contributes. An
     defaultObjData[convertedTitle+'_textboxes'].push("");
   }
 
-  console.log("textbox.vue: ReferenceID is = " + props.id)
-  NS.contributeNodeData(props.id,defaultObjData,true);
+  console.log("!!!!!textbox.vue: ReferenceID is = " + props.id)
+  NS.contributeNodeData(props.id,defaultObjData,false);
+
+  //IMPORTANT AS WELL, MAKE SURE TO BE CONSIDERATE OF HOW OFTEN THE REACTIVITY IS UPDATED, CAN LEAD TO VERY SLOW CODE. Call ND.subproperty directly if using v-for on it.
+  import { dataHas } from '@/components/editor/nodes/n-utils';
+  const ND = computed(() => { //Node data
+    return NS.getNode(props.id).data;
+  }); 
 //------------------------------IMPORTANT END-------------------------------------------
 
 const adjustTextarea = () => {
@@ -36,16 +42,16 @@ const adjustTextarea = () => {
 
 function addResponse(){
     const convertedTitle = props.title.replace(" ","_")
-    NS.getNode(props.id).data[convertedTitle+'_textboxes'].push("")
+    ND.value[convertedTitle+'_textboxes'].push("")
 }
 function removeResponse(index){
     const convertedTitle = props.title.replace(" ","_")
-    NS.getNode(props.id).data[convertedTitle+'_textboxes'].splice(index,1);
+    ND.value[convertedTitle+'_textboxes'].splice(index,1);
 
 }
 function updateResponse(index,newResponse){
     const convertedTitle = props.title.replace(" ","_")
-    NS.getNode(props.id).data[convertedTitle+'_textboxes'][index]=newResponse;
+    ND.value[convertedTitle+'_textboxes'][index]=newResponse;
 
 }
 
@@ -57,12 +63,12 @@ function updateResponse(index,newResponse){
         <HContainer>
         <div v-if="title!=''"> {{ title }}</div>
         <SmallButton v-if="allowButtons=='true'" :id="id" text="+" @click="addResponse()"></SmallButton>
+        <SmallButton v-if="allowButtons=='true'" :id="id" text="-" @click="removeResponse(index)"></SmallButton>
         </HContainer>
 
         <div class="nodrag">
-            <div v-for="(textbox) in NS.getNode(props.id).data[convertedTitle+'_textboxes']" class="textbox_container">
+            <div v-for="(textbox,index) in NS.getNode(props.id).data[convertedTitle+'_textboxes']" class="textbox_container">
                 <textarea class="textbox_text" @input="updateResponse(textbox,$event.target.value); adjustTextarea"></textarea>
-                <SmallButton v-if="allowButtons=='true'" :id="id" text="-" @click="removeResponse(textbox)"></SmallButton>
             </div>
         </div>
     </div>
@@ -84,10 +90,9 @@ function updateResponse(index,newResponse){
         /* color: v-bind('node_colors.prompt_fg'); */
         /* background:v-bind('node_colors.prompt_bg'); */
         display:flex;
-        flex-direct:column;
+        flex-direction:column;
         margin: 0px;
-        padding-left:10px;
-        padding-bottom:5px;
+
     }
     .response_title{
         display:flex;

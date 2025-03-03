@@ -78,8 +78,9 @@ const onConnect = (connection) => {
 
 <style>
 @import 'https://cdn.jsdelivr.net/npm/@vue-flow/core@1.41.4/dist/style.css';
+
     .canvas_container{
-        background-color: transparent;
+        background:white;
         width:100%;
         height:100%;
     }

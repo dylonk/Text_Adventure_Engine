@@ -1,4 +1,3 @@
-
 // Responsible for creating html like page navigation
 import { createMemoryHistory, createRouter } from 'vue-router'
 

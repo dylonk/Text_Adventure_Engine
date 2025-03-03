@@ -6,10 +6,7 @@ const projectStore = useProjectStore();
 </script>
 <template>
     <div class="toolbar">
-    <div class="project-info">
-      <div class="project-name">{{ projectStore.projectName }}</div>
-      <div class="project-id">{{ projectStore.projectId }}</div>
-    </div>    
+
       <!-- file dropdown -->
       <div class="dropdown">
         <button class="dropbtn" @click="toggleMenu('menu1')">file</button>
@@ -29,6 +26,11 @@ const projectStore = useProjectStore();
           <a href="#">Option C</a>
         </div>
       </div>
+      <div class="project-info">
+        <div class="project-id" style="color:rgb(0,150,200);">{{ projectStore.projectId }}&nbsp;</div>
+        <div class="project-name" style="color:rgb(200,200,200);font-weight:bold">{{ projectStore.projectName }}</div>
+
+      </div>    
     </div>
   </template>
   
@@ -68,11 +70,21 @@ const projectStore = useProjectStore();
   /* Toolbar style */
   .toolbar {
     display: flex;
-    justify-content: flex-start;
-    background-color: #333;
-    padding: 10px;
+    background-color: #4f4d56;
+    border-bottom: solid black 1px;
+    border-top: solid black 1px;
+
   }
-  
+  .project-info{
+    margin-left:auto;
+    display:flex;
+    height:100%;
+  }
+  .project-info>*{
+    vertical-align:middle;
+    margin-left:5px;
+    margin-right:5px;
+  }
   /* Dropdown menu styling */
   .dropdown {
     position: relative;
@@ -80,20 +92,24 @@ const projectStore = useProjectStore();
   }
   
   .dropbtn {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px;
-    font-size: 16px;
+    background-color: #b2b0ba;
+    color: rgb(0, 0, 0);
+    padding: 5px;
+    padding-right: 10px;
+    padding-left:10px;
+    font-size: 12px;
     border: none;
     cursor: pointer;
+    border-right: black 1px solid;
   }
   
   .dropdown-content {
+    border: black 1px solid;
     display: none;
     position: absolute;
     background-color: #f1f1f1;
     min-width: 160px;
-    z-index: 1;
+    z-index: 10;
   }
   
   .dropdown-content a {
@@ -112,7 +128,7 @@ const projectStore = useProjectStore();
   }
   
   .dropdown:hover .dropbtn {
-    background-color: #3e8e41;
+    background-color: #d3d3d3;
   }
   </style>
   

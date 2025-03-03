@@ -36,11 +36,8 @@ const defaultObjData =  { //This is the data that this component contributes. An
     <FunctionBase
         :id="id"
         >
-        <HContainer outerMargin="0px">
-        <Textboxes style="margin-top: 0px;" :id="id" startingQuantity=1 allowButtons=false title="Action Keyphrase"></Textboxes>
-        <Textboxes style="margin-top: 0px;" :id="id" startingQuantity=1 allowButtons=false title="Object"></Textboxes>
-        <HandleOut :handleId="id"></HandleOut>
-        </HContainer>
+        <Textboxes :id="id" startingQuantity=1 allowButtons=false title="Action Keyphrase"></Textboxes>
+        <Textboxes :id="id" startingQuantity=1 allowButtons=false title="Object"></Textboxes>
 
     </FunctionBase>
 
@@ -50,31 +47,5 @@ const defaultObjData =  { //This is the data that this component contributes. An
 
 
 <style scoped>
-    .console_response_text{
-        resize:none;
-        width:200px;
-        height:100px;
-        background:rgb(255, 255, 255);
-        /* border:solid v-bind('node_colors.prompt_fg') 1px; */
-        border-radius:3px;
-    }
-    .user_response_text{
-        resize:none;
-        width:200px;
-        height:auto;
-        color:black;
-        background:rgb(255, 255, 255);
-        /* border:solid v-bind('node_colors.prompt_fg') 1px; */
-        border-radius:3px;
-    }
-    .user_response_container{
-        /* color: v-bind('node_colors.prompt_fg'); */
-        /* background:v-bind('node_colors.prompt_bg'); */
-        margin: 0px;
-        padding-left:10px;
-        padding-bottom:5px;
-    }
-    .response_title{
-        display:flex;
-    }
+
 </style>
