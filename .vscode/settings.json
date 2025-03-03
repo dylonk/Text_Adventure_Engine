@@ -7,7 +7,7 @@
         },
         {
             "folderPath": "Text_Adventure_Engine\\frontend\\src\\components\\editor\\nodes\\",
-            "color": "foldercolorizer.color_33cc33"
+            "color": "foldercolorizer.color_336699"
         },
         {
             "folderPath": "Text_Adventure_Engine\\frontend\\src\\components\\editor\\",
@@ -15,7 +15,8 @@
         },
         {
             "folderPath": "Text_Adventure_Engine\\frontend\\src\\components\\editor\\nodes\\node_store.js\\",
-            "color": "foldercolorizer.color_330099"
+            "color": "foldercolorizer.color_33cc33",
+            "badge": "👽"
         },
         {
             "folderPath": "Text_Adventure_Engine\\frontend\\src\\components\\editor\\drag_drop.js\\",
@@ -28,6 +29,19 @@
         {
             "folderPath": "Text_Adventure_Engine\\frontend\\src\\components\\editor\\nodes\\node_assets\\",
             "color": "foldercolorizer.color_00ccff"
+        },
+        {
+            "folderPath": "Text_Adventure_Engine\\frontend\\src\\components\\editor\\nodes\\node_base.vue\\",
+            "color": "foldercolorizer.color_66ccff",
+            "badge": "🌟"
+        },
+        {
+            "folderPath": "Text_Adventure_Engine\\frontend\\src\\components\\editor\\asset_browser.vue\\",
+            "color": "foldercolorizer.color_66ccff"
+        },
+        {
+            "folderPath": "Text_Adventure_Engine\\frontend\\src\\components\\editor\\canvasSelector.vue\\",
+            "color": "foldercolorizer.color_00cc00"
         }
     ]
 }

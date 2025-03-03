@@ -11,7 +11,7 @@ const NS = useNodesStore()
 
 </script>
 <template>
-<button class="small_button_s1">{{ text }}</button>
+<button class="small_button">{{ text }}</button>
 </template>
 <style scoped>
     .small_button{
@@ -19,13 +19,16 @@ const NS = useNodesStore()
         width:20px;
         color: v-bind('NS.getNode(id).data.fg_color');
         font-weight: 800;
+        background:v-bind('NS.getNode(id).data.bg_color');
         border:v-bind('NS.getNode(id).data.fg_color') solid 1px;
+        border-top:white solid 1px;
+        border-left: white solid 1px;
         border-radius: 3px;
-        background:white;
-        margin-top:10px;
+        filter: brightness(120%);
+        text-shadow: 1px 1px white; 
     }
     .small_button:hover{
-        background-image: linear-gradient(180deg,white,white,v-bind('NS.getNode(id).data.fg_color'));
+        filter: brightness(140%);
     }
     .small_button_s1{
         height:20px;

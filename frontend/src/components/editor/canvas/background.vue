@@ -4,7 +4,7 @@ import { Background } from '@vue-flow/background'
 
 <template>
   <div class="dropzone-background">
-    <Background :size="3" :gap="20" :height="100" :widht="100" :pattern-color="'gray'" :bg-color="'rgba(240,240,240,.4)'"/>
+    <Background :size="3" :gap="20" :height="100" :widht="100" :pattern-color="'gray'"/>
 
     <div class="overlay">
       <slot />

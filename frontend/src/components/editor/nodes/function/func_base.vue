@@ -34,9 +34,17 @@ watch(() => props.id, (newId) => {  //this watcher statement watches
 <NodeBase 
 :id="id"
 >
-<slot></slot>
+<div class="node-content">
+  <slot></slot>
+</div>
 </NodeBase>
 </template>
 
 <style scoped>
+.node-content{
+  width:min-content;
+  display:flex;
+  flex-direction: column;
+  padding:5px;
+}
 </style>

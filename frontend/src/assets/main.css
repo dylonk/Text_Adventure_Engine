@@ -33,3 +33,17 @@ a,
   stroke-dasharray: 10;
   animation: dash 5s linear;
 }
+.vue-flow__nodesselection-rect{
+
+  touch-action: none;
+  z-index:1;
+  background:rgba(138, 138, 255, 0.2);
+  border:dashed gray 1px;
+}
+
+.vue-flow__selection{
+  touch-action: none;
+  z-index:1;
+  background:rgba(138, 138, 255, 0.2);
+  border:dashed gray 1px;
+}

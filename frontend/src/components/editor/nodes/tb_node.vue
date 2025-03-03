@@ -13,11 +13,11 @@ const { onDragStart } = useDragAndDrop();
 </script>
 
 <template>
-    <div class="tb_node_container" :draggable=True @dragstart="onDragStart($event, props.type, true)">
+    <div class="tb_node_container" :draggable=true @dragstart="onDragStart($event, props.type, true)">
         <NodeBase
         id=-1
         :type="type"
-        draggable="true"
+        draggable=true
         :data="{
             display_type,
             bg_color:node_colors[type+'_bg'],
@@ -30,7 +30,6 @@ const { onDragStart } = useDragAndDrop();
 @import 'https://fonts.googleapis.com/css2?family=Syne+Mono&display=swap';
 .tb_node_container{
     font-family: 'Syne Mono', monospace;
-    outline: 1px solid rgb(67, 67, 67);
     height:fit-content;
     width:fit-content;
     display:flex;

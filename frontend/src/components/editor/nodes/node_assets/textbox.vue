@@ -57,12 +57,12 @@ function updateResponse(index,newResponse){
         <HContainer>
         <div v-if="title!=''"> {{ title }}</div>
         <SmallButton v-if="allowButtons=='true'" :id="id" text="+" @click="addResponse()"></SmallButton>
+        <SmallButton v-if="allowButtons=='true'" :id="id" text="-" @click="removeResponse(index)"></SmallButton>
         </HContainer>
 
         <div class="nodrag">
-            <div v-for="(textbox) in NS.getNode(props.id).data[convertedTitle+'_textboxes']" class="textbox_container">
+            <div v-for="(textbox,index) in NS.getNode(props.id).data[convertedTitle+'_textboxes']" class="textbox_container">
                 <textarea class="textbox_text" @input="updateResponse(textbox,$event.target.value); adjustTextarea"></textarea>
-                <SmallButton v-if="allowButtons=='true'" :id="id" text="-" @click="removeResponse(textbox)"></SmallButton>
             </div>
         </div>
     </div>
@@ -84,10 +84,9 @@ function updateResponse(index,newResponse){
         /* color: v-bind('node_colors.prompt_fg'); */
         /* background:v-bind('node_colors.prompt_bg'); */
         display:flex;
-        flex-direct:column;
+        flex-direction:column;
         margin: 0px;
-        padding-left:10px;
-        padding-bottom:5px;
+
     }
     .response_title{
         display:flex;

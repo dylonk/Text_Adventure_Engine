@@ -46,7 +46,12 @@ const fetchProjects = async () => {
       image: 'https://via.placeholder.com/150'  // Add the actual image URL or placeholder
     }));
   } catch (error) {
-    console.error('Error fetching projects:', error);
+    if(true){
+      console.error('Error fetching projects (project.vue was bothering me set statement to false to bring back spam)');
+    }
+    else{
+      console.error('Error fetching projects:', error);
+    }
   }
 };
 
