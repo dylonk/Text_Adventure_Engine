@@ -1,13 +1,16 @@
 <script setup>
 import { useNodesStore } from './nodes/node_store.js'
-
+import {computed} from 'vue'
 const NS = useNodesStore()
-
+const canvasName = computed(() => {
+  NS.canvasID;
+  return NS.getCurrentCanvasName()
+});
 </script>
 <template>
     <div class="canvas-selector-container">
         <img onload="this.width*=0.45" class="canvas-selector" src="@/assets/Images/editor/currentcanvas.png">
-        <div class="selector-text">{{ NS.getCurrentCanvasName() }}</div>
+        <div class="selector-text">{{ canvasName }}</div>
     </div>
 </template>
 <style scoped>

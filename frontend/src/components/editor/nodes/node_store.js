@@ -110,13 +110,14 @@ const swapCanvas = (newid) =>{
 };
 
 const renameNode = (id) => {
+    console.log("🦠🔤 renameNode(id=",id,")")
     const nodeExists = getNode(id,true);
     if (!nodeExists) {
-      console.error(`Node with id ${id} does not exist`);
+      console.error(`🦠🔤 Node with id ${id} does not exist`);
       return;
     }
 
-    console.log("this node exists at", nodeExists.position);
+    console.log("🦠🔤 this node exists at", nodeExists.position);
     const newName = prompt(`Enter a new name for node ${id}:`); // !!NEED TO IMPLEMENT CHECK FOR OBJECT NAME UNIQUENESS
     if (newName !== null) { 
       nodeExists.data.object_name = newName;
@@ -124,13 +125,16 @@ const renameNode = (id) => {
     globalSync();
   };
 
-  const contributeNodeData = (id, inputData, OverwriteExistingData=true) => {
-    if(true){}
+const contributeNodeData = (id, inputData, OverwriteExistingData=true) => { // For creating the data that will be with the node initially, only runs through once.
+    console.log("💾🫳🏽 ContributeNodeData(id=",id,"inputData=,",inputData,"OverwriteExistingData=",OverwriteExistingData,")");
+    if(getNodeData(id,"initialized")==true){
+      console.log("💾🫳🏽 ContributeNodeData cancelled, node has initial values");
+      return;
+    }
     if(id==-1){
       console.log("💾🫳🏽 contributeNodeData called on toolbox node")
       return;
     }
-    console.log("💾🫳🏽 ContributeNodeData Called");
     const nodeExists = getNode(id);
     if (!nodeExists) {
       console.error(`💾🫳🏽 ContributeNodeData: Node with id ${id} does not exist`);
@@ -152,9 +156,33 @@ const renameNode = (id) => {
     globalSync();
     return;
   };
+  const getNodeData = (id, dataProperty = "") => {  // DO NOT USE IN A WATCHER OR COMPUTE FUNCTION (spam) gets data of node safely. dataProperty to be subbed in instances where you'd do something like node.data.obj_name for safety
+    console.log("💾🔙 getNodeData(id=",id,"dataProperty=",dataProperty,")")
+    const nodeExists = getNode(id,true)
+    if(nodeExists==null){
+      console.log("💾🔙 Node does not exist")
+      return null;
+    }
+    if(!nodeExists.hasOwnProperty("data")){
+      console.log("💾🔙 Node does not have property data")
+      return null;
+    }
+    if(dataProperty==""){
+      console.log("💾🔙 Node exists, data=", nodeExists.data)
+      return nodeExists.data
+    }
+    if(nodeExists.data.hasOwnProperty(dataProperty)){
+      console.log("💾🔙 Node exists, data property ",dataProperty,"=", nodeExists.data[dataProperty])
+      return nodeExists.data[dataProperty]
+    }
+    else{
+      console.log("💾🔙 Node data property does not exist")
+      return null;
+    }
+  }
   // ONLY FOR USE IN OBJECTS, SETS DATA.PROPERTIES
   const setNodeProperty = (id, inputKey, inputValue) => {
-    console.log("setNodeProperty(id=",id,"inputKey=",inputKey,"inputValue=",inputValue);
+    console.log("⚙️🟰 setNodeProperty(id=",id,"inputKey=",inputKey,"inputValue=",inputValue);
     const nodeExists = getNode(id);
     if (!nodeExists) {
       console.error(`setNodeProperty: Node with id ${id} does not exist`);
@@ -164,9 +192,8 @@ const renameNode = (id) => {
       console.error(`setNodeProperty: Node with ${id} does not have properties`)
       return;
     }
-    console.log("Key/Value to input", inputKey,inputValue)
     nodeExists.data.properties[inputKey]=inputValue
-    console.log("New data of properties:", nodeExists.data.properties)
+    console.log("⚙️🟰 New data of properties:", nodeExists.data.properties)
     globalSync();
     return;
   };
@@ -249,6 +276,7 @@ const renameNode = (id) => {
   }; 
 
   const getAllNodes = () => {
+    console.log("🦠💯 getAllNodes()")
     return Array.from(globalNodes.value.values()).flatMap(canv => canv.n)
   };
   const getNode = (id, doGlobal=false) => {
@@ -265,12 +293,12 @@ const renameNode = (id) => {
     //   console.log("getNode on global (id=0)")
     //   return  null;
     // }
-      console.log("   🦠🫴 getNode called on id", id, ". doGlobal=", doGlobal)
       let nodeExists = nodes.value.find((n) => n.id == id);
       if(doGlobal == true){
         globalSync();
-        console.log("   🦠🫴 getNode(global): globalNodesArray",getAllNodes().find((n) => n.id == id))
-        nodeExists = getAllNodes().find((n) => n.id == id)
+        const allNodes = getAllNodes()
+        console.log("   🦠🫴 getNode(global): globalNodesArray",allNodes)
+        nodeExists = allNodes.find((n) => n.id == id)
         console.log("   🦠🫴 getNode(global): node to return",nodeExists)
         if (nodeExists == null) {
           console.warn(`   🦠🫴 getNode(global) Node with id ${id} does not exist`);
@@ -329,7 +357,7 @@ const renameNode = (id) => {
       return "BadNode"
     }
     else{
-      const nodeTitle = getNode(canvasID.value, true)
+      const nodeTitle = getNode(canvasID.value, true,true)
       console.log("🖼️🔤 getCurrentCanvasName nodeTitle=",nodeTitle)
       if(nodeTitle == null){
         console.log("🖼️🔤 getCurrentCanvas = NodeNotFound")
@@ -345,9 +373,9 @@ const renameNode = (id) => {
       }
     }
   };
-  const getNodeProperties = (id, doGlobal=false) => { //returns an array
+  const getNodeProperties = (id, doGlobal=false) => { // DO NOT USE IN A WATCHER OR COMPUTE FUNCTION (spam), returns an array
     console.log("⚙️⬅️ getNodeProperties(id=", id, ",doGlobal=", doGlobal,")")
-    const nodeExists = getNode(id,true);
+    const nodeExists = getNode(id,true,true);
     // && nodeExists.hasProperty(data) && nodeExists.data.hasOwnProperty(properties)
     if(nodeExists != null){
       if(nodeExists.data.properties==null){
@@ -359,6 +387,10 @@ const renameNode = (id) => {
     else{
       return [];
     }
+  };
+  const getEdge = (id) => {
+    console.log("📏⬅️ getEdge(id=", id,")")
+    return edges.value.find(e => e.id === id);
   };
   const updateEdge = (id, newData) => {
     console.log("📏🆙 updateEdge(id=", id, ",newData=", newData,")")
@@ -386,10 +418,7 @@ const renameNode = (id) => {
     globalSync();
   };
 
-  const getEdge = (id) => {
-    console.log("📏⬅️ getEdge(id=", id,")")
-    return edges.value.find(e => e.id === id);
-  };
+
 
 
   return {
@@ -406,14 +435,15 @@ const renameNode = (id) => {
     deleteNode,
     renameNode,
     contributeNodeData,
+    getNodeData,
     setNodeData,
     removeNodeData,
+    getNodeProperties,
     setNodeProperty,
     removeNodeProperty,
-    getNodeProperties,
     addEdge,
     updateEdge,
     deleteEdge,
-    getEdge
+    getEdge,
   };
 });

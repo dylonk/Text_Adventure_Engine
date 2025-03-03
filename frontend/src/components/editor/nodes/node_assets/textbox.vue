@@ -27,6 +27,9 @@ const defaultObjData =  { //This is the data that this component contributes. An
 
   console.log("textbox.vue: ReferenceID is = " + props.id)
   NS.contributeNodeData(props.id,defaultObjData,true);
+const nodeData = computed(() => {
+  return NS.getNode(props.id).data;
+});
 //------------------------------IMPORTANT END-------------------------------------------
 
 const adjustTextarea = () => {
