@@ -62,7 +62,7 @@ function removeProperty(propertyKey){
       Properties
       <button @click="addProperty()" class="property-list-button">+</button>
     </div>
-    <div v-for="(property,title,index)  in NS.getNode(props.id).data.properties" @click="listSelection=index">
+    <div v-for="(property,title,index)  in NS.getNodeProperties(props.id)" @click="listSelection=index">
       <div v-if="index==listSelection" class="property-selected">
         <button @click="removeProperty(title)" class="property-list-delete" style="margin-right:3px;">x</button>
           {{ title+" " }}

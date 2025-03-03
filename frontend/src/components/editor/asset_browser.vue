@@ -80,10 +80,6 @@ function switchCanvas(id){
     <div class="asset_browser">
       <h3>Asset Browser</h3>
       <div class="objects-container">
-        <div class="current-canvas">{{ nodesStore.getNode(nodesStore.canvasID,true).data?.object_name||"Global" }}</div>
-        <div style="height: 0;width: 0; position:relative;left:-28px;top:-37px;">
-          <img onload="this.width*=0.45" class="canvas-selector" src="@/assets/Images/editor/canvasselector.png">
-        </div>
         <details>
             <summary class="sum-light" @click="switchCanvas(0)">Global</summary>
         </details>

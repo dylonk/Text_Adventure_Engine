@@ -5,6 +5,7 @@
     import AssetBrowser from './asset_browser.vue'
     import globalNavBar from '@/components/standardjs/navbar.vue'
     import Toolbar from './toolbar.vue'
+    import CanvasSelector from './canvasSelector.vue'
 
 
 
@@ -16,6 +17,7 @@
         <Toolbar/>
     <div class="editor-container">
         <Toolbox />
+        <CanvasSelector/>
         <Canvas />
         <AssetBrowser />
     </div>
