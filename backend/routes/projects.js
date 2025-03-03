@@ -12,7 +12,7 @@ const router = express.Router();
  router.post('/save', async (req, res) => {
     console.log("save request send");
     try {
-      const { id, userId,name} = req.body;   //will include nodes once implemented
+      const { id, userId,name,nodes,edges} = req.body;  
       console.log("id is", id, "name is", name);  //ok, so it successfully gets ID and name of the project
       console.log("sent user id is", userId);
       //console.log("requser id is", req.user._id);
@@ -22,7 +22,8 @@ const router = express.Router();
         {
           userId: userId,
           name: name,
-          //nodes: nodes              nodes not implemented yet
+          nodes: nodes,              
+          edges: edges
         },                    // Update object
         { upsert: true, new: true }  // Options
       );

@@ -17,12 +17,16 @@ const ProjectSchema = new mongoose.Schema({
     required: true 
   },
 
-/*
+
   nodes: {      //array of nodes. This will hopefully get smart
     type: mongoose.Schema.Types.Mixed, // Or define a more specific schema if possible
     default: []
+  },
+  edges: {      //array of nodes. This will hopefully get smart
+    type: mongoose.Schema.Types.Mixed, // Or define a more specific schema if possible
+    default: []
   }
-    */
+
 }, 
 
 {

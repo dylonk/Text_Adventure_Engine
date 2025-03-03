@@ -32,6 +32,8 @@ const router = useRouter(); // Access the Vue Router for navigation
         <RouterLink class="nav_btn" to="/project" active-class="active">Create</RouterLink><!-- I think they should be rendered conditionally-->
         <RouterLink class="nav_btn" to="/user" active-class="active">Profile</RouterLink>
         <RouterLink class="nav_btn" to="/about" active-class="active">About</RouterLink>
+        <RouterLink class="nav_btn" to="/game" active-class="active">game</RouterLink>
+
 
         <!-- Conditional rendering based on whether the user is logged in -->
         <template v-if="displayUsername">

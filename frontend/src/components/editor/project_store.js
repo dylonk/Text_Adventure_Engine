@@ -52,7 +52,8 @@
         id: projectId.value,
         userId: userid.value,
         name: projectName.value,
-        //nodes: allNodes     nodesnot there yet
+        nodes: useNodesStore().nodes,
+        edges: useNodesStore().edges
       };
 
       // Here you would typically send this to your backend
@@ -87,6 +88,13 @@
         }
         console.log("initted project with id", projectId.value, "and name", projectName.value);
       }
+
+    async function importProject(projectID) {  //this function imports a project from the database using the id.
+      console.log("importProject called");
+
+    }
+
+
 
     // Computed properties for project insights. Good idea but commenting out for now
     /*

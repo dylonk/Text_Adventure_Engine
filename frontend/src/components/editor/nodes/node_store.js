@@ -6,7 +6,7 @@ import { reactive,computed, ref } from 'vue';
 export const useNodesStore = defineStore('nodes', () => {//nodes store will no longer seperate nodes by type
 
   const nodes = ref([]);
-  const edges = ref([]); // No implementation atm
+  const edges = ref([]); 
 
   const object_count = reactive({
     //For making unique object names
