@@ -13,7 +13,6 @@ const props = defineProps({   //a lot of these are constructed into a data objec
 // Component MUST have props.id for this to work, and it needs to be passed down through each component
 // Parent component must also have @init-node-id listener
 import { useNodesStore } from '@/components/editor/nodes/node_store'
-import { dataHas } from '@/components/editor/nodes/n-utils';
 const NS = useNodesStore()
 const defaultObjData =  { //This is the data that this component contributes. Any existing properties within the functional node data will be replaced
     isObject: true, // These properties are distinct to ObjectBase, !!dont copy them!!
@@ -23,8 +22,9 @@ const defaultObjData =  { //This is the data that this component contributes. An
   console.log("obj_base.vue: ReferenceID is = " + props.id)
   console.log("obj_base.vue: bg_color is " + NS.getNodeData(props.id,"bg_color"))
   NS.contributeNodeData(props.id,defaultObjData,false);
-  //IMPORTANT AS WELL, MAKE SURE TO BE CONSIDERATE OF HOW OFTEN THE REACTIVITY IS UPDATED, CAN LEAD TO VERY SLOW CODE. DO AS I DID BELOW
-const ND = computed(() => {
+  //IMPORTANT AS WELL, MAKE SURE TO BE CONSIDERATE OF HOW OFTEN THE REACTIVITY IS UPDATED, CAN LEAD TO VERY SLOW CODE. Call ND.subproperty directly if using v-for on it.
+  import { dataHas } from '@/components/editor/nodes/n-utils';
+  const ND = computed(() => {
   return NS.getNode(props.id).data;
 });
 //------------------------------IMPORTANT END-------------------------------------------

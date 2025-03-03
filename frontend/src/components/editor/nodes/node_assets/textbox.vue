@@ -25,11 +25,14 @@ const defaultObjData =  { //This is the data that this component contributes. An
     defaultObjData[convertedTitle+'_textboxes'].push("");
   }
 
-  console.log("textbox.vue: ReferenceID is = " + props.id)
-  NS.contributeNodeData(props.id,defaultObjData,true);
-const nodeData = computed(() => {
-  return NS.getNode(props.id).data;
-});
+  console.log("!!!!!textbox.vue: ReferenceID is = " + props.id)
+  NS.contributeNodeData(props.id,defaultObjData,false);
+
+  //IMPORTANT AS WELL, MAKE SURE TO BE CONSIDERATE OF HOW OFTEN THE REACTIVITY IS UPDATED, CAN LEAD TO VERY SLOW CODE. Call ND.subproperty directly if using v-for on it.
+  import { dataHas } from '@/components/editor/nodes/n-utils';
+  const ND = computed(() => { //Node data
+    return NS.getNode(props.id).data;
+  }); 
 //------------------------------IMPORTANT END-------------------------------------------
 
 const adjustTextarea = () => {
@@ -39,16 +42,16 @@ const adjustTextarea = () => {
 
 function addResponse(){
     const convertedTitle = props.title.replace(" ","_")
-    NS.getNode(props.id).data[convertedTitle+'_textboxes'].push("")
+    ND.value[convertedTitle+'_textboxes'].push("")
 }
 function removeResponse(index){
     const convertedTitle = props.title.replace(" ","_")
-    NS.getNode(props.id).data[convertedTitle+'_textboxes'].splice(index,1);
+    ND.value[convertedTitle+'_textboxes'].splice(index,1);
 
 }
 function updateResponse(index,newResponse){
     const convertedTitle = props.title.replace(" ","_")
-    NS.getNode(props.id).data[convertedTitle+'_textboxes'][index]=newResponse;
+    ND.value[convertedTitle+'_textboxes'][index]=newResponse;
 
 }
 

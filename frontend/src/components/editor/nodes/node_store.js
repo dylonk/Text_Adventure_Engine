@@ -126,11 +126,8 @@ const renameNode = (id) => {
   };
 
 const contributeNodeData = (id, inputData, OverwriteExistingData=true) => { // For creating the data that will be with the node initially, only runs through once.
+
     console.log("💾🫳🏽 ContributeNodeData(id=",id,"inputData=,",inputData,"OverwriteExistingData=",OverwriteExistingData,")");
-    if(getNodeData(id,"initialized")==true){
-      console.log("💾🫳🏽 ContributeNodeData cancelled, node has initial values");
-      return;
-    }
     if(id==-1){
       console.log("💾🫳🏽 contributeNodeData called on toolbox node")
       return;
@@ -145,9 +142,15 @@ const contributeNodeData = (id, inputData, OverwriteExistingData=true) => { // F
     //   return;
     // }
     if(OverwriteExistingData==true){
+      if(getNodeData(id,"initialized")==true){ //Node already instanciated, if you need to set, use setNodeData
+        return;
+      }
     Object.assign(nodeExists.data, inputData)
     }
     if(OverwriteExistingData==false){
+      if(nodeExists.data.hasOwnProperty(inputData)){
+        return;
+      }
       nodeExists.data=Object.assign(inputData,nodeExists.data )
     }
     if(nodeExists.data.hasOwnProperty('initialized'))
@@ -198,7 +201,7 @@ const contributeNodeData = (id, inputData, OverwriteExistingData=true) => { // F
     return;
   };
   const setNodeData = (id, inputKey, inputValue) => {
-    console.log("💾🟰 setNodeData(id=", id, "inputKey=",inputKey, );
+    console.log("💾🟰 setNodeData(id=", id, "inputKey=",inputKey, "inputValue=", inputValue,")");
     const nodeExists = getNode(id);
     if (!nodeExists) {
       console.error(`setNodeData: Node with id ${id} does not exist`);
