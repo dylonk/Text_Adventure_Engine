@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import { reactive,computed, ref, toRaw } from 'vue';
+import {dataHas}  from './n-utils'
 
 
 
@@ -45,6 +46,18 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
     console.log(`   🌎🔄 globalSync: `,globalNodes,`updated globalNodes at canvasID `,globalNodes.value.get(canvasID.value).n,`, nodes: `,nodes.value)
     // 
   }
+  const localSync = () => { //gets nodes as they are within the global map
+    console.log("   🏠🔄 localSync()")
+    const canvas = globalNodes.value.get(canvasID.value);
+    console.log("   🏠🔄 localSync current canvas node =", canvas)
+    if(canvas == null || canvas.hasOwnProperty('n') == null){
+      console.warn("   🏠🔄 localSync failed, null canvasID or property")
+      return;
+    }
+    nodes.value = structuredClone(JSON.parse(JSON.stringify(canvas.n))); 
+    edges.value = structuredClone(JSON.parse(JSON.stringify(canvas.e)));
+  }
+
   // Add a node to the store
   const addNode = (node) => {
     console.log("🦠➕ addNode: Before adding:", nodes);
@@ -63,10 +76,10 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
     }
     node.data.parentID = canvasID.value;
     
-    // node.data.nodeDepth = 1;
-    // if(canvasID.value != 0){
-    //   node.data.nodeDepth = getNode(canvasID.value).data.nodeDepth + 1
-    // }
+    node.data.nodeDepth = 1;
+    if(canvasID.value != 0){
+      node.data.nodeDepth = getNode(canvasID.value,true).data.nodeDepth + 1
+    }
     
 
     //adds the default names
@@ -111,7 +124,9 @@ const swapCanvas = (newid) =>{
 
 const renameNode = (id) => {
     console.log("🦠🔤 renameNode(id=",id,")")
+    
     const nodeExists = getNode(id,true);
+
     if (!nodeExists) {
       console.error(`🦠🔤 Node with id ${id} does not exist`);
       return;
@@ -122,7 +137,10 @@ const renameNode = (id) => {
     if (newName !== null) { 
       nodeExists.data.object_name = newName;
     }
-    globalSync();
+
+    if(dataHas(nodeExists.data,"parentID") == canvasID.value ){ //if node has parent equal to current canvas
+      localSync();
+    }
   };
 
 const contributeNodeData = (id, inputData, OverwriteExistingData=true) => { // For creating the data that will be with the node initially, only runs through once.
@@ -202,7 +220,7 @@ const contributeNodeData = (id, inputData, OverwriteExistingData=true) => { // F
   };
   const setNodeData = (id, inputKey, inputValue) => {
     console.log("💾🟰 setNodeData(id=", id, "inputKey=",inputKey, "inputValue=", inputValue,")");
-    const nodeExists = getNode(id);
+    const nodeExists = getNode(id,true);
     if (!nodeExists) {
       console.error(`setNodeData: Node with id ${id} does not exist`);
       return;
@@ -246,11 +264,14 @@ const contributeNodeData = (id, inputData, OverwriteExistingData=true) => { // F
 //delete a node by id
   const deleteNode = (id) => {
       //removeNodes([id]);
+      
       console.log("🦠🗑️ deleteNode(id=",id,")")
+      deleteAllChildren(id);
       const nodeId = (id);
     
-      // Check if the node exists
-      
+      if(id == canvasID.value){
+        swapCanvas(0)
+      }
       const nodeExists = getNode(id,true);
       if (nodeExists) {
         console.log(`Node with id ${id} exists in objects, deleting...`);
@@ -277,6 +298,11 @@ const contributeNodeData = (id, inputData, OverwriteExistingData=true) => { // F
       console.error(`deleteNode: Node with id ${id} does not exist`);
       return; 
   }; 
+  const deleteAllChildren = (id) => { // recursive function to delete children nodes of node
+    console.log("👼🗑️ deleteAllChildren(id=",id,")")
+    console.log("👼🗑️ globalNodes.value.get(",id,")",globalNodes.value.get(id))
+    
+  };
 
   const getAllNodes = () => {
     console.log("🦠💯 getAllNodes()")
@@ -432,6 +458,7 @@ const contributeNodeData = (id, inputData, OverwriteExistingData=true) => { // F
     getAllNodes,
     getCurrentCanvasName,
     globalSync,
+    localSync,
     swapCanvas,
     canvasID,
     addNode,

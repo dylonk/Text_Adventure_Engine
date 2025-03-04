@@ -1,5 +1,5 @@
 <script setup>
-import { useNodesStore } from './nodes/node_store.js'
+import { useNodesStore } from '@/components/editor/nodes/node_store.js'
 import { computed, ref } from 'vue'
 import ContextMenu from './context_menu.vue'
 
@@ -12,18 +12,17 @@ const object_type_list = [
 ]
 
 
+import { dataHas, treeify } from '@/components/editor/nodes/n-utils';
 
 const nodesStore = useNodesStore()
 
 // Use computed properties to observe the nodes in the store. Any with object_type_list will be displayed
 const objects = computed(() => {
   nodesStore.globalNodes;
-  return nodesStore.getAllNodes().filter(node => object_type_list.includes(node.type))
+  return treeify(nodesStore.getAllNodes().filter(node => object_type_list.includes(node.type)))
 });
 
-const currentCanvasID = computed(() => {
-  return nodesStore.canvasID
-});
+const clickedCanvas = ref(0)
 
 const isContextMenuVisible = ref(false)
 const contextMenuId = ref(null)
@@ -69,30 +68,37 @@ function handleContextMenuAction(action) {
 function closeContextMenu() {
   isContextMenuVisible.value = false
 }
-function switchCanvas(id){
+function switchCanvas(id, assetBrowserIndex){
   console.log("asset_browser.vue: swapping canvas" ,nodesStore.getAllNodes())
   nodesStore.swapCanvas(Number(id));
+  clickedCanvas.value = assetBrowserIndex
 }
-
+function getDepth(node){
+  const depth = dataHas(node.data,"nodeDepth",0)
+  let whitespace = ""
+  for(let i = 0; i < depth-1; i++){
+    whitespace+="│ "
+  }
+  whitespace+="┕ "
+  return whitespace
+}
 </script>
 
 <template>
     <div class="asset_browser">
       <h3>Asset Browser</h3>
       <div class="objects-container">
-        <details>
-            <summary class="sum-light" @click="switchCanvas(0)">Global</summary>
-        </details>
+            <div v-if="clickedCanvas==0" @click="switchCanvas(0,0)" class="sum-selected">      Global        </div>
+            <div v-else class="sum-light" @click="switchCanvas(0,0)">Global</div>
 
         <div
           v-for="(object,index) in objects"
           :key="object.id"
           @contextmenu="showContextMenu($event, object.type, object.id)"
         >
-          <details @click="switchCanvas(object.id)">
-            <summary v-if="index%2==0" class="sum-dark">        {{ object.data.object_name || 'ERR_UNNAMED_NODE' }}          </summary>
-            <summary v-else class="sum-light">        {{ object.data.object_name || 'ERR_UNNAMED_NODE' }}          </summary>
-          </details>
+            <div v-if="index==clickedCanvas-1" @click="switchCanvas(object.id,index+1)" class="sum-selected">        {{ getDepth(object) + object.data.object_name || 'ERR_UNNAMED_NODE' }}          </div>
+            <div v-else-if="index%2==0" @click="switchCanvas(object.id,index+1)" class="sum-dark" style="color:v-bind('object.data.bg_color');">        {{ getDepth(object) + object.data.object_name || 'ERR_UNNAMED_NODE' }}          </div>
+            <div v-else @click="switchCanvas(object.id,index+1)" class="sum-light">        {{ getDepth(object) + object.data.object_name || 'ERR_UNNAMED_NODE' }}          </div>
           <div v-if="index==-1" style="height: 0;width: 0; position:relative;left:-28px;top:-31px;">
             <img onload="this.width*=0.45" class="canvas-selector" src="@/assets/Images/editor/canvasselector.png">
           </div>
@@ -124,36 +130,44 @@ function switchCanvas(id){
   height:auto;
   display: flex;
   flex-direction: column;
-  background: rgb(74, 74, 74)
+  background: rgb(93, 93, 93)
 }
 .asset-browser-hr{
   margin-top:5px;
   margin-bottom:5px;
 }
-details summary{
-  color:white;
-  text-shadow: 0px 1.4px black;
-}
 .sum-dark{
+  color:white;
+  min-width:fit-content;
+  font-weight:bold;
   background:rgb(100, 100, 100);
-  padding:3px;
-  padding-left:5px;
+  padding:0px;
+  padding-left:8px;
   padding-right:5px;
+  text-shadow:0px 1px black, -1px 0px black;
+  text-overflow: ellipsis;
 }
-.current-canvas{
-  background:rgb(231, 232, 219);
-  color:goldenrod;
-  font-size: large;
-  text-shadow: 0px 1px rgb(94, 75, 48);
-  padding:3px;
-  padding-left:20px;
+.sum-selected{
+  min-width:fit-content;
+  color:white;
+  font-weight:bold;
+  background:rgb(158, 158, 158);
+  padding:0px;
+  padding-left:8px;
   padding-right:5px;
+  text-shadow:0px 1px black, -1px 0px black;
+  text-overflow: ellipsis;
 }
 .sum-light{
+  min-width:fit-content;
+  color:white;
+  font-weight:bold;
   background:gray;
-  padding:3px;
-  padding-left:5px;
+  padding:0px;
+  padding-left:8px;
   padding-right:5px;
+  text-shadow:0px 1px black, -1px 0px black;
+  text-overflow: ellipsis;
 }
 
 h3 {
@@ -193,7 +207,7 @@ li {
 
 }
 
-details summary {
+details div {
   cursor: pointer;
   font-weight: bold;
 }
