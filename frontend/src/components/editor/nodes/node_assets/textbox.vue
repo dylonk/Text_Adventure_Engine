@@ -43,16 +43,17 @@ const adjustTextarea = () => {
 function addResponse(){
     const convertedTitle = props.title.replace(" ","_")
     ND.value[convertedTitle+'_textboxes'].push("")
+    NS.globalSync()
 }
 function removeResponse(index){
     const convertedTitle = props.title.replace(" ","_")
     ND.value[convertedTitle+'_textboxes'].splice(index,1);
-
+    NS.globalSync()
 }
 function updateResponse(index,newResponse){
     const convertedTitle = props.title.replace(" ","_")
     ND.value[convertedTitle+'_textboxes'][index]=newResponse;
-
+    NS.globalSync()
 }
 
 </script>
@@ -68,7 +69,7 @@ function updateResponse(index,newResponse){
 
         <div class="nodrag">
             <div v-for="(textbox,index) in NS.getNode(props.id).data[convertedTitle+'_textboxes']" class="textbox_container">
-                <textarea class="textbox_text" @input="updateResponse(textbox,$event.target.value); adjustTextarea"></textarea>
+                <textarea class="textbox_text" @input="updateResponse(index,$event.target.value); adjustTextarea"></textarea>
             </div>
         </div>
     </div>
