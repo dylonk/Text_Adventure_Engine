@@ -76,8 +76,14 @@ function newProject() {
 }
 
 // Load project from file explorer
-function loadProject() {
+function loadProject(id) {    //pretty simple, it just goes to the create page and tells the project store to open the project by id
   playClickSound();
+  router.push('/create');
+  useProjectStore().openProject(id);
+
+
+  /* I'm commenting out this code for now because do we really need to load projects from files when we're totally web based? 
+  new load project above is used when any recent project is double clicked
   const input = document.createElement('input');
   input.type = 'file';
   input.accept = '.json,.txt,.project';
@@ -88,6 +94,7 @@ function loadProject() {
     }
   };
   input.click();
+  */
 }
 </script>
 
@@ -114,7 +121,7 @@ function loadProject() {
           v-for="project in recentProjects" 
           :key="project.id" 
           class="project-box"
-          @click="playClickSound()">
+          @click="loadProject(project.id)">
           <div class="project-title">{{ project.title }}</div>
           <img :src="project.image" alt="Project image" class="project-image" />
         </div>

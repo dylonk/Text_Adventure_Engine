@@ -77,22 +77,42 @@
       }
     }
 
-    function initProject()     //initializes the project. Only temporarily linked to a toolbar button. If project already initted, does nothing
+    //initializes a new project. changed functionality 3/4 to only be initting of new project, deleting everything else.
+    //in the future we'll also init global settings. Global settings will probably end up being some sort of array to make it easier
+    function initProject()     
       {
         console.log("initProject called");
-        if (!projectId.value) { //project has no id? not initted? init that thang
-          projectId.value = uuidv4();
-        }
-        if(!projectName.value) {
-          projectName.value = "New Project";
-        }
+        projectId.value = uuidv4();
+        projectName.value = "New Project";
+        useNodesStore().nodes = [];
+        useNodesStore().edges = [];
         console.log("initted project with id", projectId.value, "and name", projectName.value);
       }
 
-    async function importProject(projectID) {  //this function imports a project from the database using the id.
-      console.log("importProject called");
-
+    async function openProject(projectID) {  //this function opens a project from the database using the id.
+    //if we have time, it wouldn't be too hard to put an autosave function/confirmation here if you already have an unsaved project open
+      console.log("openProject called");
+      try {
+        const response = await fetch(`http://localhost:5000/projects/open?id=${projectID}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        if (!response.ok) {
+          const errorDetail = await response.text();
+          throw new Error(`Failed to open project: ${errorDetail}`);
+        }
+        const projectData = await response.json();  //waits for the projectData. in the future we can also store global settings here. Like pretty much anything in a project-wide scope
+        projectName.value = projectData.name;
+        projectId.value = projectData.id;
+        useNodesStore().nodes = projectData.nodes;
+        useNodesStore().edges = projectData.edges;
+        } catch (error) {
+          console.error('Failed to open project', error);
+        };
     }
+
 
 
 
@@ -135,6 +155,7 @@
       renameProject,
       exportProject,
       initProject,
+      openProject,
      // nodeCount,
      // roomCount,
      // itemCount,

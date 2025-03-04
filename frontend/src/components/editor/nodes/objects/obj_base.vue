@@ -15,6 +15,7 @@ const props = defineProps({   //a lot of these are constructed into a data objec
 import { useNodesStore } from '@/components/editor/nodes/node_store'
 const NS = useNodesStore()
 const defaultObjData =  { //This is the data that this component contributes. Any existing properties within the functional node data will be replaced
+    object_name: "Object Name",
     isObject: true, // These properties are distinct to ObjectBase, !!dont copy them!!
     properties: {aliases: "ObjectName,ObjectName2",},
     display_type: 'ObjectBase'
