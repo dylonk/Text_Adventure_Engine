@@ -67,7 +67,7 @@ function updateResponse(index,newResponse){
 
         <div class="nodrag">
             <div v-for="(textbox,index) in NS.getNode(props.id).data[convertedTitle+'_textboxes']" class="textbox_container">
-                <textarea class="textbox_text" @input="updateResponse(index,$event.target.value); adjustTextarea"></textarea>
+                <textarea :value="textbox" class="textbox_text" @input="updateResponse(index,$event.target.value); adjustTextarea"></textarea>
             </div>
         </div>
     </div>

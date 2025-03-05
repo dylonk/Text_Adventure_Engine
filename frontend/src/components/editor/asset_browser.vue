@@ -18,10 +18,7 @@ const nodesStore = useNodesStore()
 
 // Use computed properties to observe the nodes in the store. Any with object_type_list will be displayed
 
-const objects = computed(() => {
-  nodesStore.globalNodes
-  return treeify(nodesStore.getAllNodes().filter(node => object_type_list.includes(node.type)))
-});
+const objects = ref([]);
 
 const clickedCanvas = ref(0)
 
@@ -55,7 +52,13 @@ function showContextMenu(event, nodeType, nodeId) {
 
 
 
-
+function syncAssetBrowser(){
+  objects.value = treeify(nodesStore.getAllNodes().filter(node => object_type_list.includes(node.type)))
+}
+const syn = computed( ()=>{
+  syncAssetBrowser()
+  return nodesStore.syncer
+})
 
 
 
@@ -72,6 +75,7 @@ function closeContextMenu() {
 function switchCanvas(id, assetBrowserIndex){
   console.log("asset_browser.vue: swapping canvas" ,nodesStore.getAllNodes())
   nodesStore.swapCanvas(Number(id));
+  syncAssetBrowser()
   clickedCanvas.value = assetBrowserIndex
 }
 function getDepth(node){
@@ -80,17 +84,18 @@ function getDepth(node){
   for(let i = 0; i < depth-1; i++){
     whitespace+="│ "
   }
-  whitespace+="┕ "
+  whitespace+="┕ ▼ "
   return whitespace
 }
 </script>
 
 <template>
+  <div style="display: none">{{ syn }}</div>
     <div class="asset_browser">
       <h3>Asset Browser</h3>
       <div class="objects-container">
-            <div v-if="clickedCanvas==0" @click="switchCanvas(0,0)" class="sum-selected">      Global        </div>
-            <div v-else class="sum-light" @click="switchCanvas(0,0)">Global</div>
+            <div v-if="clickedCanvas==0" @click="switchCanvas(0,0)" class="sum-selected">     ▼ Global        </div>
+            <div v-else class="sum-light" @click="switchCanvas(0,0)">▼ Global</div>
 
         <div
           v-for="(object,index) in objects"
