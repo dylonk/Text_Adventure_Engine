@@ -77,7 +77,6 @@
             id: Number(getId()),
             position: pos,
             data: {
-              display_type:'DnDNoDisplayNameGiven',
               bg_color:computed(()=>node_colors[newNode.type+'_bg'] || 'red'),
               fg_color:computed(()=>node_colors[newNode.type+'_fg'] || 'blue'),
             },

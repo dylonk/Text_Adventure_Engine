@@ -34,9 +34,8 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
     }
   }
 
-  const globalSync = () => {
+  const globalSync = (important=0) => {
     // Store current nodes and edges in canvas object
-    
     const canvas = {
       n: JSON.parse(JSON.stringify(nodes.value)),
       e: JSON.parse(JSON.stringify(edges.value)),
@@ -112,6 +111,7 @@ const swapCanvas = (newid) =>{
   edges.value = [];
 
   const canvas = globalNodes.value.get(newid);
+  
   if (canvas != null) {
     nodes.value = structuredClone(JSON.parse(JSON.stringify(canvas.n))); 
     edges.value = structuredClone(JSON.parse(JSON.stringify(canvas.e)));
@@ -143,9 +143,9 @@ const renameNode = (id) => {
     }
   };
 
-const contributeNodeData = (id, inputData, OverwriteExistingData=true) => { // For creating the data that will be with the node initially, only runs through once.
+const contributeNodeData = (id, inputData) => { // For creating the data that will be with the node initially, only runs through once.
 
-    console.log("💾🫳🏽 ContributeNodeData(id=",id,"inputData=,",inputData,"OverwriteExistingData=",OverwriteExistingData,")");
+    console.log("💾🫳🏽 ContributeNodeData(id=",id,"inputData=,",inputData,")");
     if(id==-1){
       console.log("💾🫳🏽 contributeNodeData called on toolbox node")
       return;
@@ -155,28 +155,23 @@ const contributeNodeData = (id, inputData, OverwriteExistingData=true) => { // F
       console.error(`💾🫳🏽 ContributeNodeData: Node with id ${id} does not exist`);
       return;
     }
-    console.log("💾🫳🏽 ContributeNodeData: node exists");
-    // if(nodeExists.data.hasOwnProperty('initialized')){
-    //   return;
-    // }
-    if(OverwriteExistingData==true){
-      if(getNodeData(id,"initialized")==true){ //Node already instanciated, if you need to set, use setNodeData
-        return;
-      }
-    Object.assign(nodeExists.data, inputData)
+    if(nodeExists.data.hasOwnProperty('initialized')){ //Node already instanciated, if you need to set, use setNodeData
+      console.log("💾🫳🏽 contributeNodeData on node that has already been initialized, returning")
+      return;
     }
-    if(OverwriteExistingData==false){
-      if(nodeExists.data.hasOwnProperty(inputData)){
-        return;
-      }
-      nodeExists.data=Object.assign(inputData,nodeExists.data )
-    }
-    if(nodeExists.data.hasOwnProperty('initialized'))
+  
+    Object.keys(inputData).forEach(function(k){
+      if(!nodeExists.data.hasOwnProperty(k)) nodeExists.data[k]=inputData[k];
+    })
+    
+
     console.log("💾🫳🏽 Data to input", inputData)
     console.log("💾🫳🏽 New data of node:", nodeExists.data)
     globalSync();
     return;
   };
+
+
   const getNodeData = (id, dataProperty = "") => {  // DO NOT USE IN A WATCHER OR COMPUTE FUNCTION (spam) gets data of node safely. dataProperty to be subbed in instances where you'd do something like node.data.obj_name for safety
     console.log("💾🔙 getNodeData(id=",id,"dataProperty=",dataProperty,")")
     const nodeExists = getNode(id,true)
