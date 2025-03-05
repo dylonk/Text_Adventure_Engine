@@ -17,16 +17,10 @@ const defaultObjData =  { //This is the data that this component contributes. An
     function_params: [],
   }
   console.log("func_base.vue: ReferenceID is = " + props.id)
-  NS.contributeNodeData(props.id,defaultObjData,false);
+  NS.contributeNodeData(props.id,defaultObjData);
 //------------------------------IMPORTANT END-------------------------------------------
 const debug_message = "ID:"+props.id;   //whats displayed in the innermost part of the object on canvas
 
-watch(() => props.id, (newId) => {  //this watcher statement watches 
-  console.log('FunctionBase received ID:', {
-    id: newId,
-    type: typeof newId
-  });
-}, { immediate: true });
 
 
 </script>

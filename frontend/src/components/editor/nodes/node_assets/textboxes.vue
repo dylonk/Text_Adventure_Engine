@@ -30,9 +30,7 @@ const defaultObjData =  { //This is the data that this component contributes. An
 
   //IMPORTANT AS WELL, MAKE SURE TO BE CONSIDERATE OF HOW OFTEN THE REACTIVITY IS UPDATED, CAN LEAD TO VERY SLOW CODE. Call ND.subproperty directly if using v-for on it.
   import { dataHas } from '@/components/editor/nodes/n-utils';
-  const ND = computed(() => { //Node data
-    return NS.getNode(props.id).data;
-  }); 
+  const ND = NS.getNode(props.id,true).data
 //------------------------------IMPORTANT END-------------------------------------------
 
 const adjustTextarea = () => {
@@ -42,17 +40,17 @@ const adjustTextarea = () => {
 
 function addResponse(){
     const convertedTitle = props.title.replace(" ","_")
-    ND.value[convertedTitle+'_textboxes'].push("")
+    ND[convertedTitle+'_textboxes'].push("")
     NS.globalSync()
 }
 function removeResponse(index){
     const convertedTitle = props.title.replace(" ","_")
-    ND.value[convertedTitle+'_textboxes'].splice(index,1);
+    ND[convertedTitle+'_textboxes'].splice(index,1);
     NS.globalSync()
 }
 function updateResponse(index,newResponse){
     const convertedTitle = props.title.replace(" ","_")
-    ND.value[convertedTitle+'_textboxes'][index]=newResponse;
+    ND[convertedTitle+'_textboxes'][index]=newResponse;
     NS.globalSync()
 }
 
@@ -69,7 +67,7 @@ function updateResponse(index,newResponse){
 
         <div class="nodrag">
             <div v-for="(textbox,index) in NS.getNode(props.id).data[convertedTitle+'_textboxes']" class="textbox_container">
-                <textarea class="textbox_text" @input="updateResponse(index,$event.target.value); adjustTextarea"></textarea>
+                <textarea :value="textbox" class="textbox_text" @input="updateResponse(index,$event.target.value); adjustTextarea"></textarea>
             </div>
         </div>
     </div>

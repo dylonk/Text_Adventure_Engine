@@ -21,7 +21,7 @@ const defaultObjData =  { //This is the data that this component contributes. An
   }
   console.log("obj_base.vue: ReferenceID is = " + props.id)
   console.log("obj_base.vue: bg_color is " + NS.getNodeData(props.id,"bg_color"))
-  NS.contributeNodeData(props.id,defaultObjData,false);
+  NS.contributeNodeData(props.id,defaultObjData);
   //IMPORTANT AS WELL, MAKE SURE TO BE CONSIDERATE OF HOW OFTEN THE REACTIVITY IS UPDATED, CAN LEAD TO VERY SLOW CODE. Call ND.subproperty directly if using v-for on it.
   import { dataHas } from '@/components/editor/nodes/n-utils';
   const ND = computed(() => {

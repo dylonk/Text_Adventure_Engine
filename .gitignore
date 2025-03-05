@@ -22,4 +22,10 @@ Thumbs.db
 temp/
 *.tmp
 *.py
-# Ignore this dumbass file
+backend/package-lock.json
+backend/package-lock.json
+backend/package.json
+backend/server.js
+backend/package-lock.json
+backend/package.json
+backend/server.js

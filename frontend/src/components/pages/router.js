@@ -7,7 +7,7 @@ import ExploreView from './explore.vue'
 import CreateView from './create.vue'
 import LoginView from './login.vue'
 import ProfileView from './profile.vue'
-import Game from './game.vue'
+import Game from './gameEngine.vue'
 import gamePageView from './gamePage.vue'
 import ProjectView from './project.vue'
 

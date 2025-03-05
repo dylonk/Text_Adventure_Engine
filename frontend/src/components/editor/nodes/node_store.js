@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { reactive,computed, ref, toRaw } from 'vue';
 import {dataHas}  from './n-utils'
+import { stringify, parse,toJSON,fromJSON } from 'flatted';
 
 
 
@@ -11,12 +12,13 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
   const nodes = ref([
   ]);
   const edges = ref([]); // No implementation atm
+  const syncer = ref(0)
   const idCounter = ref(1);
 
   // Collection of all nodes. Must be synced on any node or edge change
-  const globalNodes = ref(new Map([ 
+  const globalNodes = new Map([ 
     [0,{e:[],n:[]}] // Pop in global canvas because it's technically not a node with an id
-  ]))
+  ])
 
   const object_count = reactive({
     //For making unique object names
@@ -35,28 +37,31 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
     }
   }
 
-  const globalSync = () => {
+  const globalSync = (important=false) => {
     // Store current nodes and edges in canvas object
-    
-    const canvas = {
-      n: JSON.parse(JSON.stringify(nodes.value)),
-      e: JSON.parse(JSON.stringify(edges.value)),
+    if(important==true){
+       syncer.value+=1; 
+      console.log("SYNCER ACTIVATED", syncer.value)
+    }
+       const canvas = {
+      n: [...nodes.value],
+      e: [...edges.value],
     }
     // push to map
-    globalNodes.value.set(canvasID.value,canvas);
-    console.log(`   🌎🔄 globalSync: `,globalNodes,`updated globalNodes at canvasID `,globalNodes.value.get(canvasID.value).n,`, nodes: `,nodes.value)
+    globalNodes.set(canvasID.value,canvas);
+    console.log(`   🌎🔄 globalSync: `,globalNodes,`updated globalNodes at canvasID `,globalNodes.get(canvasID.value).n,`, nodes: `,nodes.value)
     // 
   }
   const localSync = () => { //gets nodes as they are within the global map
     console.log("   🏠🔄 localSync()")
-    const canvas = globalNodes.value.get(canvasID.value);
+    const canvas = globalNodes.get(canvasID.value);
     console.log("   🏠🔄 localSync current canvas node =", canvas)
     if(canvas == null || canvas.hasOwnProperty('n') == null){
       console.warn("   🏠🔄 localSync failed, null canvasID or property")
       return;
     }
-    nodes.value = structuredClone(JSON.parse(JSON.stringify(canvas.n))); 
-    edges.value = structuredClone(JSON.parse(JSON.stringify(canvas.e)));
+    nodes.value = parse(stringify(canvas.n)); 
+    edges.value = parse(stringify(canvas.e));
   }
 
   // Add a node to the store
@@ -79,7 +84,7 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
     
     node.data.nodeDepth = 1;
     if(canvasID.value != 0){
-      node.data.nodeDepth = getNode(canvasID.value,true).data.nodeDepth + 1
+      node.data.nodeDepth = getNode(canvasID.value, true).data.nodeDepth + 1
     }
     
 
@@ -107,21 +112,23 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
   };
 
 const swapCanvas = (newid) =>{
-  globalSync();
+  globalSync(true);
   console.log("🖼️↔️ swapCanvas(",newid,")")
 
   nodes.value = [];
   edges.value = [];
 
-  const canvas = globalNodes.value.get(newid);
+  const canvas = structuredClone(parse(stringify(toRaw(globalNodes.get(newid)))));
+
   if (canvas != null) {
-    nodes.value = structuredClone(JSON.parse(JSON.stringify(canvas.n))); 
-    edges.value = structuredClone(JSON.parse(JSON.stringify(canvas.e)));
+    nodes.value = parse(stringify(canvas.n)); 
+    edges.value = parse(stringify(canvas.e));
   } else {
     console.warn(`🖼️↔️ swapCanvas: No node found for canvas ${newid}`);
   }
 
   canvasID.value = newid;
+  
 };
 
 const renameNode = (id) => {
@@ -145,9 +152,9 @@ const renameNode = (id) => {
     }
   };
 
-const contributeNodeData = (id, inputData, OverwriteExistingData=true) => { // For creating the data that will be with the node initially, only runs through once.
+const contributeNodeData = (id, inputData) => { // For creating the data that will be with the node initially, only runs through once.
 
-    console.log("💾🫳🏽 ContributeNodeData(id=",id,"inputData=,",inputData,"OverwriteExistingData=",OverwriteExistingData,")");
+    console.log("💾🫳🏽 ContributeNodeData(id=",id,"inputData=,",inputData,")");
     if(id==-1){
       console.log("💾🫳🏽 contributeNodeData called on toolbox node")
       return;
@@ -157,28 +164,23 @@ const contributeNodeData = (id, inputData, OverwriteExistingData=true) => { // F
       console.error(`💾🫳🏽 ContributeNodeData: Node with id ${id} does not exist`);
       return;
     }
-    console.log("💾🫳🏽 ContributeNodeData: node exists");
-    // if(nodeExists.data.hasOwnProperty('initialized')){
+    // if(nodeExists.data.hasOwnProperty('initialized')){ //Node already instanciated, if you need to set, use setNodeData
+    //   console.log("💾🫳🏽 contributeNodeData on node that has already been initialized, returning")
     //   return;
     // }
-    if(OverwriteExistingData==true){
-      if(getNodeData(id,"initialized")==true){ //Node already instanciated, if you need to set, use setNodeData
-        return;
-      }
-    Object.assign(nodeExists.data, inputData)
-    }
-    if(OverwriteExistingData==false){
-      if(nodeExists.data.hasOwnProperty(inputData)){
-        return;
-      }
-      nodeExists.data=Object.assign(inputData,nodeExists.data )
-    }
-    if(nodeExists.data.hasOwnProperty('initialized'))
+  
+    Object.keys(inputData).forEach(function(k){
+      if(!nodeExists.data.hasOwnProperty(k)) nodeExists.data[k]=inputData[k];
+    })
+    
+
     console.log("💾🫳🏽 Data to input", inputData)
     console.log("💾🫳🏽 New data of node:", nodeExists.data)
     globalSync();
     return;
   };
+
+
   const getNodeData = (id, dataProperty = "") => {  // DO NOT USE IN A WATCHER OR COMPUTE FUNCTION (spam) gets data of node safely. dataProperty to be subbed in instances where you'd do something like node.data.obj_name for safety
     console.log("💾🔙 getNodeData(id=",id,"dataProperty=",dataProperty,")")
     const nodeExists = getNode(id,true)
@@ -222,7 +224,7 @@ const contributeNodeData = (id, inputData, OverwriteExistingData=true) => { // F
   };
   const setNodeData = (id, inputKey, inputValue) => {
     console.log("💾🟰 setNodeData(id=", id, "inputKey=",inputKey, "inputValue=", inputValue,")");
-    const nodeExists = getNode(id,true);
+    const nodeExists = getNode(id);
     if (!nodeExists) {
       console.error(`setNodeData: Node with id ${id} does not exist`);
       return;
@@ -279,22 +281,22 @@ const contributeNodeData = (id, inputData, OverwriteExistingData=true) => { // F
         console.log(`Node with id ${id} exists in objects, deleting...`);
         console.log("Before:", nodes);
         //delete the key, and delete the index within the parents key
-        globalNodes.value.delete(id)
+        globalNodes.delete(id)
         if(nodeExists.data.parentID != canvasID.value){ 
-          const parentNodes = globalNodes.value.get(nodeExists.data.parentID).n.filter((node) => node.id != nodeId)
-          const parentEdges = globalNodes.value.get(nodeExists.data.parentID).e
+          const parentNodes = globalNodes.get(nodeExists.data.parentID).n.filter((node) => node.id != nodeId)
+          const parentEdges = globalNodes.get(nodeExists.data.parentID).e
           const canvas = {
             n: parentNodes,
             e: parentEdges,
           }
-          globalNodes.value.set(nodeExists.data.parentID, canvas)
-          console.log("deleteNode: Node removed from parent. Parent: ", globalNodes.value[nodeExists.data.parentID].n)
+          globalNodes.set(nodeExists.data.parentID, canvas)
+          console.log("deleteNode: Node removed from parent. Parent: ", globalNodes[nodeExists.data.parentID].n)
         }
         else{
           nodes.value = nodes.value.filter((node) => node.id != nodeId); //may not always delete a node          
         }
         console.log("After:", nodes);
-        globalSync();
+        globalSync(true);
         return; 
       }
       console.error(`deleteNode: Node with id ${id} does not exist`);
@@ -302,13 +304,13 @@ const contributeNodeData = (id, inputData, OverwriteExistingData=true) => { // F
   }; 
   const deleteAllChildren = (id) => { // recursive function to delete children nodes of node
     console.log("👼🗑️ deleteAllChildren(id=",id,")")
-    console.log("👼🗑️ globalNodes.value.get(",id,")",globalNodes.value.get(id))
+    console.log("👼🗑️ globalNodes.get(",id,")",globalNodes.get(id))
     
   };
 
   const getAllNodes = () => {
     console.log("🦠💯 getAllNodes()")
-    return Array.from(globalNodes.value.values()).flatMap(canv => canv.n)
+    return Array.from(globalNodes.values()).flatMap(canv => canv.n)
   };
   const getNode = (id, doGlobal=false) => {
     console.log("   🦠🫴 getNode(id=", id, "doGlobal=", doGlobal,")")
@@ -388,7 +390,7 @@ const contributeNodeData = (id, inputData, OverwriteExistingData=true) => { // F
       return "BadNode"
     }
     else{
-      const nodeTitle = getNode(canvasID.value, true,true)
+      const nodeTitle = getNode(canvasID.value, true)
       console.log("🖼️🔤 getCurrentCanvasName nodeTitle=",nodeTitle)
       if(nodeTitle == null){
         console.log("🖼️🔤 getCurrentCanvas = NodeNotFound")
@@ -475,6 +477,7 @@ const contributeNodeData = (id, inputData, OverwriteExistingData=true) => { // F
     getNode,
     getAllNodes,
     getCurrentCanvasName,
+    syncer,
     globalSync,
     localSync,
     swapCanvas,
