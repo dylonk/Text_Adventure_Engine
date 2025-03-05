@@ -3,13 +3,8 @@
     import { ref, watch, computed } from 'vue'
     import { useNodesStore } from './nodes/node_store.js' // Import the Pinia store
     import node_colors from './nodes/node-colors.js'
-    let id = 1
 
-    function getId() {  //ids are just one after the other
-    return id++
-    }
-
-
+//file test
     const state = {
     draggedType: ref(null),
     draggingTB: ref(false),
@@ -72,10 +67,11 @@
 
         if (draggingTB.value) {
           // Create a new node
+          console.log("id counter is:", nodesStore.idCounter);
           const newNode = {
             type: draggedType.value,
-            id: Number(getId()),
             position: pos,
+            id:nodesStore.idCounter,    //increments id based on idcounter in node store
             data: {
               display_type:'DnDNoDisplayNameGiven',
               bg_color:computed(()=>node_colors[newNode.type+'_bg'] || 'red'),
@@ -85,7 +81,6 @@
             parentId: null,
           }
 
-          console.log('Passing node with ID:', newNode.id);
           nodesStore.addNode(newNode)
           console.log("new node added!")
         }

@@ -53,7 +53,9 @@
         userId: userid.value,
         name: projectName.value,
         nodes: useNodesStore().nodes,
-        edges: useNodesStore().edges
+        edges: useNodesStore().edges,
+        object_count: useNodesStore().object_count,
+        idCounter: useNodesStore().idCounter
       };
 
       // Here you would typically send this to your backend
@@ -84,8 +86,7 @@
         console.log("initProject called");
         projectId.value = uuidv4();
         projectName.value = "New Project";
-        useNodesStore().nodes = [];
-        useNodesStore().edges = [];
+        useNodesStore().initNodes(); //also have a seperate init function for nodestore. could have all been in this function, just an organizational choice
         console.log("initted project with id", projectId.value, "and name", projectName.value);
       }
 
@@ -103,11 +104,15 @@
           const errorDetail = await response.text();
           throw new Error(`Failed to open project: ${errorDetail}`);
         }
-        const projectData = await response.json();  //waits for the projectData. in the future we can also store global settings here. Like pretty much anything in a project-wide scope
+        //waits for the projectData. in the future we can also store global settings here. Like pretty much anything in a project-wide scope
+        //being really when we get more general settings we could probably afford to place stuff like idcounter in a list of settings and just import that. again, all just organizational
+        const projectData = await response.json();  
         projectName.value = projectData.name;
         projectId.value = projectData.id;
         useNodesStore().nodes = projectData.nodes;
         useNodesStore().edges = projectData.edges;
+        useNodesStore().idCounter = projectData.idCounter;
+        useNodesStore().object_count = projectData.object_count;
         } catch (error) {
           console.error('Failed to open project', error);
         };

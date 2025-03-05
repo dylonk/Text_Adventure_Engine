@@ -11,6 +11,7 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
   const nodes = ref([
   ]);
   const edges = ref([]); // No implementation atm
+  const idCounter = ref(1);
 
   // Collection of all nodes. Must be synced on any node or edge change
   const globalNodes = ref(new Map([ 
@@ -101,6 +102,7 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
       nodes.value.push(node);
       console.log("🦠➕ function added with id", node.id);
     }
+    idCounter.value++;
     globalSync();
   };
 
@@ -447,6 +449,21 @@ const contributeNodeData = (id, inputData, OverwriteExistingData=true) => { // F
     globalSync();
   };
 
+  const initNodes = () => {   //the node portion of initting a new project. currently empties nodes/edges, resets object counts and idcounter
+    console.log("🦠🫴 initNodes()");
+    nodes.value = [];
+    edges.value = [];
+    object_count.total = 0;
+    object_count.room = 0;
+    object_count.item = 0;
+    object_count.npc = 0;
+    object_count.pathway = 0;
+    object_count.custom = 0;
+    globalSync();
+    idCounter.value = 1;
+    canvasID.value = 0;
+    console.log("🦠🫴 initNodes() done");
+  };  
 
 
 
@@ -454,12 +471,14 @@ const contributeNodeData = (id, inputData, OverwriteExistingData=true) => { // F
     //exporting functions
     nodes,
     edges,
+    idCounter,
     getNode,
     getAllNodes,
     getCurrentCanvasName,
     globalSync,
     localSync,
     swapCanvas,
+    initNodes,
     canvasID,
     addNode,
     deleteNode,

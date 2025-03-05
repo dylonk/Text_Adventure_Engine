@@ -22,3 +22,4 @@ Thumbs.db
 temp/
 *.tmp
 *.py
+# Ignore this dumbass file
