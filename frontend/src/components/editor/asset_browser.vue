@@ -19,6 +19,7 @@ const nodesStore = useNodesStore()
 // Use computed properties to observe the nodes in the store. Any with object_type_list will be displayed
 
 const objects = computed(() => {
+  nodesStore.globalNodes
   return treeify(nodesStore.getAllNodes().filter(node => object_type_list.includes(node.type)))
 });
 
