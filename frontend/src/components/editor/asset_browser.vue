@@ -17,8 +17,8 @@ import { dataHas, treeify } from '@/components/editor/nodes/n-utils';
 const nodesStore = useNodesStore()
 
 // Use computed properties to observe the nodes in the store. Any with object_type_list will be displayed
+
 const objects = computed(() => {
-  nodesStore.globalNodes;
   return treeify(nodesStore.getAllNodes().filter(node => object_type_list.includes(node.type)))
 });
 
@@ -129,6 +129,7 @@ function getDepth(node){
 .asset_browser {
   height:auto;
   display: flex;
+  min-width:10dvw;
   flex-direction: column;
   background: rgb(93, 93, 93)
 }
@@ -136,6 +137,12 @@ function getDepth(node){
   margin-top:5px;
   margin-bottom:5px;
 }
+.ab-object{
+  display:flex;
+  flex-direction: row;
+  height:min-height;
+}
+
 .sum-dark{
   color:white;
   min-width:fit-content;
