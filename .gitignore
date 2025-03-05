@@ -22,7 +22,6 @@ Thumbs.db
 temp/
 *.tmp
 *.py
-frontend/src/components/pages/GamePage.vue
 backend/package-lock.json
 backend/package-lock.json
 backend/package.json
