@@ -12,7 +12,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const cors = require('cors');
 
 app.use(cors({
-    origin: 'http://localhost:5177', // Your frontend URL
+    origin: 'http://localhost:5173', // Your frontend URL
     methods: ['POST', 'GET', 'PUT', 'DELETE'],
     credentials: true
 }));

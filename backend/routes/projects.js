@@ -37,10 +37,11 @@ const router = express.Router();
     }
   });
 
-  router.post('/delete', async (req, res) => {
+  //function to delete a project by id
+  router.delete('/delete', async (req, res) => {
     console.log("delete request send");
     try {
-      const { id } = req.body;  
+      const { id } = req.query;  
       console.log("id is", id);
       const project = await Project.findOneAndDelete({ id: id });// Find the project by ID
       res.json(project); // Send the found project as the response

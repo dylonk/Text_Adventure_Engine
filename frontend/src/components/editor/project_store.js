@@ -118,6 +118,26 @@
         };
     }
 
+    
+
+    async function deleteProject() {  //this function deletes the current project and inits a new one
+      console.log("deleteProject called");
+      try {
+        const response = await fetch(`http://localhost:5000/projects/delete?id=${projectId.value}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        if (!response.ok) {
+          const errorDetail = await response.text();
+          throw new Error(`Failed to delete project: ${errorDetail}`);
+        }
+      } catch (error) {
+        console.error('Failed to delete project', error);
+      }
+      initProject();
+    }
 
 
 
@@ -161,6 +181,7 @@
       exportProject,
       initProject,
       openProject,
+      deleteProject
      // nodeCount,
      // roomCount,
      // itemCount,
