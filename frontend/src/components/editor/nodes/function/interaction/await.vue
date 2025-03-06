@@ -17,9 +17,9 @@ const props = defineProps({
 import { useNodesStore } from '@/components/editor/nodes/node_store'
 const NS = useNodesStore()
 const defaultObjData =  { //This is the data that this component contributes. Any existing properties within the functional node data will be replaced
-    display_type:"Prompt",
+    display_type:"Await",
   }
-  console.log("prompt.vue: ReferenceID is = " + props.id)
+  console.log("Await.vue: ReferenceID is = " + props.id)
   NS.contributeNodeData(props.id,defaultObjData,true);
 //------------------------------IMPORTANT END-------------------------------------------
 
@@ -49,14 +49,7 @@ function autoResize() {
     <FunctionBase
         :id="id"
         >
-        <HContainer outerMargin="0px">
-        <Textboxes style="margin-top: 0px;" :id="id" startingQuantity=1 allowButtons=false title="Console Output"></Textboxes>
-        <HandleIn :handleId="id"></HandleIn>
-        </HContainer>
-        <HContainer outerMargin="0px">
-        <HandleOut :handleId="id"></HandleOut>
-        <Textboxes style="margin-top: 0px;" :id="id" startingQuantity=1 allowButtons=true title="Response"></Textboxes>
-        </HContainer>
+        <Textboxes style="margin-top: 0px;" :id="id" startingQuantity=1 allowButtons=false title="Expected Phrase"></Textboxes>
     </FunctionBase>
 
 

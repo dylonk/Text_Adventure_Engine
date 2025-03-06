@@ -1,4 +1,3 @@
-
 // Responsible for creating html like page navigation
 import { createMemoryHistory, createRouter } from 'vue-router'
 
@@ -8,6 +7,7 @@ import ExploreView from './explore.vue'
 import CreateView from './create.vue'
 import LoginView from './login.vue'
 import ProfileView from './profile.vue'
+import Game from './gameEngine.vue'
 import gamePageView from './gamePage.vue'
 
 
@@ -19,6 +19,7 @@ const routes = [
     { path: '/create', component: CreateView },
     { path: '/auth', component: LoginView },
     { path: '/user', component: ProfileView },
+    { path: '/game', component: Game },
     { path: '/gamePage', component: gamePageView },
 
 
@@ -33,6 +34,9 @@ const router = createRouter({
         { path: '/create', name: 'Create', component: CreateView },
         { path: '/auth', name: 'Auth', component: LoginView },
         { path: '/user', name: 'User', component: ProfileView },
+        { path: '/project', component: ProjectView },
+        { path: '/game', component: Game },
+        { path: '/gamePage', component: gamePageView },
         { path: '/gamePage/:info', name: 'GamePage', component: gamePageView },
     ],
     scrollBehavior(to, from, savedPosition){
