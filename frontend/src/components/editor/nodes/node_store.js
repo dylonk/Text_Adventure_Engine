@@ -14,6 +14,7 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
   const edges = ref([]); // No implementation atm
   const syncer = ref(0)
   const idCounter = ref(1);
+  
 
   // Collection of all nodes. Must be synced on any node or edge change
   const globalNodes = new Map([ 
@@ -41,7 +42,6 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
     // Store current nodes and edges in canvas object
     if(important==true){
        syncer.value+=1; 
-      console.log("SYNCER ACTIVATED", syncer.value)
     }
        const canvas = {
       n: [...nodes.value],
@@ -81,7 +81,10 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
       return;
     }
     node.data.parentID = canvasID.value;
+    node.data.srcHandles = 0 //source handles
+    node.data.tgtHandles = 0 //target handles
     
+
     node.data.nodeDepth = 1;
     if(canvasID.value != 0){
       node.data.nodeDepth = getNode(canvasID.value, true).data.nodeDepth + 1
@@ -108,7 +111,7 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
       console.log("🦠➕ function added with id", node.id);
     }
     idCounter.value++;
-    globalSync();
+    globalSync(true);
   };
 
 const swapCanvas = (newid) =>{
@@ -451,6 +454,27 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
     globalSync();
   };
 
+  const addHandle = (id, handleType="source") =>{
+    console.log("🤹➕  addHandle(id=",id,"node")
+    let handleName = ""
+    const nodeExists = getNode(id)
+    if(nodeExists==null){
+      console.warn("🤹➕  addHandle, node not found")
+    }
+    if(handleType=="source"){
+      handleName = id+"_src_"+nodeExists.data.srcHandles
+      nodeExists.data.srcHandles += 1;
+      console.log("🤹➕  New handle ID = ",handleName)
+      return handleName;
+    }
+    if(handleType=="target"){
+      handleName = id+"_tgt_"+nodeExists.data.tgtHandles
+      nodeExists.data.tgtHandles += 1;
+      console.log("🤹➕  New handle ID = ",handleName)
+      return handleName;
+    }
+  };
+
   const initNodes = () => {   //the node portion of initting a new project. currently empties nodes/edges, resets object counts and idcounter
     console.log("🦠🫴 initNodes()");
     nodes.value = [];
@@ -493,6 +517,7 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
     getNodeProperties,
     setNodeProperty,
     removeNodeProperty,
+    addHandle,
     addEdge,
     updateEdge,
     deleteEdge,

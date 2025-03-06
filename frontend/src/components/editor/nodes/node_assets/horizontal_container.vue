@@ -21,8 +21,6 @@ const props = defineProps({
     display:flex;
     flex-direction: row;
     align-items: center;
-}
-.h-container>*{
-    margin-right:v-bind('spacing');
+    gap:v-bind('spacing')
 }
 </style>

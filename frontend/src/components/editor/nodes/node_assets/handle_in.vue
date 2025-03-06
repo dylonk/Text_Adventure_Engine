@@ -3,18 +3,33 @@ import { Handle, Position } from '@vue-flow/core';
 import { ref, defineProps, computed } from 'vue';
 
 const props = defineProps({
-    handleID:0,
+    id: -10,
 })
+import { useNodesStore } from '@/components/editor/nodes/node_store'
+const NS = useNodesStore()
+const handleTitle = ref("badhandle")
 
+handleTitle.value = NS.addHandle(props.id,'target')
 
 </script>
+
+
 <template>
-    <Handle :id="'in'+handleID" class="vue-flow__handle" type="target" :position="Position.Left" />
+    <div class="handle-container">
+        <Handle :id="handleTitle" class="vue-flow__handle" type="target" :position="Position.Left" />
+    </div>
 </template>
 <style scoped>
+.handle-container{
+    position:absolute;
+    margin:0px;
+    padding:0px;
+    left:0px;
+    width: 0px;
+    height: 0px;
+}
 .vue-flow__handle{
-    /* position:relative;
-    top: calc(100+calc(v-bind(handleID)*20))px; */
+    position:relative;
     border: solid blue 2px;
     background:rgb(255, 255, 255);
     height:24px;

@@ -49,7 +49,7 @@ function autoResize() {
     <FunctionBase
         :id="id"
         >
-        <Textboxes style="margin-top: 0px;" :id="id" startingQuantity=1 allowButtons=false title="Expected Phrase"></Textboxes>
+        <Textboxes handleOutput=true :id="id" startingQuantity=1 allowButtons=false title="Expected Phrase"></Textboxes>
     </FunctionBase>
 
 
