@@ -158,7 +158,10 @@ body {
     color: #f1f1f1;
 }
 
-
+.profile-container{
+    background:#181818;
+    height: 100dvh;
+}
 
 .profile-content {
     width: 50%; /* Keep the content half the page */

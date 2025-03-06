@@ -46,7 +46,7 @@ const router = useRouter(); // Access the Vue Router for navigation
     </p>
 </template>
 
-<style>
+<style scoped>
 @import 'https://fonts.googleapis.com/css2?family=Syne+Mono&display=swap';
 
 .navbar {
