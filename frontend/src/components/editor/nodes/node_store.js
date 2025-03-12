@@ -167,22 +167,16 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
       console.error(`💾🫳🏽 ContributeNodeData: Node with id ${id} does not exist`);
       return;
     }
-    // if(nodeExists.data.hasOwnProperty('initialized')){ //Node already instanciated, if you need to set, use setNodeData
-    //   console.log("💾🫳🏽 contributeNodeData on node that has already been initialized, returning")
-    //   return;
-    // }
-  
+
     Object.keys(inputData).forEach(function(k){
       if(!nodeExists.data.hasOwnProperty(k)) nodeExists.data[k]=inputData[k];
     })
     
-
     console.log("💾🫳🏽 Data to input", inputData)
     console.log("💾🫳🏽 New data of node:", nodeExists.data)
     globalSync();
     return;
   };
-
 
   const getNodeData = (id, dataProperty = "") => {  // DO NOT USE IN A WATCHER OR COMPUTE FUNCTION (spam) gets data of node safely. dataProperty to be subbed in instances where you'd do something like node.data.obj_name for safety
     console.log("💾🔙 getNodeData(id=",id,"dataProperty=",dataProperty,")")
@@ -308,7 +302,12 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
   const deleteAllChildren = (id) => { // recursive function to delete children nodes of node
     console.log("👼🗑️ deleteAllChildren(id=",id,")")
     console.log("👼🗑️ globalNodes.get(",id,")",globalNodes.get(id))
-    
+    if(!globalNodes.has(id)){
+      return;
+    }
+    for(let key in globalNodes.get(id).n){
+      deleteNode(key.id)
+    }
   };
 
   const getAllNodes = () => {
@@ -509,6 +508,7 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
     canvasID,
     addNode,
     deleteNode,
+    deleteAllChildren,
     renameNode,
     contributeNodeData,
     getNodeData,
