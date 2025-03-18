@@ -1,6 +1,7 @@
 <script setup>
 
 import { useProjectStore } from './project_store.js';
+import { ref } from 'vue';
 const projectStore = useProjectStore();
 
 </script>
@@ -27,11 +28,22 @@ const projectStore = useProjectStore();
           <a href="#">Option C</a>
         </div>
       </div>
+
+
+      <!-- view dropdown -->
+      <div class="dropdown">
+        <button class="dropbtn" @click="toggleMenu('menu1')">view</button>
+        <div class="dropdown-content" v-if="menu1Open">
+          <a href="#"@click="projectStore.showPreview = !projectStoreshowPreview">Preview</a>
+        </div>
+      </div> 
       <div class="project-info">
         <div class="project-id" style="color:rgb(0,150,200);">{{ projectStore.projectId }}&nbsp;</div>
         <div class="project-name" style="color:rgb(200,200,200);font-weight:bold">{{ projectStore.projectName }}</div>
 
-      </div>    
+      </div>   
+
+
     </div>
   </template>
   

@@ -7,8 +7,10 @@ import CanvasBackground from './background.vue'
 import CanvasControls from './controls.vue'
 import useDragAndDrop from '../drag_drop.js';
 import { useNodesStore } from "../nodes/node_store.js"
+import gamePreview from '@/components/pages/game.vue'
+import { useProjectStore } from '../project_store';
 
-
+        
 // NEWNODEREQ
 import { PromptNode, RoomNode, ItemNode, NpcNode, PathwayNode, UnimplementedNode, CustomNode, AwaitNode, ActionNode} from '../nodes/n-imports';
 
@@ -29,6 +31,7 @@ const nodesStore = useNodesStore();
 
 
 
+const showPreview = false;
 
 const { onDragOver, onDrop, onDragLeave, isDragOver } = useDragAndDrop()
 const onConnect = (connection) => {
@@ -71,6 +74,8 @@ const onConnect = (connection) => {
         }"/>
         <CanvasControls></CanvasControls>
         </VueFlow>
+        <gamePreview v-if=useProjectStore().showPreview class="previewScreen" :isPreview="true"></gamePreview> 
+
     </div>
 
 
