@@ -267,12 +267,13 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
       //removeNodes([id]);
       
       console.log("🦠🗑️ deleteNode(id=",id,")")
-      deleteAllChildren(id);
-      const nodeId = (id);
-    
       if(id == canvasID.value){
         swapCanvas(0)
       }
+      deleteAllChildren(id);
+
+      const nodeId = (id);
+    
       const nodeExists = getNode(id,true);
       if (nodeExists) {
         console.log(`Node with id ${id} exists in objects, deleting...`);
@@ -286,8 +287,8 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
             n: parentNodes,
             e: parentEdges,
           }
-          globalNodes.set(nodeExists.data.parentID, canvas)
-          console.log("deleteNode: Node removed from parent. Parent: ", globalNodes[nodeExists.data.parentID].n)
+          globalNodes.set(Number(nodeExists.data.parentID), canvas)
+          console.log("🦠🗑️ deleteNode: Node removed from parent.")
         }
         else{
           nodes.value = nodes.value.filter((node) => node.id != nodeId); //may not always delete a node          
@@ -306,14 +307,25 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
       return;
     }
     for(let key in globalNodes.get(id).n){
-      deleteNode(key.id)
+      console.log("👼🗑️ deleting node", key.id)
+      deleteNode(Number(key.id))
     }
-  };
+    return;
+  }
 
   const getAllNodes = () => {
     console.log("🦠💯 getAllNodes()")
     return Array.from(globalNodes.values()).flatMap(canv => canv.n)
   };
+  const getLocalNodeIDs = () => {
+    console.log("🦠🆔 getLocalNodeIDs()")
+    IDS = []
+    for(let i = 0; i < nodes.length; i++){
+      IDS.push(nodes[i].id)
+    }
+    return IDS;
+  }
+
   const getNode = (id, doGlobal=false) => {
     console.log("   🦠🫴 getNode(id=", id, "doGlobal=", doGlobal,")")
     if(id<-1){
@@ -359,7 +371,7 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
     console.log("📏➕ Adding edge:", edge);
     // Check if the edge already exists
     const edgeExists = edges.value.find(
-      (e) => e.id === edge.id || (e.source === edge.source && e.target === edge.target)
+      (e) => e.id === edge.id
     );
     
     if (edgeExists) {
@@ -369,7 +381,7 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
     
     // Ensure the edge has a unique ID if not provided
     if (!edge.id) {
-      edge.id = `e-${edge.source}-${edge.target}`;
+      edge.id = `${edge.sourceHandle}>${edge.targetHandle}`;
     }
     
     // Add any default edge properties if needed
@@ -461,13 +473,13 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
       console.warn("🤹➕  addHandle, node not found")
     }
     if(handleType=="source"){
-      handleName = id+"_src_"+nodeExists.data.srcHandles
+      handleName = id+"s"+nodeExists.data.srcHandles
       nodeExists.data.srcHandles += 1;
       console.log("🤹➕  New handle ID = ",handleName)
       return handleName;
     }
     if(handleType=="target"){
-      handleName = id+"_tgt_"+nodeExists.data.tgtHandles
+      handleName = id+"t"+nodeExists.data.tgtHandles
       nodeExists.data.tgtHandles += 1;
       console.log("🤹➕  New handle ID = ",handleName)
       return handleName;
@@ -499,6 +511,7 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
     idCounter,
     getNode,
     getAllNodes,
+    getLocalNodeIDs,
     getCurrentCanvasName,
     syncer,
     globalSync,

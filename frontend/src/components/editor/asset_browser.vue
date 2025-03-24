@@ -13,6 +13,7 @@ const object_type_list = [
 
 
 import { dataHas, treeify } from '@/components/editor/nodes/n-utils';
+import { VueFlow } from '@vue-flow/core'
 
 const nodesStore = useNodesStore()
 

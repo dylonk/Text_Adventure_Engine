@@ -33,11 +33,17 @@ const nodesStore = useNodesStore();
 const showPreview = false;
 
 const { onDragOver, onDrop, onDragLeave, isDragOver } = useDragAndDrop()
+
+function onSwap(){
+    //updateNodeInternals(nodesStore.getLocalNodeIDs())
+}
+
+
 const onConnect = (connection) => {
     console.log('Connection made:', connection);
     // Add the new edge to the store
     nodesStore.addEdge({
-        id: `e-${connection.source}-${connection.target}`,
+        id: `${connection.sourceHandle}>${connection.targetHandle}`,
         source: connection.source,
         target: connection.target,
         // You can add additional properties as needed
@@ -49,7 +55,6 @@ const onConnect = (connection) => {
         // Any other edge properties you need
     });
 };
-
 </script>
 
 <template>
