@@ -7,7 +7,6 @@ import CanvasBackground from './background.vue'
 import CanvasControls from './controls.vue'
 import useDragAndDrop from '../drag_drop.js';
 import { useNodesStore } from "../nodes/node_store.js"
-import gamePreview from '@/components/pages/game.vue'
 import { useProjectStore } from '../project_store';
 
         
@@ -74,7 +73,6 @@ const onConnect = (connection) => {
         }"/>
         <CanvasControls></CanvasControls>
         </VueFlow>
-        <gamePreview v-if=useProjectStore().showPreview class="previewScreen" :isPreview="true"></gamePreview> 
 
     </div>
 

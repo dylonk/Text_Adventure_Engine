@@ -34,16 +34,13 @@ const projectStore = useProjectStore();
       <div class="dropdown">
         <button class="dropbtn" @click="toggleMenu('menu1')">view</button>
         <div class="dropdown-content" v-if="menu1Open">
-          <a href="#"@click="projectStore.showPreview = !projectStoreshowPreview">Preview</a>
+          <a href="#"@click="projectStore.showPreview = !projectStore.showPreview">Preview</a>
         </div>
       </div> 
       <div class="project-info">
         <div class="project-id" style="color:rgb(0,150,200);">{{ projectStore.projectId }}&nbsp;</div>
         <div class="project-name" style="color:rgb(200,200,200);font-weight:bold">{{ projectStore.projectName }}</div>
-
       </div>   
-
-
     </div>
   </template>
   
@@ -122,7 +119,7 @@ const projectStore = useProjectStore();
     position: absolute;
     background-color: #f1f1f1;
     min-width: 160px;
-    z-index: 10;
+    z-index: 200;
   }
   
   .dropdown-content a {
