@@ -42,6 +42,10 @@
         {
             "folderPath": "Text_Adventure_Engine\\frontend\\src\\components\\editor\\canvasSelector.vue\\",
             "color": "foldercolorizer.color_00cc00"
+        },
+        {
+            "folderPath": "Text_Adventure_Engine\\frontend\\src\\components\\editor\\nodes\\game_logic.js\\",
+            "color": "foldercolorizer.color_cccc00"
         }
     ]
 }

@@ -61,7 +61,7 @@ function updateResponse(index,newResponse){
 
 <template>
     <div>
-        <HContainer>
+        <HContainer outer-margin="5px">
         <div v-if="title!=''"> {{ title }}</div>
         <SmallButton v-if="allowButtons=='true'" :id="id" text="+" @click="addResponse()"></SmallButton>
         <SmallButton v-if="allowButtons=='true'" :id="id" text="-" @click="removeResponse(index)"></SmallButton>
@@ -69,7 +69,7 @@ function updateResponse(index,newResponse){
 
         <div class="nodrag">
             <div v-for="(textbox,index) in NS.getNode(props.id).data[convertedTitle+'_textboxes']" class="textbox_container">
-                <HContainer>
+                <HContainer outer-margin="5px">
                     <HandleIn v-if="handleInput=='true'"   :id="id"></HandleIn>
                     <textarea :value="textbox" class="textbox_text" @input="updateResponse(index,$event.target.value); adjustTextarea"></textarea>
                     <HandleOut v-if="handleOutput=='true'"  :id="id"></HandleOut>

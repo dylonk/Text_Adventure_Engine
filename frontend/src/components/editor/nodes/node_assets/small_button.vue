@@ -3,7 +3,7 @@ import { ref, defineProps, computed } from 'vue';
 
 const props = defineProps({
     id: -10,
-    text:String,
+    text:"+",
     style_selection:0,
 })
 import { useNodesStore } from '@/components/editor/nodes/node_store'
@@ -16,7 +16,8 @@ const NS = useNodesStore()
 <style scoped>
     .small_button{
         height:20px;
-        width:20px;
+        min-width:20px;
+        width:max-content;
         color: v-bind('NS.getNode(id).data.fg_color');
         font-weight: 800;
         background:v-bind('NS.getNode(id).data.bg_color');

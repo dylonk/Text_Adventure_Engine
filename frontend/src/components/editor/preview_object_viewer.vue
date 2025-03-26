@@ -2,6 +2,7 @@
 import { useNodesStore } from '@/components/editor/nodes/node_store.js'
 import { computed, ref } from 'vue'
 import ContextMenu from './context_menu.vue'
+import NestedObject from './nodes/node_assets/nested_object.vue'
 
 const object_type_list = [
   'room',
@@ -13,6 +14,7 @@ const object_type_list = [
 
 
 import { dataHas, treeify } from '@/components/editor/nodes/n-utils';
+import { VueFlow } from '@vue-flow/core'
 
 const nodesStore = useNodesStore()
 
@@ -78,48 +80,17 @@ function switchCanvas(id, assetBrowserIndex){
   syncAssetBrowser()
   clickedCanvas.value = assetBrowserIndex
 }
-function getDepth(node){
-  const depth = dataHas(node.data,"nodeDepth",0)
-  let whitespace = ""
-  for(let i = 0; i < depth-1; i++){
-    whitespace+="│ "
-  }
-  whitespace+="┕ ▼ "
-  return whitespace
-}
+
 </script>
 
 <template>
   <div style="display: none">{{ syn }}</div>
     <div class="asset_browser">
-      <h3>Objects</h3>
+      <h3>Object Viewer</h3>
       <div class="objects-container">
-            <div v-if="clickedCanvas==0" @click="switchCanvas(0,0)" class="sum-selected">     ▼ Global        </div>
-            <div v-else class="sum-light" @click="switchCanvas(0,0)">▼ Global</div>
-
-        <div
-          v-for="(object,index) in objects"
-          :key="object.id"
-          @contextmenu="showContextMenu($event, object.type, object.id)"
-        >
-            <div v-if="index==clickedCanvas-1" @click="switchCanvas(object.id,index+1)" class="sum-selected">        {{ getDepth(object) + object.data.object_name || 'ERR_UNNAMED_NODE' }}          </div>
-            <div v-else-if="index%2==0" @click="switchCanvas(object.id,index+1)" class="sum-dark" style="color:v-bind('object.data.bg_color');">        {{ getDepth(object) + object.data.object_name || 'ERR_UNNAMED_NODE' }}          </div>
-            <div v-else @click="switchCanvas(object.id,index+1)" class="sum-light">        {{ getDepth(object) + object.data.object_name || 'ERR_UNNAMED_NODE' }}          </div>
-          <div v-if="index==-1" style="height: 0;width: 0; position:relative;left:-28px;top:-31px;">
-            <img onload="this.width*=0.45" class="canvas-selector" src="@/assets/Images/editor/canvasselector.png">
-          </div>
-        </div>
+        <NestedObject :n="objects"/>
       </div>
 
-      <!-- <h3>Items</h3>
-      <ul v-if="items.length > 0">
-        <li v-for="item in items" :key="item.id" @contextmenu="showContextMenu($event, 'item', item.id)">
-          {{ item.object_name || 'Unnamed Item' }}
-        </li>
-      </ul>
-      <p v-else>No items available</p> -->
-
-      <!-- Context Menu Component -->
       <ContextMenu
         v-if="isContextMenuVisible"
         :position="contextMenuPosition"
@@ -135,9 +106,12 @@ function getDepth(node){
 .asset_browser {
   height:auto;
   display: flex;
+  font-size:large;
   min-width:10dvw;
+  justify-content: center;
   flex-direction: column;
-  background: rgb(93, 93, 93)
+  background: rgb(93, 93, 93);
+  justify-content: space-between;
 }
 .asset-browser-hr{
   margin-top:5px;
@@ -147,40 +121,6 @@ function getDepth(node){
   display:flex;
   flex-direction: row;
   height:min-height;
-}
-
-.sum-dark{
-  color:white;
-  min-width:fit-content;
-  font-weight:bold;
-  background:rgb(100, 100, 100);
-  padding:0px;
-  padding-left:8px;
-  padding-right:5px;
-  text-shadow:0px 1px black, -1px 0px black;
-  text-overflow: ellipsis;
-}
-.sum-selected{
-  min-width:fit-content;
-  color:white;
-  font-weight:bold;
-  background:rgb(158, 158, 158);
-  padding:0px;
-  padding-left:8px;
-  padding-right:5px;
-  text-shadow:0px 1px black, -1px 0px black;
-  text-overflow: ellipsis;
-}
-.sum-light{
-  min-width:fit-content;
-  color:white;
-  font-weight:bold;
-  background:gray;
-  padding:0px;
-  padding-left:8px;
-  padding-right:5px;
-  text-shadow:0px 1px black, -1px 0px black;
-  text-overflow: ellipsis;
 }
 
 h3 {
@@ -214,10 +154,10 @@ li {
 
 .objects-container {
   height: 100%;
-  overflow:hidden;
-  border-top: solid rgb(47, 47, 47) 1.5px;
+  overflow:auto;
+  border: solid rgb(47, 47, 47) 1.5px;
   background: rgb(100, 100, 100);
-
+  margin:10px;
 }
 
 details div {

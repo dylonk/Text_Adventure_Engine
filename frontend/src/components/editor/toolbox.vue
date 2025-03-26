@@ -9,8 +9,8 @@ import { useProjectStore } from './project_store.js';
 </script>
 <template>
     <div class="toolbox">
-        <img onload="this.width*=0.8" src="@/assets/Images/editor/toolbox-top.png" class="tb-scroll-image-top">
-        <a class="tb_title">Toolbox</a>
+        <img onload="this.width*=0.8" src="@/assets/Images/editor/toolbox-top-posterized.png" class="tb-scroll-image-top">
+        <img class="tb_title" onload="this.width*=1" src="@/assets/Images/editor/toolboxtitle.png">
         <div class="tb-items">
             <a class="tb_subtitle">Objects</a>
                     <TBNode type="room" display_type="Room"/>
@@ -26,7 +26,7 @@ import { useProjectStore } from './project_store.js';
             <a class="tb_subtitle">Path Control</a>
             <a class="tb_subtitle">Visual</a>
         </div>
-        <img onload="this.width*=0.8" src="@/assets/Images/editor/toolbox-bottom.png" class="tb-scroll-image-bottom">
+        <img onload="this.width*=0.8" src="@/assets/Images/editor/toolbox-bottom-posterized.png" class="tb-scroll-image-bottom">
     </div>
 </template>
 
@@ -40,7 +40,9 @@ import { useProjectStore } from './project_store.js';
     width:11.2%;
     min-width:min-content;
     height:100%;
-    background:rgb(208, 169, 115);
+    background-image: url("@/assets/Images/editor/toolbox-mid-posterized.png");
+    background-repeat: repeat-y;
+    background-size:107%;
 }
 
 .tb-items>*{
@@ -56,7 +58,7 @@ import { useProjectStore } from './project_store.js';
     margin: 0 auto;
     margin-bottom:0px;
 
-    width: 100%;
+    width: 90%;
     height:min-content;
     color:rgb(78, 81, 76);
     font-weight:500;
@@ -66,7 +68,7 @@ import { useProjectStore } from './project_store.js';
     position:relative;
     margin:0px;
     width:106%;
-    z-index:1;
+    z-index:3;
     pointer-events: none;
 }
 .tb-scroll-image-bottom{
@@ -94,7 +96,6 @@ import { useProjectStore } from './project_store.js';
     flex-direction: column;
     min-width:min-content;
     margin: 6px;
-    border: 4px double rgb(111, 100, 71);
     overflow:auto;
     height:100%;
 }

@@ -2,7 +2,7 @@
 import { ref, defineProps, computed } from 'vue';
 const props = defineProps({
     spacing:{type:String,default:"5px"},
-    outerMargin:{type:String,default:"5px"}
+    outerMargin:{type:String,default:"0px"}
     
 })
 </script>
@@ -16,7 +16,7 @@ const props = defineProps({
 <style scoped>
 .h-container{
     margin: v-bind('outerMargin');
-    width:100%;
+    width:auto;
     height:max-content;
     display:flex;
     flex-direction: row;

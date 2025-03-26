@@ -1,7 +1,7 @@
 <script setup>
 import { defineProps, watch, computed, ref } from 'vue';
 import NodeBase from '../node_base.vue'
-import { DebugInfo } from '../node_assets/n-component-imports';
+import { DebugInfo, HContainer, SmallButton } from '../node_assets/n-component-imports';
 
 const listSelection = ref(-1)
 const props = defineProps({   //a lot of these are constructed into a data object and passed to node_base as seen below
@@ -57,8 +57,14 @@ function removeProperty(propertyKey){
   <NodeBase 
   :id="id"
   >
-    <div class="object-name-container">{{ ND.object_name }}</div>
-    <div class="object-properties-container">
+
+    <div class="object-name-container">  
+    <HContainer>
+      {{ ND.object_name }}  
+      <SmallButton @click="NS.swapCanvas(props.id)" style="margin-left:auto;" :id="id" text="↷"></SmallButton>
+    </HContainer>
+    </div>
+      <div class="object-properties-container">
     <div class="property-title" style="font-weight:bold"   @click="listSelection=-1"
     >
       Properties
@@ -66,7 +72,7 @@ function removeProperty(propertyKey){
     </div>
     <div v-for="(property,title,index) in ND.properties" @click="listSelection=index">
       <div v-if="index==listSelection" class="property-selected">
-        <button @click="removeProperty(title)" class="property-list-delete" style="margin-right:3px;">x</button>
+        <button @click="removeProperty(title)" class="property-list-delete" style="margin-right:3px;">✕</button>
           {{ title+" " }}
         <div class="nodrag">
           <input class="property-input" @input="setProperty(title,$event.target.value)" :value="property" @keyup.enter="listSelection=-1">
@@ -98,9 +104,14 @@ function removeProperty(propertyKey){
   margin:0px;
   font-size:small;
   font-weight: bold;
-  background: red;
-  border:none;
-  color: rgb(255, 255, 255);
+  background: rgb(190, 0, 0);
+  border:outset 2px rgb(202, 0, 0);
+  color: rgb(61, 0, 0);
+
+}
+.property-list-delete:hover{
+  background:rgb(255, 49, 49);
+  border:outset 2px rgb(255, 82, 82);
 
 }
 .property-list-button:active{
@@ -151,17 +162,17 @@ function removeProperty(propertyKey){
 }
 .property-selected{
   display:flex;
-  background: rgb(215, 215, 215);
+  background: rgb(134, 134, 134);
   font-family:Verdana, Geneva, Tahoma, sans-serif;
   font-weight: bold;
-  color:rgb(0, 0, 0);
+  color:rgb(51, 51, 51);
   padding:3px;
   padding:0px;
   border-top:rgb(66, 66, 66) solid 1px;
 
 }
 .property-input{
-  height:auto;
+  height:100%;
   border:none;
   margin:none;
   margin-left:4px;

@@ -15,11 +15,11 @@ class GameNode { //Simplifies the nodes for reading and altering
         }
     }
 }
-const compileGame = (globalNodesFlattened) => { //Gets all nodes and puts them in a more readable form, removing unnecessary information specifically relating to nodes as they are in vueflow
+const compileGame = (globalCanvases) => { //Gets all nodes and puts them in a more readable form, removing unnecessary information specifically relating to nodes as they are in vueflow
     console.log("🎮🎉 game_logic.js compileGame(Nodes=",nodes,")")
-    
-    
-    return nodeTree
+    const nodeMap = new Map(); 
+        
+    return nodeMap
   }
   
   export{
