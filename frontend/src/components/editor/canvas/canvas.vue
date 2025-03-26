@@ -60,7 +60,6 @@ const onConnect = (connection) => {
 <template>
     <div class="canvas_container" @drop="onDrop" >
         <VueFlow 
-        style="background:url('https://i.imgur.com/yp8OjSg.png'); background-size:100%"
         :apply-default="false"
         v-model:nodes="nodesStore.nodes"
         v-model:edges="nodesStore.edges"

@@ -122,7 +122,6 @@ onMounted(()=>{
 </script>
 
 <template>
-  <div class="outline">
     <div class="node_container" :draggable="draggable" @dragstart="onDragStart($event, props.type)"
         @contextmenu="showContextMenu($event, props.type, props.id)">
         <div class="node_title" :style="{ 'background-image': 'linear-gradient(180deg,' + 'data.bg_color' + ',' + 'data.fg_color' + ')' }">
@@ -146,7 +145,6 @@ onMounted(()=>{
     />
       <slot></slot>
     </div>
-  </div>
 </template>
 
 <style scoped>
@@ -165,19 +163,14 @@ onMounted(()=>{
     display:flex;
     flex-direction: column;
     border-radius: 6px;
+    border-bottom:v-bind('data.fg_color') 4px solid;
 }
-.outline:active{
-  background: blue;
-}
+
 .node_container:active{
   outline:4px blue solid;
 }
 
-.outline{
-  border-radius: 7px;
-  background:v-bind('data.fg_color');
-  padding:2px;
-}
+
 .node-id{
   margin-left:auto;
   text-shadow:none;
