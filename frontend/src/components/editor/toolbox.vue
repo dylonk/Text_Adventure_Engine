@@ -81,21 +81,20 @@ import { useProjectStore } from './project_store.js';
 }
 .tb_subtitle{
     font-family: "Hurricane", serif;    
-    font-size:x-large;
+    font-size:30px;
     padding:4px;
-    width:max-content;
     margin: 0 auto;
     margin-bottom:0px;
 
     width: 100%;
     height:min-content;
-    color:rgb(78, 81, 76);
+    color:rgb(0, 0, 0);
 }
 .tb-items{
     display:flex;
     flex-direction: column;
     min-width:min-content;
-    margin: 6px;
+    margin: 8px;
     overflow:auto;
     height:100%;
 }

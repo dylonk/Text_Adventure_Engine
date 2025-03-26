@@ -60,6 +60,7 @@ const onConnect = (connection) => {
 <template>
     <div class="canvas_container" @drop="onDrop" >
         <VueFlow 
+        style="background:url('https://i.imgur.com/yp8OjSg.png'); background-size:100%"
         :apply-default="false"
         v-model:nodes="nodesStore.nodes"
         v-model:edges="nodesStore.edges"
@@ -88,7 +89,6 @@ const onConnect = (connection) => {
 @import 'https://cdn.jsdelivr.net/npm/@vue-flow/core@1.41.4/dist/style.css';
 
     .canvas_container{
-        background:white;
         width:100%;
         height:100%;
     }

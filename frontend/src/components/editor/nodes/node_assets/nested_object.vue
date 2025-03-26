@@ -87,11 +87,12 @@ function toggleTree(){
         background:rgb(76, 76, 76);
     }
     .row:hover{
-        background:rgb(96, 96, 121);
+        background:rgb(111, 111, 142);
+
 
     }
     .row-isOdd:hover{
-        background:rgb(111, 111, 142);
+        background:rgb(96, 96, 121);
 
     }
 

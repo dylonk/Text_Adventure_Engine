@@ -16,7 +16,7 @@ function updateAssets(){
 
 <!-- This is the outermost layer of the editor -->
 <template>
-  <Toolbar class="editor_topbar"/>
+  <Toolbar/>
   <div class="editor-container">
     <!-- The Toolbox, AssetBrowser, CanvasSelector, and Canvas are only visible if the preview is not active -->
     <Toolbox v-if="!useProjectStore().showPreview" />

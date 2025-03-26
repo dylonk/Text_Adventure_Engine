@@ -104,13 +104,13 @@ function removeProperty(propertyKey){
   margin:0px;
   font-size:small;
   font-weight: bold;
-  background: rgb(190, 0, 0);
+  background: rgb(255, 0, 0);
   border:outset 2px rgb(202, 0, 0);
-  color: rgb(61, 0, 0);
+  color: rgb(255, 255, 255);
 
 }
 .property-list-delete:hover{
-  background:rgb(255, 49, 49);
+  background:rgb(255, 125, 125);
   border:outset 2px rgb(255, 82, 82);
 
 }
