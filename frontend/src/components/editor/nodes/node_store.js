@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { reactive,computed, ref, toRaw } from 'vue';
 import {dataHas}  from './n-utils'
 import { stringify, parse,toJSON,fromJSON } from 'flatted';
+import node_colors from './node-colors.js'
 
 
 
@@ -11,7 +12,7 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
   const canvasID = ref(0);
   const nodes = ref([
   ]);
-  const edges = ref([]); // No implementation atm
+  const edges = ref([]);
   const syncer = ref(0)
   const idCounter = ref(1);
   
@@ -28,6 +29,7 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
     item: 0,
     npc: 0,
     pathway: 0,
+    player:0,
     custom: 0,
   });
   function incrementCount(key) {
@@ -37,6 +39,8 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
       console.error(`Key "${key}" does not exist in object_count.`);
     }
   }
+
+
 
   const globalSync = (important=false) => {
     // Store current nodes and edges in canvas object
@@ -113,6 +117,8 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
     idCounter.value++;
     globalSync(true);
   };
+
+
 
 const swapCanvas = (newid) =>{
   globalSync(true);
@@ -499,6 +505,41 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
     globalSync();
     idCounter.value = 1;
     canvasID.value = 0;
+
+  // Default global nodes (Player) -------------------
+  let pos = {
+    x: 0,
+    y: 0,
+  }
+  console.log("id counter is:", idCounter);
+  const startNode = {
+    type: 'start',
+    position: pos,
+    id:idCounter.value,    //increments id based on idcounter in node store
+    data: {
+      bg_color:computed(()=>node_colors[startNode.type+'_bg'] || 'red'),
+      fg_color:computed(()=>node_colors[startNode.type+'_fg'] || 'blue'),
+      parentID: 0,
+    },
+    expandParent: true,
+  }
+  addNode(startNode)
+  pos.y = 200;
+
+  const playerNode = {
+    type: 'player',
+    position: pos,
+    id:idCounter.value,    //increments id based on idcounter in node store
+    data: {
+      bg_color:computed(()=>node_colors[playerNode.type+'_bg'] || 'red'),
+      fg_color:computed(()=>node_colors[playerNode.type+'_fg'] || 'blue'),
+      parentID: 0,
+    },
+    expandParent: true,
+  }
+  addNode(playerNode)
+  // ---------------------------------------------------
+
     console.log("🦠🫴 initNodes() done");
   };  
 

@@ -8,7 +8,7 @@ class GameNode { //Simplifies the nodes for reading and altering
         if(node.hasOwnProperty("data")&&node.data.hasOwnProperty("isObject")&&node.data.isObject==true){
             this.isObject =  true
             this.childNodes = childNodes //Stores objects of GameNode class only
-            this.childEdges = childEdges //Stores string of edge names
+            this.childEdges = childEdges //Stores edge objects
         }
         else{
             this.isObject = false
@@ -21,8 +21,12 @@ const compileGame = (globalCanvases) => { //Gets all nodes and puts them in a mo
         
     return nodeMap
   }
+
   
-  export{
+
+
+
+export{
       compileNodes,
       GameNode,
-  }
+}
