@@ -7,9 +7,13 @@ import ExploreView from './explore.vue'
 import CreateView from './create.vue'
 import LoginView from './login.vue'
 import ProfileView from './profile.vue'
-import Game from './gameEngine.vue'
+import Game from './GameEngine.vue'
 import gamePageView from './GamePage.vue'
 import ProjectView from './project.vue'
+import Publish from './publish.vue'
+
+
+
 
 
 
@@ -23,6 +27,7 @@ const routes = [
     { path: '/game', component: Game },
     { path: '/gamePage', component: gamePageView },
     { path: '/project', component: ProjectView },
+    {path: '/publish', component: Publish}
 ]
 
 const router = createRouter({
@@ -38,6 +43,7 @@ const router = createRouter({
         { path: '/game', component: Game },
         { path: '/gamePage', component: gamePageView },
         { path: '/gamePage/:info', name: 'G     amePage', component: gamePageView },
+        {path: '/publish', component: Publish}
     ],
     scrollBehavior(to, from, savedPosition){
 

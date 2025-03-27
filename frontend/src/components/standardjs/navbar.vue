@@ -33,6 +33,8 @@ const router = useRouter(); // Access the Vue Router for navigation
         <RouterLink class="nav_btn" to="/user" active-class="active">Profile</RouterLink>
         <RouterLink class="nav_btn" to="/about" active-class="active">About</RouterLink>
         <RouterLink class="nav_btn" to="/game" active-class="active">Game</RouterLink>
+        <RouterLink class="nav_btn" to="/publish" active-class="active">Publish</RouterLink>
+
 
 
         <!-- Conditional rendering based on whether the user is logged in -->
