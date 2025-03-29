@@ -1,100 +1,95 @@
 <script setup>
 import { useRouter } from 'vue-router';
-import { ref,onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import globalNavBar from '@/components/standardjs/navbar.vue';
 import clickSound from '@/assets/sounds/click.wav';
 import moreSound from '@/assets/sounds/more.wav';
 import { useProjectStore } from '../editor/project_store';
-import axios from 'axios';//I'm using axios here to simplify the http. We don't necessarily need to use it with evreything.
+import axios from 'axios';
 
 const router = useRouter();
-
-
 const recentProjects = ref([]);
 const userId = ref('');
-// Fetch the projects for the logged-in user
+const projectStore = useProjectStore(); // Using projectStore globally
+
 const fetchProjects = async () => {
   try {
-    const token = localStorage.getItem('token');  //gotta get the token to make sure user logged in
-        const response = await fetch('http://localhost:5000/auth/user', {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`,  // Pass the JWT token in the Authorization header
-                'Content-Type': 'application/json'
-            }
-        });
+    const token = localStorage.getItem('token');
+    const response = await fetch('http://localhost:5000/auth/user', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
 
-        if (!response.ok) {
-            throw new Error('Failed to fetch user data');
-        }
-
-        const userData = await response.json();
-        userId.value = userData._id;  // all this just to get the users id. If only i was less lazy and made this more modular.
-
-    } catch (error) {
-        console.error('Error fetching user profile:', error);
+    if (!response.ok) {
+      throw new Error('Failed to fetch user data');
     }
+
+    const userData = await response.json();
+    userId.value = userData._id;
+
+  } catch (error) {
+    console.error('Error fetching user profile:', error);
+  }
 
   try {
     console.log('Fetching projects for user:', userId.value);
     const response = await axios.get(`http://localhost:5000/projects?userId=${userId.value}`);
-    console.log(response.data);
-    // Assuming response.data is an array of projects
     recentProjects.value = response.data.map(project => ({
       id: project.id,
-      title: project.name,  // Assuming project.name corresponds to the title
-      image: 'https://via.placeholder.com/150'  // Add the actual image URL or placeholder
+      title: project.name,
+      image: 'https://talentclick.com/wp-content/uploads/2021/08/placeholder-image.png'
     }));
   } catch (error) {
-    if(true){
-      console.error('Error fetching projects (project.vue was bothering me set statement to false to bring back spam)');
-    }
-    else{
-      console.error('Error fetching projects:', error);
-    }
+    console.error('Error fetching projects:', error);
   }
 };
 
-//when mounted, uses the above code to get all the user's projects. we can always edit it to only get the 6 most recently edited.
-onMounted(() => {
-  fetchProjects();
-});
+// Delete project using projectStore
+const deleteProject = async (id) => {
+  if (!confirm("Are you sure you want to delete this project?")) return;
+  try {
+    projectStore.deleteProject(id);
+    recentProjects.value = recentProjects.value.filter(project => project.id !== id);
+  } catch (error) {
+    console.error("Error deleting project:", error);
+  }
+};
 
+// Rename project using projectStore
+const renameProject = async (id) => {
+  const newTitle = prompt("Enter the new project name:");
+  if (!newTitle) return;
 
-// Play sound function
+  try {
+    projectStore.renameProject(id, newTitle);
+    const project = recentProjects.value.find(p => p.id === id);
+    if (project) project.title = newTitle;
+  } catch (error) {
+    console.error("Error renaming project:", error);
+  }
+};
+
+onMounted(fetchProjects);
+
 function playClickSound(soundType = 'click') {
   const sound = new Audio(soundType === 'more' ? moreSound : clickSound);
   sound.volume = 0.5;
-  sound.play().catch((e) => console.warn("Sound play blocked", e));
+  sound.play().catch(e => console.warn("Sound play blocked", e));
 }
 
-// Navigate to new project (canvas screen)
 function newProject() {
   playClickSound();
   router.push('/create');
-  useProjectStore().initProject();
+  projectStore.initProject();
 }
 
-// Load project from file explorer
-function loadProject(id) {    //pretty simple, it just goes to the create page and tells the project store to open the project by id
+function loadProject(id) {
   playClickSound();
   router.push('/create');
-  useProjectStore().openProject(id);
-
-
-  /* I'm commenting out this code for now because do we really need to load projects from files when we're totally web based? 
-  new load project above is used when any recent project is double clicked
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = '.json,.txt,.project';
-  input.onchange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      alert(`Loaded project: ${file.name}`);
-    }
-  };
-  input.click();
-  */
+  projectStore.openProject(id);
 }
 </script>
 
@@ -115,15 +110,20 @@ function loadProject(id) {    //pretty simple, it just goes to the create page a
     </div>
 
     <div class="recent-projects">
-      <h2 class="section-title"> Open Recents</h2>
+      <h2 class="section-title">Open Recents</h2>
       <div class="projects-grid">
         <div 
           v-for="project in recentProjects" 
           :key="project.id" 
           class="project-box"
-          @click="loadProject(project.id)">
+        >
           <div class="project-title">{{ project.title }}</div>
           <img :src="project.image" alt="Project image" class="project-image" />
+          <div class="project-actions">
+            <button class="action-button" @click="loadProject(project.id)">Open</button>
+            <button class="action-button delete" @click="deleteProject(project.id)">Delete</button>
+            <button class="action-button rename" @click="renameProject(project.id)">Rename</button>
+          </div>
         </div>
       </div>
     </div>
@@ -144,7 +144,7 @@ function loadProject(id) {    //pretty simple, it just goes to the create page a
 }
 
 .background-overlay {
-    background: url('@/assets/Images/stars.jpg') no-repeat center center/cover;
+  background: url('@/assets/Images/stars.jpg') no-repeat center center/cover;
   width: 100%;
   height: 100%;
   position: absolute;
@@ -214,7 +214,6 @@ function loadProject(id) {    //pretty simple, it just goes to the create page a
   border-radius: 6px;
   padding: 12px;
   text-align: center;
-  cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
@@ -239,5 +238,27 @@ function loadProject(id) {    //pretty simple, it just goes to the create page a
   object-fit: cover;
   border: 2px solid #e0e0e0;
   box-shadow: inset 2px 2px 0 #000;
+}
+
+.project-actions {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-around;
+}
+
+.action-button {
+  font-size: 0.9rem;
+  padding: 5px 10px;
+  border: 2px solid white;
+  background: #c0392b;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.action-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 2px 2px 0 #000;
 }
 </style>

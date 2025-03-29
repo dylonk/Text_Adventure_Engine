@@ -7,17 +7,16 @@ const props = defineProps({
 })
 import { useNodesStore } from '@/components/editor/nodes/node_store'
 const NS = useNodesStore()
-
 const handleTitle = ref("badhandle")
-handleTitle.value = NS.addHandle(props.id,'source')
 
+handleTitle.value = NS.addHandle(props.id,'target')
 
 </script>
 
 
 <template>
     <div class="handle-container">
-        <Handle :id="handleTitle" class="vue-flow__handle" type="source" :position="Position.Right" />
+        <Handle :id="handleTitle" class="vue-flow__handle" type="target" :position="Position.Left" />
     </div>
 </template>
 <style scoped>
@@ -25,7 +24,7 @@ handleTitle.value = NS.addHandle(props.id,'source')
     position:absolute;
     margin:0px;
     padding:0px;
-    right:10px;
+    left:0px;
     width: 0px;
     height: 0px;
 }

@@ -50,12 +50,10 @@ function autoResize() {
         :id="id"
         >
         <HContainer outerMargin="0px">
-        <Textboxes style="margin-top: 0px;" :id="id" startingQuantity=1 allowButtons=false title="Console Output"></Textboxes>
-        <HandleIn :handleId="id"></HandleIn>
+        <Textboxes handleOutput=true handleInput=true :id="id" startingQuantity=1 allowButtons=false title="Console Output"></Textboxes>
         </HContainer>
         <HContainer outerMargin="0px">
-        <HandleOut :handleId="id"></HandleOut>
-        <Textboxes style="margin-top: 0px;" :id="id" startingQuantity=1 allowButtons=true title="Response"></Textboxes>
+        <Textboxes handleOutput=true :id="id" startingQuantity=1 allowButtons=true title="Response"></Textboxes>
         </HContainer>
     </FunctionBase>
 

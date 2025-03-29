@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { reactive,computed, ref, toRaw } from 'vue';
 import {dataHas}  from './n-utils'
 import { stringify, parse,toJSON,fromJSON } from 'flatted';
+import node_colors from './node-colors.js'
 
 
 
@@ -11,9 +12,10 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
   const canvasID = ref(0);
   const nodes = ref([
   ]);
-  const edges = ref([]); // No implementation atm
+  const edges = ref([]);
   const syncer = ref(0)
   const idCounter = ref(1);
+  
 
   // Collection of all nodes. Must be synced on any node or edge change
   const globalNodes = new Map([ 
@@ -27,6 +29,7 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
     item: 0,
     npc: 0,
     pathway: 0,
+    player:0,
     custom: 0,
   });
   function incrementCount(key) {
@@ -37,11 +40,12 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
     }
   }
 
+
+
   const globalSync = (important=false) => {
     // Store current nodes and edges in canvas object
     if(important==true){
        syncer.value+=1; 
-      console.log("SYNCER ACTIVATED", syncer.value)
     }
        const canvas = {
       n: [...nodes.value],
@@ -81,7 +85,10 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
       return;
     }
     node.data.parentID = canvasID.value;
+    node.data.srcHandles = 0 //source handles
+    node.data.tgtHandles = 0 //target handles
     
+
     node.data.nodeDepth = 1;
     if(canvasID.value != 0){
       node.data.nodeDepth = getNode(canvasID.value, true).data.nodeDepth + 1
@@ -108,8 +115,10 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
       console.log("🦠➕ function added with id", node.id);
     }
     idCounter.value++;
-    globalSync();
+    globalSync(true);
   };
+
+
 
 const swapCanvas = (newid) =>{
   globalSync(true);
@@ -164,22 +173,16 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
       console.error(`💾🫳🏽 ContributeNodeData: Node with id ${id} does not exist`);
       return;
     }
-    // if(nodeExists.data.hasOwnProperty('initialized')){ //Node already instanciated, if you need to set, use setNodeData
-    //   console.log("💾🫳🏽 contributeNodeData on node that has already been initialized, returning")
-    //   return;
-    // }
-  
+
     Object.keys(inputData).forEach(function(k){
       if(!nodeExists.data.hasOwnProperty(k)) nodeExists.data[k]=inputData[k];
     })
     
-
     console.log("💾🫳🏽 Data to input", inputData)
     console.log("💾🫳🏽 New data of node:", nodeExists.data)
     globalSync();
     return;
   };
-
 
   const getNodeData = (id, dataProperty = "") => {  // DO NOT USE IN A WATCHER OR COMPUTE FUNCTION (spam) gets data of node safely. dataProperty to be subbed in instances where you'd do something like node.data.obj_name for safety
     console.log("💾🔙 getNodeData(id=",id,"dataProperty=",dataProperty,")")
@@ -270,12 +273,13 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
       //removeNodes([id]);
       
       console.log("🦠🗑️ deleteNode(id=",id,")")
-      deleteAllChildren(id);
-      const nodeId = (id);
-    
       if(id == canvasID.value){
         swapCanvas(0)
       }
+      deleteAllChildren(id);
+
+      const nodeId = (id);
+    
       const nodeExists = getNode(id,true);
       if (nodeExists) {
         console.log(`Node with id ${id} exists in objects, deleting...`);
@@ -289,8 +293,8 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
             n: parentNodes,
             e: parentEdges,
           }
-          globalNodes.set(nodeExists.data.parentID, canvas)
-          console.log("deleteNode: Node removed from parent. Parent: ", globalNodes[nodeExists.data.parentID].n)
+          globalNodes.set(Number(nodeExists.data.parentID), canvas)
+          console.log("🦠🗑️ deleteNode: Node removed from parent.")
         }
         else{
           nodes.value = nodes.value.filter((node) => node.id != nodeId); //may not always delete a node          
@@ -305,13 +309,29 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
   const deleteAllChildren = (id) => { // recursive function to delete children nodes of node
     console.log("👼🗑️ deleteAllChildren(id=",id,")")
     console.log("👼🗑️ globalNodes.get(",id,")",globalNodes.get(id))
-    
-  };
+    if(!globalNodes.has(id)){
+      return;
+    }
+    for(let key in globalNodes.get(id).n){
+      console.log("👼🗑️ deleting node", key.id)
+      deleteNode(Number(key.id))
+    }
+    return;
+  }
 
   const getAllNodes = () => {
     console.log("🦠💯 getAllNodes()")
     return Array.from(globalNodes.values()).flatMap(canv => canv.n)
   };
+  const getLocalNodeIDs = () => {
+    console.log("🦠🆔 getLocalNodeIDs()")
+    IDS = []
+    for(let i = 0; i < nodes.length; i++){
+      IDS.push(nodes[i].id)
+    }
+    return IDS;
+  }
+
   const getNode = (id, doGlobal=false) => {
     console.log("   🦠🫴 getNode(id=", id, "doGlobal=", doGlobal,")")
     if(id<-1){
@@ -357,7 +377,7 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
     console.log("📏➕ Adding edge:", edge);
     // Check if the edge already exists
     const edgeExists = edges.value.find(
-      (e) => e.id === edge.id || (e.source === edge.source && e.target === edge.target)
+      (e) => e.id === edge.id
     );
     
     if (edgeExists) {
@@ -367,7 +387,7 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
     
     // Ensure the edge has a unique ID if not provided
     if (!edge.id) {
-      edge.id = `e-${edge.source}-${edge.target}`;
+      edge.id = `${edge.sourceHandle}>${edge.targetHandle}`;
     }
     
     // Add any default edge properties if needed
@@ -451,6 +471,27 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
     globalSync();
   };
 
+  const addHandle = (id, handleType="source") =>{
+    console.log("🤹➕  addHandle(id=",id,"node")
+    let handleName = ""
+    const nodeExists = getNode(id)
+    if(nodeExists==null){
+      console.warn("🤹➕  addHandle, node not found")
+    }
+    if(handleType=="source"){
+      handleName = id+"s"+nodeExists.data.srcHandles
+      nodeExists.data.srcHandles += 1;
+      console.log("🤹➕  New handle ID = ",handleName)
+      return handleName;
+    }
+    if(handleType=="target"){
+      handleName = id+"t"+nodeExists.data.tgtHandles
+      nodeExists.data.tgtHandles += 1;
+      console.log("🤹➕  New handle ID = ",handleName)
+      return handleName;
+    }
+  };
+
   const initNodes = () => {   //the node portion of initting a new project. currently empties nodes/edges, resets object counts and idcounter
     console.log("🦠🫴 initNodes()");
     nodes.value = [];
@@ -464,6 +505,41 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
     globalSync();
     idCounter.value = 1;
     canvasID.value = 0;
+
+  // Default global nodes (Player) -------------------
+  let pos = {
+    x: 0,
+    y: 0,
+  }
+  console.log("id counter is:", idCounter);
+  const startNode = {
+    type: 'start',
+    position: pos,
+    id:idCounter.value,    //increments id based on idcounter in node store
+    data: {
+      bg_color:computed(()=>node_colors[startNode.type+'_bg'] || 'red'),
+      fg_color:computed(()=>node_colors[startNode.type+'_fg'] || 'blue'),
+      parentID: 0,
+    },
+    expandParent: true,
+  }
+  addNode(startNode)
+  pos.y = 200;
+
+  const playerNode = {
+    type: 'player',
+    position: pos,
+    id:idCounter.value,    //increments id based on idcounter in node store
+    data: {
+      bg_color:computed(()=>node_colors[playerNode.type+'_bg'] || 'red'),
+      fg_color:computed(()=>node_colors[playerNode.type+'_fg'] || 'blue'),
+      parentID: 0,
+    },
+    expandParent: true,
+  }
+  addNode(playerNode)
+  // ---------------------------------------------------
+
     console.log("🦠🫴 initNodes() done");
   };  
 
@@ -476,6 +552,7 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
     idCounter,
     getNode,
     getAllNodes,
+    getLocalNodeIDs,
     getCurrentCanvasName,
     syncer,
     globalSync,
@@ -485,6 +562,7 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
     canvasID,
     addNode,
     deleteNode,
+    deleteAllChildren,
     renameNode,
     contributeNodeData,
     getNodeData,
@@ -493,6 +571,7 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
     getNodeProperties,
     setNodeProperty,
     removeNodeProperty,
+    addHandle,
     addEdge,
     updateEdge,
     deleteEdge,

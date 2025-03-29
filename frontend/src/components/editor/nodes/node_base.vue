@@ -1,6 +1,6 @@
 <!---FATHER CLASS OF ALL NODES-->
 <script setup>
-import { ref, defineProps, computed, watch, defineEmits } from 'vue';
+import { ref, defineProps, computed, watch, defineEmits, onMounted } from 'vue';
 import { HContainer, SmallButton, Tooltip, DebugInfo} from './node_assets/n-component-imports.js';
 import useDragAndDrop from '../drag_drop.js';
 import help_msg from './help_btn_msg';
@@ -9,7 +9,7 @@ import { Position } from '@vue-flow/core';
 import { useNodesStore } from '../nodes/node_store.js'
 import { useVueFlow } from '@vue-flow/core';
 
-const { screenToFlowCoordinate, updateNodeData, updateNode, findNode } = useVueFlow()
+const { screenToFlowCoordinate, updateNodeData, updateNode, findNode, updateNodeInternals } = useVueFlow()
 Position
 
 
@@ -110,12 +110,18 @@ const { onDragStart } = useDragAndDrop();
 // if(props.containHelp){
 //     watch(isDisplayTooltip);
 // }
+if(nodesStore.getNode(props.id)) nodesStore.getNode(props.id).data.srcHandles = 0
+if(nodesStore.getNode(props.id)) nodesStore.getNode(props.id).data.tgtHandles = 0
 
+
+onMounted(()=>{
+  console.log("🦠🐎 Node Mounted, ID=",props.id)
+  updateNodeInternals([props.id])
+})
 
 </script>
 
 <template>
-  <div class="outline">
     <div class="node_container" :draggable="draggable" @dragstart="onDragStart($event, props.type)"
         @contextmenu="showContextMenu($event, props.type, props.id)">
         <div class="node_title" :style="{ 'background-image': 'linear-gradient(180deg,' + 'data.bg_color' + ',' + 'data.fg_color' + ')' }">
@@ -139,7 +145,6 @@ const { onDragStart } = useDragAndDrop();
     />
       <slot></slot>
     </div>
-  </div>
 </template>
 
 <style scoped>
@@ -158,19 +163,14 @@ const { onDragStart } = useDragAndDrop();
     display:flex;
     flex-direction: column;
     border-radius: 6px;
+    border-bottom:v-bind('data.fg_color') 4px solid;
 }
-.outline:active{
-  background: blue;
-}
+
 .node_container:active{
   outline:4px blue solid;
 }
 
-.outline{
-  border-radius: 7px;
-  background:v-bind('data.fg_color');
-  padding:2px;
-}
+
 .node-id{
   margin-left:auto;
   text-shadow:none;

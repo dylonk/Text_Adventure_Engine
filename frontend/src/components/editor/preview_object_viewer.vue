@@ -9,7 +9,6 @@ const object_type_list = [
   'item',
   'npc',
   'pathway',
-  'player',
   'custom',
 ]
 
@@ -89,7 +88,7 @@ function switchCanvas(id, assetBrowserIndex){
     <div class="asset_browser">
       <h3>Object Viewer</h3>
       <div class="objects-container">
-        <NestedObject :n="objects" @ov-context-clicked="showContextMenu($event,$event,nodesStore.getNode($event,true).type)" />
+        <NestedObject :n="objects"/>
       </div>
 
       <ContextMenu
@@ -125,15 +124,19 @@ function switchCanvas(id, assetBrowserIndex){
 }
 
 h3 {
-  font-weight:100; 
-  font-size:20px;
-  color: rgb(156, 156, 156);
-  
+  font-family: "Scada", serif;  
+  font-size: 1.2em;
+  color: rgb(180, 180, 180);
+  margin-left:8px;
+  margin-right:8px;
+  margin-top:5px;
+  margin-bottom:5px;
   padding-right:10px;
   padding-left:10px;
   text-align: center;
-  width:auto;
-  border-bottom: rgb(109, 109, 109) 3px groove;
+  width:max-content;
+  border-radius: 5px;
+  border: rgb(46, 46, 46) 1.7px solid;
 
 }
 
@@ -151,12 +154,9 @@ li {
 
 .objects-container {
   height: 100%;
-  overflow-y:scroll;
-  border: inset rgb(83, 83, 83) 2px;
-  overflow-x:scroll;
-
-  border-radius: 10px;
-  background: rgb(56, 56, 56);
+  overflow:auto;
+  border: solid rgb(47, 47, 47) 1.5px;
+  background: rgb(100, 100, 100);
   margin:10px;
 }
 

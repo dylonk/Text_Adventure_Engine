@@ -7,12 +7,14 @@ import CanvasBackground from './background.vue'
 import CanvasControls from './controls.vue'
 import useDragAndDrop from '../drag_drop.js';
 import { useNodesStore } from "../nodes/node_store.js"
+import { useProjectStore } from '../project_store';
 
-
+        
 // NEWNODEREQ
-import { PromptNode, RoomNode, ItemNode, NpcNode, PathwayNode, UnimplementedNode, CustomNode, AwaitNode, ActionNode} from '../nodes/n-imports';
+import { PromptNode, StartNode, RoomNode, ItemNode, NpcNode, PlayerNode, PathwayNode, UnimplementedNode, CustomNode, AwaitNode, ActionNode} from '../nodes/n-imports';
 
     const nodeTypes = {
+        start: markRaw(StartNode),
         prompt: markRaw(PromptNode),
         room: markRaw(RoomNode),
         item: markRaw(ItemNode),
@@ -21,6 +23,7 @@ import { PromptNode, RoomNode, ItemNode, NpcNode, PathwayNode, UnimplementedNode
         custom: markRaw(CustomNode),
         await: markRaw(AwaitNode),
         action: markRaw(ActionNode),
+        player: markRaw(PlayerNode),
         unimplemented: markRaw(UnimplementedNode)
     }
 
@@ -29,13 +32,20 @@ const nodesStore = useNodesStore();
 
 
 
+const showPreview = false;
 
 const { onDragOver, onDrop, onDragLeave, isDragOver } = useDragAndDrop()
+
+function onSwap(){
+    //updateNodeInternals(nodesStore.getLocalNodeIDs())
+}
+
+
 const onConnect = (connection) => {
     console.log('Connection made:', connection);
     // Add the new edge to the store
     nodesStore.addEdge({
-        id: `e-${connection.source}-${connection.target}`,
+        id: `${connection.sourceHandle}>${connection.targetHandle}`,
         source: connection.source,
         target: connection.target,
         // You can add additional properties as needed
@@ -47,7 +57,6 @@ const onConnect = (connection) => {
         // Any other edge properties you need
     });
 };
-
 </script>
 
 <template>
@@ -71,6 +80,7 @@ const onConnect = (connection) => {
         }"/>
         <CanvasControls></CanvasControls>
         </VueFlow>
+
     </div>
 
 
@@ -80,7 +90,6 @@ const onConnect = (connection) => {
 @import 'https://cdn.jsdelivr.net/npm/@vue-flow/core@1.41.4/dist/style.css';
 
     .canvas_container{
-        background:white;
         width:100%;
         height:100%;
     }

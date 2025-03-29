@@ -17,28 +17,11 @@ const props = defineProps({
 import { useNodesStore } from '@/components/editor/nodes/node_store'
 const NS = useNodesStore()
 const defaultObjData =  { //This is the data that this component contributes. Any existing properties within the functional node data will be replaced
-    display_type:"Await",
+    display_type:"Start",
   }
-  console.log("Await.vue: ReferenceID is = " + props.id)
+  console.log("start.vue: ReferenceID is = " + props.id)
   NS.contributeNodeData(props.id,defaultObjData,true);
 //------------------------------IMPORTANT END-------------------------------------------
-
-function addResponse(){
-    // responses.value.push({id:response_id++, text:""})
-}
-function removeResponse(){
-    // if(response_id>0){
-    //     responses.value.pop()
-    //     response_id--;
-    // }
-}
-
-function autoResize() {
-    this.style.height = 'auto';
-    this.style.height = this.scrollHeight + 'px';
-}
-
-
 </script>
 
 
@@ -49,7 +32,10 @@ function autoResize() {
     <FunctionBase
         :id="id"
         >
-        <Textboxes handleOutput=true :id="id" startingQuantity=1 allowButtons=false title="Expected Phrase"></Textboxes>
+        <HContainer outerMargin="0px">
+        <img style="border:groove 2px" src="../../../../../assets/Images/editor/start.png" onload="this.scale*=.5">
+        <HandleOut :id="id"></HandleOut>
+        </HContainer>
     </FunctionBase>
 
 

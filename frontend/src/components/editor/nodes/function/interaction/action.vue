@@ -36,7 +36,7 @@ const defaultObjData =  { //This is the data that this component contributes. An
     <FunctionBase
         :id="id"
         >
-        <Textboxes :id="id" startingQuantity=1 allowButtons=false title="Action Keyphrase"></Textboxes>
+        <Textboxes :id="id" handleOutput=true startingQuantity=1 allowButtons=false title="Action Keyphrase"></Textboxes>
         <Textboxes :id="id" startingQuantity=1 allowButtons=false title="Object"></Textboxes>
 
     </FunctionBase>

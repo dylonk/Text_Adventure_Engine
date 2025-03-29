@@ -9,6 +9,11 @@
     const projectId = ref('');
     const userid = ref('');
 
+
+
+    //project settings This one doesn't really need to be arrayed because it doesn't need to persist through sessions
+    const showPreview = ref(false);
+
     // Method to rename the project
     function renameProject(newName) {
       const name = newName || prompt(`Enter a new name for the project ID: ${projectId.value}. Current name: ${projectName.value}`);
@@ -105,7 +110,7 @@
           throw new Error(`Failed to open project: ${errorDetail}`);
         }
         //waits for the projectData. in the future we can also store global settings here. Like pretty much anything in a project-wide scope
-        //being really when we get more general settings we could probably afford to place stuff like idcounter in a list of settings and just import that. again, all just organizational
+        //being real when we get more general settings we could probably afford to place stuff like idcounter in a list of settings and just import that. again, all just organizational
         const projectData = await response.json();  
         projectName.value = projectData.name;
         projectId.value = projectData.id;
@@ -177,6 +182,7 @@
     return {
       projectName,
       projectId,
+      showPreview,
       renameProject,
       exportProject,
       initProject,
