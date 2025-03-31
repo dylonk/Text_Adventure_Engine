@@ -11,9 +11,10 @@ import { useProjectStore } from '../project_store';
 
         
 // NEWNODEREQ
-import { PromptNode, RoomNode, ItemNode, NpcNode, PathwayNode, UnimplementedNode, CustomNode, AwaitNode, ActionNode} from '../nodes/n-imports';
+import { PromptNode, StartNode, RoomNode, ItemNode, NpcNode, PlayerNode, PathwayNode, UnimplementedNode, CustomNode, AwaitNode, ActionNode} from '../nodes/n-imports';
 
     const nodeTypes = {
+        start: markRaw(StartNode),
         prompt: markRaw(PromptNode),
         room: markRaw(RoomNode),
         item: markRaw(ItemNode),
@@ -22,6 +23,7 @@ import { PromptNode, RoomNode, ItemNode, NpcNode, PathwayNode, UnimplementedNode
         custom: markRaw(CustomNode),
         await: markRaw(AwaitNode),
         action: markRaw(ActionNode),
+        player: markRaw(PlayerNode),
         unimplemented: markRaw(UnimplementedNode)
     }
 
@@ -60,7 +62,6 @@ const onConnect = (connection) => {
 <template>
     <div class="canvas_container" @drop="onDrop" >
         <VueFlow 
-        style="background:url('https://i.imgur.com/yp8OjSg.png'); background-size:100%"
         :apply-default="false"
         v-model:nodes="nodesStore.nodes"
         v-model:edges="nodesStore.edges"

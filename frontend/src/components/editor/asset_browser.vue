@@ -9,6 +9,7 @@ const object_type_list = [
   'item',
   'npc',
   'pathway',
+  'player',
   'custom',
 ]
 

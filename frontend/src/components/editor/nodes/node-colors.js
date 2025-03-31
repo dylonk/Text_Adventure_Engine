@@ -1,4 +1,6 @@
 const node_colors = {
+    start_fg: "#505050",
+    start_bg: "#B0B0B0",
     prompt_fg: "#1e4ce3",
     prompt_bg: "#c4e4ff",
     item_fg: "#14140c",
@@ -7,6 +9,8 @@ const node_colors = {
     room_bg:"#ff6b4b",
     npc_bg: "#aecfd1",
     npc_fg: "#3d121d",
+    player_bg:"#e0dbb4",
+    player_fg:"#353627",
     pathway_bg: "#d1f584",
     pathway_fg: "#212121",
     custom_bg: "#e6aaca",
