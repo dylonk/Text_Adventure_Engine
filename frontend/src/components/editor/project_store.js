@@ -66,6 +66,8 @@
       // Here you would typically send this to your backend
       try {
         console.log('Exporting project:', projectData);
+        localStorage.setItem('project', JSON.stringify(projectData));//also saves it to localstorage! This is for preview capabilty.
+
         const response = await fetch('http://localhost:5000/projects/save', {  //tries to POST the data to the project save route in backend
           method: 'POST',
           headers: {

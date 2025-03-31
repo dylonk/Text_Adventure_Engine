@@ -41,9 +41,6 @@ router.post('/register', async (req, res) => {
             return res.status(400).json({ error: 'Username already exists' });  // Return JSON for error
         }
 
-        // Hash password before saving 
-        //const hashedPassword = await bcrypt.hash(password, 12);
-        //console.log('Hashed password during registration:', hashedPassword);
         hashedPassword=password;
         const user = new User({ username, email, password: hashedPassword });
 
@@ -65,8 +62,7 @@ router.post('/login', async (req, res) => {
       const user = await User.findOne({ username });
       if (!user) return res.status(400).send('Invalid credentials');
   
-      // Compare the provided password with the hashed password in the database
-        //const isMatch = await bcrypt.compare(password, user.password); TEMP DISABLED HASHING
+
         const isMatch = password === user.password;  // Compare plaintext passwords
 
         console.log("Provided password:", password);

@@ -31,17 +31,27 @@ const contextMenuActions=ref()
 
 
 // Show the context menu on right-click
-function showContextMenu(event, nodeType, nodeId) {
-  console.log("Context Menu Triggered:", {
-    nodeId, 
-    nodeType, 
-  });
-  console.log("all nodes: ",nodesStore.globalNodes)
+function showContextMenu(event) {
+  // Check if event is an object with event and id properties. this way it can handle either a direct or nested event.
+  const contextEvent = event.event || event
+  const nodeId = event.id || event
 
-  contextMenuId.value = nodeId //the id of the node
-  contextMenuPosition.value = { x: event.clientX, y: event.clientY }
+  console.log("Context Menu Triggered:", { nodeId })
+  contextMenuId.value = nodeId
+
+
+
+
+  // Set context menu position
+  contextMenuPosition.value = { 
+    x: contextEvent.clientX, 
+    y: contextEvent.clientY-75 
+  }
+
   isContextMenuVisible.value = true//what makes the menu visible
-  event.preventDefault()//prevents the default browser context menu from appearing
+  console.log("context menu position is ",contextMenuPosition.value)
+  console.log("context menu id is ",contextMenuId.value)
+  contextEvent.preventDefault()
 
 
   //if we're cool being a little messy, we could add a very long switch statement here that adds actions based off nodetype
@@ -88,7 +98,8 @@ function switchCanvas(id, assetBrowserIndex){
     <div class="asset_browser">
       <h3>Object Viewer</h3>
       <div class="objects-container">
-        <NestedObject :n="objects" @ov-context-clicked="showContextMenu($event,$event,nodesStore.getNode($event,true).type)" />
+        <NestedObject :n="objects"  @ov-context-clicked="showContextMenu($event)" 
+        />
       </div>
 
       <ContextMenu

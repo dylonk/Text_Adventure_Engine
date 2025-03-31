@@ -1,10 +1,11 @@
 <script setup>
-import { defineProps, ref } from 'vue';
+import { defineProps, ref, defineEmits } from 'vue'; // Import defineEmits
 import NestedObject from './nested_object.vue'
 import { HContainer } from './n-component-imports';
 import { useNodesStore } from '@/components/editor/nodes/node_store'
 
 const NS = useNodesStore()
+const emit = defineEmits();
 
 const displayTree = ref(true)
 
@@ -28,11 +29,19 @@ function toggleTree(){
     console.log("🪹👁️ nested_object.vue tree vis toggled")
 }
 
+//adding a middleman context menu handler that passes a full event up to the parent. 
+function handleContextMenu(event, id) {
+    event.preventDefault()
+    // Directly emit the event with both the event and the id
+    emit('ov-context-clicked', { event, id: id || props.n.val.id})
+}
+
+
 </script>
 
 <template>
 <div  style="min-width:100%; width:fit-content;">
-    <div v-if="isEven" class="row" @contextmenu="$emit('ov-context-clicked',n.val.id)" @click="NS.swapCanvas(n.val.id)">
+    <div v-if="isEven" class="row"   @contextmenu.prevent="handleContextMenu($event, n.val.id)"  @click="NS.swapCanvas(n.val.id)">
         <HContainer style="width:100%" spacing="0px">
 
             &nbsp;
@@ -47,7 +56,7 @@ function toggleTree(){
             <div class="object-name"> &nbsp {{ n.val.data.object_name }} </div>
         </HContainer>
     </div>
-    <div v-else class="row-isOdd" @contextmenu="$emit('ov-context-clicked',n.val.id)" @click="NS.swapCanvas(n.val.id)">
+    <div v-else class="row-isOdd"   @contextmenu.prevent="handleContextMenu($event, n.val.id)"  @click="NS.swapCanvas(n.val.id)">
         <HContainer style="width:100%" spacing="0px">
 
 &nbsp;
@@ -64,7 +73,7 @@ function toggleTree(){
     </div>
     <div v-if="displayTree==true" style="width:100%;">
         <HContainer v-for="child in n.children" spacing="0px">
-            <NestedObject @ov-context-clicked="$emit('ov-context-clicked',$event)" :n="child" :isEven="!isEven"/>
+            <NestedObject   @ov-context-clicked="$emit('ov-context-clicked', $event)"  :n="child" :isEven="!isEven"/>
         </HContainer>
     </div>
 </div>

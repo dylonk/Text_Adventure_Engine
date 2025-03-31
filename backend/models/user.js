@@ -8,10 +8,7 @@ const UserSchema = new mongoose.Schema({
 });
 
 UserSchema.pre('save', async function(next) {
-    // Comment out the password hashing logic for testing
-    // if (!this.isModified('password')) return next();
-    // const salt = await bcrypt.genSalt(10);
-    // this.password = await bcrypt.hash(this.password, salt);
+
     next();  // Skip hashing for now
 });
 
