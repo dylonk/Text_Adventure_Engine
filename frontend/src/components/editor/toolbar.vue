@@ -76,7 +76,8 @@ const projectStore = useProjectStore();
 
 
       setupPreview() {
-        currentProject=localStorage.getItem(project); //if you've saved your project before, this will be there.
+        const projectStore = useProjectStore();
+        const currentProject=localStorage.getItem('project'); //if you've saved your project before, this will be there.
         if(currentProject==null){ //if you haven't, don't worry, we'll  do it for you
           projectStore.exportProject();
         }

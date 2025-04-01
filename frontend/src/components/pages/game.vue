@@ -1,52 +1,10 @@
-<template>
-  <div
-    class="game-container"
-    :class="[{ preview: isPreview}, $attrs.class]"
-    ref="gameContainer"
-    :style="{ width: previewWidth + 'px', height: previewHeight + 'px' }"
-    @mousedown="startDrag"
-  >
-    <div v-if="!isPreview">
-      <globalNavBar />
-    </div>
-    <div class="progress-bar">
-      <div class="progress" :style="{ width: progress + '%' }"></div>
-    </div>
-    <div class="game-screen">
-      <div class="game-text" v-html="displayText"></div>
-    </div>
-    <div class="game-input">  
-      <input v-model="userInput" @keyup.enter="handleInput" placeholder="Enter your command..." autofocus />
-    </div>
-    <div class="game-controls">
-      <button @click="saveGame">Save</button>
-      <button @click="loadGame">Load</button>
-      <button @click="restartGame">Restart</button>
-      <button @click="quitGame">Quit</button>
-    </div>
-
-    <!-- Conditionally rendered components for preview mode -->
-    <div v-if="isPreview" class="left-side">
-      <previewSetup />
-    </div>
-    <div v-if="isPreview" class="right-side">
-      <previewObjectViewer />
-    </div>
-
-    <!-- Resize handle for preview mode -->
-    <div 
-      v-if="isPreview" 
-      class="resize-handle" 
-      @mousedown="startResize"
-    ></div>
-  </div>
-</template>
-
 <script setup>
-import { ref, onMounted, nextTick } from 'vue';
+import { ref, onMounted, nextTick, computed } from 'vue';
 import globalNavBar from '@/components/standardjs/navbar.vue';
 import previewSetup from '@/components/editor/preview_setup.vue';
 import previewObjectViewer from '@/components/editor/preview_object_viewer.vue';
+import { useNodesStore } from '../editor/nodes/node_store.js';
+import Game from '../editor/nodes/game_logic.js'
 
 const props = defineProps({
   isPreview: {
@@ -55,6 +13,7 @@ const props = defineProps({
   },
 });
 
+const NS = useNodesStore()
 
 
 const gameContainer = ref(null);
@@ -63,13 +22,14 @@ const gameContainer = ref(null);
 onMounted(() => {
   if (props.isPreview) {
     gameContainer.value.style.position = 'absolute';
+    Game.compileGame(NS.globalNodes);
   }
+  Game.start();
 });
 
-const text = ref(`Welcome to the Enchanted Forest!<br><br>
-  You find yourself in a dense forest. The trees whisper secrets and a soft glow emanates from a path ahead.<br>
-  A majestic <span class='highlight'>unicorn</span> watches you cautiously.<br><br>
-  What will you do?`);
+const text = computed(()=>{
+  return Game.output.value
+})
 const displayText = ref("");
 const userInput = ref("");
 const typingIndex = ref(0);
@@ -133,6 +93,50 @@ onMounted(() => {
   startTypingEffect();
 });
 </script>
+
+<template>
+  <div
+    class="game-container"
+    :class="[{ preview: isPreview}, $attrs.class]"
+    ref="gameContainer"
+    :style="{ width: previewWidth + 'px', height: previewHeight + 'px' }"
+    @mousedown="startDrag"
+  >
+    <div v-if="!isPreview">
+      <globalNavBar />
+    </div>
+    <div class="progress-bar">
+      <div class="progress" :style="{ width: progress + '%' }"></div>
+    </div>
+    <div class="game-screen">
+      <div class="game-text" v-html="displayText"></div>
+    </div>
+    <div class="game-input">  
+      <input v-model="userInput" @keyup.enter="handleInput" placeholder="Enter your command..." autofocus />
+    </div>
+    <div class="game-controls">
+      <button @click="saveGame">Save</button>
+      <button @click="loadGame">Load</button>
+      <button @click="restartGame">Restart</button>
+      <button @click="quitGame">Quit</button>
+    </div>
+
+    <!-- Conditionally rendered components for preview mode -->
+    <div v-if="isPreview" class="left-side">
+      <previewSetup />
+    </div>
+    <div v-if="isPreview" class="right-side">
+      <previewObjectViewer />
+    </div>
+
+    <!-- Resize handle for preview mode -->
+    <div 
+      v-if="isPreview" 
+      class="resize-handle" 
+      @mousedown="startResize"
+    ></div>
+  </div>
+</template>
 
 <style scoped>
 .game-container {
@@ -214,7 +218,7 @@ onMounted(() => {
 }
 
 .game-input input {
-  width: 80%;
+  width: 100%;
   padding: 0.5rem;
   margin-top: 1rem;
   font-size: 1rem;

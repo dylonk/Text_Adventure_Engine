@@ -16,7 +16,6 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
   const syncer = ref(0)
   const idCounter = ref(1);
   
-
   // Collection of all nodes. Must be synced on any node or edge change
   const globalNodes = new Map([ 
     [0,{e:[],n:[]}] // Pop in global canvas because it's technically not a node with an id
@@ -321,8 +320,57 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
 
   const getAllNodes = () => {
     console.log("🦠💯 getAllNodes()")
-    return Array.from(globalNodes.values()).flatMap(canv => canv.n)
+    return Array.from(globalNodes.values()).flatMap(canv => canv.n)    
+    
   };
+
+  const GameNode = (node, childNodes=[], childEdges=[]) => { //Simplifies the nodes for reading and altering
+    const gNode = {}
+        gNode.id = node.id ? Number(node.id):0
+        gNode.parentID = node.data.parentID ? Number(node.data.parentID):-1
+        gNode.type = node.type ? node.type:"nullType"
+        gNode.data = node.data ? node.data:{}
+        if(node.hasOwnProperty("data")&&node.data.hasOwnProperty("isObject")&&node.data.isObject==true){
+          gNode.isObject =  true
+          gNode.n = childNodes //Stores node IDs
+          gNode.e = childEdges //Stores edge objects
+        }
+        else{
+          gNode.isObject = false
+        }
+    return gNode
+  }
+    
+  
+
+  const compileGame = () =>{
+    const game = {} // any additional props can also be added here
+    const allNodes = new Map()
+    if(ID == 0){
+      const nodeGlobal = {
+          id: 0,
+          parentID: -1,
+          type: "global",
+          data: {object_name: "Global"},
+          isObject: true,
+      }
+      const tGN = GameNode(nodeGlobal,globalNodes.get(0).n,globalNodes.get(0).e)
+      allNodes.set(ID, tGN)
+    }
+
+
+    for(const [ID, canvas] of Object.entries(globalNodes)){
+      for(let node in canvas.n){ // go through all nodes per canvas. add them to the map of all nodes
+        allNodes.set(node.id,GameNode(node))
+        // add child node ids to parent
+        allNodes.set(ID,allNodes.get(ID).n.push(node.id)) 
+      }
+      // add edges to canvas
+      allNodes.set(ID,allNodes.get(ID).e=canvas.e)
+    }
+    return game
+  };
+
   const getLocalNodeIDs = () => {
     console.log("🦠🆔 getLocalNodeIDs()")
     IDS = []
@@ -342,10 +390,10 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
       console.log("   🦠🫴 getNode called on toolbox node")
       return  null;
     }
-    // if(id==0){
-    //   console.log("getNode on global (id=0)")
-    //   return  null;
-    // }
+    if(id==0){
+      console.log("getNode on global (id=0)")
+      return  null;
+    }
       let nodeExists = nodes.value.find((n) => n.id == id);
       if(doGlobal == true){
         globalSync();
@@ -576,5 +624,7 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
     updateEdge,
     deleteEdge,
     getEdge,
+    GameNode,
+    compileGame,
   };
 });
