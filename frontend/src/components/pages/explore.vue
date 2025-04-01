@@ -1,8 +1,33 @@
 <script setup>
 import globalNavBar from '@/components/standardjs/navbar.vue'
+import axios from 'axios';
+import { ref, onMounted } from 'vue';   
+
+
+
+
+
+const recentGames = ref([]);
+
 function goToHome() {
       this.$router.push('/')
 }
+const fetchGames = async () => {
+
+  try {
+    console.log('Fetching all games');
+    const response = await axios.get(`http://localhost:5000/games/`);
+    recentGames.value = response.data.map(game => ({
+      id: game.id,
+      title: game.title,
+      image: 'https://talentclick.com/wp-content/uploads/2021/08/placeholder-image.png'
+    }));
+  } catch (error) {
+    console.error('Error fetching projects:', error);
+  }
+};
+onMounted(fetchGames);
+
 </script>
 
 <template>
@@ -11,8 +36,8 @@ function goToHome() {
         <input type="search" name="search-bar" placeholder="SEARCH">
     </form>
     <div class="games-section">
-        <div class="game" v-for="i in 12" :key="i"> <!--lOOP FROM BACKEND -->
-            <div class="gametitle">Fake Game {{ i }}</div>
+        <div class="game" v-for="game in recentGames" :key="i"> <!--lOOP FROM BACKEND -->
+            <div class="gametitle">{{game.title}}</div>
             <div class="gamepic"><img src="https://i.pinimg.com/736x/13/34/75/133475f2b4de23314a01df9a61f85436.jpg"> </div>
         </div>
     </div>

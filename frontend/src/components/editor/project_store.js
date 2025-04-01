@@ -86,7 +86,69 @@
       }
     }
 
-        //the below function saves the project to a file on the users computer
+    //important function! publishes the game to the database as a json. makes use of the compile_game function in nodesStore.
+    //unlike project, it has args. They're just metadata that the player inputs on the publish page, might not be whats in the project store.
+    async function exportGame(title,description,thumbnail) {  
+      console.log("exportGame called");
+      const token = localStorage.getItem('token');  //gotta get the token to make sure user logged in
+      if (!token) {
+        console.log('No token found. Cannot save game');
+        return null;
+      }
+      try {
+        const response = await fetch('http://localhost:5000/auth/user', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,  // Pass the JWT token in the Authorization header
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch user data');
+        }
+
+        const userData = await response.json();
+        userid.value = userData._id;  // all this just to get the users id. If only i was less lazy and made this more modular.
+        console.log("user id is", userid.value);
+
+    } catch (error) {
+        console.error('Error fetching user profile:', error);
+    }
+
+
+      // Prepare Game data
+      const Game = {
+        id: projectId.value,
+        userId: userid.value,
+        title: title,
+        description: description,
+        //thumbnail: thumbnail,
+        gameData: useNodesStore().compileGame()
+      };
+
+      // Here you would typically send this to your backend
+      try {
+        console.log('Exporting game:', Game);
+        const response = await fetch('http://localhost:5000/games/save', {  //tries to POST the data to the game save route in backend
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'  //json
+          },
+          body: JSON.stringify(Game)   //json stringifies this data
+                });
+        if (!response.ok) {
+          const errorDetail = await response.text();  // Get error response details
+          throw new Error(`Exportfailed: ${errorDetail}`);
+        }
+
+      } catch (error) {
+        console.error('Failed to export game', error);
+        return null;
+      }
+    }
+
+    //the below function saves the project to a file on the users computer
     //mostly useful for demonstration bypassing that dumbass firewall
     async function saveProjectToFile() {
       console.log("saveProjectToFile called");
@@ -313,7 +375,8 @@
       openProjectFromFile,
       initProject,
       openProject,
-      deleteProject
+      deleteProject,
+      exportGame
      // nodeCount,
      // roomCount,
      // itemCount,

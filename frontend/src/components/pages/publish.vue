@@ -2,6 +2,8 @@
 import globalNavBar from '@/components/standardjs/navbar.vue';
 import Toastify from 'toastify-js';
 import 'toastify-js/src/toastify.css';
+import Project from './project.vue';
+import { useProjectStore } from '../editor/project_store';
 
 
 export default {
@@ -40,7 +42,7 @@ export default {
       }
     },
     async publishGame() {
-      if (!this.title || !this.description || !this.thumbnail) {
+      if (!this.title || !this.description || this.thumbnail) {
         this.showToast("Please fill in all fields before publishing.", "error");
         return;
       }
@@ -54,6 +56,7 @@ export default {
         formData.append("title", this.title);
         formData.append("description", this.description);
         formData.append("thumbnail", this.thumbnail);
+        useProjectStore().exportGame(this.title, this.description, this.thumbnail);
 
         // Simulated API call
         await new Promise(resolve => setTimeout(resolve, 2000)); // simulate delay of 2 seconds

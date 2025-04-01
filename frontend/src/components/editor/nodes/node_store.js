@@ -346,7 +346,6 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
   const compileGame = () =>{
     const game = {} // any additional props can also be added here
     const allNodes = new Map()
-    if(ID == 0){
       const nodeGlobal = {
           id: 0,
           parentID: -1,
@@ -355,12 +354,13 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
           isObject: true,
       }
       const tGN = GameNode(nodeGlobal,globalNodes.get(0).n,globalNodes.get(0).e)
-      allNodes.set(ID, tGN)
-    }
+      allNodes.set(0, tGN)
+    
 
 
     for(const [ID, canvas] of Object.entries(globalNodes)){
       for(let node in canvas.n){ // go through all nodes per canvas. add them to the map of all nodes
+        console.log("🦠💯 compiledNode: canvas",ID,"node",node)
         allNodes.set(node.id,GameNode(node))
         // add child node ids to parent
         allNodes.set(ID,allNodes.get(ID).n.push(node.id)) 
@@ -368,8 +368,12 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
       // add edges to canvas
       allNodes.set(ID,allNodes.get(ID).e=canvas.e)
     }
+    console.log("compiled game",game)
     return game
   };
+
+
+
 
   const getLocalNodeIDs = () => {
     console.log("🦠🆔 getLocalNodeIDs()")

@@ -22,9 +22,8 @@ const gameContainer = ref(null);
 onMounted(() => {
   if (props.isPreview) {
     gameContainer.value.style.position = 'absolute';
-    Game.compileGame(NS.globalNodes);
-  }
-  Game.start();
+    Game.start(NS.compileGame());
+  } 
 });
 
 const text = computed(()=>{

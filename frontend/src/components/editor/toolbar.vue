@@ -1,5 +1,6 @@
 <script setup>
 
+import router from '../pages/router.js';
 import { useProjectStore } from './project_store.js';
 import { ref } from 'vue';
 const projectStore = useProjectStore();
@@ -18,6 +19,8 @@ const projectStore = useProjectStore();
           <a href="#"@click="useProjectStore().openProjectFromFile()">Load from file</a>
           <a href="#"@click="useProjectStore().renameProject()">Rename</a>
           <a href="#"@click="useProjectStore().deleteProject()">Delete</a>
+          <a href="#"@click="router.push('/publish')">Publish</a>
+
         </div>
       </div>
   
