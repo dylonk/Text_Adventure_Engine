@@ -15,6 +15,7 @@ const NS = useNodesStore()
 const defaultObjData =  { //This is the data that this component contributes. Any existing properties within the functional node data will be replaced
     function_name: 'defaultFunction()',
     function_params: [],
+    isFunction:true,
   }
   console.log("func_base.vue: ReferenceID is = " + props.id)
   NS.contributeNodeData(props.id,defaultObjData);

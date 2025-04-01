@@ -31,11 +31,11 @@ const fetchProjects = async () => {
     userId.value = userData._id;
 
   } catch (error) {
-    console.error('Error fetching user profile:', error);
+    console.warn('Error fetching user profile:', error);
   }
 
   try {
-    console.log('Fetching projects for user:', userId.value);
+    console.warn('Fetching projects for user:', userId.value);
     const response = await axios.get(`http://localhost:5000/projects?userId=${userId.value}`);
     recentProjects.value = response.data.map(project => ({
       id: project.id,
@@ -43,7 +43,7 @@ const fetchProjects = async () => {
       image: 'https://talentclick.com/wp-content/uploads/2021/08/placeholder-image.png'
     }));
   } catch (error) {
-    console.error('Error fetching projects:', error);
+    console.warn('Error fetching projects:', error);
   }
 };
 
@@ -54,7 +54,7 @@ const deleteProject = async (id) => {
     projectStore.deleteProject(id);
     recentProjects.value = recentProjects.value.filter(project => project.id !== id);
   } catch (error) {
-    console.error("Error deleting project:", error);
+    console.warn("Error deleting project:", error);
   }
 };
 
@@ -68,7 +68,7 @@ const renameProject = async (id) => {
     const project = recentProjects.value.find(p => p.id === id);
     if (project) project.title = newTitle;
   } catch (error) {
-    console.error("Error renaming project:", error);
+    console.warn("Error renaming project:", error);
   }
 };
 

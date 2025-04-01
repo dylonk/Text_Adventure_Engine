@@ -327,48 +327,62 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
   const GameNode = (node, childNodes=[], childEdges=[]) => { //Simplifies the nodes for reading and altering
     const gNode = {}
         gNode.id = node.id ? Number(node.id):0
-        gNode.parentID = node.data.parentID ? Number(node.data.parentID):-1
+        gNode.parentID = node.data.parentID||node.data.parentID==0 ? Number(node.data.parentID):-1
         gNode.type = node.type ? node.type:"nullType"
-        gNode.data = node.data ? node.data:{}
-        if(node.hasOwnProperty("data")&&node.data.hasOwnProperty("isObject")&&node.data.isObject==true){
-          gNode.isObject =  true
+        gNode.data = node.data ? {...node.data}:{}
+        gNode.isObject = node.data.isObject ? node.data.isObject:false 
+        gNode.isFunction = node.data.isFunction ? node.data.isFunction:false 
+
+        if(gNode.isObject){
+          gNode.objectName = node.data.object_name
           gNode.n = childNodes //Stores node IDs
           gNode.e = childEdges //Stores edge objects
         }
-        else{
-          gNode.isObject = false
+        if(gNode.isFunction){
+          gNode.functionName = node.data.function_name
+          gNode.functionParams = node.data.function_params   
         }
+
+    console.log("🦠🎮 GameNode(",node,")")
     return gNode
   }
     
   
 
   const compileGame = () =>{
+    globalSync(true)
     const game = {} // any additional props can also be added here
     const allNodes = new Map()
       const nodeGlobal = {
           id: 0,
           parentID: -1,
           type: "global",
-          data: {object_name: "Global"},
-          isObject: true,
+          data: {object_name: "Global", isObject: true, parentID:-1,
+          },
       }
-      const tGN = GameNode(nodeGlobal,globalNodes.get(0).n,globalNodes.get(0).e)
+      const tGN = GameNode(nodeGlobal)
       allNodes.set(0, tGN)
-    
 
 
-    for(const [ID, canvas] of Object.entries(globalNodes)){
-      for(let node in canvas.n){ // go through all nodes per canvas. add them to the map of all nodes
-        console.log("🦠💯 compiledNode: canvas",ID,"node",node)
+    for(const [ID, canvas] of globalNodes){
+      console.log("🚢🎮 compiledNode: ID",ID,"canvas",canvas)
+      for(const node of canvas.n){ // go through all nodes per canvas. add them to the map of all nodes
+        console.log("🚢🎮 compiledNode: canvas",ID,"node",node)
+        // add node to global map
         allNodes.set(node.id,GameNode(node))
         // add child node ids to parent
-        allNodes.set(ID,allNodes.get(ID).n.push(node.id)) 
+        const tNode2 = allNodes.get(ID)
+        tNode2.n.push(Number(node.id))
+
+        allNodes.set(ID,tNode2) 
       }
       // add edges to canvas
-      allNodes.set(ID,allNodes.get(ID).e=canvas.e)
+      const tNode = allNodes.get(ID)
+      tNode.e = [...canvas.e]
+      allNodes.set(ID,tNode)
     }
-    console.log("compiled game",game)
+    game.nodeMap=allNodes
+    console.log("🚢🎮 GAME COMPILED",game)
     return game
   };
 

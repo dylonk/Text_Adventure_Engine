@@ -23,7 +23,7 @@ const fetchGames = async () => {
       image: 'https://talentclick.com/wp-content/uploads/2021/08/placeholder-image.png'
     }));
   } catch (error) {
-    console.error('Error fetching projects:', error);
+    console.warn('Error fetching projects:', error);
   }
 };
 onMounted(fetchGames);

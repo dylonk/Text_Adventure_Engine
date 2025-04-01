@@ -25,6 +25,6 @@ export async function fetchUserData(attribute = null) {
         console.log("fetched user data", data[attribute]);
         return attribute ? data[attribute] : data;
     } catch (error) {
-        console.error('Error fetching user profile:', error);
+        console.warn('Error fetching user profile:', error);
     }
 }

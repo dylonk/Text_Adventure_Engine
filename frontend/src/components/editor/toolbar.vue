@@ -13,12 +13,11 @@ const projectStore = useProjectStore();
       <div class="dropdown">
         <button class="dropbtn" @click="toggleMenu('menu1')">file</button>
         <div class="dropdown-content" v-if="menu1Open">
-          <a href="#">Open</a>
           <a href="#"@click="useProjectStore().exportProject()">Save</a>
-          <a href="#"@click="useProjectStore().saveProjectToFile()">Save to file</a>
-          <a href="#"@click="useProjectStore().openProjectFromFile()">Load from file</a>
           <a href="#"@click="useProjectStore().renameProject()">Rename</a>
-          <a href="#"@click="useProjectStore().deleteProject()">Delete</a>
+          <a href="#"@click="useProjectStore().saveProjectToFile()">Export Project</a>
+          <a href="#"@click="useProjectStore().openProjectFromFile()">Import Project</a>
+          <!-- <a href="#"@click="useProjectStore().deleteProject()">Delete</a> -->
           <a href="#"@click="router.push('/publish')">Publish</a>
 
         </div>
