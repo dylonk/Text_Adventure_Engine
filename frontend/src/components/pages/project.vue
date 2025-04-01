@@ -86,10 +86,28 @@ function newProject() {
   projectStore.initProject();
 }
 
-function loadProject(id) {
+function loadProjectFile() {
   playClickSound();
+  const fileInput = document.createElement('input');
+  fileInput.type = 'file';
   router.push('/create');
-  projectStore.openProject(id);
+  return new Promise((resolve, reject) => {
+    fileInput.onchange = async () => {
+      try {
+        const file = fileInput.files[0];  // Get the selected file
+        if (file) {
+          // Call the openProjectFromFile method in project store
+          projectStore.openProjectFromFile(file);
+          resolve();  // Resolve the promise once the project is loaded
+        } else {
+          reject('No file selected');
+        }
+      } catch (error) {
+        reject('Failed to load project from file: ' + error.message);
+      }
+    };
+    fileInput.click();  // Trigger the file input dialog
+  });
 }
 </script>
 
@@ -105,7 +123,7 @@ function loadProject(id) {
       
       <div class="right-container">
         <button class="project-button" @click="newProject">New Project</button>
-        <button class="project-button" @click="loadProject">Load Project</button>
+        <button class="project-button" @click="loadProjectFile">Load Project From File</button>
       </div>
     </div>
 
