@@ -329,7 +329,7 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
         gNode.id = node.id ? Number(node.id):0
         gNode.parentID = node.data.parentID||node.data.parentID==0 ? Number(node.data.parentID):-1
         gNode.type = node.type ? node.type:"nullType"
-        gNode.data = node.data ? {...node.data}:{}
+        gNode.data = node.data ? {...node.data}:{} // important for removing proxies
         gNode.isObject = node.data.isObject ? node.data.isObject:false 
         gNode.isFunction = node.data.isFunction ? node.data.isFunction:false 
 
@@ -340,7 +340,7 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
         }
         if(gNode.isFunction){
           gNode.functionName = node.data.function_name
-          gNode.functionParams = node.data.function_params   
+          gNode.functionParams = [...node.data.function_params]   
         }
 
     console.log("🦠🎮 GameNode(",node,")")

@@ -86,6 +86,8 @@
       }
     }
 
+
+
     //important function! publishes the game to the database as a json. makes use of the compile_game function in nodesStore.
     //unlike project, it has args. They're just metadata that the player inputs on the publish page, might not be whats in the project store.
     async function exportGame(title,description,thumbnail) {  
@@ -376,11 +378,8 @@
       initProject,
       openProject,
       deleteProject,
-      exportGame
-     // nodeCount,
-     // roomCount,
-     // itemCount,
-     // promptCount
+      exportGame,
+      
     };
 
   });
