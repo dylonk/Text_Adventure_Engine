@@ -86,6 +86,49 @@
       }
     }
 
+        //the below function saves the project to a file on the users computer
+    //mostly useful for demonstration bypassing that dumbass firewall
+    async function saveProjectToFile() {
+      console.log("saveProjectToFile called");
+    
+      const projectData = {
+        id: projectId.value,
+        userId: userid.value,
+        name: projectName.value,
+        nodes: useNodesStore().nodes,
+        edges: useNodesStore().edges,
+        object_count: useNodesStore().object_count,
+        idCounter: useNodesStore().idCounter
+      };
+    
+      try {
+        console.log('Saving project:', projectData);
+    
+        // Convert project data to a JSON string
+        const fileData = JSON.stringify(projectData);
+    
+        // Create a Blob from the file data
+        const blob = new Blob([fileData], { type: 'application/json' });
+    
+        // Create an object URL for the Blob
+        const url = URL.createObjectURL(blob);
+    
+        // Create a temporary anchor element to trigger the download
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'project.json';  // Filename for the downloaded file
+        a.click();  // Programmatically click the anchor to trigger the download
+    
+        // Clean up the object URL after the download is triggered
+        URL.revokeObjectURL(url);
+    
+        console.log('Project saved successfully!');
+      } catch (error) {
+        console.error('Failed to save project', error);
+      }
+    }
+    
+
     //initializes a new project. changed functionality 3/4 to only be initting of new project, deleting everything else.
     //in the future we'll also init global settings. Global settings will probably end up being some sort of array to make it easier
     function initProject()     
@@ -114,15 +157,94 @@
         //waits for the projectData. in the future we can also store global settings here. Like pretty much anything in a project-wide scope
         //being real when we get more general settings we could probably afford to place stuff like idcounter in a list of settings and just import that. again, all just organizational
         const projectData = await response.json();  
-        projectName.value = projectData.name;
-        projectId.value = projectData.id;
-        useNodesStore().nodes = projectData.nodes;
-        useNodesStore().edges = projectData.edges;
-        useNodesStore().idCounter = projectData.idCounter;
-        useNodesStore().object_count = projectData.object_count;
+        loadProjectData(projectData);
         } catch (error) {
           console.error('Failed to open project', error);
         };
+    }
+
+    function openProjectFromFile(file = null) {
+      console.log("openProjectFromFile called");
+    
+      // Case 1: If no file is passed, trigger the file input (toolbar action)
+      if (!file) {
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        
+        // Return a Promise that resolves when a file is selected
+        return new Promise((resolve, reject) => {
+          // Handle file selection
+          fileInput.onchange = () => {
+            try {
+              const selectedFile = fileInput.files[0];  // Get the selected file
+              if (selectedFile) {
+                resolve(selectedFile);  // Resolve the promise with the selected file
+              } else {
+                reject('No file selected');
+              }
+            } catch (error) {
+              reject('Failed to load project from file: ' + error.message);
+            }
+          };
+    
+          fileInput.click();  // Open the file input dialog
+        }).then((selectedFile) => {
+          // This block executes once the file is selected
+          return readFile(selectedFile);  // Read the selected file and return its content
+        }).then((projectData) => {
+          // This block executes once the file is read and parsed
+          loadProjectData(projectData);  // Load the project data into your app
+        }).catch((error) => {
+          console.error('Error in file handling:', error);
+        });
+      }
+    
+      // Case 2: If a file is passed directly, read it and process the project data
+      try {
+        const reader = new FileReader();
+        reader.onload = async () => {
+          try {
+            // Parse the JSON data from the file
+            const projectData = JSON.parse(reader.result);
+            loadProjectData(projectData);
+          } catch (error) {
+            console.error('Failed to parse project data from file', error);
+          }
+        };
+    
+        // Read the file as text
+        reader.readAsText(file);
+    
+      } catch (error) {
+        console.error('Failed to open project from file', error);
+      }
+    }
+    
+    // Helper function to read and parse the file content
+    function readFile(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const projectData = JSON.parse(reader.result);
+            resolve(projectData);  // Resolve with the parsed project data
+          } catch (error) {
+            reject('Failed to parse project data');
+          }
+        };
+        reader.onerror = reject;
+        reader.readAsText(file);  // Read the file as text
+      });
+    }
+
+    //helper function, just loads the project data into the store
+    function loadProjectData(projectData) {
+      projectName.value = projectData.name;
+      projectId.value = projectData.id;
+      useNodesStore().nodes = projectData.nodes;
+      useNodesStore().edges = projectData.edges;
+      useNodesStore().idCounter = projectData.idCounter;
+      useNodesStore().object_count = projectData.object_count;
     }
 
     
@@ -187,6 +309,8 @@
       showPreview,
       renameProject,
       exportProject,
+      saveProjectToFile,
+      openProjectFromFile,
       initProject,
       openProject,
       deleteProject
