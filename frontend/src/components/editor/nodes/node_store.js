@@ -41,6 +41,7 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
 
 
   const globalSync = (important=false) => {
+    console.log(toRaw(globalNodes)); // Look at the raw value
     // Store current nodes and edges in canvas object
     if(important==true){
        syncer.value+=1; 
@@ -55,6 +56,7 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
     // 
   }
   const localSync = () => { //gets nodes as they are within the global map
+
     console.log("   🏠🔄 localSync()")
     const canvas = globalNodes.get(canvasID.value);
     console.log("   🏠🔄 localSync current canvas node =", canvas)
@@ -651,6 +653,7 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
     nodes,
     edges,
     idCounter,
+    globalNodes,
     getNode,
     getAllNodes,
     getLocalNodeIDs,

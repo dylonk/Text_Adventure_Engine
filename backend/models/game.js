@@ -25,7 +25,7 @@ const GameSchema = new mongoose.Schema({
   },
 
 
-  GameData: {      //array of nodes. This will hopefully get smart
+  gameData: {      //array of nodes. This will hopefully get smart
     type: mongoose.Schema.Types.Mixed, // Or define a more specific schema if possible
     default: []
   },

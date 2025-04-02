@@ -16,6 +16,12 @@ const router = express.Router();
       const { id, userId,title,description,gameData} = req.body;  
       console.log("id is", id, "title is", title);  //ok, so it successfully gets ID and name of the project
       console.log("sent user id is", userId);
+      console.log("Received game data:", gameData);  // Log the gameData to see what's being passed
+             // If gameData is undefined or empty, try logging the full body and checking its structure
+             if (!gameData) {
+                console.log("GameData is missing or empty in the request body");
+                return res.status(400).json({ message: 'GameData missing in the request' });
+            }
       // Create or update the game
       const game = await Game.findOneAndUpdate(
         { id: id },           // Filter to find the document
@@ -24,7 +30,7 @@ const router = express.Router();
           title: title,
           description: description,
           //thumbnail: thumbnail,
-          GameData: gameData
+          gameData: gameData
         },                    // Update object
         { upsert: true, new: true }  // Options
       );
@@ -50,3 +56,14 @@ const router = express.Router();
     }
   });
   module.exports = router;  //gotta export the router
+
+// converts gamedata back to a map. we're probably gonna need this to keep games playable 
+function serializableToMap(obj) {
+    const map = new Map();
+    for (const key in obj) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        map.set(Number(key), obj[key]);
+      }
+    }
+    return map;
+  }

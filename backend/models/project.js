@@ -21,11 +21,6 @@ const ProjectSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.Mixed, // Or define a more specific schema if possible
     default: []
   },
-  edges: {      //array of nodes. This will hopefully get smart
-    type: mongoose.Schema.Types.Mixed, // Or define a more specific schema if possible
-    default: []
-  },
-
   //stuff below is kind of pushing it and doesn't really need to have it's own singular field 
   // I'll probably just rewrite this all to be a more convenient data structure. but i just want it working for now
   idCounter: {

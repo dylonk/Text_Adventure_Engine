@@ -1,5 +1,5 @@
   import { defineStore } from 'pinia';
-  import { ref, computed } from 'vue';
+  import { ref, computed,markRaw } from 'vue';
   import { useNodesStore } from './nodes/node_store.js';  //imports from node store
   import { v4 as uuidv4 } from 'uuid';
 
@@ -9,7 +9,7 @@
     const projectId = ref('');
     const userid = ref('');
 
-
+    const nodesStore = useNodesStore();
 
     //project settings This one doesn't really need to be arrayed because it doesn't need to persist through sessions
     const showPreview = ref(false);
@@ -53,15 +53,8 @@
 
 
       // Prepare project data
-      const projectData = {
-        id: projectId.value,
-        userId: userid.value,
-        name: projectName.value,
-        nodes: useNodesStore().nodes,
-        edges: useNodesStore().edges,
-        object_count: useNodesStore().object_count,
-        idCounter: useNodesStore().idCounter
-      };
+      console.log("before compileproject:", nodesStore.globalNodes);
+      const projectData = compileProject();
 
       // Here you would typically send this to your backend
       try {
@@ -118,7 +111,8 @@
         console.error('Error fetching user profile:', error);
     }
 
-
+      const thisGame=nodesStore.compileGame();
+      thisGame.nodeMap = mapToSerializable(thisGame.nodeMap);
       // Prepare Game data
       const Game = {
         id: projectId.value,
@@ -126,12 +120,12 @@
         title: title,
         description: description,
         //thumbnail: thumbnail,
-        gameData: useNodesStore().compileGame()
+        gameData: thisGame
       };
 
       // Here you would typically send this to your backend
       try {
-        console.log('Exporting game:', Game);
+        console.log('Exporting game:', JSON.stringify(Game));
         const response = await fetch('http://localhost:5000/games/save', {  //tries to POST the data to the game save route in backend
           method: 'POST',
           headers: {
@@ -150,23 +144,24 @@
       }
     }
 
+    // Helper function to convert Map to serializable object. This needs to be done for jsonification for backend saving. in localstorage we should just be able to use/modify the game directly
+    function mapToSerializable(map) {
+      const obj = {};
+      for (const [key, value] of map.entries()) {
+        obj[key] = value;
+      }
+      return obj;
+    }
+
     //the below function saves the project to a file on the users computer
     //mostly useful for demonstration bypassing that dumbass firewall
     async function saveProjectToFile() {
       console.log("saveProjectToFile called");
     
-      const projectData = {
-        id: projectId.value,
-        userId: userid.value,
-        name: projectName.value,
-        nodes: useNodesStore().nodes,
-        edges: useNodesStore().edges,
-        object_count: useNodesStore().object_count,
-        idCounter: useNodesStore().idCounter
-      };
-    
+      console.log("before compileproject:", nodesStore.globalNodes);
+      const projectData=compileProject();
+      console.log("after compileproject:", projectData.nodes);
       try {
-        console.log('Saving project:', projectData);
     
         // Convert project data to a JSON string
         const fileData = JSON.stringify(projectData);
@@ -191,6 +186,26 @@
         console.error('Failed to save project', error);
       }
     }
+
+    //so we don't repeat ourselves. just compiles the project into a projectData 
+    function compileProject()
+    {
+      const nodesArray = Array.from(nodesStore.globalNodes.entries()).map(([id, nodeData]) => {
+        return {
+          id,
+          data: nodeData
+        };
+      });
+      const projectData = {
+        id: projectId.value,
+        userId: userid.value,
+        name: projectName.value,
+        nodes: nodesArray,
+        object_count: nodesStore.object_count,
+        idCounter: nodesStore.idCounter
+      };
+      return projectData;
+    }
     
 
     //initializes a new project. changed functionality 3/4 to only be initting of new project, deleting everything else.
@@ -200,7 +215,7 @@
         console.log("initProject called");
         projectId.value = uuidv4();
         projectName.value = "New Project";
-        useNodesStore().initNodes(); //also have a seperate init function for nodestore. could have all been in this function, just an organizational choice
+        nodesStore.initNodes(); //also have a seperate init function for nodestore. could have all been in this function, just an organizational choice
         console.log("initted project with id", projectId.value, "and name", projectName.value);
       }
 
@@ -271,6 +286,8 @@
             // Parse the JSON data from the file
             const projectData = JSON.parse(reader.result);
             loadProjectData(projectData);
+            console.log("globalnodes in middle of openProjectFromFile", nodesStore.globalNodes);
+            console.log('loading project:', projectData);
           } catch (error) {
             console.error('Failed to parse project data from file', error);
           }
@@ -301,14 +318,21 @@
       });
     }
 
-    //helper function, just loads the project data into the store
-    function loadProjectData(projectData) {
+    //helper function, just loads the project data into the store from it's jsonified state
+    function loadProjectData(projectData) { //it needs to do this to convert stuff back into a map
+      const nodesMap = new Map(
+        projectData.nodes.map(item => [item.id, item.data])
+      );
       projectName.value = projectData.name;
       projectId.value = projectData.id;
-      useNodesStore().nodes = projectData.nodes;
-      useNodesStore().edges = projectData.edges;
-      useNodesStore().idCounter = projectData.idCounter;
-      useNodesStore().object_count = projectData.object_count;
+      console.log("created nodes map", nodesMap);
+      //nodesStore.globalNodes = nodesMap;
+      nodesStore.globalNodes = markRaw(nodesMap); // Prevent Vue from proxying it
+      nodesStore.idCounter = projectData.idCounter;
+      nodesStore.object_count = projectData.object_count;
+      console.log(nodesStore.globalNodes);
+      nodesStore.localSync();
+      nodesStore.globalSync();
     }
 
     
@@ -337,22 +361,22 @@
     // Computed properties for project insights. Good idea but commenting out for now
     /*
     const nodeCount = computed(() => {
-      const nodesStore = useNodesStore();
+      const nodesStore = nodesStore;
       return nodesStore.getAllNodes().length;
     });
 
     const roomCount = computed(() => {
-      const nodesStore = useNodesStore();
+      const nodesStore = nodesStore;
       return nodesStore.nodes.rooms.length;
     });
 
     const itemCount = computed(() => {
-      const nodesStore = useNodesStore();
+      const nodesStore = nodesStore;
       return nodesStore.nodes.items.length;
     });
 
     const promptCount = computed(() => {
-      const nodesStore = useNodesStore();
+      const nodesStore = nodesStore;
       return nodesStore.nodes.prompts.length;
     });
   */
