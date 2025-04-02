@@ -16,13 +16,16 @@
           <button @click="loadGame">Load</button>
           <button @click="restartGame">Restart</button>
           <button @click="quitGame">Quit</button>
+          <div class="tts-toggle">
+            <button @click="toggleTTS"><img src="@/assets/images/speaker_icon.png" width="40" height="40" style="padding:0 rem; padding-top:0.25rem"/></button>
+          </div>
         </div>
       </div>
     </div>
   </template>
   
   <script setup>
-  import { ref, onMounted, nextTick } from 'vue';
+  import { ref, onMounted, nextTick, watch } from 'vue';
   import globalNavBar from '@/components/standardjs/navbar.vue';
   
   const text = ref(`Welcome to the Enchanted Forest!<br><br>
@@ -34,6 +37,8 @@
   const typingIndex = ref(0);
   const progress = ref(0);
   const gameScreen = ref(null);
+  const ttsTog = ref(0);
+  const words = ref('');
   
   const startTypingEffect = () => {
     if (typingIndex.value < text.value.length) {
@@ -42,6 +47,41 @@
       setTimeout(startTypingEffect, 30);
     }
   };
+
+const toggleTTS = () => {
+  if(ttsTog.value == 0) {
+    ttsTog.value = 1;
+    words.value = displayText.value;
+    let newWords = words.value.split('<br>').join('');
+    newWords = newWords.split('<span class=\'user-input\'>>').join('');
+    newWords = newWords.split('<span class=\'highlight\'>').join('');
+    newWords = newWords.split('</span>').join('');
+    if (speechSynthesis.speaking) {
+      speechSynthesis.cancel();
+    }
+    const spokenWords = new SpeechSynthesisUtterance(newWords);
+    speechSynthesis.speak(spokenWords);
+  }
+  else {
+    ttsTog.value = 0;
+    speechSynthesis.cancel();
+  }
+};
+
+watch(displayText, (newValue, oldValue) => {
+  if(displayText.value.length >= text.value.length && ttsTog.value == 1) {
+    console.log('New words');
+    let newWords = displayText.value.replace(words.value, "");
+    words.value = displayText.value;
+    newWords = newWords.split('<br>').join('');
+    newWords = newWords.split('<span class=\'user-input\'>>').join('');
+    newWords = newWords.split('<span class=\'highlight\'>').join('');
+    newWords = newWords.split('</span>').join('');
+    speechSynthesis.cancel();
+    const spokenWords = new SpeechSynthesisUtterance(newWords);
+    speechSynthesis.speak(spokenWords);
+  }
+});
   
   const handleInput = () => {
     if (userInput.value.trim()) {
