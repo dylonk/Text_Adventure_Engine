@@ -4,6 +4,7 @@ import { ref, defineProps, computed } from 'vue';
 
 const props = defineProps({
     id: -10,
+    hasConnection: false,
 })
 import { useNodesStore } from '@/components/editor/nodes/node_store'
 const NS = useNodesStore()

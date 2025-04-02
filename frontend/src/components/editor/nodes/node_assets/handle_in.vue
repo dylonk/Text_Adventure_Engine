@@ -10,13 +10,15 @@ const NS = useNodesStore()
 const handleTitle = ref("badhandle")
 
 handleTitle.value = NS.addHandle(props.id,'target')
-
+function deleteEdges(){
+    NS.deleteEdgeByHandle(handleTitle.value)
+}
 </script>
 
 
 <template>
     <div class="handle-container">
-        <Handle :id="handleTitle" class="vue-flow__handle" type="target" :position="Position.Left" />
+        <Handle @click="deleteEdges()" :id="handleTitle" class="vue-flow__handle" type="target" :position="Position.Left" />
     </div>
 </template>
 <style scoped>
@@ -35,5 +37,8 @@ handleTitle.value = NS.addHandle(props.id,'target')
     height:24px;
     width:10px;
     border-radius:4px
+}
+.vue-flow__handle:hover{
+    border: solid red 2px;
 }
 </style>

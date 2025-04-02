@@ -28,7 +28,6 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
     item: 0,
     npc: 0,
     pathway: 0,
-    player:0,
     custom: 0,
   });
   function incrementCount(key) {
@@ -86,7 +85,8 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
     node.data.parentID = canvasID.value;
     node.data.srcHandles = 0 //source handles
     node.data.tgtHandles = 0 //target handles
-    
+    node.data.inputEdges = {}
+    node.data.outputEdges = {}
 
     node.data.nodeDepth = 1;
     if(canvasID.value != 0){
@@ -99,17 +99,22 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
       node.type == "room" ||
       node.type == "item" ||
       node.type == "pathway" ||
-      node.type == "player" ||
       node.type == "npc" ||
       node.type == "custom"
-    ) {
+    ){
       incrementCount(node.type);
       console.log("🦠➕ object name shoudl be", node.type + object_count[node.type]);
       node.data.object_name = node.type + object_count[node.type];
       nodes.value.push(node);
       console.log("🦠➕ After adding:", nodes);
 
-    } else {  //if the node is a function
+    }
+    else if(node.type == "player"){
+      node.data.object_name = "player"
+      nodes.value.push(node);
+      console.log("🦠➕ After adding:", nodes);
+    } 
+    else {  //if the node is a function
       nodes.value.push(node);
       console.log("🦠➕ function added with id", node.id);
     }
@@ -280,6 +285,8 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
       const nodeId = (id);
     
       const nodeExists = getNode(id,true);
+
+      //TODO: Need to implement deleting the ID for inputEdge and outputEdge for connected edges
       if (nodeExists) {
         console.log(`Node with id ${id} exists in objects, deleting...`);
         console.log("Before:", nodes);
@@ -332,16 +339,21 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
         gNode.data = node.data ? {...node.data}:{} // important for removing proxies
         gNode.isObject = node.data.isObject ? node.data.isObject:false 
         gNode.isFunction = node.data.isFunction ? node.data.isFunction:false 
+        gNode.edgesIn = []
+        gNode.edgesOut = []
+        gNode.inScope = false
 
         if(gNode.isObject){
           gNode.objectName = node.data.object_name
+          gNode.properties = node.data.properties ? {...node.data.properties}:{}
           gNode.n = childNodes //Stores node IDs
-          gNode.e = childEdges //Stores edge objects
+          // no need for global edge store with compiled games
         }
         if(gNode.isFunction){
           gNode.functionName = node.data.function_name
           gNode.functionParams = [...node.data.function_params]   
         }
+
 
     console.log("🦠🎮 GameNode(",node,")")
     return gNode
@@ -374,11 +386,10 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
         const tNode2 = allNodes.get(ID)
         tNode2.n.push(Number(node.id))
 
-        allNodes.set(ID,tNode2) 
+        allNodes.set(Number(ID),tNode2) 
       }
       // add edges to canvas
       const tNode = allNodes.get(ID)
-      tNode.e = [...canvas.e]
       allNodes.set(ID,tNode)
     }
     game.nodeMap=allNodes
@@ -450,7 +461,6 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
       console.error(`📏➕Edge from ${edge.source} to ${edge.target} already exists`);
       return;
     }
-    
     // Ensure the edge has a unique ID if not provided
     if (!edge.id) {
       edge.id = `${edge.sourceHandle}>${edge.targetHandle}`;
@@ -460,7 +470,18 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
     if (!edge.type) {
       edge.type = 'default';
     }
-    
+    // adding connection to node connections
+    let srcHandleIndex = edge.id.match(/s(\d+)/);
+    let tgtHandleIndex = edge.id.match(/t(\d+)/);
+    tgtHandleIndex = tgtHandleIndex[1]
+    srcHandleIndex = srcHandleIndex[1]
+
+
+    getNode(Number(edge.source)).data.outputEdges[Number(srcHandleIndex)]=Number(edge.target)
+    getNode(Number(edge.target)).data.inputEdges[Number(tgtHandleIndex)]=Number(edge.source)
+
+    // node.data.srcHandles = 0 //source handles
+    // node.data.tgtHandles
     // Add the edge
     edges.value.push(edge);
     console.log("📏➕ After adding edge:", edges.value);
@@ -524,6 +545,12 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
     globalSync();
   };
 
+  const deleteEdgeByHandle = (handleID) => { //should be in the form of 1s0 or 30t12
+    console.log("📏🗑️ deleteEdgeByHandle(handleID=", handleID,")")
+    for(const edge of edges.value){
+      if(edge.id.includes(handleID)) deleteEdge(edge.id)
+    }
+  }
   const deleteEdge = (id) => {
     console.log("📏🗑️ deleteEdge(id=", id,")")
     const edgeExists = edges.value.find(e => e.id === id);
@@ -531,7 +558,14 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
       console.error(`📏🗑️Edge with id ${id} does not exist`);
       return;
     }
-    
+    const e = getEdge(id)
+    let srcHandleIndex = id.match(/s(\d+)/); //get the nodes index
+    let tgtHandleIndex = id.match(/t(\d+)/);
+    tgtHandleIndex = tgtHandleIndex[1] // truncate the t or s from the id
+    srcHandleIndex = srcHandleIndex[1]
+    delete getNode(Number(e.source)).data.outputEdges[Number(srcHandleIndex)]
+    delete getNode(Number(e.target)).data.inputEdges[Number(tgtHandleIndex)]
+
     edges.value = edges.value.filter(e => e.id !== id);
     console.log("📏🗑️ Edge deleted. Remaining edges:", edges.value);
     globalSync();
@@ -573,14 +607,13 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
     canvasID.value = 0;
 
   // Default global nodes (Player) -------------------
-  let pos = {
-    x: 0,
-    y: 0,
-  }
   console.log("id counter is:", idCounter);
   const startNode = {
     type: 'start',
-    position: pos,
+    position: {
+      x: 0,
+      y: 0,
+    },
     id:idCounter.value,    //increments id based on idcounter in node store
     data: {
       bg_color:computed(()=>node_colors[startNode.type+'_bg'] || 'red'),
@@ -590,11 +623,13 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
     expandParent: true,
   }
   addNode(startNode)
-  pos.y = 200;
 
   const playerNode = {
     type: 'player',
-    position: pos,
+    position: {
+      x: -200,
+      y: 0,
+    },
     id:idCounter.value,    //increments id based on idcounter in node store
     data: {
       bg_color:computed(()=>node_colors[playerNode.type+'_bg'] || 'red'),
@@ -641,6 +676,7 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
     addEdge,
     updateEdge,
     deleteEdge,
+    deleteEdgeByHandle,
     getEdge,
     GameNode,
     compileGame,

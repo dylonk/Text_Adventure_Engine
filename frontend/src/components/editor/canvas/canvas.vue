@@ -2,7 +2,7 @@
 <!---Each canvas is a component of an "Object". The world editor is a canvas that is a component of the global object-->
 <script setup>
 import { ref, markRaw,computed, watch } from 'vue'
-import { VueFlow, applyNodeChanges, applyEdgeChanges } from '@vue-flow/core';
+import { VueFlow, ConnectionMode,applyNodeChanges, applyEdgeChanges } from '@vue-flow/core';
 import CanvasBackground from './background.vue'
 import CanvasControls from './controls.vue'
 import useDragAndDrop from '../drag_drop.js';
@@ -63,6 +63,7 @@ const onConnect = (connection) => {
     <div class="canvas_container" @drop="onDrop" >
         <VueFlow 
         :apply-default="false"
+        :delete-key-code="null"
         v-model:nodes="nodesStore.nodes"
         v-model:edges="nodesStore.edges"
         :node-types="nodeTypes" 
@@ -72,6 +73,7 @@ const onConnect = (connection) => {
         @connect="onConnect"
         @nodes-change="changes => applyNodeChanges(changes  , nodesStore.nodes)"
         @edges-change="changes => applyEdgeChanges(changes, nodesStore.edges)"
+        :connection-mode="ConnectionMode.Strict"
         fit-view-on-init>
 
             <CanvasBackground        :style="{

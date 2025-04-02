@@ -4,7 +4,7 @@ import globalNavBar from '@/components/standardjs/navbar.vue';
 import previewSetup from '@/components/editor/preview_setup.vue';
 import previewObjectViewer from '@/components/editor/preview_object_viewer.vue';
 import { useNodesStore } from '../editor/nodes/node_store.js';
-import Game from '../editor/nodes/game_logic.js'
+import GameLogic from '../editor/nodes/game_logic.js'
 
 const props = defineProps({
   isPreview: {
@@ -22,12 +22,12 @@ const gameContainer = ref(null);
 onMounted(() => {
   if (props.isPreview) {
     gameContainer.value.style.position = 'absolute';
-    Game.start(NS.compileGame());
+    GameLogic.start(NS.compileGame());
   } 
 });
 
 const text = computed(()=>{
-  return Game.output.value
+  return GameLogic.output.value
 })
 const displayText = ref("");
 const userInput = ref("");
@@ -165,7 +165,6 @@ onMounted(() => {
   height: 100%;
   background-color: #222;
   padding: 10px;
-  border: 1px solid #c0392b;
   position: absolute;
   top: 0;
 }
@@ -206,7 +205,6 @@ onMounted(() => {
   height: 60vh;
   overflow-y: auto;
   padding: 1rem;
-  border: 2px solid #c0392b;
   background-color: #222;
   white-space: pre-line;
 }
