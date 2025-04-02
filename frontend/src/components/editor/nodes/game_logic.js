@@ -35,6 +35,7 @@ const updateNode = (inputNode) => { //modify node (for updating values within ma
 const processNode = () =>{
 
 }
+
 const nextNode = (sourceHandleIndex) => {
   let targetNode = null; //-1 insists that a node isn't found, other values correspond with node id
   if(getNode(activePosition).outputEdges.hasOwn(sourceHandleIndex)){

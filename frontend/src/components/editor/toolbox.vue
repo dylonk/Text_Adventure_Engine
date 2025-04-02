@@ -20,12 +20,22 @@ import { useProjectStore } from './project_store.js';
                     <TBNode type="custom" display_type="Custom"/>
             <a class="tb_subtitle">Interactive</a>
                     <TBNode type="prompt" display_type="Prompt"/>
+            <a class="tb_subtitle">Wait</a>
                     <TBNode type="await" display_type="Await"/>
-                    <TBNode type="action" display_type="Action"/>
+                    <TBNode type="unimplemented" display_type="Extend Scope"/>
             <a class="tb_subtitle">Value</a>
+                    <TBNode type="unimplemented" display_type="Set Property"/>
+                    <TBNode type="unimplemented" display_type="Location"/>
             <a class="tb_subtitle">Path Control</a>
+                <TBNode type="unimplemented" display_type="If"/>
+                <TBNode type="unimplemented" display_type="Return"/>
+                <TBNode type="unimplemented" display_type="End Game"/>
             <a class="tb_subtitle">Visual</a>
-        </div>
+                <TBNode type="unimplemented" display_type="Image"/>
+                <TBNode type="unimplemented" display_type="Animation"/>
+                <TBNode type="unimplemented" display_type="If"/>
+        
+            </div>
         <img onload="this.width*=0.8" src="@/assets/Images/editor/toolbox-bottom-posterized.png" class="tb-scroll-image-bottom">
     </div>
 </template>

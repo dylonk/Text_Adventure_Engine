@@ -5,6 +5,7 @@ import { defineProps, computed } from 'vue';
 import NodeBase from './node_base.vue'
 import node_colors from './node-colors.js';
 
+
 const props = defineProps({ 
     type:String,
     display_type:String,
