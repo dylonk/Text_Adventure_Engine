@@ -339,8 +339,8 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
         gNode.data = node.data ? {...node.data}:{} // important for removing proxies
         gNode.isObject = node.data.isObject ? node.data.isObject:false 
         gNode.isFunction = node.data.isFunction ? node.data.isFunction:false 
-        gNode.edgesIn = []
-        gNode.edgesOut = []
+        gNode.edgesIn = node.data.inputEdges ? {...node.data.inputEdges}:{}
+        gNode.edgesOut = node.data.outputEdges ? {...node.data.outputEdges}:{}
         gNode.inScope = false
 
         if(gNode.isObject){

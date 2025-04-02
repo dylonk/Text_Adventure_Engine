@@ -12,7 +12,7 @@ const allowInput = ref(false) // ensures that user input is only accepted during
 
 let canvas = 0
 let activePosition = 1 // the node of which the path is currently on
-let prevPositions = [] //ONLY PUSHED WHEN AWAIT IS CALLED. For when the path is abducted by an await or similar watcher node so the path knows where to return to.
+let prevPositions = [] //ONLY PUSHED WHEN AWAIT OR OTHER PATH ABDUCTOR IS CALLED. For when the path is abducted by an await or similar watcher node so the path knows where to return to.
 let watching = [] //lists all ids of await function nodes in scope
 
 
