@@ -17,9 +17,20 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
   const idCounter = ref(1);
   
   // Collection of all nodes. Must be synced on any node or edge change
-  const globalNodes = new Map([ 
+  let globalNodes = new Map([ 
     [0,{e:[],n:[]}] // Pop in global canvas because it's technically not a node with an id
   ])
+
+
+  function getGlobalNodes()
+  {
+    return globalNodes;
+  };
+
+  function setGlobalNodes(newNodes)
+  {
+    globalNodes=newNodes;
+  }
 
   const object_count = reactive({
     //For making unique object names
@@ -658,6 +669,7 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
     getAllNodes,
     getLocalNodeIDs,
     getCurrentCanvasName,
+    getGlobalNodes,
     syncer,
     globalSync,
     localSync,
@@ -683,5 +695,6 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
     getEdge,
     GameNode,
     compileGame,
+    setGlobalNodes
   };
 });

@@ -327,12 +327,13 @@
       projectId.value = projectData.id;
       console.log("created nodes map", nodesMap);
       //nodesStore.globalNodes = nodesMap;
-      nodesStore.globalNodes = markRaw(nodesMap); // Prevent Vue from proxying it
       nodesStore.idCounter = projectData.idCounter;
       nodesStore.object_count = projectData.object_count;
       console.log(nodesStore.globalNodes);
+      console.log(nodesStore.getGlobalNodes());
+      nodesStore.setGlobalNodes(nodesMap);
       nodesStore.localSync();
-      nodesStore.globalSync();
+      nodesStore.globalSync(true);
     }
 
     
