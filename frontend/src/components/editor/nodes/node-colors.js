@@ -21,6 +21,9 @@ const node_colors = {
     unimplemented_fg:"black",
     action_bg: "#ffb8b8",
     action_fg: "#942b63",
+    image_bg: "#ffe6cc",
+    image_fg: "#663300",
+
 };
 
 export default node_colors;

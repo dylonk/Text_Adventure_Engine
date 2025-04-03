@@ -22,7 +22,7 @@ import { useProjectStore } from './project_store.js';
                     <TBNode type="unimplemented" display_type="Console Output"/>
                     <TBNode type="prompt" display_type="Prompt"/>
                     <TBNode type="unimplemented" display_type="Wait"/>
-                    <TBNode type="unimplemented" display_type="Image"/>
+                    <TBNode type="image" display_type="Image"/>
                     <TBNode type="unimplemented" display_type="Modify Image"/>
                     <TBNode type="unimplemented" display_type="Background"/>
                     <TBNode type="unimplemented" display_type="Animation"/>
