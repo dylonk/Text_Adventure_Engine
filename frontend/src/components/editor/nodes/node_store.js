@@ -396,7 +396,7 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
         // add node to global map
         allNodes.set(Number(node.id),GameNode(node))
         // add child node ids to parent
-        const tNode2 = allNodes.get(ID)
+        const tNode2 = allNodes.get(Number(ID))
         tNode2.n.push(Number(node.id))
         allNodes.set(Number(ID),tNode2) 
       }
