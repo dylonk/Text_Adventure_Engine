@@ -54,12 +54,12 @@ async function handleFile(event) {
     console.log("Status:", response.status);
 
     if (response.ok && result.success) {
-      alert(`✅ Image uploaded:\n${result.data.link}`);
+      alert(`Image uploaded:\n${result.data.link}`);
     } else {
-      alert(`❌ Upload failed.\nStatus: ${response.status}\nMessage: ${result?.data?.error || 'Unknown error'}`);
+      alert(`Upload failed.\nStatus: ${response.status}\nMessage: ${result?.data?.error || 'Unknown error'}`);
     }
   } catch (err) {
-    console.error("❌ Error uploading image:", err);
+    console.error("Error uploading image:", err);
     alert("An error occurred while uploading.");
   }
 }
