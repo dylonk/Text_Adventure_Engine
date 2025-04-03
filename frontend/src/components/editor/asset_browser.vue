@@ -164,7 +164,7 @@ li {
   overflow-y:scroll;
   border: inset rgb(83, 83, 83) 2px;
   overflow-x:scroll;
-  width:10dvw;
+  width:200px;
 
   border-radius: 10px;
   background: rgb(56, 56, 56);

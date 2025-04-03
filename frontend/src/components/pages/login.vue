@@ -137,7 +137,7 @@ const onRegisterSubmit = async (event) => {
 #page {
   display: flex;
   flex-direction: row;
-  height: 90vh;
+  flex:1;
   background: #1d1f21;
   color: #e0e0e0;
   font-family: 'Pixelify Sans', sans-serif;

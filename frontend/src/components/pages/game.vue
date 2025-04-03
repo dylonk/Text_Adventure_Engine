@@ -4,7 +4,13 @@ import globalNavBar from '@/components/standardjs/navbar.vue';
 import previewSetup from '@/components/editor/preview_setup.vue';
 import previewObjectViewer from '@/components/editor/preview_object_viewer.vue';
 import { useNodesStore } from '../editor/nodes/node_store.js';
-import GameLogic from '../editor/nodes/game_logic.js'
+import { useGameStore } from '../editor/nodes/game_logic.js'
+
+const GameLogic = useGameStore();
+GameLogic.$dispose
+GameLogic.initialized=false
+
+const NS = useNodesStore()
 
 const props = defineProps({
   isPreview: {
@@ -13,22 +19,21 @@ const props = defineProps({
   },
 });
 
-const NS = useNodesStore()
 
 
 const gameContainer = ref(null);
 
-
 onMounted(() => {
   if (props.isPreview) {
-    // gameContainer.value.style.position = 'absolute';
     GameLogic.start(NS.compileGame());
   } 
 });
 
 const text = computed(()=>{
-  return GameLogic.output.value
+  return GameLogic.output
 })
+
+
 const displayText = ref("");
 const userInput = ref("");
 const typingIndex = ref(0);
@@ -45,6 +50,8 @@ const startTypingEffect = () => {
     setTimeout(startTypingEffect, 30);
   }
 };
+
+
 
 const toggleTTS = () => {
     if(ttsTog.value == 0) {
@@ -156,8 +163,8 @@ onMounted(() => {
       </div>
     </div>
       <div class="game-screen">
-      <div class="game-text" v-html="displayText"></div>
-    </div>
+        <div class="game-text" v-html="displayText"></div>
+      </div>
     <div class="game-input">  
       <input v-model="userInput" @keyup.enter="handleInput" placeholder="Enter your command..." autofocus />
     </div>
@@ -167,7 +174,7 @@ onMounted(() => {
     <!-- Conditionally rendered components for preview mode -->
 
     <div v-if="isPreview" class="right-side">
-      <previewObjectViewer />
+      <previewObjectViewer/>
     </div>
 
 
@@ -203,15 +210,15 @@ onMounted(() => {
 
 .left-side,
 .right-side {
-  width: 20%;
+  width: fit-content;
   height: 100%;
   background-color: #222;
-  padding: 10px;
   top: 0;
 }
 
 .left-side {
   left: 0;
+  width:300px;
 }
 
 .right-side {
@@ -250,6 +257,16 @@ onMounted(() => {
   white-space: pre-line;
 }
 
+.game-text-previous {
+  font-size: 1.2rem;
+  line-height: 1.5;
+  color:rgb(211, 211, 211);
+}
+.game-text-previous-player {
+  font-size: 1.2rem;
+  line-height: 1.5;
+  color:goldenrod;
+}
 .game-text {
   font-size: 1.2rem;
   line-height: 1.5;
@@ -257,11 +274,16 @@ onMounted(() => {
 
 .game-input input {
   width: 100%;
-  padding: 0.5rem;
+  padding: 0.6rem;
   font-size: 1rem;
-  background: rgb(119, 119, 119);
-  color: white;
-  outline: none;
+  background: rgb(120, 120, 120);
+  color: rgb(0, 0, 0);
+  border:none;
+  outline:none;
+}
+.game-input input:focus{
+  background:rgb(197, 197, 197);
+  border:none;
 }
 
 .game-controls {

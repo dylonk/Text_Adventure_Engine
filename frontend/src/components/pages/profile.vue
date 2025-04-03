@@ -160,7 +160,7 @@ body {
 
 .profile-container{
     background:#181818;
-    height: 100dvh;
+    flex:1;
 }
 
 .profile-content {

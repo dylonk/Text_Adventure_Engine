@@ -1,116 +1,39 @@
 <script setup>
 import { useNodesStore } from '@/components/editor/nodes/node_store.js'
-import { computed, ref } from 'vue'
+import { computed, ref, defineProps } from 'vue'
+import { useGameStore } from './nodes/game_logic'
 import ContextMenu from './context_menu.vue'
-import NestedObject from './nodes/node_assets/nested_object.vue'
+import PreviewObject from './nodes/node_assets/preview_object.vue'
 
-const object_type_list = [
-  'room',
-  'item',
-  'npc',
-  'pathway',
-  'custom',
-]
-
-
-import { dataHas, treeify } from '@/components/editor/nodes/n-utils';
-import { VueFlow } from '@vue-flow/core'
-
-const nodesStore = useNodesStore()
+const GL = useGameStore();
 
 // Use computed properties to observe the nodes in the store. Any with object_type_list will be displayed
-
-const objects = ref([]);
-
-const clickedCanvas = ref(0)
-
-const isContextMenuVisible = ref(false)
-const contextMenuId = ref(null)
-const contextMenuPosition = ref({ x: 0, y: 0 })
-const contextMenuActions=ref()
-
-
-// Show the context menu on right-click
-function showContextMenu(event, nodeType, nodeId) {
-  console.log("Context Menu Triggered:", {
-    nodeId, 
-    nodeType, 
-  });
-  console.log("all nodes: ",nodesStore.globalNodes)
-
-  contextMenuId.value = nodeId //the id of the node
-  contextMenuPosition.value = { x: event.clientX, y: event.clientY }
-  isContextMenuVisible.value = true//what makes the menu visible
-  event.preventDefault()//prevents the default browser context menu from appearing
-
-
-  //if we're cool being a little messy, we could add a very long switch statement here that adds actions based off nodetype
-    contextMenuActions.value = [//these actions are what will be availible when anything is right clicked. 
-      { label: 'Delete', action: () => nodesStore.deleteNode(nodeId) },
-      { label: 'Rename', action: () => nodesStore.renameNode(nodeId) },//
-      // Add more item-specific actions here.
-    ]
-  }
-
-
-
-function syncAssetBrowser(){
-  objects.value = treeify(nodesStore.getAllNodes().filter(node => object_type_list.includes(node.type)))
-}
-const syn = computed( ()=>{
-  syncAssetBrowser()
-  return nodesStore.syncer
-})
-
-
-
-// Handle action for context menu
-function handleContextMenuAction(action) {
-  action.action()
-  isContextMenuVisible.value = false
+function renderObjectView(){
+  GL.scopeSyncer =! GL.scopeSyncer
 }
 
-// Close the context menu
-function closeContextMenu() {
-  isContextMenuVisible.value = false
-}
-function switchCanvas(id, assetBrowserIndex){
-  console.log("asset_browser.vue: swapping canvas" ,nodesStore.getAllNodes())
-  nodesStore.swapCanvas(Number(id));
-  syncAssetBrowser()
-  clickedCanvas.value = assetBrowserIndex
-}
 
 </script>
 
 <template>
-  <div style="display: none">{{ syn }}</div>
     <div class="asset_browser">
-      <h3>Object Viewer</h3>
-      <div class="objects-container">
-        <NestedObject :n="objects"/>
+      <h3>Game View</h3>
+      <div v-if="GL.scopeSyncer!=null" class="objects-container" @click="renderObjectView()">
+        <PreviewObject v-if="GL.initialized" id="0" nodeDepth="0"/>
       </div>
-
-      <ContextMenu
-        v-if="isContextMenuVisible"
-        :position="contextMenuPosition"
-        :actions="contextMenuActions"
-        @action="handleContextMenuAction"
-        @hide-context-menu="closeContextMenu"
-      />
     </div>
 </template>
+
 
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Scada");
 .asset_browser {
-  height:auto;
+  height:100%;
   display: flex;
   font-size:large;
-  min-width:10dvw;
   justify-content: center;
   flex-direction: column;
-  background: rgb(93, 93, 93);
+  background: rgb(227, 227, 227);
   justify-content: space-between;
 }
 .asset-browser-hr{
@@ -124,19 +47,15 @@ function switchCanvas(id, assetBrowserIndex){
 }
 
 h3 {
-  font-family: "Scada", serif;  
-  font-size: 1.2em;
-  color: rgb(180, 180, 180);
-  margin-left:8px;
-  margin-right:8px;
-  margin-top:5px;
-  margin-bottom:5px;
+  font-weight:100; 
+  font-size:20px;
+  color: rgb(121, 121, 121);
+  
   padding-right:10px;
   padding-left:10px;
   text-align: center;
-  width:max-content;
-  border-radius: 5px;
-  border: rgb(46, 46, 46) 1.7px solid;
+  width:auto;
+  border-bottom: rgb(186, 186, 186) 3px groove;
 
 }
 
@@ -154,9 +73,12 @@ li {
 
 .objects-container {
   height: 100%;
-  overflow:auto;
-  border: solid rgb(47, 47, 47) 1.5px;
-  background: rgb(100, 100, 100);
+  overflow-y:scroll;
+  border: inset  rgb(190, 190, 190) 2px;
+  overflow-x:scroll;
+  border-radius: 10px;
+  background: rgb(192, 201, 212);
+  width:200px;
   margin:10px;
 }
 

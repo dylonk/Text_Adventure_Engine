@@ -42,7 +42,7 @@ function handleContextMenu(event, id) {
 <template>
 <div  style="min-width:100%; width:fit-content;">
     <div v-if="n.val.id==NS.canvasID" class="row-Selected"   @contextmenu.prevent="handleContextMenu($event, n.val.id)"  @click="NS.swapCanvas(n.val.id)">
-        <HContainer style="width:100%" spacing="0px">
+        <HContainer style="width:100%;" spacing="0px">
 
             &nbsp;
             <div v-for="i in n.val.data.nodeDepth" class="indent">●</div>
@@ -57,7 +57,7 @@ function handleContextMenu(event, id) {
         </HContainer>
     </div>
     <div v-else-if="isEven" class="row"   @contextmenu.prevent="handleContextMenu($event, n.val.id)"  @click="NS.swapCanvas(n.val.id)">
-        <HContainer style="width:100%" spacing="0px">
+        <HContainer style="width:100%;" spacing="0px">
 
             &nbsp;
             <div v-for="i in n.val.data.nodeDepth" class="indent">●</div>

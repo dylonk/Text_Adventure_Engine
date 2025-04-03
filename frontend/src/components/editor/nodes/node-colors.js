@@ -1,6 +1,6 @@
 const node_colors = {
-    start_bg: "#8fffa9",
-    start_fg: "#8570EB",
+    start_bg: "#e6fffd",
+    start_fg: "#4917b7",
     prompt_fg: "#1e4ce3",
     prompt_bg: "#c4e4ff",
     item_fg: "#14140c",
