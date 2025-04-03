@@ -330,11 +330,10 @@
       //nodesStore.globalNodes = nodesMap;
       nodesStore.idCounter = projectData.idCounter;
       nodesStore.object_count = projectData.object_count;
-      console.log(nodesStore.globalNodes);
-      console.log(nodesStore.getGlobalNodes());
+      // console.log(nodesStore.globalNodes);
+      // console.log(nodesStore.getGlobalNodes());
       nodesStore.setGlobalNodes(nodesMap);
-      nodesStore.localSync();
-      nodesStore.globalSync(true);
+      nodesStore.localSync()
     }
 
     

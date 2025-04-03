@@ -66,7 +66,6 @@ function setProperty(property, input){
     }
     .object-name{
         color:white;
-        background-color: ;
     }
     .property-input{
         width:50%;

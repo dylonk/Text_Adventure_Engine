@@ -69,9 +69,9 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
   }
   const localSync = () => { //gets nodes as they are within the global map
 
-    console.log("   🏠🔄 localSync()")
+    console.log("[EDITOR]   🏠🔄 localSync()")
     const canvas = globalNodes.get(canvasID.value);
-    console.log("   🏠🔄 localSync current canvas node =", canvas)
+    console.log("[EDITOR]   🏠🔄 localSync current canvas node =", canvas)
     if(canvas == null || canvas.hasOwnProperty('n') == null){
       console.warn("   🏠🔄 localSync failed, null canvasID or property")
       return;
@@ -82,9 +82,9 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
 
   // Add a node to the store
   const addNode = (node) => {
-    console.log("🦠➕ addNode: Before adding:", nodes);
+    console.log("[EDITOR]🦠➕ addNode: Before adding:", nodes);
     const nodeExists = nodes.value.find((n) => n.id === node.id);
-    console.log("🦠➕ addNode: Adding node:", {
+    console.log("[EDITOR]🦠➕ addNode: Adding node:", {
       id: node.id,
       type: node.type,
       idType: typeof node.id,
@@ -118,20 +118,20 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
       node.type == "image" 
     ){
       incrementCount(node.type);
-      console.log("🦠➕ object name shoudl be", node.type + object_count[node.type]);
+      console.log("[EDITOR]🦠➕ object name shoudl be", node.type + object_count[node.type]);
       node.data.object_name = node.type + object_count[node.type];
       nodes.value.push(node);
-      console.log("🦠➕ After adding:", nodes);
+      console.log("[EDITOR]🦠➕ After adding:", nodes);
 
     }
     else if(node.type == "player"){
       node.data.object_name = "player"
       nodes.value.push(node);
-      console.log("🦠➕ After adding:", nodes);
+      console.log("[EDITOR]🦠➕ After adding:", nodes);
     } 
     else {  //if the node is a function
       nodes.value.push(node);
-      console.log("🦠➕ function added with id", node.id);
+      console.log("[EDITOR]🦠➕ function added with id", node.id);
     }
     idCounter.value++;
     globalSync(true);
@@ -141,7 +141,7 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
 
 const swapCanvas = (newid) =>{
   globalSync(true);
-  console.log("🖼️↔️ swapCanvas(",newid,")")
+  console.log("[EDITOR]🖼️↔️ swapCanvas(",newid,")")
 
   nodes.value = [];
   edges.value = [];
@@ -160,7 +160,7 @@ const swapCanvas = (newid) =>{
 };
 
 const renameNode = (id) => {
-    console.log("🦠🔤 renameNode(id=",id,")")
+    console.log("[EDITOR]🦠🔤 renameNode(id=",id,")")
     
     const nodeExists = getNode(id,true);
 
@@ -169,7 +169,7 @@ const renameNode = (id) => {
       return;
     }
 
-    console.log("🦠🔤 this node exists at", nodeExists.position);
+    console.log("[EDITOR]🦠🔤 this node exists at", nodeExists.position);
     const newName = prompt(`Enter a new name for node ${id}:`); // !!NEED TO IMPLEMENT CHECK FOR OBJECT NAME UNIQUENESS
     if (newName !== null) { 
       nodeExists.data.object_name = newName;
@@ -182,9 +182,9 @@ const renameNode = (id) => {
 
 const contributeNodeData = (id, inputData) => { // For creating the data that will be with the node initially, only runs through once.
 
-    console.log("💾🫳🏽 ContributeNodeData(id=",id,"inputData=,",inputData,")");
+    console.log("[EDITOR]💾🫳🏽 ContributeNodeData(id=",id,"inputData=,",inputData,")");
     if(id==-1){
-      console.log("💾🫳🏽 contributeNodeData called on toolbox node")
+      console.log("[EDITOR]💾🫳🏽 contributeNodeData called on toolbox node")
       return;
     }
     const nodeExists = getNode(id);
@@ -197,39 +197,76 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
       if(!nodeExists.data.hasOwnProperty(k)) nodeExists.data[k]=inputData[k];
     })
     
-    console.log("💾🫳🏽 Data to input", inputData)
-    console.log("💾🫳🏽 New data of node:", nodeExists.data)
+    console.log("[EDITOR]💾🫳🏽 Data to input", inputData)
+    console.log("[EDITOR]💾🫳🏽 New data of node:", nodeExists.data)
     globalSync();
     return;
   };
 
+const contributeFunctionParameters = (id,paramName, paramArray) => { 
+  console.log("[EDITOR]🔧🫳🏽 contributeFunctionParameters(",id,paramName,paramArray,")")
+  let param = {name: paramName,vals: paramArray} // MUST ALWAYS BE AN ARRAY
+  const nodeExists = getNode(id)
+  if(!nodeExists){
+    return;
+  }
+  if(nodeExists.data.hasOwnProperty("function_params")){
+    for(const parameter of nodeExists.data.function_params){
+      if(param.name == parameter.name){
+        console.log("[EDITOR] Parameter exists, ignoring")
+        return;
+      }
+    }
+    console.log("[EDITOR] Pushing param:", param)
+    nodeExists.data.function_params.push(param)
+    console.log("[EDITOR] Node parameters after:", nodeExists.data.function_params)
+    globalSync();
+    return;
+  }
+}
+
+const getParam=(id,paramName)=>{
+  console.log("[EDITOR]🔧🔙 getParam(",id,paramName,")")
+
+  const nodeExists = getNode(id)
+  if(!nodeExists){
+    return;
+  }
+  for(const parameter of nodeExists.data.function_params){
+    if(paramName == parameter.name){
+      console.log("[EDITOR] Parameter exists:", parameter)
+      return parameter.vals;
+    }
+  }
+}
+
   const getNodeData = (id, dataProperty = "") => {  // DO NOT USE IN A WATCHER OR COMPUTE FUNCTION (spam) gets data of node safely. dataProperty to be subbed in instances where you'd do something like node.data.obj_name for safety
-    console.log("💾🔙 getNodeData(id=",id,"dataProperty=",dataProperty,")")
+    console.log("[EDITOR]💾🔙 getNodeData(id=",id,"dataProperty=",dataProperty,")")
     const nodeExists = getNode(id,true)
     if(nodeExists==null){
-      console.log("💾🔙 Node does not exist")
+      console.log("[EDITOR]💾🔙 Node does not exist")
       return null;
     }
     if(!nodeExists.hasOwnProperty("data")){
-      console.log("💾🔙 Node does not have property data")
+      console.log("[EDITOR]💾🔙 Node does not have property data")
       return null;
     }
     if(dataProperty==""){
-      console.log("💾🔙 Node exists, data=", nodeExists.data)
+      console.log("[EDITOR]💾🔙 Node exists, data=", nodeExists.data)
       return nodeExists.data
     }
     if(nodeExists.data.hasOwnProperty(dataProperty)){
-      console.log("💾🔙 Node exists, data property ",dataProperty,"=", nodeExists.data[dataProperty])
+      console.log("[EDITOR]💾🔙 Node exists, data property ",dataProperty,"=", nodeExists.data[dataProperty])
       return nodeExists.data[dataProperty]
     }
     else{
-      console.log("💾🔙 Node data property does not exist")
+      console.log("[EDITOR]💾🔙 Node data property does not exist")
       return null;
     }
   }
   // ONLY FOR USE IN OBJECTS, SETS DATA.PROPERTIES
   const setNodeProperty = (id, inputKey, inputValue) => {
-    console.log("⚙️🟰 setNodeProperty(id=",id,"inputKey=",inputKey,"inputValue=",inputValue);
+    console.log("[EDITOR]⚙️🟰 setNodeProperty(id=",id,"inputKey=",inputKey,"inputValue=",inputValue);
     const nodeExists = getNode(id);
     if (!nodeExists) {
       console.error(`setNodeProperty: Node with id ${id} does not exist`);
@@ -240,38 +277,38 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
       return;
     }
     nodeExists.data.properties[inputKey]=inputValue
-    console.log("⚙️🟰 New data of properties:", nodeExists.data.properties)
+    console.log("[EDITOR]⚙️🟰 New data of properties:", nodeExists.data.properties)
     globalSync();
     return;
   };
   const setNodeData = (id, inputKey, inputValue) => {
-    console.log("💾🟰 setNodeData(id=", id, "inputKey=",inputKey, "inputValue=", inputValue,")");
+    console.log("[EDITOR]💾🟰 setNodeData(id=", id, "inputKey=",inputKey, "inputValue=", inputValue,")");
     const nodeExists = getNode(id);
     if (!nodeExists) {
       console.error(`setNodeData: Node with id ${id} does not exist`);
       return;
     }
-    console.log("Key/Value to input", inputKey,inputValue)
+    console.log("[EDITOR]Key/Value to input", inputKey,inputValue)
     nodeExists.data[inputKey]=inputValue
-    console.log("New data of node:", nodeExists.data)
+    console.log("[EDITOR]New data of node:", nodeExists.data)
     globalSync();
     return;
   };
   const removeNodeData = (id, inputKey) => {
-    console.log("💾❎ removeNodeData(id=",id,"inputKey=",inputKey,")");
+    console.log("[EDITOR]💾❎ removeNodeData(id=",id,"inputKey=",inputKey,")");
     const nodeExists = getNode(id);
     if (!nodeExists) {
       console.error(`💾❎ removeNodeData: Node with id ${id} does not exist`);
       return;
     }
-    console.log("💾❎ Key to remove", inputKey)
+    console.log("[EDITOR]💾❎ Key to remove", inputKey)
     delete nodeExists.data[inputKey]
-    console.log("💾❎ New data of node:", nodeExists.data)
+    console.log("[EDITOR]💾❎ New data of node:", nodeExists.data)
     globalSync();
     return;
   };
   const removeNodeProperty = (id, inputKey) => {
-    console.log("⚙️❎ removeNodeProperty(",id,",",inputKey,")");
+    console.log("[EDITOR]⚙️❎ removeNodeProperty(",id,",",inputKey,")");
     const nodeExists = getNode(id);
     if (!nodeExists) {
       console.error(`⚙️❎removeNodeProperty: Node with id ${id} does not exist`);
@@ -281,9 +318,9 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
       console.error(`⚙️❎ removeNodeProperty: Node with ${id} does not have properties`)
       return;
     }
-    console.log("⚙️❎ Key to remove", inputKey)
+    console.log("[EDITOR]⚙️❎ Key to remove", inputKey)
     delete nodeExists.data.properties[inputKey]
-    console.log("⚙️❎ New data of properties:", nodeExists.data.properties)
+    console.log("[EDITOR]⚙️❎ New data of properties:", nodeExists.data.properties)
     globalSync();
     return;
   };
@@ -291,7 +328,7 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
   const deleteNode = (id) => {
       //removeNodes([id]);
       
-      console.log("🦠🗑️ deleteNode(id=",id,")")
+      console.log("[EDITOR]🦠🗑️ deleteNode(id=",id,")")
       if(id == canvasID.value){
         swapCanvas(0)
       }
@@ -304,7 +341,7 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
       //TODO: Need to implement deleting the ID for inputEdge and outputEdge for connected edges
       if (nodeExists) {
         console.log(`Node with id ${id} exists in objects, deleting...`);
-        console.log("Before:", nodes);
+        console.log("[EDITOR]Before:", nodes);
         //delete the key, and delete the index within the parents key
         globalNodes.delete(id)
         if(nodeExists.data.parentID != canvasID.value){ 
@@ -315,12 +352,12 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
             e: parentEdges,
           }
           globalNodes.set(Number(nodeExists.data.parentID), canvas)
-          console.log("🦠🗑️ deleteNode: Node removed from parent.")
+          console.log("[EDITOR]🦠🗑️ deleteNode: Node removed from parent.")
         }
         else{
           nodes.value = nodes.value.filter((node) => node.id != nodeId); //may not always delete a node          
         }
-        console.log("After:", nodes);
+        console.log("[EDITOR]After:", nodes);
         globalSync(true);
         return; 
       }
@@ -328,20 +365,20 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
       return; 
   }; 
   const deleteAllChildren = (id) => { // recursive function to delete children nodes of node
-    console.log("👼🗑️ deleteAllChildren(id=",id,")")
-    console.log("👼🗑️ globalNodes.get(",id,")",globalNodes.get(id))
+    console.log("[EDITOR]👼🗑️ deleteAllChildren(id=",id,")")
+    console.log("[EDITOR]👼🗑️ globalNodes.get(",id,")",globalNodes.get(id))
     if(!globalNodes.has(id)){
       return;
     }
     for(let key in globalNodes.get(id).n){
-      console.log("👼🗑️ deleting node", key.id)
+      console.log("[EDITOR]👼🗑️ deleting node", key.id)
       deleteNode(Number(key.id))
     }
     return;
   }
 
   const getAllNodes = () => {
-    console.log("🦠💯 getAllNodes()")
+    console.log("[EDITOR]🦠💯 getAllNodes()")
     return Array.from(globalNodes.values()).flatMap(canv => canv.n)    
     
   };
@@ -370,7 +407,7 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
         }
 
 
-    console.log("🦠🎮 GameNode(",node,")")
+    console.log("[EDITOR]🦠🎮 GameNode(",node,")")
     return gNode
   }
     
@@ -392,9 +429,9 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
 
 
     for(const [ID, canvas] of globalNodes){
-      console.log("🚢🎮 compiledNode: ID",ID,"canvas",canvas)
+      console.log("[EDITOR]🚢🎮 compiledNode: ID",ID,"canvas",canvas)
       for(const node of canvas.n){ // go through all nodes per canvas. add them to the map of all nodes
-        console.log("🚢🎮 compiledNode: canvas",ID,"node",node)
+        console.log("[EDITOR]🚢🎮 compiledNode: canvas",ID,"node",node)
         // add node to global map
         allNodes.set(Number(node.id),GameNode(node))
         // add child node ids to parent
@@ -404,7 +441,7 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
       }
     }
     game.nodeMap=allNodes
-    console.log("🚢🎮 GAME COMPILED",game)
+    console.log("[EDITOR]🚢🎮 GAME COMPILED",game)
     return game
   };
 
@@ -412,7 +449,7 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
 
 
   const getLocalNodeIDs = () => {
-    console.log("🦠🆔 getLocalNodeIDs()")
+    console.log("[EDITOR]🦠🆔 getLocalNodeIDs()")
     IDS = []
     for(let i = 0; i < nodes.length; i++){
       IDS.push(nodes[i].id)
@@ -421,26 +458,26 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
   }
 
   const getNode = (id, doGlobal=false) => {
-    console.log("   🦠🫴 getNode(id=", id, "doGlobal=", doGlobal,")")
+    console.log("[EDITOR]   🦠🫴 getNode(id=", id, "doGlobal=", doGlobal,")")
     if(id<-1){
       console.error(`   🦠🫴 getNode called with invalid id, id is ${id}`)
       return null;
     }
     if(id==-1){
-      console.log("   🦠🫴 getNode called on toolbox node")
+      console.log("[EDITOR]   🦠🫴 getNode called on toolbox node")
       return  null;
     }
     if(id==0){
-      console.log("getNode on global (id=0)")
+      console.log("[EDITOR]getNode on global (id=0)")
       return  null;
     }
       let nodeExists = nodes.value.find((n) => n.id == id);
       if(doGlobal == true){
         globalSync();
         const allNodes = getAllNodes()
-        console.log("   🦠🫴 getNode(global): globalNodesArray",allNodes)
+        console.log("[EDITOR]   🦠🫴 getNode(global): globalNodesArray",allNodes)
         nodeExists = allNodes.find((n) => n.id == id)
-        console.log("   🦠🫴 getNode(global): node to return",nodeExists)
+        console.log("[EDITOR]   🦠🫴 getNode(global): node to return",nodeExists)
         if (nodeExists == null) {
           console.warn(`   🦠🫴 getNode(global) Node with id ${id} does not exist`);
           return null;
@@ -453,16 +490,16 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
         return null;
       }
     if (nodeExists.type == 'room' || nodeExists.type == 'item' || nodeExists.type == 'pathway' || nodeExists.type == 'player' || nodeExists.type == 'npc' || nodeExists.type == 'custom'){
-      console.log("   🦠🫴 getNode(local) node exists", nodeExists, "title is", nodeExists.data.object_name);
+      console.log("[EDITOR]   🦠🫴 getNode(local) node exists", nodeExists, "title is", nodeExists.data.object_name);
     }
     else {
-      console.log("   🦠🫴 getNode(local) function node exists", nodeExists);
+      console.log("[EDITOR]   🦠🫴 getNode(local) function node exists", nodeExists);
     }
       //globalSync(); // might be necessary? SHAKY
       return nodeExists
   };
   const addEdge = (edge) => {
-    console.log("📏➕ Adding edge:", edge);
+    console.log("[EDITOR]📏➕ Adding edge:", edge);
     // Check if the edge already exists
     const edgeExists = edges.value.find(
       (e) => e.id === edge.id
@@ -495,12 +532,12 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
     // node.data.tgtHandles
     // Add the edge
     edges.value.push(edge);
-    console.log("📏➕ After adding edge:", edges.value);
+    console.log("[EDITOR]📏➕ After adding edge:", edges.value);
     globalSync();
   };
 
   const getCurrentCanvasName = () => {
-    console.log("🖼️🔤 getCurrentCanvasName()")
+    console.log("[EDITOR]🖼️🔤 getCurrentCanvasName()")
     if(canvasID.value == 0){
       return "Global"
     }
@@ -509,9 +546,9 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
     }
     else{
       const nodeTitle = getNode(canvasID.value, true)
-      console.log("🖼️🔤 getCurrentCanvasName nodeTitle=",nodeTitle)
+      console.log("[EDITOR]🖼️🔤 getCurrentCanvasName nodeTitle=",nodeTitle)
       if(nodeTitle == null){
-        console.log("🖼️🔤 getCurrentCanvas = NodeNotFound")
+        console.log("[EDITOR]🖼️🔤 getCurrentCanvas = NodeNotFound")
         return "NodeNotFound"
       }
       else{
@@ -525,14 +562,14 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
     }
   };
   const getNodeProperties = (id, doGlobal=false) => { // DO NOT USE IN A WATCHER OR COMPUTE FUNCTION (spam), returns an array
-    console.log("⚙️⬅️ getNodeProperties(id=", id, ",doGlobal=", doGlobal,")")
+    console.log("[EDITOR]⚙️⬅️ getNodeProperties(id=", id, ",doGlobal=", doGlobal,")")
     const nodeExists = getNode(id,true,true);
     // && nodeExists.hasProperty(data) && nodeExists.data.hasOwnProperty(properties)
     if(nodeExists != null){
       if(nodeExists.data.properties==null){
         return [];
       }
-      console.log("⚙️⬅️ Successful getNodeProperties! Properties:", nodeExists.data.properties)
+      console.log("[EDITOR]⚙️⬅️ Successful getNodeProperties! Properties:", nodeExists.data.properties)
       return nodeExists.data.properties;
     }
     else{
@@ -540,11 +577,11 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
     }
   };
   const getEdge = (id) => {
-    console.log("📏⬅️ getEdge(id=", id,")")
+    console.log("[EDITOR]📏⬅️ getEdge(id=", id,")")
     return edges.value.find(e => e.id === id);
   };
   const updateEdge = (id, newData) => {
-    console.log("📏🆙 updateEdge(id=", id, ",newData=", newData,")")
+    console.log("[EDITOR]📏🆙 updateEdge(id=", id, ",newData=", newData,")")
     const edgeIndex = edges.value.findIndex(e => e.id === id);
     if (edgeIndex === -1) {
       console.error(`Edge with id ${id} does not exist`);
@@ -552,18 +589,18 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
     }
     
     edges.value[edgeIndex] = { ...edges.value[edgeIndex], ...newData };
-    console.log("📏🆙Edge updated:", edges.value[edgeIndex]);
+    console.log("[EDITOR]📏🆙Edge updated:", edges.value[edgeIndex]);
     globalSync();
   };
 
   const deleteEdgeByHandle = (handleID) => { //should be in the form of 1s0 or 30t12
-    console.log("📏🗑️ deleteEdgeByHandle(handleID=", handleID,")")
+    console.log("[EDITOR]📏🗑️ deleteEdgeByHandle(handleID=", handleID,")")
     for(const edge of edges.value){
       if(edge.id.includes(handleID)) deleteEdge(edge.id)
     }
   }
   const deleteEdge = (id) => {
-    console.log("📏🗑️ deleteEdge(id=", id,")")
+    console.log("[EDITOR]📏🗑️ deleteEdge(id=", id,")")
     const edgeExists = edges.value.find(e => e.id === id);
     if (!edgeExists) {
       console.error(`📏🗑️Edge with id ${id} does not exist`);
@@ -578,12 +615,12 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
     delete getNode(Number(e.target)).data.inputEdges[Number(tgtHandleIndex)]
 
     edges.value = edges.value.filter(e => e.id !== id);
-    console.log("📏🗑️ Edge deleted. Remaining edges:", edges.value);
+    console.log("[EDITOR]📏🗑️ Edge deleted. Remaining edges:", edges.value);
     globalSync();
   };
 
   const addHandle = (id, handleType="source") =>{
-    console.log("🤹➕  addHandle(id=",id,"node")
+    console.log("[EDITOR]🤹➕  addHandle(id=",id,"node")
     let handleName = ""
     const nodeExists = getNode(id)
     if(nodeExists==null){
@@ -592,19 +629,19 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
     if(handleType=="source"){
       handleName = id+"s"+nodeExists.data.srcHandles
       nodeExists.data.srcHandles += 1;
-      console.log("🤹➕  New handle ID = ",handleName)
+      console.log("[EDITOR]🤹➕  New handle ID = ",handleName)
       return handleName;
     }
     if(handleType=="target"){
       handleName = id+"t"+nodeExists.data.tgtHandles
       nodeExists.data.tgtHandles += 1;
-      console.log("🤹➕  New handle ID = ",handleName)
+      console.log("[EDITOR]🤹➕  New handle ID = ",handleName)
       return handleName;
     }
   };
 
   const initNodes = () => {   //the node portion of initting a new project. currently empties nodes/edges, resets object counts and idcounter
-    console.log("🦠🫴 initNodes()");
+    console.log("[EDITOR]🦠🫴 initNodes()");
     nodes.value = [];
     edges.value = [];
     object_count.total = 0;
@@ -618,7 +655,7 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
     canvasID.value = 0;
 
   // Default global nodes (Player) -------------------
-  console.log("id counter is:", idCounter);
+  console.log("[EDITOR]id counter is:", idCounter);
   const startNode = {
     type: 'start',
     position: {
@@ -652,7 +689,7 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
   addNode(playerNode)
   // ---------------------------------------------------
 
-    console.log("🦠🫴 initNodes() done");
+    console.log("[EDITOR]🦠🫴 initNodes() done");
   };  
 
 
@@ -693,6 +730,8 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
     getEdge,
     GameNode,
     compileGame,
-    setGlobalNodes
+    contributeFunctionParameters,
+    getParam,
+    setGlobalNodes,
   };
 });

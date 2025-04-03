@@ -91,25 +91,24 @@ const toggleTTS = () => {
 const handleInput = () => {
     if (userInput.value.trim()) {
       displayText.value += `<br><br><span class='user-input'>> ${userInput.value}</span>`;
-      processCommand(userInput.value.trim().toLowerCase());
+      GameLogic.userResponse(userInput.value.trim().toLowerCase());
       userInput.value = "";
       nextTick(() => {
-        gameScreen.value.scrollTop = gameScreen.value.scrollHeight;
       });
     }
   };
 
-  const processCommand = (command) => {
-    if (command === "approach unicorn") {
-      displayText.value += "<br><br>The unicorn allows you to get closer, its eyes glowing with wisdom.";
-      progress.value += 20;
-    } else if (command === "explore path") {
-      displayText.value += "<br><br>You follow the glowing path deeper into the forest, mysteries ahead.";
-      progress.value += 30;
-    } else {
-      displayText.value += "<br><br>Nothing happens... Try something else.";
-    }
-  };
+  // const processCommand = (command) => {
+  //   if (command === "approach unicorn") {
+  //     displayText.value += "<br><br>The unicorn allows you to get closer, its eyes glowing with wisdom.";
+  //     progress.value += 20;
+  //   } else if (command === "explore path") {
+  //     displayText.value += "<br><br>You follow the glowing path deeper into the forest, mysteries ahead.";
+  //     progress.value += 30;
+  //   } else {
+  //     displayText.value += "<br><br>Nothing happens... Try something else.";
+  //   }
+  // };
 const saveGame = () => {
   localStorage.setItem('gameProgress', JSON.stringify({ text: displayText.value, progress: progress.value }));
 };

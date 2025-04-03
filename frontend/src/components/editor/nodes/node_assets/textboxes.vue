@@ -19,19 +19,17 @@ const props = defineProps({
 // Parent component must also have @init-node-id listener
 import { useNodesStore } from '@/components/editor/nodes/node_store'
 const NS = useNodesStore()
-const convertedTitle = props.title.replace(" ","_")
-const defaultObjData =  { //This is the data that this component contributes. Any existing properties within the functional node data will be replaced
-  }
-  defaultObjData[convertedTitle+'_textboxes'] =[""]
-  for(let i=1;i<props.startingQuantity;i++){
-    defaultObjData[convertedTitle+'_textboxes'].push("");
+const convertedTitle = ref(props.title.replace(" ","_"))
+convertedTitle.value = convertedTitle.value+'_textboxes'
+const defaultArgs =  { //This is the data that this component contributes. Any existing properties within the functional node data will be replaced
+    params:[],
+    paramName:convertedTitle.value,
+    }
+  for(let i=0;i<props.startingQuantity;i++){
+    defaultArgs.params.push("");
   }
 
-  NS.contributeNodeData(props.id,defaultObjData,false);
-
-  //IMPORTANT AS WELL, MAKE SURE TO BE CONSIDERATE OF HOW OFTEN THE REACTIVITY IS UPDATED, CAN LEAD TO VERY SLOW CODE. Call ND.subproperty directly if using v-for on it.
-  import { dataHas } from '@/components/editor/nodes/n-utils';
-  const ND = NS.getNode(props.id,true).data
+  NS.contributeFunctionParameters(props.id,defaultArgs.paramName,defaultArgs.params);
 //------------------------------IMPORTANT END-------------------------------------------
 
 const adjustTextarea = () => {
@@ -40,18 +38,15 @@ const adjustTextarea = () => {
 };
 
 function addResponse(){
-    const convertedTitle = props.title.replace(" ","_")
-    ND[convertedTitle+'_textboxes'].push("")
+    NS.getParam(props.id, convertedTitle.value).push("")
     NS.globalSync()
 }
 function removeResponse(){
-    const convertedTitle = props.title.replace(" ","_")
-    ND[convertedTitle+'_textboxes'].pop();
+    NS.getParam(props.id,convertedTitle.value).pop();
     NS.globalSync()
 }
 function updateResponse(index,newResponse){
-    const convertedTitle = props.title.replace(" ","_")
-    ND[convertedTitle+'_textboxes'][index]=newResponse;
+    NS.getParam(props.id,convertedTitle.value)[index]=newResponse;
     NS.globalSync()
 }
 
@@ -67,7 +62,7 @@ function updateResponse(index,newResponse){
         </HContainer>
 
         <div class="nodrag">
-            <div v-for="(textbox,index) in NS.getNode(props.id).data[convertedTitle+'_textboxes']" class="textbox_container">
+            <div v-for="(textbox,index) in NS.getParam(props.id,convertedTitle)" class="textbox_container">
                 <HContainer outer-margin="5px">
                     <HandleIn v-if="handleInput=='true'"   :id="id"></HandleIn>
                     <textarea :value="textbox" class="textbox_text" @input="updateResponse(index,$event.target.value); adjustTextarea"></textarea>

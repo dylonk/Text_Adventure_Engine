@@ -7,6 +7,7 @@ export const useGameStore = defineStore('game', () => {
 let nodeMap = new Map()
 const output = ref("TEST")
 const outputQueue = []
+const choices = []
 // syncers
 const progressionSyncer = ref(false) // confusing value, but it just alternates between true and false per tick so that outside elements can update if need be
 const scopeSyncer = ref(false) // when the position of an item is changed, this ticks for the asset browser
@@ -17,7 +18,7 @@ const allowInput = ref(false) // ensures that user input is only accepted during
 
 let canvasID = ref(0)
 
-let activePosition = 1 // the node of which the path is currently on
+let activeNode = 1 // the node of which the path is currently on
 let prevPositions = [] //ONLY PUSHED WHEN AWAIT OR OTHER PATH ABDUCTOR IS CALLED. For when the path is abducted by an await or similar watcher node so the path knows where to return to.
 let watching = [] //lists all ids of await function nodes in scope
 
@@ -45,9 +46,9 @@ const updateNode = (inputNode) => { //modify node (for updating values within ma
 
 
 const processNode = (ID) =>{
-  console.log("[GAME] Parsing node:",ID)
+  console.log("[GAME] 🦠🔍 Parsing node:",ID)
   const node = getNode(Number(ID))
-  console.log("[GAME] Parsed node is:", node)
+  console.log("[GAME] 🦠🔍 Parsed node is:", node)
   if(node.isFunction){
     func(node.functionName,node.functionParams)
   }
@@ -63,9 +64,9 @@ const markScope = () =>{
 
 const nextNode = (sourceHandleIndex) => {
   let targetNode = null; //-1 insists that a node isn't found, other values correspond with node id
-  if(getNode(activePosition).edgesOut.hasOwnProperty(sourceHandleIndex)){
-    targetNode = getNode(activePosition).edgesOut[sourceHandleIndex]
-    activePosition = targetNode
+  if(getNode(activeNode).edgesOut.hasOwnProperty(sourceHandleIndex)){
+    targetNode = getNode(activeNode).edgesOut[sourceHandleIndex]
+    activeNode = targetNode
   }
   // TODO: make sure something happens when next handle is null
   return targetNode
@@ -79,14 +80,25 @@ const func = (funcName,funcParams=[]) => { // function node functions
       break;
     }
     case "prompt":{
-      output.value = "PROMPT"
+      output.value = funcParams[0].vals[0]
+      choices.value = [...funcParams[1].vals]
       break;
     }
 
   }
 }
 
-
+const userResponse=(text)=>{
+  for(const i = 0; i < choices.length; i++){
+    if(text == "") processNode(Number(nextNode(0)))
+    if(text == choices.value[i]){
+      processNode(Number(nextNode(i+1)))
+      return;
+    }
+  }
+  processNode(Number(nextNode(0)))
+  return;
+}
 
 return{
       start, //initializes game
@@ -101,6 +113,7 @@ return{
       output,
       processNode,
       nextNode,
+      userResponse,
       markScope,
 }
 });
