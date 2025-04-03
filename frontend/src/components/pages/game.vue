@@ -212,13 +212,11 @@ onMounted(() => {
 .right-side {
   width: fit-content;
   height: 100%;
-  background-color: #222;
   top: 0;
 }
 
 .left-side {
   left: 0;
-  width:300px;
 }
 
 .right-side {
@@ -253,7 +251,7 @@ onMounted(() => {
   height:100%;
   overflow-y: auto;
   padding: 1rem;
-  background-color: #222;
+  background-color: #2e2e2e;
   white-space: pre-line;
 }
 
@@ -287,9 +285,9 @@ onMounted(() => {
 }
 
 .game-controls {
-  padding:1rem;
+  padding:0.5rem;
   display: flex;
-  background:gray;
+  background-color: #1e1e1e;
   gap: 10px;
 }
 

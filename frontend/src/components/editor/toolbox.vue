@@ -25,17 +25,18 @@ import { useProjectStore } from './project_store.js';
                     <TBNode type="image" display_type="Image"/>
                     <TBNode type="unimplemented" display_type="Modify Image"/>
                     <TBNode type="unimplemented" display_type="Background"/>
-                    <TBNode type="unimplemented" display_type="Animation"/>
                     <TBNode type="unimplemented" display_type="Sound"/>
             <a class="tb_subtitle">Watchers</a>
                     <TBNode type="unimplemented" display_type="Extend Scope"/>
                     <TBNode type="await" display_type="Await"/>
             <a class="tb_subtitle">Value</a>
                     <TBNode type="unimplemented" display_type="Set Property"/>
-                    <TBNode type="unimplemented" display_type="Location"/>
             <a class="tb_subtitle">Path Control</a>
                 <TBNode type="unimplemented" display_type="If"/>
                 <TBNode type="unimplemented" display_type="Return"/>
+                <TBNode type="unimplemented" display_type="Location"/>
+                <TBNode type="unimplemented" display_type="On Player"/>
+                <TBNode type="unimplemented" display_type="On Visible"/>
                 <TBNode type="unimplemented" display_type="End Game"/>
             <a class="tb_subtitle">Visual</a>
         

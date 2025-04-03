@@ -214,6 +214,7 @@
       {
         console.log("initProject called");
         projectId.value = uuidv4();
+        showPreview.value = false;
         projectName.value = "New Project";
         nodesStore.initNodes(); //also have a seperate init function for nodestore. could have all been in this function, just an organizational choice
         console.log("initted project with id", projectId.value, "and name", projectName.value);

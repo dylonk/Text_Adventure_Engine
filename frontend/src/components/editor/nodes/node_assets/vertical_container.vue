@@ -2,8 +2,9 @@
 import { ref, defineProps, computed } from 'vue';
 const props = defineProps({
     spacing:{type:String,default:"5px"},
-    outerMargin:{type:String,default:"0px"}
-    
+    outerMargin:{type:String,default:"0px"},
+    justifyContent:{type:String,default:"center"}
+
 })
 </script>
 
@@ -20,7 +21,7 @@ const props = defineProps({
     height:max-content;
     display:flex;
     flex-direction: column;
-    align-items: center;
+    justify-content: v-bind('justifyContent');
     gap:v-bind('spacing')
 }
 </style>

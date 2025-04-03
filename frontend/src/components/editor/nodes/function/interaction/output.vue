@@ -2,7 +2,7 @@
 import { ref, defineProps, computed } from 'vue';
 import NodeBase from '../../node_base.vue'
 import { Handle, Position } from '@vue-flow/core';
-import { SmallButton, HContainer, HandleIn, HandleOut, Textboxes, VContainer } from '../../node_assets/n-component-imports.js';
+import { SmallButton, HContainer, HandleIn, HandleOut, Textboxes } from '../../node_assets/n-component-imports.js';
 import node_colors from '../../node-colors';
 import FunctionBase from '../func_base.vue'
 let response_id = 0;
@@ -17,12 +17,30 @@ const props = defineProps({
 import { useNodesStore } from '@/components/editor/nodes/node_store'
 const NS = useNodesStore()
 const defaultObjData =  { //This is the data that this component contributes. Any existing properties within the functional node data will be replaced
-    display_type:"Start",
-    function_name: "start"
+    display_type:"Console Output",
+    function_name: 'output',
+    function_params: [],
   }
-  console.log("start.vue: ReferenceID is = " + props.id)
-  NS.contributeNodeData(props.id,defaultObjData);
+  console.log("prompt.vue: ReferenceID is = " + props.id)
+  NS.contributeNodeData(props.id,defaultObjData,true);
 //------------------------------IMPORTANT END-------------------------------------------
+
+function addResponse(){
+    // responses.value.push({id:response_id++, text:""})
+}
+function removeResponse(){
+    // if(response_id>0){
+    //     responses.value.pop()
+    //     response_id--;
+    // }
+}
+
+function autoResize() {
+    this.style.height = 'auto';
+    this.style.height = this.scrollHeight + 'px';
+}
+
+
 </script>
 
 
@@ -34,10 +52,10 @@ const defaultObjData =  { //This is the data that this component contributes. An
         :id="id"
         >
         <HContainer outerMargin="0px">
-            <VContainer>
-            <div style="width:150px; color:purple;">Your adventure begins here!</div> <div style="width:150px; color:purple;">To direct the script, place down a node with an input (Try prompt!) and drag the Start node's output to the other node's input </div>
-            </VContainer>
-            <HandleOut :id="id"></HandleOut>
+        <Textboxes handleOutput=true handleInput=true :id="id" startingQuantity=1 allowButtons=false title="Console Output"></Textboxes>
+        </HContainer>
+        <HContainer outerMargin="0px">
+        <Textboxes handleOutput=true :id="id" startingQuantity=1 allowButtons=true title="Response"></Textboxes>
         </HContainer>
     </FunctionBase>
 

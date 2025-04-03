@@ -31,10 +31,10 @@ const start = (compiledGame) =>{
   processNode(1)
 }
 
-const getNode = (nodeID) => { //get node from nodemap
+const getNode = (nodeID, notifyConsole=false) => { //get node from nodemap
   let nodeExists = nodeMap.get(Number(nodeID))
   nodeExists = nodeExists!=null? nodeExists:null
-  console.log("[GAME] getNode(",nodeID,") is",nodeExists)
+  if(notifyConsole) console.log("[GAME] getNode(",nodeID,") is",nodeExists)
   return nodeExists
 }
 const updateNode = (inputNode) => { //modify node (for updating values within map)
@@ -45,9 +45,11 @@ const updateNode = (inputNode) => { //modify node (for updating values within ma
 
 
 const processNode = (ID) =>{
+  console.log("[GAME] Parsing node:",ID)
   const node = getNode(Number(ID))
+  console.log("[GAME] Parsed node is:", node)
   if(node.isFunction){
-    func(node.funcName,node.funcParams)
+    func(node.functionName,node.functionParams)
   }
 }
 
@@ -61,10 +63,11 @@ const markScope = () =>{
 
 const nextNode = (sourceHandleIndex) => {
   let targetNode = null; //-1 insists that a node isn't found, other values correspond with node id
-  if(getNode(activePosition).outputEdges.hasOwn(sourceHandleIndex)){
-    targetNode = getNode(activePosition).outputEdges[sourceHandleIndex]
+  if(getNode(activePosition).edgesOut.hasOwnProperty(sourceHandleIndex)){
+    targetNode = getNode(activePosition).edgesOut[sourceHandleIndex]
     activePosition = targetNode
   }
+  // TODO: make sure something happens when next handle is null
   return targetNode
 }
 
@@ -72,7 +75,7 @@ const func = (funcName,funcParams=[]) => { // function node functions
   console.log("[GAME] func( ",funcName,",",funcParams,")")
   switch(funcName){
     case "start":{
-      processNode(nextNode(0))
+      processNode(Number(nextNode(0)))
       break;
     }
     case "prompt":{
