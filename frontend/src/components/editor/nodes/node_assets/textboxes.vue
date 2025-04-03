@@ -45,9 +45,9 @@ function addResponse(){
     ND[convertedTitle+'_textboxes'].push("")
     NS.globalSync()
 }
-function removeResponse(index){
+function removeResponse(){
     const convertedTitle = props.title.replace(" ","_")
-    ND[convertedTitle+'_textboxes'].splice(index,1);
+    ND[convertedTitle+'_textboxes'].pop();
     NS.globalSync()
 }
 function updateResponse(index,newResponse){

@@ -80,7 +80,11 @@ function onGameClick(index) {
 #home-container {
   position: relative;
   min-height: 100vh;
+  height:auto;
   font-family: 'Pixelify Sans', sans-serif;
+  background:rgb(25, 25, 25);
+  z-index:0;
+  
 }
 
 /* Background Overlay */
@@ -91,17 +95,21 @@ function onGameClick(index) {
   width: 100%;
   height: 100%;
   position: absolute;
-  z-index: -1;
+  z-index: 1;
   filter: brightness(0.85);
 }
 
 /* Main Grid */
 .main-grid {
+  position:relative;
+  margin:auto;
+  top:120px;
   display: grid;
   grid-template-columns: 50% 50%;
   gap: 30px;
   width: 70%;
-  margin: 120px auto 0 auto;
+  z-index:2;
+  /* margin: 120px auto 0 auto; */
 }
 
 /* Left Grid: Hero Section */

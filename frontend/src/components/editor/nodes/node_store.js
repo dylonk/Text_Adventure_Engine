@@ -344,7 +344,7 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
     
   };
 
-  const GameNode = (node, childNodes=[], childEdges=[]) => { //Simplifies the nodes for reading and altering
+  const GameNode = (node, childNodes=[]) => { //Simplifies the nodes for reading and altering
     const gNode = {}
         gNode.id = node.id ? Number(node.id):0
         gNode.parentID = node.data.parentID||node.data.parentID==0 ? Number(node.data.parentID):-1

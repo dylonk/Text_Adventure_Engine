@@ -4,6 +4,7 @@ import { ref } from "vue"
 
 let nodeMap = new Map()
 const output = ref("TEST")
+const outputQueue = []
 // syncers
 const progressionSyncer = ref(false) // confusing value, but it just alternates between true and false per tick so that outside elements can update if need be
 const scopeSyncer = ref(false) // when the position of an item is changed, this ticks for the asset browser
@@ -20,10 +21,11 @@ const start = (compiledGame) =>{
   output.value = "erm"
   nodeMap = compiledGame.nodeMap
   console.log("GAMENODES:",nodeMap)
+  processNode(1)
 }
 
 const getNode = (nodeID) => { //get node from nodemap
-  return nodeMap.get(nodeID)
+  return nodeMap.get(Number(nodeID))
 }
 const updateNode = (inputNode) => { //modify node (for updating values within map)
   nodeMap.set(inputNode.id,inputNode)
@@ -32,8 +34,11 @@ const updateNode = (inputNode) => { //modify node (for updating values within ma
 
 
 
-const processNode = () =>{
-
+const processNode = (ID) =>{
+  const node = getNode(ID)
+  if(node.isFunction){
+    func(node.funcName,node.funcParams)
+  }
 }
 
 const nextNode = (sourceHandleIndex) => {

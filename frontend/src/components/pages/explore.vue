@@ -35,10 +35,20 @@ onMounted(fetchGames);
     <form id="section-bar" action="placeholder" method="get">
         <input type="search" name="search-bar" placeholder="SEARCH">
     </form>
-    <div class="games-section">
-        <div class="game" v-for="game in recentGames" :key="i"> <!--lOOP FROM BACKEND -->
-            <div class="gametitle">{{game.title}}</div>
-            <div class="gamepic"><img src="https://i.pinimg.com/736x/13/34/75/133475f2b4de23314a01df9a61f85436.jpg"> </div>
+    <div v-if="recentGames.length>0" class="games-section">
+            <div class="game" v-for="game in recentGames" :key="i"> <!--lOOP FROM BACKEND -->
+                <div class="gametitle">{{game.title}}</div>
+                <div class="gamepic"><img src="https://i.pinimg.com/736x/13/34/75/133475f2b4de23314a01df9a61f85436.jpg"> </div>
+            </div>
+    </div>
+    <div class="games-section" v-else>
+        <div class="game"> <!--lOOP FROM BACKEND -->
+                <div class="gametitle">Offline Game</div>
+                <div class="gamepic"><img src="https://i.pinimg.com/736x/13/34/75/133475f2b4de23314a01df9a61f85436.jpg"> </div>
+        </div>
+        <div class="game"> <!--lOOP FROM BACKEND -->
+                <div class="gametitle">Offline Game</div>
+                <div class="gamepic"><img src="https://i.pinimg.com/736x/13/34/75/133475f2b4de23314a01df9a61f85436.jpg"> </div>
         </div>
     </div>
 </template>
@@ -76,13 +86,17 @@ input[type=search]:focus {
 }
 
 .games-section {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);  /* Four items per row */
+    display: inline-flex;
+    flex-wrap:wrap;
     gap: 20px;
-    margin: 20px;
+    padding: 20px;
     justify-content: center;
+    text-align: center;
+    min-height:100dvh;
     width: 100%;
+    background:rgb(25,25,25);
     grid-auto-rows: minmax(250px, auto);  /* Adjust height dynamically */
+    color:white;
 }
 
 .game {
@@ -90,8 +104,8 @@ input[type=search]:focus {
     flex-direction: column;
     align-items: center;
     font-size: 28px;
-    width: 100%;
-    height: 100%;
+    width: fit-content;
+    height: fit-content;
     background-color: #2c2f33;
     color: #e0e0e0;
     border: 2px solid #e0e0e0;
@@ -122,12 +136,8 @@ input[type=search]:focus {
 .game:hover {
     background-color: #e74c3c;
     color: #000;
-    box-shadow: 0px 0px 15px rgba(255, 0, 0, 0.5);
-    transform: scale(1.1);
-    transition: all 0.3s ease-in-out;
+    transform: scale(1.02);
+    transition: all 0.1s ease-in-out;
 }
 
-.gamepic img:hover {
-    transform: rotate(15deg);
-}
 </style>
