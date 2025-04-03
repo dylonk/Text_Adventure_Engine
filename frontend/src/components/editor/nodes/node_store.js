@@ -40,6 +40,7 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
     npc: 0,
     pathway: 0,
     custom: 0,
+    image: 0,
   });
   function incrementCount(key) {
     if (key in object_count) {
@@ -113,7 +114,8 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
       node.type == "item" ||
       node.type == "pathway" ||
       node.type == "npc" ||
-      node.type == "custom"
+      node.type == "custom" ||
+      node.type == "image" 
     ){
       incrementCount(node.type);
       console.log("🦠➕ object name shoudl be", node.type + object_count[node.type]);

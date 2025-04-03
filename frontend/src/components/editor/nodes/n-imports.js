@@ -8,6 +8,7 @@ import StartNode from './function/interaction/start.vue'
 import PlayerNode from './objects/player.vue'
 import PathwayNode from './objects/pathway.vue'
 import CustomNode from './objects/custom.vue'
+import ImageNode from './objects/image.vue'
 import AwaitNode from './function/interaction/await.vue'
 import ActionNode from './function/interaction/action.vue'
 import UnimplementedNode from './function/interaction/unimplemented.vue'
@@ -26,4 +27,5 @@ export{ //exports both tb and real nodes
     AwaitNode,
     ActionNode,
     UnimplementedNode,
+    ImageNode,
 }
