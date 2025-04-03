@@ -41,7 +41,22 @@ function handleContextMenu(event, id) {
 
 <template>
 <div  style="min-width:100%; width:fit-content;">
-    <div v-if="isEven" class="row"   @contextmenu.prevent="handleContextMenu($event, n.val.id)"  @click="NS.swapCanvas(n.val.id)">
+    <div v-if="n.val.id==NS.canvasID" class="row-Selected"   @contextmenu.prevent="handleContextMenu($event, n.val.id)"  @click="NS.swapCanvas(n.val.id)">
+        <HContainer style="width:100%" spacing="0px">
+
+            &nbsp;
+            <div v-for="i in n.val.data.nodeDepth" class="indent">●</div>
+            <div v-if="n.children.length>0">
+                <div class="arrow" v-if="displayTree==true" @click="toggleTree()">⏷</div>
+                <div class="arrow" v-else @click="toggleTree()">⏵</div>
+            </div>
+            <div class="arrow-disabled" v-else>
+                ⏵
+            </div>
+            <div class="object-name"> &nbsp {{ n.val.data.object_name }} </div>
+        </HContainer>
+    </div>
+    <div v-else-if="isEven" class="row"   @contextmenu.prevent="handleContextMenu($event, n.val.id)"  @click="NS.swapCanvas(n.val.id)">
         <HContainer style="width:100%" spacing="0px">
 
             &nbsp;
@@ -58,18 +73,17 @@ function handleContextMenu(event, id) {
     </div>
     <div v-else class="row-isOdd"   @contextmenu.prevent="handleContextMenu($event, n.val.id)"  @click="NS.swapCanvas(n.val.id)">
         <HContainer style="width:100%" spacing="0px">
-
-&nbsp;
-<div v-for="i in n.val.data.nodeDepth" class="indent">●</div>
-<div v-if="n.children.length>0">
-    <div class="arrow" v-if="displayTree==true" @click="toggleTree()">⏷</div>
-    <div class="arrow" v-else @click="toggleTree()">⏵</div>
-</div>
-<div class="arrow-disabled" v-else>
-    ⏵
-</div>
-<div class="object-name"> &nbsp {{ n.val.data.object_name }} </div>
-</HContainer>
+    &nbsp;
+    <div v-for="i in n.val.data.nodeDepth" class="indent">●</div>
+    <div v-if="n.children.length>0">
+        <div class="arrow" v-if="displayTree==true" @click="toggleTree()">⏷</div>
+        <div class="arrow" v-else @click="toggleTree()">⏵</div>
+    </div>
+    <div class="arrow-disabled" v-else>
+        ⏵
+    </div>
+    <div class="object-name"> &nbsp {{ n.val.data.object_name }} </div>
+    </HContainer>
     </div>
     <div v-if="displayTree==true" style="width:100%;">
         <HContainer v-for="child in n.children" spacing="0px">
@@ -81,6 +95,13 @@ function handleContextMenu(event, id) {
 </template>
 
 <style scoped>
+    .row-Selected{
+        -webkit-user-select: none; /* Safari */
+        -ms-user-select: none; /* IE 10 and IE 11 */
+        user-select: none; /* Standard syntax */
+        width:auto;
+        background:rgb(126, 126, 126);
+    }
     .row{
         -webkit-user-select: none; /* Safari */
         -ms-user-select: none; /* IE 10 and IE 11 */

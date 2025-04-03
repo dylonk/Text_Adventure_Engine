@@ -35,7 +35,7 @@ const updateNode = (inputNode) => { //modify node (for updating values within ma
 
 
 const processNode = (ID) =>{
-  const node = getNode(ID)
+  const node = getNode(Number(ID))
   if(node.isFunction){
     func(node.funcName,node.funcParams)
   }
@@ -51,10 +51,10 @@ const nextNode = (sourceHandleIndex) => {
 }
 
 const func = (funcName,funcParams=[]) => { // function node functions
-  console.log("[GAME] ",funcName,"(",funcParams,")")
+  console.log("[GAME] func( ",funcName,",",funcParams,")")
   switch(funcName){
     case "start":{
-      nextNode(0)
+      processNode(nextNode(0))
       break;
     }
     case "prompt":{

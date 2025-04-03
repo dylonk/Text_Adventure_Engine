@@ -394,16 +394,12 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
       for(const node of canvas.n){ // go through all nodes per canvas. add them to the map of all nodes
         console.log("🚢🎮 compiledNode: canvas",ID,"node",node)
         // add node to global map
-        allNodes.set(node.id,GameNode(node))
+        allNodes.set(Number(node.id),GameNode(node))
         // add child node ids to parent
         const tNode2 = allNodes.get(ID)
         tNode2.n.push(Number(node.id))
-
         allNodes.set(Number(ID),tNode2) 
       }
-      // add edges to canvas
-      const tNode = allNodes.get(ID)
-      allNodes.set(ID,tNode)
     }
     game.nodeMap=allNodes
     console.log("🚢🎮 GAME COMPILED",game)

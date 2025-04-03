@@ -119,7 +119,6 @@ function switchCanvas(id, assetBrowserIndex){
   height:auto;
   display: flex;
   font-size:large;
-  min-width:10dvw;
   justify-content: center;
   flex-direction: column;
   background: rgb(93, 93, 93);
@@ -165,6 +164,7 @@ li {
   overflow-y:scroll;
   border: inset rgb(83, 83, 83) 2px;
   overflow-x:scroll;
+  width:10dvw;
 
   border-radius: 10px;
   background: rgb(56, 56, 56);
