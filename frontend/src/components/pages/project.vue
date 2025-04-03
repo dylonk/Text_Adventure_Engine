@@ -74,20 +74,13 @@ const renameProject = async (id) => {
 
 onMounted(fetchProjects);
 
-function playClickSound(soundType = 'click') {
-  const sound = new Audio(soundType === 'more' ? moreSound : clickSound);
-  sound.volume = 0.5;
-  sound.play().catch(e => console.warn("Sound play blocked", e));
-}
 
 function newProject() {
-  playClickSound();
   router.push('/create');
   projectStore.initProject();
 }
 
 function loadProjectFile() {
-  playClickSound();
   const fileInput = document.createElement('input');
   fileInput.type = 'file';
   router.push('/create');
@@ -153,7 +146,7 @@ function loadProjectFile() {
 
 #project-container {
   position: relative;
-  min-height: 100vh;
+  flex:1;
   font-family: 'Pixelify Sans', sans-serif;
   display: flex;
   flex-direction: column;

@@ -19,10 +19,17 @@ import { useProjectStore } from './project_store.js';
                     <TBNode type="pathway" display_type="Pathway"/>
                     <TBNode type="custom" display_type="Custom"/>
             <a class="tb_subtitle">Interactive</a>
+                    <TBNode type="unimplemented" display_type="Console Output"/>
                     <TBNode type="prompt" display_type="Prompt"/>
-            <a class="tb_subtitle">Wait</a>
-                    <TBNode type="await" display_type="Await"/>
+                    <TBNode type="unimplemented" display_type="Wait"/>
+                    <TBNode type="unimplemented" display_type="Image"/>
+                    <TBNode type="unimplemented" display_type="Modify Image"/>
+                    <TBNode type="unimplemented" display_type="Background"/>
+                    <TBNode type="unimplemented" display_type="Animation"/>
+                    <TBNode type="unimplemented" display_type="Sound"/>
+            <a class="tb_subtitle">Watchers</a>
                     <TBNode type="unimplemented" display_type="Extend Scope"/>
+                    <TBNode type="await" display_type="Await"/>
             <a class="tb_subtitle">Value</a>
                     <TBNode type="unimplemented" display_type="Set Property"/>
                     <TBNode type="unimplemented" display_type="Location"/>
@@ -31,9 +38,6 @@ import { useProjectStore } from './project_store.js';
                 <TBNode type="unimplemented" display_type="Return"/>
                 <TBNode type="unimplemented" display_type="End Game"/>
             <a class="tb_subtitle">Visual</a>
-                <TBNode type="unimplemented" display_type="Image"/>
-                <TBNode type="unimplemented" display_type="Animation"/>
-                <TBNode type="unimplemented" display_type="If"/>
         
             </div>
         <img onload="this.width*=0.8" src="@/assets/Images/editor/toolbox-bottom-posterized.png" class="tb-scroll-image-bottom">
@@ -103,7 +107,7 @@ import { useProjectStore } from './project_store.js';
 .tb-items{
     display:flex;
     flex-direction: column;
-    min-width:min-content;
+    min-width:max-content;
     margin: 8px;
     overflow:auto;
     height:100%;

@@ -7,16 +7,10 @@ import explorer from'@/assets/Images/More.jpg';
 
 const router = useRouter();
 
-// Play sound function
-function playClickSound(soundType = 'click') {
-  const sound = new Audio(soundType === 'more' ? moreSound : clickSound);
-  sound.volume = 0.5; // Adjust volume
-  sound.play().catch((e) => console.warn("Sound play blocked", e));
-}
+
 
 // Navigate to explore page
 function goToExplore() {
-  playClickSound();
   router.push('/explore');
 }
 
@@ -31,7 +25,6 @@ const games = [
 ];
 
 function onGameClick(index) {
-  playClickSound(index < 5 ? 'click' : 'more');
   router.push({name: 'GamePage', params: { info: `testData${index}`} });
 }
 </script>

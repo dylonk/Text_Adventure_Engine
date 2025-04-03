@@ -87,12 +87,12 @@ input[type=search]:focus {
 
 .games-section {
     display: inline-flex;
+    flex:1;
     flex-wrap:wrap;
     gap: 20px;
     padding: 20px;
     justify-content: center;
     text-align: center;
-    min-height:100dvh;
     width: 100%;
     background:rgb(25,25,25);
     grid-auto-rows: minmax(250px, auto);  /* Adjust height dynamically */

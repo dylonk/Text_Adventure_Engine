@@ -26,7 +26,7 @@ const router = useRouter(); // Access the Vue Router for navigation
 </script>
 
 <template>
-    <p class="navbar">
+    <div class="navbar">
         <RouterLink class="nav_btn" to="/" active-class="active">Home</RouterLink>
         <RouterLink class="nav_btn" to="/explore" active-class="active">Explore</RouterLink> 
         <RouterLink class="nav_btn" to="/project" active-class="active">Create</RouterLink><!-- I think they should be rendered conditionally-->
@@ -44,19 +44,19 @@ const router = useRouter(); // Access the Vue Router for navigation
         <template v-else>
             <RouterLink class="login_btn" to="/auth" active-class="active">Login</RouterLink>
         </template>
-    </p>
+    </div>
 </template>
 
 <style scoped>
 @import 'https://fonts.googleapis.com/css2?family=Syne+Mono&display=swap';
 
 .navbar {
+    position:sticky;
     display: flex;
-    position: sticky;
     top: 0;
     width: 100vw;
-    height: max-content;
-    padding: 1vh;
+    height: fit-content;
+    padding: 10px;
     background-color: rgba(64, 64, 64,1);
     font-family: Arial, Helvetica, sans-serif;
     font-weight: bold;
@@ -70,7 +70,6 @@ const router = useRouter(); // Access the Vue Router for navigation
 .nav_btn {
     font-family: 'Syne Mono', monospace;
     font-size: 22px;
-    height: calc(min-content + 10px);
     margin-left: 10px;
     color: rgb(165, 165, 165);
     transition: color 0.2s;
@@ -83,7 +82,6 @@ const router = useRouter(); // Access the Vue Router for navigation
 .login_btn {
     font-family: 'Syne Mono', monospace;
     font-size: 22px;
-    height: calc(min-content + 10px);
     margin-left: auto;
     margin-right: 10px;
     background: rgb(255, 255, 255);

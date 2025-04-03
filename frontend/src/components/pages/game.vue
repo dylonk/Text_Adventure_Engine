@@ -21,7 +21,7 @@ const gameContainer = ref(null);
 
 onMounted(() => {
   if (props.isPreview) {
-    gameContainer.value.style.position = 'absolute';
+    // gameContainer.value.style.position = 'absolute';
     GameLogic.start(NS.compileGame());
   } 
 });
@@ -131,71 +131,73 @@ onMounted(() => {
 </script>
 
 <template>
+  <globalNavBar v-if="!isPreview"/>
+    
+
   <div
     class="game-container"
     :class="[{ preview: isPreview}, $attrs.class]"
     ref="gameContainer"
-    :style="{ width: previewWidth + 'px', height: previewHeight + 'px' }"
     @mousedown="startDrag"
   >
-    <div v-if="!isPreview">
-      <globalNavBar />
+    <div v-if="isPreview" class="left-side">
+      <previewSetup />
     </div>
-    <div class="progress-bar">
-      <div class="progress" :style="{ width: progress + '%' }"></div>
-    </div>
-    <div class="game-screen">
-      <div class="game-text" v-html="displayText"></div>
-    </div>
-    <div class="game-input">  
-      <input v-model="userInput" @keyup.enter="handleInput" placeholder="Enter your command..." autofocus />
-    </div>
-    <div class="game-controls">
+    
+    
+    <div class="game-playarea">
+      <div class="game-controls">
       <button @click="saveGame">Save</button>
       <button @click="loadGame">Load</button>
       <button @click="restartGame">Restart</button>
       <button @click="quitGame">Quit</button>
       <div class="tts-toggle">
-        <button @click="toggleTTS"><img src="@/assets/images/speaker_icon.png" width="40" height="40" style="padding:0rem; padding-top:0.25rem"/></button>
+        <button @click="toggleTTS"><img src="@/assets/images/speaker_icon.png" style="height:100%;padding:0rem; padding-top:0.25rem"/></button>
       </div>
+    </div>
+      <div class="game-screen">
+      <div class="game-text" v-html="displayText"></div>
+    </div>
+    <div class="game-input">  
+      <input v-model="userInput" @keyup.enter="handleInput" placeholder="Enter your command..." autofocus />
+    </div>
+
     </div>
 
     <!-- Conditionally rendered components for preview mode -->
-    <div v-if="isPreview" class="left-side">
-      <previewSetup />
-    </div>
+
     <div v-if="isPreview" class="right-side">
       <previewObjectViewer />
     </div>
 
-    <!-- Resize handle for preview mode -->
-    <div 
-      v-if="isPreview" 
-      class="resize-handle" 
-      @mousedown="startResize"
-    ></div>
+
   </div>
 </template>
 
 <style scoped>
 .game-container {
+  flex:1;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
-  height: 100vh;
   background-color: black;
   color: white;
   font-family: monospace;
   position: relative;
 }
+.game-playarea{
+  width:100%;
+  height: 100%;
+  flex:1;
+  display:flex;
+  flex-direction:column;
+}
 
 .game-container.preview {
-  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
   z-index: 100;
 }
 
@@ -205,7 +207,6 @@ onMounted(() => {
   height: 100%;
   background-color: #222;
   padding: 10px;
-  position: absolute;
   top: 0;
 }
 
@@ -241,8 +242,8 @@ onMounted(() => {
 }
 
 .game-screen {
-  width: 60%;
-  height: 60vh;
+  width: 100%;
+  height:100%;
   overflow-y: auto;
   padding: 1rem;
   background-color: #222;
@@ -257,31 +258,37 @@ onMounted(() => {
 .game-input input {
   width: 100%;
   padding: 0.5rem;
-  margin-top: 1rem;
   font-size: 1rem;
-  background: black;
+  background: rgb(119, 119, 119);
   color: white;
-  border: 2px solid #c0392b;
   outline: none;
 }
 
 .game-controls {
-  margin-top: 1rem;
+  padding:1rem;
   display: flex;
+  background:gray;
   gap: 10px;
 }
 
+
 .game-controls button {
-  padding: 0.5rem 1rem;
-  background: #c0392b;
-  color: white;
+  padding: 10px;
+  background: #e74c3c;
   border: none;
-  cursor: pointer;
+  color: #fff;
   font-size: 1rem;
+  font-weight: bold;
+  height:50px;
+  cursor: pointer;
+  border: 2px solid #e0e0e0;
+  box-shadow: 4px 4px 0 #000;
+  border-radius: 4px;
+  transition: background 0.2s;
 }
 
 .game-controls button:hover {
-  background: #a02d24;
+  background: #c0392b;
 }
 
 .highlight {

@@ -7,16 +7,9 @@ import explorer from'@/assets/Images/More.jpg';
 
 const router = useRouter();
 
-// Play sound function
-function playClickSound(soundType = 'click') {
-  const sound = new Audio(soundType === 'more' ? moreSound : clickSound);
-  sound.volume = 0.5; // Adjust volume
-  sound.play().catch((e) => console.warn("Sound play blocked", e));
-}
 
 // Navigate to explore page
 function goToExplore() {
-  playClickSound();
   router.push('/explore');
 }
 
@@ -31,7 +24,6 @@ const games = [
 ];
 
 function onGameClick(index) {
-  playClickSound(index < 5 ? 'click' : 'more');
   router.push({name: 'GamePage', params: { info: `testData${index}`} });
 }
 </script>
@@ -76,7 +68,7 @@ function onGameClick(index) {
 
 #home-container {
   position: relative;
-  min-height: 100vh;
+  flex:1;
   font-family: 'Pixelify Sans', sans-serif;
 }
 
@@ -86,7 +78,6 @@ function onGameClick(index) {
   background-position: center;
   background-repeat: no-repeat;
   width: 100%;
-  height: 100%;
   position: absolute;
   z-index: -1;
   filter: brightness(0.85);

@@ -8,3 +8,10 @@
     </main>
 </div>
 </template>
+<style scoped>
+    main{
+        height:100dvh;
+        display:flex;
+        flex-direction: column;
+    }
+</style>

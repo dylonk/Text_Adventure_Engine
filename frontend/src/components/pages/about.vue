@@ -6,7 +6,6 @@ function goToAbout() {
 }
 </script>
 <template>
-<body>
     <globalNavBar/>
     <div class="content">
     <div class="text-container">
@@ -31,7 +30,6 @@ function goToAbout() {
 </div>
     </div>
 
-</body>
 </template>
 
 <style scoped>
@@ -41,14 +39,9 @@ function goToAbout() {
     font-family: 'Syne Mono', monospace;
 }
 
-#body {
-    justify-content: center;
-    display: block;
-}
-
 .content {
     width: 100vw;
-    height: calc(100vh * 0.922);
+    flex:1;
     display:flex;
     flex-direction: column;
     align-items: center;
@@ -61,7 +54,7 @@ function goToAbout() {
 }
 
 .text-container{
-    height:100vh;
+    height:100%;
     width:100vw;
     backdrop-filter:blur(3px);
 }

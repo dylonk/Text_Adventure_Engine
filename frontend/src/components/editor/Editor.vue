@@ -16,19 +16,20 @@ function updateAssets(){
 
 <!-- This is the outermost layer of the editor -->
 <template>
-  <Toolbar/>
-  <div class="editor-container">
-    <!-- The Toolbox, AssetBrowser, CanvasSelector, and Canvas are only visible if the preview is not active -->
-    <Toolbox v-if="!useProjectStore().showPreview" />
-    <gamePreview
-      v-if="useProjectStore().showPreview"
-      class="previewScreen"
-      :isPreview="true"
-    ></gamePreview>
-    <CanvasSelector v-if="!useProjectStore().showPreview" />
-    <Canvas v-if="!useProjectStore().showPreview" />
-    <AssetBrowser v-if="!useProjectStore().showPreview" />
-  </div>
+    <Toolbar/>
+    <div class="editor-screenspace">
+      <!-- The Toolbox, AssetBrowser, CanvasSelector, and Canvas are only visible if the preview is not active -->
+      <Toolbox v-if="!useProjectStore().showPreview" />
+      <gamePreview
+        v-if="useProjectStore().showPreview"
+        class="previewScreen"
+        :isPreview="true"
+      ></gamePreview>
+      <CanvasSelector v-if="!useProjectStore().showPreview" />
+      <Canvas v-if="!useProjectStore().showPreview" />
+      <AssetBrowser v-if="!useProjectStore().showPreview" />
+    </div>
+
 </template>
 
 <style scoped>
@@ -42,10 +43,14 @@ function updateAssets(){
 .editor-topbar {
     z-index: 100;
 }
-.editor-container {
+.editor-container{
+  display:flex;
+  height: 100%;
+  flex-direction:column;
+}
+.editor-screenspace {
   width: 100vw;
-  height: 100vh;
-  max-height: 100vh !important;
+  height: 100%;
   display: flex;
   flex-direction: row;
   background: white;
@@ -63,11 +68,10 @@ function updateAssets(){
 
 /* Style for the preview screen */
 .previewScreen {
-  position: absolute; /* Absolute positioning to overlap everything */
+  flex:1;
   top: 0;
   left: 0;
   width: 100%;
-  height: calc(100vh - 40px); /* Subtract navbar height, adjust as needed */
   background-color: black;
   z-index: 100; /* Ensure it is on top */
 }

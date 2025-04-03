@@ -27,7 +27,6 @@ const defaultObjData =  { //This is the data that this component contributes. An
     defaultObjData[convertedTitle+'_textboxes'].push("");
   }
 
-  console.log("!!!!!textbox.vue: ReferenceID is = " + props.id)
   NS.contributeNodeData(props.id,defaultObjData,false);
 
   //IMPORTANT AS WELL, MAKE SURE TO BE CONSIDERATE OF HOW OFTEN THE REACTIVITY IS UPDATED, CAN LEAD TO VERY SLOW CODE. Call ND.subproperty directly if using v-for on it.
