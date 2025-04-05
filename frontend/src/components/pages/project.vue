@@ -102,6 +102,11 @@ function loadProjectFile() {
     fileInput.click();  // Trigger the file input dialog
   });
 }
+
+function loadProject(id) {
+  projectStore.openProject(id);
+  router.push('/create');
+}
 </script>
 
 <template>

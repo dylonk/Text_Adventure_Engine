@@ -53,7 +53,7 @@
 
 
       // Prepare project data
-      console.log("before compileproject:", nodesStore.globalNodes);
+      console.log("before compileproject:", nodesStore.getGlobalNodes());
       const projectData = compileProject();
 
       // Here you would typically send this to your backend
@@ -112,6 +112,7 @@
     }
 
       const thisGame=nodesStore.compileGame();
+      //converts the nodeMap of the game to a serializable format. It's weird that thisGame is not the entire game, but essentially just containsthe nodeMap.
       thisGame.nodeMap = mapToSerializable(thisGame.nodeMap);
       // Prepare Game data
       const Game = {
@@ -120,7 +121,7 @@
         title: title,
         description: description,
         //thumbnail: thumbnail,
-        gameData: thisGame
+        nodeMap: thisGame.nodeMap
       };
 
       // Here you would typically send this to your backend
@@ -158,7 +159,7 @@
     async function saveProjectToFile() {
       console.log("saveProjectToFile called");
     
-      console.log("before compileproject:", nodesStore.globalNodes);
+      console.log("before compileproject:", nodesStore.getGlobalNodes);
       const projectData=compileProject();
       console.log("after compileproject:", projectData.nodes);
       try {
@@ -175,7 +176,7 @@
         // Create a temporary anchor element to trigger the download
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'project.json';  // Filename for the downloaded file
+        a.download = projectName.value;  // Filename for the downloaded file
         a.click();  // Programmatically click the anchor to trigger the download
     
         // Clean up the object URL after the download is triggered
@@ -190,7 +191,7 @@
     //so we don't repeat ourselves. just compiles the project into a projectData 
     function compileProject()
     {
-      const nodesArray = Array.from(nodesStore.globalNodes.entries()).map(([id, nodeData]) => {
+      const nodesArray = Array.from(nodesStore.getGlobalNodes().entries()).map(([id, nodeData]) => {
         return {
           id,
           data: nodeData
@@ -287,7 +288,7 @@
             // Parse the JSON data from the file
             const projectData = JSON.parse(reader.result);
             loadProjectData(projectData);
-            console.log("globalnodes in middle of openProjectFromFile", nodesStore.globalNodes);
+            console.log("globalnodes in middle of openProjectFromFile", nodesStore.getGlobalNodes());
             console.log('loading project:', projectData);
           } catch (error) {
             console.error('Failed to parse project data from file', error);

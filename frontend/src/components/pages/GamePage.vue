@@ -5,16 +5,13 @@ import { ref, onMounted } from 'vue'
 
 const route = useRoute();
 const basePath = '@/assets/';
-const gameInfoLink = String(route.params.info);
+const gameInfoLink = String(route.params.info);//it's all in the route params.
+
+//im thinking that it gets the name and goes from there, finding it in the database. 
+// I'm not really sure how we're loading games yet. They will probably have their own pages. BUt will the descriptions.?? much to think about
 const filePath = ref(basePath + gameInfoLink + '.txt?raw');
-//import gameInfoData from '@/assets/testData.txt?raw';
-//var gameInfoData = import(`${filePath.value}`);
-/*
-onMounted(() => {
-    console.log(filePath.value);
-    console.log(gameInfo);
-});
-*/
+
+
 const image = ref('');
 const title = ref('');;
 const creator = ref('');;

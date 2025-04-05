@@ -2,6 +2,9 @@
 import globalNavBar from '@/components/standardjs/navbar.vue'
 import axios from 'axios';
 import { ref, onMounted } from 'vue';   
+import game from './game.vue';
+import { useRouter } from 'vue-router';
+const router = useRouter();
 
 
 
@@ -12,6 +15,14 @@ const recentGames = ref([]);
 function goToHome() {
       this.$router.push('/')
 }
+
+//yeah, we're doing it by title not id. it makes the links prettier and we're making titles unique anyway.
+const goToGame = (async (title) => {
+  router.push('/game/' + title);//takes you to the player screen
+
+});
+
+
 const fetchGames = async () => {
 
   try {
@@ -36,21 +47,12 @@ onMounted(fetchGames);
         <input type="search" name="search-bar" placeholder="SEARCH">
     </form>
     <div v-if="recentGames.length>0" class="games-section">
-            <div class="game" v-for="game in recentGames" :key="i"> <!--lOOP FROM BACKEND -->
+            <div class="game" @click="goToGame(game.title)" v-for="game in recentGames" :key="i"> <!--lOOP FROM BACKEND -->
                 <div class="gametitle">{{game.title}}</div>
                 <div class="gamepic"><img src="https://i.pinimg.com/736x/13/34/75/133475f2b4de23314a01df9a61f85436.jpg"> </div>
             </div>
     </div>
-    <div class="games-section" v-else>
-        <div class="game"> <!--lOOP FROM BACKEND -->
-                <div class="gametitle">Offline Game</div>
-                <div class="gamepic"><img src="https://i.pinimg.com/736x/13/34/75/133475f2b4de23314a01df9a61f85436.jpg"> </div>
-        </div>
-        <div class="game"> <!--lOOP FROM BACKEND -->
-                <div class="gametitle">Offline Game</div>
-                <div class="gamepic"><img src="https://i.pinimg.com/736x/13/34/75/133475f2b4de23314a01df9a61f85436.jpg"> </div>
-        </div>
-    </div>
+
 </template>
 
 <style scoped>

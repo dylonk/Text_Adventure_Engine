@@ -5,19 +5,27 @@ import previewSetup from '@/components/editor/preview_setup.vue';
 import previewObjectViewer from '@/components/editor/preview_object_viewer.vue';
 import { useNodesStore } from '../editor/nodes/node_store.js';
 import { useGameStore } from '../editor/nodes/game_logic.js'
+import axios from 'axios';
 
 const GameLogic = useGameStore();
 GameLogic.$dispose
 GameLogic.initialized=false
-
+let fetchedGame = {}//this is the full game object, it's not used in preview mode, but we need it for the metadata.
 const NS = useNodesStore()
 
+
 const props = defineProps({
+  gameTitle: {    //it's gonna use this to retrieve the game if it's not a preview
+    type: String,
+    required: true
+  },
   isPreview: {
     type: Boolean,
     default: false
   },
 });
+
+
 
 
 
@@ -27,7 +35,42 @@ onMounted(() => {
   if (props.isPreview) {
     GameLogic.start(NS.compileGame());
   } 
+
+  //if it's not a preview, we're going to get a game from the database.
+  else if (props.gameTitle) {
+  fetchGame(props.gameTitle);
+  }
 });
+
+
+
+// converts gamedata back to a map. we may or may not need to use this elsewhere, 
+// but it's essentially always used in the process of transferring games from the backend to a playable state.
+function serializableToMap(obj) {
+    const map = new Map();
+    for (const key in obj) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        map.set(Number(key), obj[key]);
+      }
+    }
+    return map;
+  }
+
+//loads a game from the backend by title. This never fires for previews
+async function fetchGame(gameTitle) {
+  try {
+    console.log("fetching game" + gameTitle);
+    const response = await axios.get(`http://localhost:5000/games/${gameTitle}`);//response is the game
+    console.log(response.data);
+    fetchedGame = response.data;
+    //we have to de-jsonify it now. We don'Ft have to do this for previews because the backend isn't involved
+    fetchedGame.nodeMap = serializableToMap(fetchedGame.nodeMap);
+    //start the game logic using the game data. The rest of the response is important too, it's displayed in the template
+    GameLogic.start(fetchedGame);
+  } catch (error) {
+    console.warn('Error fetching game:', error);    
+  }
+}
 
 const text = computed(()=>{
   return GameLogic.output
@@ -157,6 +200,8 @@ onMounted(() => {
       <button @click="loadGame">Load</button>
       <button @click="restartGame">Restart</button>
       <button @click="quitGame">Quit</button>
+      <div class="title">{{fetchedGame.title}}</div>">
+      <div class="description">{{fetchedGame.description}}</div>">
       <div class="tts-toggle">
         <button @click="toggleTTS"><img src="@/assets/images/speaker_icon.png" style="height:100%;padding:0rem; padding-top:0.25rem"/></button>
       </div>
@@ -318,5 +363,16 @@ onMounted(() => {
 .user-input {
   color: #c0392b;
   font-weight: bold;
+}
+
+.title{
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: white;
+}
+.description{
+  font-size: 1rem;
+  margin-bottom: 20px;
+  color: white;
 }
 </style>

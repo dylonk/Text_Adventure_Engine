@@ -27,7 +27,7 @@ const routes = [
     { path: '/game', component: Game },
     { path: '/gamePage', component: gamePageView },
     { path: '/project', component: ProjectView },
-    {path: '/publish', component: Publish}
+    { path: '/publish', component: Publish}
 ]
 
 const router = createRouter({
@@ -40,10 +40,10 @@ const router = createRouter({
         { path: '/auth', name: 'Auth', component: LoginView },
         { path: '/user', name: 'User', component: ProfileView },
         { path: '/project', component: ProjectView },
-        { path: '/game', component: Game },
+        { path: '/game/:gameTitle', name: 'game', component: Game, props: true },
         { path: '/gamePage', component: gamePageView },
-        { path: '/gamePage/:info', name: 'G     amePage', component: gamePageView },
-        {path: '/publish', component: Publish}
+        { path: '/gamePage/:info', name: 'GamePage', component: gamePageView },
+        { path: '/publish', component: Publish}
     ],
     scrollBehavior(to, from, savedPosition){
 
