@@ -19,7 +19,7 @@ import { useProjectStore } from './project_store.js';
                     <TBNode type="pathway" display_type="Pathway"/>
                     <TBNode type="custom" display_type="Custom"/>
             <a class="tb_subtitle">Interactive</a>
-                    <TBNode type="unimplemented" display_type="Console Output"/>
+                    <TBNode type="output" display_type="Console Output"/>
                     <TBNode type="prompt" display_type="Prompt"/>
                     <TBNode type="unimplemented" display_type="Wait"/>
                     <TBNode type="image" display_type="Image"/>

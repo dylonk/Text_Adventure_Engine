@@ -11,7 +11,7 @@ import { useProjectStore } from '../project_store';
 
         
 // NEWNODEREQ
-import { PromptNode, StartNode, RoomNode, ItemNode, NpcNode, PlayerNode, PathwayNode, UnimplementedNode, CustomNode, AwaitNode, ActionNode, ImageNode,} from '../nodes/n-imports';
+import { PromptNode, OutputNode, StartNode, RoomNode, ItemNode, NpcNode, PlayerNode, PathwayNode, UnimplementedNode, CustomNode, AwaitNode, ActionNode, ImageNode,} from '../nodes/n-imports';
 
     const nodeTypes = {
         start: markRaw(StartNode),
@@ -26,6 +26,7 @@ import { PromptNode, StartNode, RoomNode, ItemNode, NpcNode, PlayerNode, Pathway
         player: markRaw(PlayerNode),
         unimplemented: markRaw(UnimplementedNode),
         image: markRaw(ImageNode),
+        output: markRaw(OutputNode),
     }
 
 // Pinia store

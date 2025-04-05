@@ -97,6 +97,8 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
       return;
     }
     node.data.parentID = canvasID.value;
+    node.data.tbStyle= true,
+
     node.data.srcHandles = 0 //source handles
     node.data.tgtHandles = 0 //target handles
     node.data.inputEdges = {}

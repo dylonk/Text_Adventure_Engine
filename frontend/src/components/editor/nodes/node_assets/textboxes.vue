@@ -29,7 +29,7 @@ const defaultArgs =  { //This is the data that this component contributes. Any e
     defaultArgs.params.push("");
   }
 
-  NS.contributeFunctionParameters(props.id,defaultArgs.paramName,defaultArgs.params);
+  NS.contributeFunctionParameters(props.id,defaultArgs.paramName,defaultArgs.params); // a little confusing, but this adds 1 param to function_params in the style [response_textboxes(name), textbox1(parameter index 0),textbox2(parameter index 1)]
 //------------------------------IMPORTANT END-------------------------------------------
 
 const adjustTextarea = () => {

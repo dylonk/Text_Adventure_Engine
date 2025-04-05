@@ -13,8 +13,8 @@ const props = defineProps({
 import { useNodesStore } from '@/components/editor/nodes/node_store'
 const NS = useNodesStore()
 const defaultObjData =  { //This is the data that this component contributes. Any existing properties within the functional node data will be replaced
-    function_name: 'defaultFunction()',
-    function_params: [],
+    function_name: 'default',
+    function_params: [], // Function parameters must also have a parameter name! use contributeFunction. See prompt.vue for an example of proper data storage
     isFunction:true,
   }
   console.log("func_base.vue: ReferenceID is = " + props.id)

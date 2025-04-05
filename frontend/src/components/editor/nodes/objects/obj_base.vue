@@ -17,7 +17,7 @@ const NS = useNodesStore()
 const defaultObjData =  { //This is the data that this component contributes. Any existing properties within the functional node data will be replaced
     isObject: true, // These properties are distinct to ObjectBase, !!dont copy them!!
     properties: {aliases: "ObjectName,ObjectName2",},
-    display_type: 'ObjectBase'
+    display_type: 'ObjectBase',
   }
   console.log("obj_base.vue: ReferenceID is = " + props.id)
   console.log("obj_base.vue: bg_color is " + NS.getNodeData(props.id,"bg_color"))
@@ -70,15 +70,15 @@ function removeProperty(propertyKey){
       Properties
       <button @click="addProperty()" class="property-list-button">+</button>
     </div>
-    <div v-for="(property,title,index) in ND.properties" @click="listSelection=index">
+    <div v-for="(property,title,index) in ND.properties" @click="listSelection=index" class="properties">
       <div v-if="index==listSelection" class="property-selected">
         <button @click="removeProperty(title)" class="property-list-delete" style="margin-right:3px;">✕</button>
           {{ title+" " }}
         <div class="nodrag">
-          <input class="property-input" @input="setProperty(title,$event.target.value)" :value="property" @keyup.enter="listSelection=-1">
+          <input class="property-input"  @input="setProperty(title,$event.target.value)" :value="property" @keyup.enter="listSelection=-1">
         </div>
       </div>
-      <div v-else class="property">{{ title +":" + property }}</div>
+      <div v-else class="property"><div style="font-weight:bold;">{{ title }}</div>{{": " + property }}</div>
     </div>
     
   </div>
@@ -104,18 +104,17 @@ function removeProperty(propertyKey){
   margin:0px;
   font-size:small;
   font-weight: bold;
-  background: rgb(255, 0, 0);
-  border:outset 2px rgb(202, 0, 0);
-  color: rgb(255, 255, 255);
-
+  background:none;
+  background-color: none;
+  color: rgb(42, 42, 42);
+  border:none;
 }
-.property-list-delete:hover{
-  background:rgb(255, 125, 125);
-  border:outset 2px rgb(255, 82, 82);
 
+.property-list-delete:hover{
+  color:white;
 }
 .property-list-button:active{
-  background: rgb(101, 101, 101);
+  color:white;
 }
 .object-name-container{
   font-size: 16px;
@@ -129,56 +128,64 @@ function removeProperty(propertyKey){
 .object-properties-container{
   color: v-bind('dataHas(ND,"bg_color")');
   height: min-content;
+  background:white;
   margin: 0px;
   display:flex;
   flex-direction: column;
-  background: white;
-
 }
+.properties:nth-child(odd){
+  background-color: rgb(224, 224, 224);
+}
+
 .property{
   display:flex;
-  background: black;
   font-family:Verdana, Geneva, Tahoma, sans-serif;
   font-weight: lighter;
-  color:white;
+  text-align: center;
+  line-height: 20px;
+  color:rgb(0, 0, 0);
   padding:3px;
   padding-top:0px;
-  border-top:white solid 1px;
-
 }
+
 .property-title{
   display:flex;
   background: black;
   font-family:Verdana, Geneva, Tahoma, sans-serif;
   font-weight: lighter;
   color:white;
+  line-height: 25px;
   padding:3px;
   padding-top:0px;
-  border-top:white solid 1px;
-
+  border-top:v-bind('dataHas(ND,"bg_color")');
 }
+
 .property:hover{
-  background: rgb(41, 41, 41);
+  background: rgb(181, 187, 206);
 }
 .property-selected{
   display:flex;
-  background: rgb(134, 134, 134);
   font-family:Verdana, Geneva, Tahoma, sans-serif;
   font-weight: bold;
   color:rgb(51, 51, 51);
   padding:3px;
+  line-height: 25px;
   padding:0px;
-  border-top:rgb(66, 66, 66) solid 1px;
-
+}
+.property-selected:hover{
+  background: rgb(181, 187, 206);
 }
 .property-input{
-  height:100%;
+  height:82%;
   border:none;
-  margin:none;
+  margin:2px;
+  width:fit-content;
   margin-left:4px;
-  margin-right:0px
+  color:gray;
+  border:1px gray solid;
+  border-radius: 3px;
 }
 .property-input:focus{
-  border:none;
+  outline:none;
 }
 </style>

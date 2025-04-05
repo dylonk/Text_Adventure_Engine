@@ -68,7 +68,7 @@ const nextNode = (sourceHandleIndex) => {
     targetNode = getNode(activeNode).edgesOut[sourceHandleIndex]
     activeNode = targetNode
   }
-  // TODO: make sure something happens when next handle is null
+  // TODO: make sure something happens when next handle is null (outside of this function of course)
   return targetNode
 }
 
@@ -80,15 +80,27 @@ const func = (funcName,funcParams=[]) => { // function node functions
       break;
     }
     case "prompt":{
-      output.value = funcParams[0].vals[0]
-      choices.value = [...funcParams[1].vals]
+      output.value = funcParams[0].vals[0] //Console Output
+      choices.value = [...funcParams[1].vals] //All
+      console.log("[GAME] prompt function choices = ", choices.value)
       break;
     }
 
   }
 }
 
-const userResponse=(text)=>{
+const interpretUserText=(text)=>{ //This is the system responsible for allowing aliases, making verbs variable and soforth.
+// $alias{Object1} adds all of object1's aliases to array of interpreted texts
+// $property{Object1,health} outputs the property
+const interpretedTexts = []
+
+}
+
+const interpretGameText=(text)=>{
+// does the same as user Text but for 
+}
+
+const userResponse=(text)=>{ // Compares user text to possible choices
   for(const i = 0; i < choices.length; i++){
     if(text == "") processNode(Number(nextNode(0)))
     if(text == choices.value[i]){
@@ -115,5 +127,6 @@ return{
       nextNode,
       userResponse,
       markScope,
+      interpretUserText,
 }
 });

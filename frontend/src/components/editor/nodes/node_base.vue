@@ -122,9 +122,44 @@ onMounted(()=>{
 </script>
 
 <template>
-    <div class="node_container" :draggable="draggable" @dragstart="onDragStart($event, props.type)"
+    <div v-if="data.tbStyle" class="node_container" :draggable="draggable" @dragstart="onDragStart($event, props.type)"
         @contextmenu="showContextMenu($event, props.type, props.id)">
-        <div class="node_title" :style="{ 'background-image': 'linear-gradient(180deg,' + 'data.bg_color' + ',' + 'data.fg_color' + ')' }">
+        <div v-if="data.isObject"  class="node_title">
+        
+        
+        <div>
+        <HContainer outer-margin="">
+          {{ data.display_type }}
+        <div v-if="props.id!=-1" class="node-id">
+        {{" ID:" + props.id}}
+        </div>
+        </HContainer>
+        </div>
+        </div>
+        <div v-if="!data.isObject" class="node_title">
+        
+        
+        <div>
+        <HContainer outer-margin="">
+          {{ data.display_type }}
+        <div v-if="props.id!=-1" class="node-id">
+        {{" ID:" + props.id}}
+        </div>
+        </HContainer>
+        </div>
+        </div>
+        <ContextMenu
+      v-if="isContextMenuVisible"
+      :position="contextMenuPosition"
+      :actions="contextMenuActions"
+      @action="handleContextMenuAction"
+      @hide-context-menu="closeContextMenu"
+    />
+      <slot></slot>
+    </div>
+    <div v-else class="node_container tbStyle" :draggable="draggable" @dragstart="onDragStart($event, props.type)"
+        @contextmenu="showContextMenu($event, props.type, props.id)">
+        <div class="node_title tbStyle">
 
         
         <div>
@@ -136,6 +171,7 @@ onMounted(()=>{
         </HContainer>
         </div>
         </div>
+        
         <ContextMenu
       v-if="isContextMenuVisible"
       :position="contextMenuPosition"
@@ -187,8 +223,22 @@ onMounted(()=>{
     padding:0px;
     padding-left:5px;
     padding-right:5px;
-    background-image: linear-gradient(180deg, v-bind('data.bg_color'),v-bind('data.fg_color'));
-    text-shadow: v-bind('data.fg_color') -1px 1px, v-bind('data.fg_color') -1px -1px,  v-bind('data.fg_color') -2px 0px;
+    background: v-bind('data.fg_color');
+}
+.node_title.tbStyle{
+  color:v-bind('data.fg_color');
+  background:v-bind('data.bg_color');
+}
+.node_container.tbStyle{
+  
+  border-bottom:v-bind('data.fg_color') 4px solid;
+
+}
+
+.node_title.tbStyle{
+
+  background: v-bind('data.bg_color');
+
 }
 textarea{
     color:blue;

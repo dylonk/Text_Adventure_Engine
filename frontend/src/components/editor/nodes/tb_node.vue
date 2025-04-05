@@ -23,6 +23,7 @@ const { onDragStart } = useDragAndDrop();
             display_type,
             bg_color:node_colors[type+'_bg'],
             fg_color:node_colors[type+'_fg'],
+            tbStyle:false,
         }"></NodeBase>
     </div>
 </template>

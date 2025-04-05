@@ -21,19 +21,10 @@ const defaultObjData =  { //This is the data that this component contributes. An
     function_name: 'output',
     function_params: [],
   }
-  console.log("prompt.vue: ReferenceID is = " + props.id)
+  console.log("output.vue: ReferenceID is = " + props.id)
   NS.contributeNodeData(props.id,defaultObjData,true);
 //------------------------------IMPORTANT END-------------------------------------------
 
-function addResponse(){
-    // responses.value.push({id:response_id++, text:""})
-}
-function removeResponse(){
-    // if(response_id>0){
-    //     responses.value.pop()
-    //     response_id--;
-    // }
-}
 
 function autoResize() {
     this.style.height = 'auto';
@@ -52,11 +43,9 @@ function autoResize() {
         :id="id"
         >
         <HContainer outerMargin="0px">
-        <Textboxes handleOutput=true handleInput=true :id="id" startingQuantity=1 allowButtons=false title="Console Output"></Textboxes>
+        <Textboxes handleOutput=true handleInput=true :id="id" startingQuantity=1 allowButtons=false title="Output Text"></Textboxes>
         </HContainer>
-        <HContainer outerMargin="0px">
-        <Textboxes handleOutput=true :id="id" startingQuantity=1 allowButtons=true title="Response"></Textboxes>
-        </HContainer>
+
     </FunctionBase>
 
 

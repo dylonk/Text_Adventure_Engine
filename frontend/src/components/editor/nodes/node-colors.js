@@ -1,6 +1,6 @@
 const node_colors = {
-    start_bg: "#e6fffd",
-    start_fg: "#4917b7",
+    start_bg: "#E6FFFD",
+    start_fg: "#4917B7",
     prompt_fg: "#1e4ce3",
     prompt_bg: "#c4e4ff",
     item_fg: "#14140c",
@@ -23,7 +23,8 @@ const node_colors = {
     action_fg: "#942b63",
     image_bg: "#ffe6cc",
     image_fg: "#663300",
-
+    output_fg: "#2BAE66",
+    output_bg: "#FCF6F5",
 };
 
 export default node_colors;
