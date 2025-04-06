@@ -47,6 +47,10 @@
             "folderPath": "Text_Adventure_Engine\\frontend\\src\\components\\editor\\nodes\\game_logic.js\\",
             "color": "foldercolorizer.color_009900",
             "badge": "🎮"
+        },
+        {
+            "folderPath": "Text_Adventure_Engine\\frontend\\src\\components\\pages\\game.vue\\",
+            "color": "foldercolorizer.color_ff66ff"
         }
     ]
 }

@@ -230,16 +230,9 @@ onMounted(()=>{
   background:v-bind('data.bg_color');
 }
 .node_container.tbStyle{
-  
-  border-bottom:v-bind('data.fg_color') 4px solid;
-
+  border-bottom:black 4px solid;
 }
 
-.node_title.tbStyle{
-
-  background: v-bind('data.bg_color');
-
-}
 textarea{
     color:blue;
 }

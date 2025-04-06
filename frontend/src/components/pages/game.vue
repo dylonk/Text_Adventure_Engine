@@ -132,13 +132,13 @@ const toggleTTS = () => {
   });
 
 const handleInput = () => {
-    if (userInput.value.trim()) {
       displayText.value += `<br><br><span class='user-input'>> ${userInput.value}</span>`;
-      GameLogic.userResponse(userInput.value.trim().toLowerCase());
-      userInput.value = "";
+      GameLogic.userResponse(userInput.value);
       nextTick(() => {
       });
-    }
+      GameLogic.outputQueue.push(">> "+userInput.value)
+      userInput.value = "";
+
   };
 
   // const processCommand = (command) => {
@@ -165,9 +165,7 @@ const loadGame = () => {
 };
 
 const restartGame = () => {
-  displayText.value = text.value;
-  progress.value = 0;
-  typingIndex.value = text.value.length;
+  GameLogic.restartGame();
 };
 
 const quitGame = () => {
@@ -200,14 +198,22 @@ onMounted(() => {
       <button @click="loadGame">Load</button>
       <button @click="restartGame">Restart</button>
       <button @click="quitGame">Quit</button>
-      <div class="title">{{fetchedGame.title}}</div>">
-      <div class="description">{{fetchedGame.description}}</div>">
       <div class="tts-toggle">
         <button @click="toggleTTS"><img src="@/assets/images/speaker_icon.png" style="height:100%;padding:0rem; padding-top:0.25rem"/></button>
       </div>
+      <div v-if="!isPreview" class="title" style="margin-left: auto;">{{fetchedGame.title}}</div>
     </div>
       <div class="game-screen">
-        <div class="game-text" v-html="displayText"></div>
+        <div style="margin-top:auto"></div>
+        <div v-for="output in GameLogic.outputQueue" class="game-text">
+          <div v-if="output[0] == '>'" style="color:yellow">
+            {{ output }}
+          </div>
+          <div v-else style="color:gray">
+            {{ output }}
+          </div>
+        </div>
+        <div class="game-text">{{ GameLogic.output }}</div>
       </div>
     <div class="game-input">  
       <input v-model="userInput" @keyup.enter="handleInput" placeholder="Enter your command..." autofocus />
@@ -291,6 +297,8 @@ onMounted(() => {
 }
 
 .game-screen {
+  display:flex;
+  flex-direction:column;
   width: 100%;
   height:100%;
   overflow-y: auto;
@@ -312,6 +320,8 @@ onMounted(() => {
 .game-text {
   font-size: 1.2rem;
   line-height: 1.5;
+  white-space: pre-wrap;
+  display:block;
 }
 
 .game-input input {
