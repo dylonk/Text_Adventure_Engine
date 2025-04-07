@@ -1,7 +1,7 @@
 <script setup>
 import globalNavBar from '@/components/standardjs/navbar.vue'
 import axios from 'axios';
-import { ref, onMounted } from 'vue';   
+import { ref, onMounted,watch } from 'vue';   
 import game from './game.vue';
 import { useRouter } from 'vue-router';
 const router = useRouter();
@@ -11,10 +11,26 @@ const router = useRouter();
 
 
 const recentGames = ref([]);
+const searchQuery = ref('');
 
 function goToHome() {
       this.$router.push('/')
 }
+
+// Watch for changes in searchQuery and filter games
+watch(searchQuery, () => {
+  filterGames(); // Re-filter the games when search input changes
+});
+
+// Filter the games based on search query
+const filterGames = () => {
+  if (!searchQuery.value) {
+    return recentGames.value; // If no search query, show all games
+  }
+  return recentGames.value.filter(game =>
+    game.title.toLowerCase().includes(searchQuery.value.toLowerCase())
+  );
+};
 
 //yeah, we're doing it by title not id. it makes the links prettier and we're making titles unique anyway.
 const goToGame = (async (title) => {
@@ -44,10 +60,10 @@ onMounted(fetchGames);
 <template>
     <globalNavBar/>
     <form id="section-bar" action="placeholder" method="get">
-        <input type="search" name="search-bar" placeholder="SEARCH">
+        <input type="search" name="search-bar" placeholder="SEARCH" v-model="searchQuery">
     </form>
     <div v-if="recentGames.length>0" class="games-section">
-            <div class="game" @click="goToGame(game.title)" v-for="game in recentGames" :key="i"> <!--lOOP FROM BACKEND -->
+            <div class="game" @click="goToGame(game.title)" v-for="game in filterGames()" :key="i"> <!--lOOP FROM BACKEND -->
                 <div class="gametitle">{{game.title}}</div>
                 <div class="gamepic"><img src="https://i.pinimg.com/736x/13/34/75/133475f2b4de23314a01df9a61f85436.jpg"> </div>
             </div>

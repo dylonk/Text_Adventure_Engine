@@ -22,6 +22,7 @@ const usersRoute = require('./routes/users');
 const authRoutes = require('./routes/auth');
 const projectRoutes = require('./routes/projects');
 const gameRoutes = require('./routes/games');
+const saveGameRoutes = require('./routes/savegames');
 
 console.log("Routing");
 
@@ -36,6 +37,7 @@ app.use('/users', usersRoute);
 app.use('/auth', authRoutes);
 app.use('/projects', projectRoutes);
 app.use('/games', gameRoutes);
+app.use('/savegames', saveGameRoutes);
 //use bodyParser
 
 

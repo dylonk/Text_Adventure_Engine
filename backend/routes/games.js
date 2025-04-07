@@ -82,6 +82,9 @@ const router = express.Router();
       res.status(500).json({ message: 'Error fetching games', error });
     }
   });
-  module.exports = router;  //gotta export the router
 
+
+  
+
+module.exports = router;
 

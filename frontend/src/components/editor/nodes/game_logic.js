@@ -167,6 +167,19 @@ const userResponse=(text)=>{ // Compares user text to possible choices
   return;
 }
 
+
+
+
+//included getter and setter for nodemap to preemptively avoid the kind of issue we had with nodestore
+function getNodeMap()
+{
+  return nodeMap;
+}
+function setNodeMap(newmap)
+{
+  nodeMap=newmap;
+}
+
 return{
       start, //initializes game
       restartGame,
@@ -189,5 +202,7 @@ return{
       markScope,
       interpretUserText,
       interpretGameText,
+      getNodeMap,
+      setNodeMap
 }
 });

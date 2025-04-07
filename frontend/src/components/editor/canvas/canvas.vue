@@ -1,7 +1,7 @@
 
 <!---Each canvas is a component of an "Object". The world editor is a canvas that is a component of the global object-->
 <script setup>
-import { ref, markRaw,computed, watch } from 'vue'
+import { ref, markRaw,computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { VueFlow, ConnectionMode,applyNodeChanges, applyEdgeChanges } from '@vue-flow/core';
 import CanvasBackground from './background.vue'
 import CanvasControls from './controls.vue'
@@ -33,6 +33,23 @@ import { PromptNode, OutputNode, StartNode, RoomNode, ItemNode, NpcNode, PlayerN
 const nodesStore = useNodesStore();
 
 
+const handleCtrlS = () => {
+  useProjectStore().exportProject();
+  console.log('Ctrl + S pressed');
+};
+
+const keydownHandler = (event) => {
+    if (event.ctrlKey && event.key === 's') {
+        event.preventDefault();
+        handleCtrlS();
+    }
+};
+onMounted(() => {
+    document.addEventListener('keydown', keydownHandler);
+});
+onBeforeUnmount(() => {
+    document.removeEventListener('keydown', keydownHandler);
+})
 
 const showPreview = false;
 

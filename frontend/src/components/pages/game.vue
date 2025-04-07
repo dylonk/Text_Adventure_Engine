@@ -6,12 +6,15 @@ import previewObjectViewer from '@/components/editor/preview_object_viewer.vue';
 import { useNodesStore } from '../editor/nodes/node_store.js';
 import { useGameStore } from '../editor/nodes/game_logic.js'
 import axios from 'axios';
+import { fetchUserData } from '@/components/standardjs/fetchUserData';
+
 
 const GameLogic = useGameStore();
 GameLogic.$dispose
 GameLogic.initialized=false
 let fetchedGame = {}//this is the full game object, it's not used in preview mode, but we need it for the metadata.
 const NS = useNodesStore()
+const userId = ref('');
 
 
 const props = defineProps({
@@ -27,11 +30,30 @@ const props = defineProps({
 
 
 
+//this function tries to find a savegame in the database.
+//if it finds one, it loads it into the game
+async function fetchSaveGame() {
+  try {
+    console.log("fetching savegame");
+    const response = await axios.get(`http://localhost:5000/savegames/?gameId=${props.gameTitle}&userId=${userId}`);//response will be the savegame object
+    //we then de-serialize the nodemap we get back
+    response.data[0].nodeMap=serializableToMap(response.data.nodeMap);
+    //and put the gamestate/game into the gamelogic. gamestate and game being essentially the same thing is very cool
+    console.log(response.data);
+    GameLogic.start(response.data.nodeMap);
+}
 
+  catch (error) {
+    console.warn('Error fetching savegame:', error);    
+  }
+}
 
 const gameContainer = ref(null);
 
-onMounted(() => {
+onMounted(async() => {
+  userId.value= await fetchUserData('_id');
+  
+
   if (props.isPreview) {
     GameLogic.start(NS.compileGame());
   } 
@@ -40,6 +62,12 @@ onMounted(() => {
   else if (props.gameTitle) {
   fetchGame(props.gameTitle);
   }
+
+  //after fetching the game, check if we have a savegame. A little inefficient (if there's a savegame, the nodemap of the default game we already fetched is useless)
+  //but it's easy and the datas so small that this shouldn't be a big issue
+  fetchSaveGame();  
+
+  
 });
 
 
@@ -55,6 +83,17 @@ function serializableToMap(obj) {
     }
     return map;
   }
+
+  //yes, this function is a direct copypaste from project.store when i should have just imported both of these. Employers if you're looking at this 
+  //I will not do this when I am working for you
+  function mapToSerializable(map) {
+      const obj = {};
+      for (const [key, value] of map.entries()) {
+        obj[key] = value;
+      }
+      return obj;
+    }
+
 
 //loads a game from the backend by title. This never fires for previews
 async function fetchGame(gameTitle) {
@@ -152,17 +191,26 @@ const handleInput = () => {
   //     displayText.value += "<br><br>Nothing happens... Try something else.";
   //   }
   // };
-const saveGame = () => {
-  localStorage.setItem('gameProgress', JSON.stringify({ text: displayText.value, progress: progress.value }));
-};
 
-const loadGame = () => {
-  const savedData = JSON.parse(localStorage.getItem('gameProgress'));
-  if (savedData) {
-    displayText.value = savedData.text;
-    progress.value = savedData.progress;
-  }
-};
+
+//saves a game to the backend
+async function saveGame () {
+
+  const response=await fetch ('http://localhost:5000/savegames/save', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      gameId: fetchedGame.id,
+      userId: userId.value,
+      nodeMap: mapToSerializable(GameLogic.getNodeMap())//gotta make sure this little guy is ready for jsonification
+    })
+  });
+  console.log(userId.value);
+}
+
+
 
 const restartGame = () => {
   GameLogic.restartGame();
