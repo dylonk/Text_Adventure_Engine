@@ -21,10 +21,14 @@ const props = defineProps({   //needs position and actions, the position is the 
   actions: { type: Array, required: true },  // Accept actions as an array
 })
 
+
+
+
+//these are the emits of the component. "action" is emitted
 const emit = defineEmits(['action', 'hide-context-menu'])
 
 const visible = ref(true)
-
+//this emit just hides the context menu
 function hide() {
   visible.value = false
   emit('hide-context-menu')

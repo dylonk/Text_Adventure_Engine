@@ -16,7 +16,21 @@ Position
 const nodesStore = useNodesStore()
 
 
+//yes, this is very similar or even identical to the one in the asset browser. But one day it might not be.
 
+const actionsByType = {
+//these are actions that all nodes have. You can always delete a node.
+commonActions: [
+  {label: 'Delete', action: () => nodesStore.deleteNode(contextMenuId.value) },
+],
+//these are actions that all objects have. Rename node for now.
+objectActions: [
+  {label: 'Rename', action: () => nodesStore.renameNode(contextMenuId.value) },
+]
+
+//later we can have actions for specific node types. I just don't know of any right now.
+//it will probably be mostly function nodes, considering objects are essentially all the same.
+}
 
 //contextmenu stuff
 const isContextMenuVisible = ref(false)
@@ -32,21 +46,40 @@ function showContextMenu(event, nodeType, nodeId) {
     nodeType, 
   });
 
+
+
+
   contextMenuId.value = nodeId //the id of the node
   const { realx, realy } = screenToFlowCoordinate({
   realx: event.clientX,
   realy: event.clientY,
 })
   contextMenuPosition.value = { x: realx, y: realy }; // Update reactive state  console.log("context menu position is ",contextMenuPosition.value)
-  isContextMenuVisible.value = true//what makes the menu visible
   event.preventDefault()//prevents the default browser context menu from appearing
-  //if we're cool being a little messy, we could add a very long switch statement here that adds actions for specific nodes.
-    contextMenuActions.value = [//these actions are what will be availible when anything is right clicked. 
-      { label: 'Delete', action: () => nodesStore.deleteNode(nodeId) },
-      { label: 'Rename', action: () => nodesStore.renameNode(nodeId) },//
+
+  if(!nodeType||nodeType=='player'||nodeType=='start') 
+  {
+    return;
+  }
+  const thisNode=nodesStore.getNode(nodeId)
+
+  isContextMenuVisible.value = true//what makes the menu visible
+
+
+
+  contextMenuActions.value = [//these actions are what will be availible when anything is right clicked. 
+      ...actionsByType.commonActions,
       // Add more item-specific actions here.
     ]
+
+    //if the node is an object, add object actions
+    if (thisNode.data.isObject) {
+    contextMenuActions.value = [
+      ...contextMenuActions.value, // Keep previous actions
+      ...actionsByType.objectActions, // Add object-specific actions
+    ];
   }
+}
 
 // Handle action for context menu
 function handleContextMenuAction(action) {

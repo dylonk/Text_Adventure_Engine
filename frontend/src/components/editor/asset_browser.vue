@@ -31,6 +31,26 @@ const contextMenuPosition = ref({ x: 0, y: 0 })
 const contextMenuActions=ref()
 
 
+
+
+//I'm putting context menu actions of the asset browser in here instead of context_menu.vue. 
+// It would be nice to have it be one size fits all (A lot of this will probably be copypasted to node_base.vue), 
+// but this way we can have seperate actions for the asset browser and canvas nodes, which could come in handy
+
+const actionsByType = {
+
+//these are actions that all nodes have. You can always delete a node.
+commonActions: [
+  {label: 'Delete', action: () => nodesStore.deleteNode(contextMenuId.value) },
+],
+//these are actions that all objects have. Rename node for now.
+objectActions: [
+  {label: 'Rename', action: () => nodesStore.renameNode(contextMenuId.value) },
+]
+
+//later we can have actions for specific node types. I just don't know of any right now.
+//it will probably be mostly function nodes, considering objects are essentially all the same.
+}
 // Show the context menu on right-click
 function showContextMenu(event) {
   // Check if event is an object with event and id properties. this way it can handle either a direct or nested event.
@@ -39,9 +59,15 @@ function showContextMenu(event) {
 
   console.log("Context Menu Triggered:", { nodeId })
   contextMenuId.value = nodeId
+  //we're gonna want to have the node so we can use it's data to determine context meny behavior
+  const thisNode=nodesStore.getNode(nodeId)
+  const nodeType=thisNode.type
 
-
-
+  //first off, you can't do anything to these nodes or nodes with no type. (If we want to later editing the logic shouldn't be too hard)
+  if(!nodeType||nodeType=='player'||nodeType=='start') 
+  {
+    return;
+  }
 
   // Set context menu position
   contextMenuPosition.value = { 
@@ -57,11 +83,18 @@ function showContextMenu(event) {
 
   //if we're cool being a little messy, we could add a very long switch statement here that adds actions based off nodetype
     contextMenuActions.value = [//these actions are what will be availible when anything is right clicked. 
-      { label: 'Delete', action: () => nodesStore.deleteNode(nodeId) },
-      { label: 'Rename', action: () => nodesStore.renameNode(nodeId) },//
+      ...actionsByType.commonActions,
       // Add more item-specific actions here.
     ]
+
+    //if the node is an object, add object actions
+    if (object_type_list.includes(nodeType)) {
+    contextMenuActions.value = [
+      ...contextMenuActions.value, // Keep previous actions
+      ...actionsByType.objectActions, // Add object-specific actions
+    ];
   }
+}
 
 
 
