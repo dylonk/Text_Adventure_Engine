@@ -4,13 +4,16 @@ import useDragAndDrop from './drag_drop.js';
 import node_colors from './nodes/node-colors.js'
 import { TBNode } from './nodes/n-imports.js'
 import { useProjectStore } from './project_store.js';
-
+import tbTop from '../assets/Images/editor/toolbox-top-posterized.png'
+import tbTitle from '../assets/Images/editor/toolboxtitle.png'
+import tbBottom from '../assets/Images/editor/toolbox-bottom-posterized.png'
+import tbMid from '../assets/Images/editor/toolbox-mid-posterized.png'
 
 </script>
 <template>
     <div class="toolbox">
-        <img onload="this.width*=0.8" src="@/assets/Images/editor/toolbox-top-posterized.png" class="tb-scroll-image-top">
-        <img class="tb_title" onload="this.width*=1" src="@/assets/Images/editor/toolboxtitle.png">
+        <img onload="this.width*=0.8" :src="tbTop" class="tb-scroll-image-top">
+        <img class="tb_title" onload="this.width*=1" :src="tbTitle">
         <div class="tb-items">
             <a class="tb_subtitle">Objects</a>
                     <TBNode type="room" display_type="Room"/>
@@ -41,7 +44,7 @@ import { useProjectStore } from './project_store.js';
             <a class="tb_subtitle">Visual</a>
         
             </div>
-        <img onload="this.width*=0.8" src="@/assets/Images/editor/toolbox-bottom-posterized.png" class="tb-scroll-image-bottom">
+        <img onload="this.width*=0.8" :src="tbBottom" class="tb-scroll-image-bottom">
     </div>
 </template>
 

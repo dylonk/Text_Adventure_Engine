@@ -1,6 +1,7 @@
 <script setup>
 import { useNodesStore } from './nodes/node_store.js'
 import {computed} from 'vue'
+import globeIcon from '../../assets/Images/editor/globe.png'
 const NS = useNodesStore()
 const canvasName = computed(() => {
   NS.canvasID;
@@ -12,14 +13,14 @@ const canvasName = computed(() => {
         <div class="selector-text">{{ canvasName }}</div>
     </div>
     <div class="canvas-selector-container" style="left:0px;">
-        <img onload="this.width*=1" class="canvas-selector" src="@/assets/Images/editor/canvas-selection.png">
+        <img onload="this.width*=1" class="canvas-selector" :src="globeIcon">
     </div>
     <div>
 
     </div>
     <div class="canvas-selector-container">
 
-    <img onload="this.width*=1" class="canvas-selector" src="@/assets/Images/editor/globe.png">
+    <img onload="this.width*=1" class="canvas-selector" :src="globeIcon">
 </div>
 
 </template>
