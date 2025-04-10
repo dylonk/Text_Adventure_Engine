@@ -247,7 +247,7 @@ onMounted(() => {
       <button @click="restartGame">Restart</button>
       <button @click="quitGame">Quit</button>
       <div class="tts-toggle">
-        <button @click="toggleTTS"><img src="@/assets/images/speaker_icon.png" style="height:100%;padding:0rem; padding-top:0.25rem"/></button>
+        <button @click="toggleTTS"><img src="../../assets/images/speaker_icon.png" style="height:100%;padding:0rem; padding-top:0.25rem"/></button>
       </div>
       <div v-if="!isPreview" class="title" style="margin-left: auto;">{{fetchedGame.title}}</div>
     </div>
