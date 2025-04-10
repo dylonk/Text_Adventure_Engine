@@ -4,10 +4,10 @@ import useDragAndDrop from './drag_drop.js';
 import node_colors from './nodes/node-colors.js'
 import { TBNode } from './nodes/n-imports.js'
 import { useProjectStore } from './project_store.js';
-import tbTop from '../assets/Images/editor/toolbox-top-posterized.png'
-import tbTitle from '../assets/Images/editor/toolboxtitle.png'
-import tbBottom from '../assets/Images/editor/toolbox-bottom-posterized.png'
-import tbMid from '../assets/Images/editor/toolbox-mid-posterized.png'
+import tbTop from '../../assets/Images/editor/toolbox-top-posterized.png'
+import tbTitle from '../../assets/Images/editor/toolboxtitle.png'
+import tbBottom from '../../assets/Images/editor/toolbox-bottom-posterized.png'
+import tbMid from '../../assets/Images/editor/toolbox-mid-posterized.png'
 
 </script>
 <template>

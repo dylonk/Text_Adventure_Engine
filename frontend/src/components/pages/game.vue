@@ -7,7 +7,8 @@ import { useNodesStore } from '../editor/nodes/node_store.js';
 import { useGameStore } from '../editor/nodes/game_logic.js'
 import axios from 'axios';
 import { fetchUserData } from '@/components/standardjs/fetchUserData';
-import speakerIcon from '../../assets/images/speaker_icon.png'
+import speakerIcon from '../../assets/Images/speaker_icon.png';
+
 
 
 const GameLogic = useGameStore();
