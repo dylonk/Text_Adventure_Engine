@@ -31,7 +31,7 @@
         return null;
       }
       try {
-        const response = await fetch('${API_BASE_URL}/auth/user', {
+        const response = await fetch(`${API_BASE_URL}/auth/user', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,  // Pass the JWT token in the Authorization header
@@ -61,7 +61,7 @@
         console.log('Exporting project:', projectData);
         localStorage.setItem('project', JSON.stringify(projectData));//also saves it to localstorage! This is for preview capabilty.
 
-        const response = await fetch('${API_BASE_URL}/projects/save', {  //tries to POST the data to the project save route in backend
+        const response = await fetch(`${API_BASE_URL}/projects/save', {  //tries to POST the data to the project save route in backend
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'  //json
@@ -91,7 +91,7 @@
         return null;
       }
       try {
-        const response = await fetch('${API_BASE_URL}/auth/user', {
+        const response = await fetch(`${API_BASE_URL}/auth/user', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,  // Pass the JWT token in the Authorization header
@@ -127,7 +127,7 @@
       // Here you would typically send this to your backend
       try {
         console.log('Exporting game:', JSON.stringify(Game));
-        const response = await fetch('${API_BASE_URL}/games/save', {  //tries to POST the data to the game save route in backend
+        const response = await fetch(`${API_BASE_URL}/games/save', {  //tries to POST the data to the game save route in backend
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'  //json

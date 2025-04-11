@@ -12,7 +12,7 @@ export async function fetchUserData(attribute = null) {
     }
 
     try {
-        const response = await fetch('${API_BASE_URL}/auth/user', {
+        const response = await fetch(`${API_BASE_URL}/auth/user`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,  // Pass the JWT token in the Authorization header

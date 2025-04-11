@@ -20,7 +20,7 @@ async function changePassword() {
 
 try {
     const token = localStorage.getItem('token');  // Get the token from localStorage
-    const response = await fetch('${API_BASE_URL}/auth/changePassword', {
+    const response = await fetch(`${API_BASE_URL}/auth/changePassword`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -49,7 +49,7 @@ async function saveProfile() {
 
     try {
         const token = localStorage.getItem('token');  // Get the token from localStorage
-        const response = await fetch('${API_BASE_URL}/auth/update', {
+        const response = await fetch(`${API_BASE_URL}/auth/update`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

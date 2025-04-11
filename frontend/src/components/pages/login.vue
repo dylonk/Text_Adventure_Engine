@@ -24,7 +24,7 @@ const onLoginSubmit = async (event) => {
   const plainFormData = { ...formData.value };
   console.log('Form data being sent for login:', plainFormData);
   try {
-    const response = await fetch('${API_BASE_URL}/auth/login', {
+    const response = await fetch(`${API_BASE_URL}/auth/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -52,7 +52,7 @@ const onRegisterSubmit = async (event) => {
     return;
   }
   try {
-    const response = await fetch('${API_BASE_URL}/auth/register', {
+    const response = await fetch(`${API_BASE_URL}/auth/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

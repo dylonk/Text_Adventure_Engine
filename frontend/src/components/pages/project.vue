@@ -17,7 +17,7 @@ const projectStore = useProjectStore(); // Using projectStore globally
 const fetchProjects = async () => {
   try {
     const token = localStorage.getItem('token');
-    const response = await fetch('${API_BASE_URL}/auth/user', {
+    const response = await fetch(`${API_BASE_URL}/auth/user`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,

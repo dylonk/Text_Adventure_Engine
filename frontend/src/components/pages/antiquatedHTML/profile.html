@@ -35,7 +35,7 @@
             window.location.href = 'login.html';
         } else {
             // Fetch user data from the server
-            fetch('${API_BASE_URL}/auth/user', {
+            fetch(`${API_BASE_URL}/auth/user', {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`

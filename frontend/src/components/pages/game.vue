@@ -200,7 +200,7 @@ const handleInput = () => {
 //saves a game to the backend
 async function saveGame () {
 
-  const response=await fetch ('${API_BASE_URL}/savegames/save', {
+  const response=await fetch (`${API_BASE_URL}/savegames/save`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
