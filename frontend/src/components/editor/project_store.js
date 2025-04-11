@@ -2,6 +2,7 @@
   import { ref, computed,markRaw } from 'vue';
   import { useNodesStore } from './nodes/node_store.js';  //imports from node store
   import { v4 as uuidv4 } from 'uuid';
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 
   export const useProjectStore = defineStore('project', () => {
     // Project metadata
