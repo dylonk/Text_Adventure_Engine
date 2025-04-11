@@ -4,6 +4,9 @@ import axios from 'axios';
 import { ref, onMounted,watch } from 'vue';   
 import game from './game.vue';
 import { useRouter } from 'vue-router';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // for Vite
+
+
 const router = useRouter();
 
 
@@ -43,7 +46,7 @@ const fetchGames = async () => {
 
   try {
     console.log('Fetching all games');
-    const response = await axios.get(`http://localhost:5000/games/`);
+    const response = await axios.get(`${API_BASE_URL}/games/`);
     recentGames.value = response.data.map(game => ({
       id: game.id,
       title: game.title,

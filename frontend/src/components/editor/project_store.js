@@ -31,7 +31,7 @@
         return null;
       }
       try {
-        const response = await fetch('http://localhost:5000/auth/user', {
+        const response = await fetch('${API_BASE_URL}/auth/user', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,  // Pass the JWT token in the Authorization header
@@ -61,7 +61,7 @@
         console.log('Exporting project:', projectData);
         localStorage.setItem('project', JSON.stringify(projectData));//also saves it to localstorage! This is for preview capabilty.
 
-        const response = await fetch('http://localhost:5000/projects/save', {  //tries to POST the data to the project save route in backend
+        const response = await fetch('${API_BASE_URL}/projects/save', {  //tries to POST the data to the project save route in backend
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'  //json
@@ -91,7 +91,7 @@
         return null;
       }
       try {
-        const response = await fetch('http://localhost:5000/auth/user', {
+        const response = await fetch('${API_BASE_URL}/auth/user', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,  // Pass the JWT token in the Authorization header
@@ -127,7 +127,7 @@
       // Here you would typically send this to your backend
       try {
         console.log('Exporting game:', JSON.stringify(Game));
-        const response = await fetch('http://localhost:5000/games/save', {  //tries to POST the data to the game save route in backend
+        const response = await fetch('${API_BASE_URL}/games/save', {  //tries to POST the data to the game save route in backend
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'  //json
@@ -225,7 +225,7 @@
     //if we have time, it wouldn't be too hard to put an autosave function/confirmation here if you already have an unsaved project open
       console.log("openProject called");
       try {
-        const response = await fetch(`http://localhost:5000/projects/open?id=${projectID}`, {
+        const response = await fetch(`${API_BASE_URL}/projects/open?id=${projectID}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
@@ -342,7 +342,7 @@
     async function deleteProject() {  //this function deletes the current project and inits a new one
       console.log("deleteProject called");
       try {
-        const response = await fetch(`http://localhost:5000/projects/delete?id=${projectId.value}`, {
+        const response = await fetch(`${API_BASE_URL}/projects/delete?id=${projectId.value}`, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json'

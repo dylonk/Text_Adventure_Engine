@@ -11,8 +11,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 const cors = require('cors');
 
+const API_BASE_URL = process.env.API_BASE_URL;
+
 app.use(cors({
-    origin: 'https://magiquill.netlify.app', // Your frontend URL
+    origin: API_BASE_URL, // Your frontend URL
     methods: ['POST', 'GET', 'PUT', 'DELETE'],
     credentials: true
 }));

@@ -10,6 +10,8 @@ const confirmPassword = ref('');
 const email=ref('');
 const showAvatarModal = ref(false); // Modal state for changing avatars
 const selectedAvatar = ref('Felix');
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // for Vite
+
 
 
 
@@ -18,7 +20,7 @@ async function changePassword() {
 
 try {
     const token = localStorage.getItem('token');  // Get the token from localStorage
-    const response = await fetch('http://localhost:5000/auth/changePassword', {
+    const response = await fetch('${API_BASE_URL}/auth/changePassword', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -47,7 +49,7 @@ async function saveProfile() {
 
     try {
         const token = localStorage.getItem('token');  // Get the token from localStorage
-        const response = await fetch('http://localhost:5000/auth/update', {
+        const response = await fetch('${API_BASE_URL}/auth/update', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

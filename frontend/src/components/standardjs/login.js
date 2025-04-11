@@ -1,3 +1,6 @@
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // for Vite
+
+
 document.getElementById('login-form').addEventListener('submit', async function(event) {
     event.preventDefault(); // Prevent the default form submission
     const form = event.target;//gets the form targheted by the event.
@@ -10,7 +13,7 @@ document.getElementById('login-form').addEventListener('submit', async function(
     };
 
     try {
-        const response = await fetch('http://localhost:5000/auth/login', {   //sends a post to auth/login with the form data
+        const response = await fetch('${API_BASE_URL}/auth/login', {   //sends a post to auth/login with the form data
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

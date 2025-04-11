@@ -6,6 +6,8 @@ import clickSound from '@/assets/sounds/click.wav';
 import moreSound from '@/assets/sounds/more.wav';
 import { useProjectStore } from '../editor/project_store';
 import axios from 'axios';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // for Vite
+
 
 const router = useRouter();
 const recentProjects = ref([]);
@@ -15,7 +17,7 @@ const projectStore = useProjectStore(); // Using projectStore globally
 const fetchProjects = async () => {
   try {
     const token = localStorage.getItem('token');
-    const response = await fetch('http://localhost:5000/auth/user', {
+    const response = await fetch('${API_BASE_URL}/auth/user', {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -36,7 +38,7 @@ const fetchProjects = async () => {
 
   try {
     console.warn('Fetching projects for user:', userId.value);
-    const response = await axios.get(`http://localhost:5000/projects?userId=${userId.value}`);
+    const response = await axios.get(`${API_BASE_URL}/projects?userId=${userId.value}`);
     recentProjects.value = response.data.map(project => ({
       id: project.id,
       title: project.name,

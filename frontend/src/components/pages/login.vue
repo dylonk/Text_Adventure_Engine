@@ -2,6 +2,8 @@
 import { ref } from 'vue';
 import globalNavBar from '@/components/standardjs/navbar.vue';
 import { useRouter } from 'vue-router';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // for Vite
+
 
 const formData = ref({
   username: '',
@@ -22,7 +24,7 @@ const onLoginSubmit = async (event) => {
   const plainFormData = { ...formData.value };
   console.log('Form data being sent for login:', plainFormData);
   try {
-    const response = await fetch('http://localhost:5000/auth/login', {
+    const response = await fetch('${API_BASE_URL}/auth/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -50,7 +52,7 @@ const onRegisterSubmit = async (event) => {
     return;
   }
   try {
-    const response = await fetch('http://localhost:5000/auth/register', {
+    const response = await fetch('${API_BASE_URL}/auth/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

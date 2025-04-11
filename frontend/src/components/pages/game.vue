@@ -8,6 +8,8 @@ import { useGameStore } from '../editor/nodes/game_logic.js'
 import axios from 'axios';
 import { fetchUserData } from '@/components/standardjs/fetchUserData';
 import speakerIcon from '../../assets/Images/speaker_icon.png';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // for Vite
+
 
 
 
@@ -37,7 +39,7 @@ const props = defineProps({
 async function fetchSaveGame() {
   try {
     console.log("fetching savegame");
-    const response = await axios.get(`http://localhost:5000/savegames/?gameId=${props.gameTitle}&userId=${userId}`);//response will be the savegame object
+    const response = await axios.get(`${API_BASE_URL}/savegames/?gameId=${props.gameTitle}&userId=${userId}`);//response will be the savegame object
     //we then de-serialize the nodemap we get back
     response.data[0].nodeMap=serializableToMap(response.data.nodeMap);
     //and put the gamestate/game into the gamelogic. gamestate and game being essentially the same thing is very cool
@@ -101,7 +103,7 @@ function serializableToMap(obj) {
 async function fetchGame(gameTitle) {
   try {
     console.log("fetching game" + gameTitle);
-    const response = await axios.get(`http://localhost:5000/games/${gameTitle}`);//response is the game
+    const response = await axios.get(`${API_BASE_URL}/games/${gameTitle}`);//response is the game
     console.log(response.data);
     fetchedGame = response.data;
     //we have to de-jsonify it now. We don'Ft have to do this for previews because the backend isn't involved
@@ -198,7 +200,7 @@ const handleInput = () => {
 //saves a game to the backend
 async function saveGame () {
 
-  const response=await fetch ('http://localhost:5000/savegames/save', {
+  const response=await fetch ('${API_BASE_URL}/savegames/save', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
