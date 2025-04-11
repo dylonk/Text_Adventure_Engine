@@ -11,10 +11,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 const cors = require('cors');
 
-const API_BASE_URL = process.env.API_BASE_URL;
+const FRONTEND_URL = process.env.FRONTEND_URL;
 
 app.use(cors({
-    origin: API_BASE_URL, // Your frontend URL
+    origin: FRONTEND_URL, // Your frontend URL
     methods: ['POST', 'GET', 'PUT', 'DELETE'],
     credentials: true
 }));
