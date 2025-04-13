@@ -153,6 +153,7 @@ function switchCanvas(id, assetBrowserIndex){
   height:auto;
   display: flex;
   font-size:large;
+  width:250px;
   justify-content: center;
   flex-direction: column;
   background: rgb(93, 93, 93);

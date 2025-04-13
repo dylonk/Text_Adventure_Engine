@@ -11,7 +11,7 @@ const canvasName = computed(() => {
 </script>
 <template>
     <div>
-    <div class="canvas-selector-container" style="left:0px; top:-6px">
+    <div class="canvas-selector-container" style="left:0px; top:-4px">
         <div class="selector-text">{{ canvasName }}</div>
     </div>
         <img onload="this.width*=1" class="canvas-selector" :src="canvasSelectorContainer">
@@ -40,9 +40,12 @@ const canvasName = computed(() => {
 .selector-text{
     font-family: "Eagle Lake", serif;
     position:relative;
-    font-size:large;
-    width:200px;
+    font-size:small;
+    background:rgb(0, 0, 0);
+    width:150px;
     left:25px;
+    overflow:hidden;
+    white-space: nowrap;
     top:25px;
     color:rgb(255, 255, 255);
     text-overflow:ellipsis;
