@@ -113,14 +113,19 @@ import tbMid from '../../assets/Images/editor/toolbox-mid-posterized.png'
     flex-direction: column;
     min-width:max-content;
     margin: 8px;
+    background: rgba(154, 126, 73, 0.2);
+    border-radius:10px;
     margin-bottom:0px;
     margin-top:12px;
-    border:1px solid rgb(84, 84, 84);
+    border:3px inset #f1b882;
     overflow:auto;
-    scrollbar-width:none;
-    scrollbar-color: blue rgba(0,0,0,0);
     scrollbar-gutter: stable;
     height:100%;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+.tb-items::-webkit-scrollbar {
+  display: none;
 }
 
 .context-menu {

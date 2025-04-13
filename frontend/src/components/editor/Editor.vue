@@ -25,7 +25,6 @@ function updateAssets(){
         class="previewScreen"
         :isPreview="true"
       ></gamePreview>
-      <CanvasSelector v-if="!useProjectStore().showPreview" />
       <Canvas v-if="!useProjectStore().showPreview" />
       <AssetBrowser v-if="!useProjectStore().showPreview" />
     </div>

@@ -16,6 +16,7 @@ const object_type_list = [
 
 import { dataHas, treeify } from '@/components/editor/nodes/n-utils';
 import { VueFlow } from '@vue-flow/core'
+import CanvasSelector from './canvasSelector.vue'
 
 const nodesStore = useNodesStore()
 
@@ -130,7 +131,7 @@ function switchCanvas(id, assetBrowserIndex){
 <template>
   <div style="display: none">{{ syn }}</div>
     <div class="asset_browser">
-      <h3>Object Viewer</h3>
+      <CanvasSelector></CanvasSelector>
       <div class="objects-container">
         <NestedObject :n="objects"  @ov-context-clicked="showContextMenu($event)" 
         />
@@ -157,6 +158,7 @@ function switchCanvas(id, assetBrowserIndex){
   background: rgb(93, 93, 93);
   justify-content: space-between;
 }
+
 .asset-browser-hr{
   margin-top:5px;
   margin-bottom:5px;
@@ -197,11 +199,12 @@ li {
   overflow-y:scroll;
   border: inset rgb(83, 83, 83) 2px;
   overflow-x:scroll;
-  width:200px;
+  width:auto;
 
   border-radius: 10px;
   background: rgb(56, 56, 56);
   margin:10px;
+  margin-top:2px;
 }
 
 details div {
