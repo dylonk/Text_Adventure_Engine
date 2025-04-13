@@ -105,7 +105,7 @@ onMounted(async() => {
         console.log("fetched password", currentPassword.value);
         email.value = await fetchUserData('email');
         console.log("fetched email", email.value);
-        profileImage.value = await fetchUserData('profileImage') || null;
+        profileImage.value = await fetchUserData('profileImage');
         console.log("fetched profileImage", profileImage.value);
 });
 </script>
