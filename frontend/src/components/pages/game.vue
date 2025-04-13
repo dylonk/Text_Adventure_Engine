@@ -230,7 +230,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <globalNavBar v-if="!isPreview"/>o
+  <globalNavBar v-if="!isPreview"/>
     
 
   <div

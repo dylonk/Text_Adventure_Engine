@@ -1,10 +1,14 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import globalNavBar from '@/components/standardjs/navbar.vue';
+import wizardPfp from '@/assets/Images/wizardpfp.png';
 import { fetchUserData } from '@/components/standardjs/fetchUserData';
+import { HContainer } from '../editor/nodes/node_assets/n-component-imports';
 const username = ref('Felix');  // I  'Felix' as the default username for the avatar nothing to do with anyones name
 const showChangePassword = ref(false);
 const currentPassword = ref('defaultPassword');
+const profileImage = ref(null)
+const profileImageField = ref(null)
 const newPassword = ref('');
 const confirmPassword = ref('');
 const email=ref('');
@@ -57,7 +61,8 @@ async function saveProfile() {
             },
             body: JSON.stringify({
                 username: username.value,
-                email: email.value
+                email: email.value,
+                profileImage: profileImage.value
             })
         });
 
@@ -76,7 +81,22 @@ function selectAvatar(seed) {
     selectedAvatar.value = seed;
     showAvatarModal.value = false;
 }
+function isValidURL(url) {
+  try {
+    new URL(url);
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
 
+function updatePFP(){
+    if (isValidURL(profileImageField.value)) {
+    profileImage.value = profileImageField.value;
+  } else {
+    alert("Invalid image URL");
+  }
+}
 // Fetch user profile when the component is mounted
 onMounted(async() => {
         username.value = await fetchUserData('username');
@@ -85,21 +105,32 @@ onMounted(async() => {
         console.log("fetched password", currentPassword.value);
         email.value = await fetchUserData('email');
         console.log("fetched email", email.value);
-
+        profileImage.value = await fetchUserData('profileImage') || null;
+        console.log("fetched profileImage", profileImage.value);
 });
 </script>
 <template>
     <div class="profile-container">
         <globalNavBar/>
         <div class="profile-content">
-            <div class="profile-header">
-                <div class="profile-picture-container">
-                    <img :src="`https://api.dicebear.com/9.x/big-ears-neutral/svg?seed=${selectedAvatar}`" alt="Profile Picture" />
+            <div class="profile-picture-container">
+                    <img v-if="profileImage!=null" :src="profileImage" alt="Profile Picture" />
+                    <img v-else :src="wizardPfp"  alt="Profile Picture">
                 </div>
-                <button class="change-avatar-btn" @click="showAvatarModal = true">Change Avatar</button>
+            <div class="profile-header">
+
                 <h1>Profile Settings</h1>
             </div>
             <div class="profile-info">
+                
+                <div class="form-group">
+                    <label for="profile-image-url">Profile Image URL</label>
+
+                    <HContainer>
+                    <input type="text" id="profile-image-url" v-model="profileImageField" placeholder="Enter image URL" />
+                    <button @click="updatePFP">Update PFP</button>
+                    </HContainer>
+                </div>
                 <div class="form-group">
                     <label for="username">Username</label>
                     <input type="text" id="username" v-model="username" />
@@ -124,22 +155,6 @@ onMounted(async() => {
                 <div class="form-group">
                     <button @click="saveProfile">Save Profile</button>
                 </div>
-            </div>
-        </div>
-
-        <!-- Avatar Selection Modal -->
-        <div v-if="showAvatarModal" class="avatar-modal">
-            <div class="avatar-modal-content">
-                <h2>Select Avatar</h2>
-                <div class="avatars-grid">
-                    <div v-for="seed in ['Felix', 'Max', 'Charlie', 'Luna', 'Milo', 'Oscar', 'Bella', 'Daisy', 'Toby']"
-                         :key="seed"
-                         class="avatar-item"
-                         @click="selectAvatar(seed)">
-                        <img :src="`https://api.dicebear.com/9.x/big-ears-neutral/svg?seed=${seed}`" :alt="seed" />
-                    </div>
-                </div>
-                <button class="close-modal-btn" @click="showAvatarModal = false">Close</button>
             </div>
         </div>
     </div>
@@ -185,8 +200,8 @@ body {
 }
 
 .profile-picture-container {
-    width: 150px;
-    height: 150px;
+    width: 300px;
+    height: 300px;
     overflow: hidden;
     border-radius: 0;
     margin: 0 auto 1rem; /* Center the avatar */
