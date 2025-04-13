@@ -67,7 +67,8 @@ async function saveProfile() {
         });
 
         if (response.ok) {
-            console.log('Profile updated successfully');
+
+            console.log('Profile updated successfully:body',response.body);
         } else {
             console.error('Failed to update profile');
         }
