@@ -7,8 +7,8 @@ import { HContainer } from '../editor/nodes/node_assets/n-component-imports';
 const username = ref('Felix');  // I  'Felix' as the default username for the avatar nothing to do with anyones name
 const showChangePassword = ref(false);
 const currentPassword = ref('defaultPassword');
-const profileImage = ref(null)
-const profileImageField = ref(null)
+const profileImage = ref("")
+const profileImageField = ref("")
 const newPassword = ref('');
 const confirmPassword = ref('');
 const email=ref('');
@@ -115,7 +115,7 @@ onMounted(async() => {
         <globalNavBar/>
         <div class="profile-content">
             <div class="profile-picture-container">
-                    <img v-if="profileImage!=null" :src="profileImage" alt="Profile Picture" />
+                    <img v-if="profileImage!=''" :src="profileImage" alt="Profile Picture" />
                     <img v-else :src="wizardPfp"  alt="Profile Picture">
                 </div>
             <div class="profile-header">
