@@ -68,7 +68,7 @@ async function saveProfile() {
 
         if (response.ok) {
 
-            console.log('Profile updated successfully:body',response.body);
+            console.log('Profile updated successfully, profile info image=', profileImage.value);
         } else {
             console.error('Failed to update profile');
         }
