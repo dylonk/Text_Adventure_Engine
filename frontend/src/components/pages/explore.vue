@@ -71,6 +71,12 @@ onMounted(fetchGames);
                 <div class="gamepic"><img src="https://i.pinimg.com/736x/13/34/75/133475f2b4de23314a01df9a61f85436.jpg"> </div>
             </div>
     </div>
+    <div v-else class="games-section">
+      <div class="game">
+                <div class="gametitle">Offline Title</div>
+                <div class="gamepic"><img src="https://i.pinimg.com/736x/13/34/75/133475f2b4de23314a01df9a61f85436.jpg"> </div>
+            </div>
+    </div>
 
 </template>
 

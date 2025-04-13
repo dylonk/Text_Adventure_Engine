@@ -17,7 +17,7 @@ const node_colors = {
     custom_fg: "#110617",
     await_bg: "#c4ffda",
     await_fg: "#206e49",
-    unimplemented_bg:"#ff00f2",
+    unimplemented_bg:"#7fffd4",
     unimplemented_fg:"black",
     action_bg: "#ffb8b8",
     action_fg: "#942b63",

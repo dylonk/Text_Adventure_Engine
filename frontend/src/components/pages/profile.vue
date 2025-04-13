@@ -115,7 +115,7 @@ onMounted(async() => {
         <globalNavBar/>
         <div class="profile-content">
             <div class="profile-picture-container">
-                    <img v-if="profileImage!=''" :src="profileImage" alt="Profile Picture" />
+                    <img v-if="profileImage!=''&&profileImage!=null" :src="profileImage" alt="Profile Picture" />
                     <img v-else :src="wizardPfp"  alt="Profile Picture">
                 </div>
             <div class="profile-header">

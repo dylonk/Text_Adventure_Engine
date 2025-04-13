@@ -98,8 +98,8 @@ import tbMid from '../../assets/Images/editor/toolbox-mid-posterized.png'
 
 }
 .tb_subtitle{
-    font-family: "Hurricane", serif;    
-    font-size:30px;
+    font-family: "Syne Mono", serif;    
+    font-size:20px;
     padding:4px;
     margin: 0 auto;
     margin-bottom:0px;
@@ -113,7 +113,13 @@ import tbMid from '../../assets/Images/editor/toolbox-mid-posterized.png'
     flex-direction: column;
     min-width:max-content;
     margin: 8px;
+    margin-bottom:0px;
+    margin-top:12px;
+    border:1px solid rgb(84, 84, 84);
     overflow:auto;
+    scrollbar-width:none;
+    scrollbar-color: blue rgba(0,0,0,0);
+    scrollbar-gutter: stable;
     height:100%;
 }
 
