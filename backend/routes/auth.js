@@ -80,7 +80,7 @@ router.post('/login', async (req, res) => {
   });
 
 router.post('/update', authenticateToken, async (req, res) => { //this updates the user profile non password fields
-    const { username, email } = req.body;   //right now just updates username and email. But we'll make it update everything
+    const { username, email, profileImage } = req.body;   //right now just updates username and email. But we'll make it update everything
   
     try {
       const user = await User.findById(req.user.id);
@@ -88,6 +88,7 @@ router.post('/update', authenticateToken, async (req, res) => { //this updates t
   
       user.username = username;
       user.email = email;
+      user.profileImage = profileImage
   
       await user.save();
   
