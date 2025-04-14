@@ -1,5 +1,4 @@
 import {defineStore} from 'pinia'
-import { useNodesStore } from "./node_store"
 import { ref } from "vue"
 
 export const useGameStore = defineStore('game', () => {

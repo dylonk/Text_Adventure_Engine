@@ -1,7 +1,9 @@
-# Ignore node_modules in both frontend and backend
+# Ignore node_modules in both frontend and backend and electron
 frontend/node_modules/
 frontend/dist/
 backend/node_modules/
+electron/node_modules/
+electron/
 
 # Ignore environment variable files
 frontend/.env

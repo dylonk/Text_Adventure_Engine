@@ -106,7 +106,7 @@ async function fetchGame(gameTitle) {
     const response = await axios.get(`${API_BASE_URL}/games/${gameTitle}`);//response is the game
     console.log(response.data);
     fetchedGame = response.data;
-    //we have to de-jsonify it now. We don'Ft have to do this for previews because the backend isn't involved
+    //we have to de-jsonify it now. We don't have to do this for previews because the backend isn't involved
     fetchedGame.nodeMap = serializableToMap(fetchedGame.nodeMap);
     //start the game logic using the game data. The rest of the response is important too, it's displayed in the template
     GameLogic.start(fetchedGame);
@@ -114,6 +114,78 @@ async function fetchGame(gameTitle) {
     console.warn('Error fetching game:', error);    
   }
 }
+
+
+async function downloadGame() {
+  // Create a copy of the game data with the nodeMap converted to a serializable format
+  const gameToDownload = {
+    ...fetchedGame,
+    nodeMap: mapToSerializable(GameLogic.getNodeMap())
+  };
+
+  const gameJson = JSON.stringify(gameToDownload);
+  const blob = new Blob([gameJson], { type: "application/json" });
+
+    // Create a download link
+  const gameTitle = fetchedGame.title || "text-adventure";
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = `${gameTitle}.game.json`;
+  
+  // Trigger the download
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+const loadGameFromFile = (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+  
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      // Parse the JSON file
+      const gameData = JSON.parse(e.target.result);
+      
+      // Convert the nodeMap back to a Map object
+      gameData.nodeMap = serializableToMap(gameData.nodeMap);
+      
+      // Store the game data and start the game
+      fetchedGame = gameData;
+      GameLogic.start(fetchedGame);
+      
+      // Reset user input and display
+      userInput.value = "";
+      GameLogic.outputQueue = [];
+      
+    } catch (error) {
+      console.error("Error loading game file:", error);
+      alert("Invalid game file format. Please select a valid .game.json file.");
+    }
+  };
+  
+  reader.readAsText(file);
+};
+
+// Create a hidden file input element for loading games
+const createFileInput = () => {
+  const fileInput = document.createElement("input");
+  fileInput.type = "file";
+  fileInput.accept = ".game.json";
+  fileInput.style.display = "none";
+  fileInput.addEventListener("change", loadGameFromFile);
+  return fileInput;
+};
+
+// Function to trigger the file selection dialog
+const importGame = () => {
+  const fileInput = createFileInput();
+  document.body.appendChild(fileInput);
+  fileInput.click();
+  document.body.removeChild(fileInput);
+};
+
 
 const text = computed(()=>{
   return GameLogic.output
@@ -250,6 +322,10 @@ onMounted(() => {
       <button @click="loadGame">Load</button>
       <button @click="restartGame">Restart</button>
       <button @click="quitGame">Quit</button>
+      <button @click="downloadGame">Download</button>
+      <button @click="importGame">Load From File</button>
+
+
       <div class="tts-toggle">
         <button @click="toggleTTS"><img :src="speakerIcon" style="height:100%;padding:0rem; padding-top:0.25rem"/></button>
       </div>
