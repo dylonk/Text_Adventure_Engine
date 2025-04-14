@@ -4,6 +4,8 @@ import globalNavBar from '@/components/standardjs/navbar.vue';
 import wizardPfp from '@/assets/Images/wizardpfp.png';
 import { fetchUserData } from '@/components/standardjs/fetchUserData';
 import { HContainer } from '../editor/nodes/node_assets/n-component-imports';
+import { useRouter } from 'vue-router';
+import axios from 'axios';
 const username = ref('Felix');  // I  'Felix' as the default username for the avatar nothing to do with anyones name
 const showChangePassword = ref(false);
 const currentPassword = ref('defaultPassword');
@@ -15,8 +17,46 @@ const email=ref('');
 const showAvatarModal = ref(false); // Modal state for changing avatars
 const selectedAvatar = ref('Felix');
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // for Vite
+const myGames = ref([]);
+const userID=ref('');
+const router = useRouter();
 
 
+async function fetchMyGames() {
+    try {
+        userID.value=await fetchUserData("_id");    //gets your id
+        const response = await axios.get(`${API_BASE_URL}/games/?userId=${userID}`);//response is any games that mtch the userid
+        myGames.value = response.data.map(game => ({
+        id: game.id,
+        title: game.title,
+        image: 'https://talentclick.com/wp-content/uploads/2021/08/placeholder-image.png'
+        }));
+    } catch (error) {
+        console.warn('Error fetching games:', error);
+    }
+}
+
+//deletes the game from the backend. Probably want to add a confirmation.
+async function deleteGame(gameId) {
+
+    try {
+        const token = localStorage.getItem('token');  // Get the token from localStorage
+        axios.post(`${API_BASE_URL}/games/${gameId}/delete`, null, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        })
+    }
+    catch (error) {
+        console.error('Error deleting game:', error);
+    }
+}
+
+//we open games by title to make the links pretty. 
+async function openGame(title) {
+    router.push('/game/' + title);//takes you to the player screen
+};
 
 
 // Function to change the password
@@ -108,6 +148,7 @@ onMounted(async() => {
         console.log("fetched email", email.value);
         profileImage.value = await fetchUserData('profileImage');
         console.log("fetched profileImage", profileImage.value);
+        fetchMyGames();
 });
 </script>
 <template>
@@ -157,6 +198,23 @@ onMounted(async() => {
                     <button @click="saveProfile">Save Profile</button>
                 </div>
             </div>
+    <div class="user-games">
+      <h2 class="section-title">Your Games</h2>
+      <div class="games-grid">
+        <div 
+          v-for="game in myGames" 
+          :key="game.id" 
+          class="game-box"
+        >
+          <div class="game-title">{{ game.title }}</div>
+          <img :src="game.thumbnail" alt="Game image" class="game-image" />
+          <div class="game-actions">
+            <button class="action-button" @click="openGame(game.title)">Play</button>
+            <button class="action-button delete" @click="deleteGame(game.id)">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
         </div>
     </div>
 </template>
@@ -363,5 +421,92 @@ body {
     padding: 8px 12px;
     cursor: pointer;
     margin-top: 10px;
+}
+
+
+
+
+
+
+
+
+
+
+.my-games {
+  background: rgba(44, 47, 51, 0.9);
+  border: 2px solid #e0e0e0;
+  box-shadow: 6px 6px 0 #000;
+  padding: 25px;
+  border-radius: 10px;
+  text-align: center;
+  width: 70%;
+  margin-top: 50px;
+}
+
+.section-title {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #e0e0e0;
+}
+
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 15px;
+}
+
+.game-box {
+  background: #e74c3c;
+  border: 2px solid #e0e0e0;
+  box-shadow: 4px 4px 0 #000;
+  border-radius: 6px;
+  padding: 12px;
+  text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.game-box:hover {
+  transform: translateY(-5px);
+  box-shadow: 6px 6px 0 #000;
+}
+
+.game-title {
+  font-size: 1rem;
+  margin-bottom: 10px;
+  padding: 6px;
+  background: #c0392b;
+  color: #fff;
+  border: 2px solid #e0e0e0;
+  box-shadow: 2px 2px 0 #000;
+}
+
+.game-image {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border: 2px solid #e0e0e0;
+  box-shadow: inset 2px 2px 0 #000;
+}
+
+.game-actions {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-around;
+}
+
+.action-button {
+  font-size: 0.9rem;
+  padding: 5px 10px;
+  border: 2px solid white;
+  background: #c0392b;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.action-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 2px 2px 0 #000;
 }
 </style>

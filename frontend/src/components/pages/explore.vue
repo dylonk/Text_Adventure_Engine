@@ -38,7 +38,6 @@ const filterGames = () => {
 //yeah, we're doing it by title not id. it makes the links prettier and we're making titles unique anyway.
 const goToGame = (async (title) => {
   router.push('/game/' + title);//takes you to the player screen
-
 });
 
 

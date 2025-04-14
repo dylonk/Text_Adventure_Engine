@@ -69,22 +69,38 @@ const router = express.Router();
     }
   });
 
-
-
-  //route to get ALL GAMES, ALL OF THEM. it's for the explore page. we can scale this later.
-  router.get('/', async (req, res) => {
+  router.post('/delete', async (req, res) => {
+    console.log("delete request send");
     try {
-      // Fetch all games
-      const games = await Game.find(); // This fetches all games in the database
-      res.json(games); // Send the found projects as the response
+      const { id } = req.body;  
+      console.log("id is", id);  //ok, so it successfully gets ID and name of the project
+      const game = await Game.findOneAndDelete({ id: id });
+      console.log('Game deleted successfully', game);
+      res.json(game);
     } catch (error) {
-      console.error('Error fetching games:', error);
-      res.status(500).json({ message: 'Error fetching games', error });
+      res.status(500).json({ message: 'Error deleting game', error });
     }
   });
 
 
-  
+
+// route to get games from the database. Used in the explore page. optional query param userId
+router.get('/', async (req, res) => {
+  try {
+    const { userId } = req.query;
+
+    let filter = {};
+    if (userId) {
+      filter.userId = userId; // Only add this filter if userId is present
+    }
+
+    const games = await Game.find(filter); // Filter if userId exists, otherwise get all
+    res.json(games);
+  } catch (error) {
+    console.error('Error fetching games:', error);
+    res.status(500).json({ message: 'Error fetching games', error });
+  }
+});
 
 module.exports = router;
 
