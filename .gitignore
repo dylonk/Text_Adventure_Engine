@@ -3,7 +3,9 @@ frontend/node_modules/
 frontend/dist/
 backend/node_modules/
 electron/node_modules/
-electron/
+electron/dist
+electron/dist_electron
+node_modules/
 
 # Ignore environment variable files
 frontend/.env

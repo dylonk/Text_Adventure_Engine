@@ -1,0 +1,333 @@
+<script setup>
+import { ref, onMounted, nextTick, computed, watch } from 'vue';
+import { useGameStore } from './game_logic.js'
+//import speakerIcon from '../../assets/Images/speaker_icon.png';
+
+
+//this version of game.vue is built for offline mode. It'll be a little more stripped down.
+
+const GameLogic = useGameStore();
+GameLogic.$dispose
+GameLogic.initialized=false
+let Game = {}       //this is the game the user imports, with it's metadata. 
+
+
+const props = defineProps({
+  gameTitle: {    
+    type: String,
+    required: true
+  },
+});
+
+
+const gameContainer = ref(null);
+
+
+
+
+// converts gamedata back to a map. we may or may not need to use this elsewhere, 
+// but it's essentially always used in the process of transferring games from the backend to a playable state.
+function serializableToMap(obj) {
+    const map = new Map();
+    for (const key in obj) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        map.set(Number(key), obj[key]);
+      }
+    }
+    return map;
+  }
+
+  //yes, this function is a direct copypaste from project.store when i should have just imported both of these. Employers if you're looking at this 
+  //I will not do this when I am working for you
+  function mapToSerializable(map) {
+      const obj = {};
+      for (const [key, value] of map.entries()) {
+        obj[key] = value;
+      }
+      return obj;
+    }
+
+
+const text = computed(()=>{
+  return GameLogic.output
+})
+
+
+const displayText = ref("");
+const userInput = ref("");
+const typingIndex = ref(0);
+const progress = ref(0);
+const gameScreen = ref(null);
+const ttsTog = ref(0);
+const words = ref('');
+
+
+const startTypingEffect = () => {
+  if (typingIndex.value < text.value.length) {
+    displayText.value += text.value.charAt(typingIndex.value);
+    typingIndex.value++;
+    setTimeout(startTypingEffect, 30);
+  }
+};
+
+
+
+const toggleTTS = () => {
+    if(ttsTog.value == 0) {
+      ttsTog.value = 1;
+      words.value = displayText.value;
+      let newWords = words.value.split('<br>').join('');
+      newWords = newWords.split('<span class=\'user-input\'>>').join('');
+      newWords = newWords.split('<span class=\'highlight\'>').join('');
+      newWords = newWords.split('</span>').join('');
+      if (speechSynthesis.speaking) {
+        speechSynthesis.cancel();
+      }
+      const spokenWords = new SpeechSynthesisUtterance(newWords);
+      speechSynthesis.speak(spokenWords);
+    }
+    else {
+      ttsTog.value = 0;
+      speechSynthesis.cancel();
+    }
+  };
+
+  watch(displayText, (newValue, oldValue) => {
+    if(displayText.value.length >= text.value.length && ttsTog.value == 1) {
+      console.log('New words');
+      let newWords = displayText.value.replace(words.value, "");
+      words.value = displayText.value;
+      newWords = newWords.split('<br>').join('');
+      newWords = newWords.split('<span class=\'user-input\'>>').join('');
+      newWords = newWords.split('<span class=\'highlight\'>').join('');
+      newWords = newWords.split('</span>').join('');
+      speechSynthesis.cancel();
+      const spokenWords = new SpeechSynthesisUtterance(newWords);
+      speechSynthesis.speak(spokenWords);
+    }
+  });
+
+const handleInput = () => {
+      displayText.value += `<br><br><span class='user-input'>> ${userInput.value}</span>`;
+      GameLogic.userResponse(userInput.value);
+      nextTick(() => {
+      });
+      GameLogic.outputQueue.push(">> "+userInput.value)
+      userInput.value = "";
+
+  };
+
+
+const restartGame = () => {
+  GameLogic.restartGame();
+};
+
+const quitGame = () => {
+  alert("Game Over. Refresh to start again.");
+};
+
+//in onmounted, we make listeners to the electron api.
+onMounted(() => {
+  window.electronAPI.onLoadGameData((data) => {
+      console.log("loaded game data", data);
+      Game=data;
+      Game.nodeMap=serializableToMap(Game.nodeMap)
+      GameLogic.start(Game);
+  })  
+  startTypingEffect();
+});
+</script>
+
+<template>    
+
+  <div
+    class="game-container"
+    ref="gameContainer"
+    @mousedown="startDrag"
+  >
+    </div>
+    <div class="game-playarea">
+      <div class="game-controls">
+      <button @click="saveGame">Save</button>
+      <button @click="loadGame">Load</button>
+      <button @click="restartGame">Restart</button>
+      <button @click="quitGame">Quit</button>
+
+
+      <div class="title" style="margin-left: auto;">{{Game.title}}</div>
+    </div>
+      <div class="game-screen">
+        <div style="margin-top:auto"></div>
+        <div v-for="output in GameLogic.outputQueue" class="game-text">
+          <div v-if="output[0] == '>'" style="color:yellow">
+            {{ output }}
+          </div>
+          <div v-else style="color:gray">
+            {{ output }}
+          </div>
+        </div>
+        <div class="game-text">{{ GameLogic.output }}</div>
+      </div>
+    <div class="game-input">  
+      <input v-model="userInput" @keyup.enter="handleInput" placeholder="Enter your command..." autofocus />
+    </div>
+  </div>
+
+
+</template>
+
+<style scoped>
+.game-container {
+  flex:1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  background-color: black;
+  color: white;
+  font-family: monospace;
+  position: relative;
+}
+.game-playarea{
+  width:100%;
+  height: 100%;
+  flex:1;
+  display:flex;
+  flex-direction:column;
+}
+
+.game-container.preview {
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+}
+
+.left-side,
+.right-side {
+  width: fit-content;
+  height: 100%;
+  top: 0;
+}
+
+.left-side {
+  left: 0;
+}
+
+.right-side {
+  right: 0;
+}
+
+.resize-handle {
+  width: 20px;
+  height: 20px;
+  background-color: #c0392b;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  cursor: se-resize;
+}
+
+.progress-bar {
+  width: 80%;
+  height: 10px;
+  background: #444;
+  margin-bottom: 10px;
+}
+
+.progress {
+  height: 100%;
+  background: #c0392b;
+  transition: width 0.3s;
+}
+
+.game-screen {
+  display:flex;
+  flex-direction:column;
+  width: 100%;
+  height:100%;
+  overflow-y: auto;
+  padding: 1rem;
+  background-color: #2e2e2e;
+  white-space: pre-line;
+}
+
+.game-text-previous {
+  font-size: 1.2rem;
+  line-height: 1.5;
+  color:rgb(211, 211, 211);
+}
+.game-text-previous-player {
+  font-size: 1.2rem;
+  line-height: 1.5;
+  color:goldenrod;
+}
+.game-text {
+  font-size: 1.2rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  display:block;
+}
+
+.game-input input {
+  width: 100%;
+  padding: 0.6rem;
+  font-size: 1rem;
+  background: rgb(120, 120, 120);
+  color: rgb(0, 0, 0);
+  border:none;
+  outline:none;
+}
+.game-input input:focus{
+  background:rgb(197, 197, 197);
+  border:none;
+}
+
+.game-controls {
+  padding:0.5rem;
+  display: flex;
+  background-color: #1e1e1e;
+  gap: 10px;
+}
+
+
+.game-controls button {
+  padding: 10px;
+  background: #e74c3c;
+  border: none;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: bold;
+  height:50px;
+  cursor: pointer;
+  border: 2px solid #e0e0e0;
+  box-shadow: 4px 4px 0 #000;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.game-controls button:hover {
+  background: #c0392b;
+}
+
+.highlight {
+  color: #c0392b;
+  font-weight: bold;
+}
+
+.user-input {
+  color: #c0392b;
+  font-weight: bold;
+}
+
+.title{
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: white;
+}
+.description{
+  font-size: 1rem;
+  margin-bottom: 20px;
+  color: white;
+}
+</style>

@@ -1,6 +1,6 @@
 <script>
 import globalNavBar from '@/components/standardjs/navbar.vue';
-import Toastify from 'toastify-js';
+import Toastify from '../../../../electron/node_modules/toastify-js/src/toastify';
 import 'toastify-js/src/toastify.css';
 import Project from './project.vue';
 import { useProjectStore } from '../editor/project_store';

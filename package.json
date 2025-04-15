@@ -1,7 +1,12 @@
 {
-  "dependencies": {
-    "electron": "^35.1.5",
-    "toastify-js": "^1.12.0",
-    "uuid": "^11.0.5"
+  "name": "text-adventure-platform",
+  "version": "1.0.0",
+  "scripts": {
+    "start:web": "cd frontend && npm run serve",
+    "start:api": "cd backend && npm run start",
+    "start:electron": "cd electron && npm run start",
+    "build:all": "npm run build:web && npm run build:electron",
+    "build:web": "cd frontend && npm run build",
+    "build:electron": "cd electron && npm run build"
   }
 }
