@@ -130,7 +130,7 @@ async function downloadGame() {
   const gameTitle = fetchedGame.title || "text-adventure";
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
-  link.download = `${gameTitle}.game.json`;
+  link.download = `${gameTitle}.quill`;
   
   // Trigger the download
   document.body.appendChild(link);
