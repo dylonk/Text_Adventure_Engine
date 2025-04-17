@@ -332,16 +332,19 @@ onMounted(() => {
       <div v-if="!isPreview" class="title" style="margin-left: auto;">{{fetchedGame.title}}</div>
     </div>
       <div class="game-screen">
-        <div style="margin-top:auto"></div>
-        <div v-for="output in GameLogic.outputQueue" class="game-text">
-          <div v-if="output[0] == '>'" style="color:yellow">
-            {{ output }}
-          </div>
-          <div v-else style="color:gray">
-            {{ output }}
-          </div>
+        <div class="game-image-display">
+          <img v-if="GameLogic.getNodeMap().has('image')" :src="GameLogic.getNodeMap().get('image')" alt="Game Image">
         </div>
-        <div class="game-text">{{ GameLogic.output }}</div>
+        <div class="game-text-area">
+          <div v-for="output in GameLogic.outputQueue" class="game-text">
+            <div v-if="output[0] == '>'" style="color:yellow">
+              {{ output }}
+            </div>
+            <div v-else style="color:gray" v-html="output">
+            </div>
+          </div>
+          <div class="game-text" v-html="GameLogic.output"></div>
+        </div>
       </div>
     <div class="game-input">  
       <input v-model="userInput" @keyup.enter="handleInput" placeholder="Enter your command..." autofocus />
@@ -361,7 +364,7 @@ onMounted(() => {
 
 <style scoped>
 .game-container {
-  flex:1;
+  flex: 1;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -371,12 +374,13 @@ onMounted(() => {
   font-family: monospace;
   position: relative;
 }
-.game-playarea{
-  width:100%;
+
+.game-playarea {
+  width: 100%;
   height: 100%;
-  flex:1;
-  display:flex;
-  flex-direction:column;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .game-container.preview {
@@ -425,14 +429,80 @@ onMounted(() => {
 }
 
 .game-screen {
-  display:flex;
-  flex-direction:column;
+  display: flex;
+  flex-direction: column;
   width: 100%;
-  height:100%;
+  height: 100%;
   overflow-y: auto;
   padding: 1rem;
   background-color: #2e2e2e;
   white-space: pre-line;
+}
+
+.game-image-display {
+  width: 100%;
+  height: 150px;
+  background-color: #252525;
+  border-bottom: 1px solid #404040;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.game-image-display img {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.game-text-area {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+.game-text {
+  font-size: 1.2rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  display: block;
+}
+
+.game-text-content {
+  color: #e0e0e0;
+  margin: 5px 0;
+}
+
+.game-image {
+  margin: 5px 0;
+  display: flex;
+  justify-content: center;
+  max-width: 10%;
+  max-height: 10%;
+  align-self: flex-start;
+}
+
+.game-image img {
+  width: 100%;
+  height: 100%;
+  border-radius: 4px;
+  border: 1px solid #404040;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  object-fit: contain;
+}
+
+.game-output-content :deep(img) {
+  width: 10%;
+  max-height: 10vh;
+  border-radius: 4px;
+  border: 1px solid #404040;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  margin: 5px 0;
+  display: block;
+  object-fit: contain;
 }
 
 .game-text-previous {
@@ -444,12 +514,6 @@ onMounted(() => {
   font-size: 1.2rem;
   line-height: 1.5;
   color:goldenrod;
-}
-.game-text {
-  font-size: 1.2rem;
-  line-height: 1.5;
-  white-space: pre-wrap;
-  display:block;
 }
 
 .game-input input {
@@ -464,6 +528,11 @@ onMounted(() => {
 .game-input input:focus{
   background:rgb(197, 197, 197);
   border:none;
+}
+
+.user-input {
+  color: #c0392b;
+  font-weight: bold;
 }
 
 .game-controls {
@@ -494,11 +563,6 @@ onMounted(() => {
 }
 
 .highlight {
-  color: #c0392b;
-  font-weight: bold;
-}
-
-.user-input {
   color: #c0392b;
   font-weight: bold;
 }

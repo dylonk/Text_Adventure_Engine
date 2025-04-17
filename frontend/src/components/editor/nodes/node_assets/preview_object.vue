@@ -43,6 +43,9 @@ function setSelectedObject(){
                 ⏵
             </div>
             <div class="object-name"> &nbsp {{ GL.getNode(id).objectName }} </div>
+            <div v-if="GL.getNode(id).display_type === 'Image' && GL.getNode(id).properties?.imgur_link" class="image-preview-container">
+                <img :src="GL.getNode(id).properties.imgur_link" class="preview-image" :alt="GL.getNode(id).objectName" />
+            </div>
         </HContainer>
     </div>
     <div v-else-if="id == GL.canvasID" class="row-active"  @click="setSelectedObject()">
@@ -58,6 +61,9 @@ function setSelectedObject(){
                 ⏵
             </div>
             <div class="object-name"> &nbsp {{ GL.getNode(id).objectName }} </div>
+            <div v-if="GL.getNode(id).display_type === 'Image' && GL.getNode(id).properties?.imgur_link" class="image-preview-container">
+                <img :src="GL.getNode(id).properties.imgur_link" class="preview-image" :alt="GL.getNode(id).objectName" />
+            </div>
         </HContainer>
     </div>
     <div v-else-if="GL.getNode(id).inScope" class="row-inScope"  @click="setSelectedObject()">
@@ -73,6 +79,9 @@ function setSelectedObject(){
                 ⏵
             </div>
             <div class="object-name"> &nbsp {{ GL.getNode(id).objectName }} </div>
+            <div v-if="GL.getNode(id).display_type === 'Image' && GL.getNode(id).properties?.imgur_link" class="image-preview-container">
+                <img :src="GL.getNode(id).properties.imgur_link" class="preview-image" :alt="GL.getNode(id).objectName" />
+            </div>
         </HContainer>
     </div>
     <div v-else-if="isEven" class="row"  @click="setSelectedObject()">
@@ -88,6 +97,9 @@ function setSelectedObject(){
                 ⏵
             </div>
             <div class="object-name"> &nbsp {{ GL.getNode(id).objectName }} </div>
+            <div v-if="GL.getNode(id).display_type === 'Image' && GL.getNode(id).properties?.imgur_link" class="image-preview-container">
+                <img :src="GL.getNode(id).properties.imgur_link" class="preview-image" :alt="GL.getNode(id).objectName" />
+            </div>
         </HContainer>
     </div>
     <div v-else class="row-isOdd"  @click="setSelectedObject()">
@@ -103,6 +115,9 @@ function setSelectedObject(){
                 ⏵
             </div>
             <div class="object-name"> &nbsp {{ GL.getNode(id).objectName }} </div>
+            <div v-if="GL.getNode(id).display_type === 'Image' && GL.getNode(id).properties?.imgur_link" class="image-preview-container">
+                <img :src="GL.getNode(id).properties.imgur_link" class="preview-image" :alt="GL.getNode(id).objectName" />
+            </div>
         </HContainer>
     </div>
     <div v-if="displayTree==true" style="width:100%;">
@@ -222,5 +237,20 @@ function setSelectedObject(){
         height:100%;
         color:white;
         position:relative;
+    }
+    .preview-image {
+        max-width: 100px;
+        max-height: 100px;
+        object-fit: contain;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        margin-left: 10px;
+    }
+
+    .image-preview-container {
+        display: flex;
+        align-items: center;
+        margin-left: auto;
+        padding-right: 10px;
     }
 </style>

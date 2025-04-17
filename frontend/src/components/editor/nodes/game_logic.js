@@ -24,7 +24,7 @@ let watching = [] //lists all ids of await function nodes in scope
 
 
 const start = (compiledGame) =>{
-  output.value = "Game initialized"
+  output.value = '<div class="game-text-content">hello</div>\n<div class="game-text-content">Game initialized</div>'
   outputQueue.value = []
   choices=[];
   activeNode = 1;
@@ -54,19 +54,58 @@ const updateNode = (inputNode) => { //modify node (for updating values within ma
 
 
 const processNode = (iNode) =>{
-  if(iNode == null){ output.value="End of game reached"; return;}
-  // Add awaits to choices here
+  if(iNode == null){ 
+    console.log("[GAME] Reached end of path")
+    return;
+  }
+  
   activeNode = iNode.id
-  console.log("[GAME] 🦠🔍 Parsing node:",iNode.id)
+  console.log("[GAME] 🦠🔍 Parsing node:", iNode.id)
   console.log("[GAME] 🦠🔍 Parsed node is:", iNode)
-  if(iNode.isFunction){
+  
+  // Handle image nodes
+  if(iNode.type === 'image' || iNode.display_type === 'Image') {
+    console.log("[GAME] Processing image node:", iNode)
+    if(iNode.data?.properties?.imgur_link || iNode.properties?.imgur_link) {
+      const imageUrl = iNode.data?.properties?.imgur_link || iNode.properties?.imgur_link
+      console.log("[GAME] Found image URL:", imageUrl)
+      // Store the current image URL in the nodeMap
+      nodeMap.set('currentImage', imageUrl)
+      // Also output a message about the image
+      outputText("Displaying image...")
+    }
+  }
+  
+  if(iNode.isFunction) {
     func(iNode)
+  }
+
+  // Only process next node if current node has edges
+  if(iNode.edgesOut && Object.keys(iNode.edgesOut).length > 0) {
+    const nextNode = nextNodeFromHandle(0)
+    if(nextNode) {
+      processNode(nextNode)
+    }
   }
 }
 
-const outputText = (text) =>{
-  if(output.value!="")output.value += `\n`+text
-  else output.value += text
+const appendToOutput = (content) => {
+  if (output.value === "") {
+    output.value = content
+  } else {
+    output.value = output.value + "\n" + content
+  }
+}
+
+const outputText = (text, imageUrl = null) => {
+  console.log("[GAME] outputText called with:", { text, imageUrl })
+  
+  if (imageUrl) {
+    appendToOutput(`<div class="game-image"><img src="${imageUrl}" alt="Game Image"></div>`)
+  }
+  if (text && text.trim() !== "") {
+    appendToOutput(`<div class="game-text-content">${text}</div>`)
+  }
 }
 const textNext = () =>{
   outputQueue.value.push(output.value)
@@ -179,6 +218,11 @@ function setNodeMap(newmap)
   nodeMap=newmap;
 }
 
+// Add a getter for the current image
+const getCurrentImage = () => {
+  return nodeMap.get('currentImage') || null
+}
+
 return{
       start, //initializes game
       restartGame,
@@ -202,6 +246,7 @@ return{
       interpretUserText,
       interpretGameText,
       getNodeMap,
-      setNodeMap
+      setNodeMap,
+      getCurrentImage
 }
 });
