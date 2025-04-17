@@ -1,4 +1,3 @@
-
 <!---Each canvas is a component of an "Object". The world editor is a canvas that is a component of the global object-->
 <script setup>
 import { ref, markRaw,computed, watch, onMounted, onBeforeUnmount } from 'vue'
@@ -11,7 +10,7 @@ import { useProjectStore } from '../project_store';
 
         
 // NEWNODEREQ
-import { PromptNode, OutputNode, StartNode, RoomNode, ItemNode, NpcNode, PlayerNode, PathwayNode, UnimplementedNode, CustomNode, AwaitNode, ActionNode, ImageNode,} from '../nodes/n-imports';
+import { PromptNode, OutputNode, StartNode, RoomNode, ItemNode, NpcNode, PlayerNode, PathwayNode, UnimplementedNode, CustomNode, AwaitNode, ActionNode, ImageNode, ModifyImageNode} from '../nodes/n-imports';
 
     const nodeTypes = {
         start: markRaw(StartNode),
@@ -27,6 +26,7 @@ import { PromptNode, OutputNode, StartNode, RoomNode, ItemNode, NpcNode, PlayerN
         unimplemented: markRaw(UnimplementedNode),
         image: markRaw(ImageNode),
         output: markRaw(OutputNode),
+        modify_image: markRaw(ModifyImageNode),
     }
 
 // Pinia store

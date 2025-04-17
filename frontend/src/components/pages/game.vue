@@ -333,7 +333,17 @@ onMounted(() => {
     </div>
       <div class="game-screen">
         <div class="game-image-display">
-          <img v-if="GameLogic.getNodeMap().has('image')" :src="GameLogic.getNodeMap().get('image')" alt="Game Image">
+          <img 
+            v-if="GameLogic.getCurrentImage()" 
+            :src="GameLogic.getCurrentImage()" 
+            alt="Game Image"
+            :class="{
+              'fade-effect': GameLogic.getImageModifications()?.fade?.enabled
+            }"
+            :style="{
+              '--fade-duration': `${GameLogic.getImageModifications()?.fade?.duration || 2000}ms`
+            }"
+          >
         </div>
         <div class="game-text-area">
           <div v-for="output in GameLogic.outputQueue" class="game-text">
@@ -576,5 +586,15 @@ onMounted(() => {
   font-size: 1rem;
   margin-bottom: 20px;
   color: white;
+}
+
+@keyframes fade {
+  0% { opacity: 1; }
+  50% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+.fade-effect {
+  animation: fade var(--fade-duration) infinite;
 }
 </style>

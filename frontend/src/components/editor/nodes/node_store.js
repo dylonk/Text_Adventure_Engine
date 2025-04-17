@@ -41,6 +41,7 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
     pathway: 0,
     custom: 0,
     image: 0,
+    modify_image: 0,
   });
   function incrementCount(key) {
     if (key in object_count) {
@@ -117,14 +118,15 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
       node.type == "pathway" ||
       node.type == "npc" ||
       node.type == "custom" ||
-      node.type == "image" 
+      node.type == "image" ||
+      node.type == "modify_image"
     ){
       incrementCount(node.type);
-      console.log("[EDITOR]🦠➕ object name shoudl be", node.type + object_count[node.type]);
+      console.log("[EDITOR]🦠➕ object name should be", node.type + object_count[node.type]);
       node.data.object_name = node.type + object_count[node.type];
+      node.data.isObject = true;
       nodes.value.push(node);
       console.log("[EDITOR]🦠➕ After adding:", nodes);
-
     }
     else if(node.type == "player"){
       node.data.object_name = "player"

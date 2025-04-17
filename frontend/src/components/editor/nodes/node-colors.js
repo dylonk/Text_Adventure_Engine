@@ -23,6 +23,8 @@ const node_colors = {
     action_fg: "#942b63",
     image_bg: "#ffe6cc",
     image_fg: "#663300",
+    modify_image_bg: "#ffd9cc",
+    modify_image_fg: "#994d00",
     output_fg: "#2BAE66",
     output_bg: "#FCF6F5",
 };

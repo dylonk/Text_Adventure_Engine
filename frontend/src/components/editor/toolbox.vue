@@ -26,7 +26,7 @@ import tbMid from '../../assets/Images/editor/toolbox-mid-posterized.png'
                     <TBNode type="prompt" display_type="Prompt"/>
                     <TBNode type="unimplemented" display_type="Wait"/>
                     <TBNode type="image" display_type="Image"/>
-                    <TBNode type="unimplemented" display_type="Modify Image"/>
+                    <TBNode type="modify_image" display_type="Modify Image"/>
                     <TBNode type="unimplemented" display_type="Background"/>
                     <TBNode type="unimplemented" display_type="Sound"/>
             <a class="tb_subtitle">Watchers</a>

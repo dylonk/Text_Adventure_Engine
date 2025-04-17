@@ -22,6 +22,9 @@ let activeNode = 1 // the node of which the path is currently on
 let prevPositions = [] //ONLY PUSHED WHEN AWAIT OR OTHER PATH ABDUCTOR IS CALLED. For when the path is abducted by an await or similar watcher node so the path knows where to return to.
 let watching = [] //lists all ids of await function nodes in scope
 
+// Add new refs for image handling
+const currentImage = ref(null)
+const imageModifications = ref({})
 
 const start = (compiledGame) =>{
   output.value = '<div class="game-text-content">hello</div>\n<div class="game-text-content">Game initialized</div>'
@@ -69,11 +72,61 @@ const processNode = (iNode) =>{
     if(iNode.data?.properties?.imgur_link || iNode.properties?.imgur_link) {
       const imageUrl = iNode.data?.properties?.imgur_link || iNode.properties?.imgur_link
       console.log("[GAME] Found image URL:", imageUrl)
-      // Store the current image URL in the nodeMap
+      // Store the current image URL in the nodeMap and ref
       nodeMap.set('currentImage', imageUrl)
-      // Also output a message about the image
+      currentImage.value = imageUrl
+      // Reset image modifications when new image is loaded
+      const defaultMods = {
+        fade: { enabled: false, duration: 2000 },
+        blur: { enabled: false, amount: 0 },
+        brightness: { enabled: false, amount: 100 },
+        contrast: { enabled: false, amount: 100 }
+      }
+      nodeMap.set('imageModifications', defaultMods)
+      imageModifications.value = defaultMods
       outputText("Displaying image...")
     }
+  }
+  
+  // Handle image modification nodes
+  if(iNode.type === 'modify_image' || iNode.display_type === 'ModifyImage') {
+    console.log("[GAME] Processing image modification node:", iNode)
+    const currentMods = nodeMap.get('imageModifications') || {}
+    const props = iNode.data?.properties || iNode.properties || {}
+    
+    // Update modifications based on node properties
+    if(props.fade_enabled) {
+      currentMods.fade = {
+        enabled: true,
+        duration: props.fade_duration || 2000
+      }
+    }
+    
+    if(props.blur_enabled) {
+      currentMods.blur = {
+        enabled: true,
+        amount: props.blur_amount || 5
+      }
+    }
+    
+    if(props.brightness_enabled) {
+      currentMods.brightness = {
+        enabled: true,
+        amount: props.brightness_amount || 100
+      }
+    }
+    
+    if(props.contrast_enabled) {
+      currentMods.contrast = {
+        enabled: true,
+        amount: props.contrast_amount || 100
+      }
+    }
+    
+    // Store updated modifications
+    nodeMap.set('imageModifications', currentMods)
+    imageModifications.value = currentMods
+    outputText("Applying image modifications...")
   }
   
   if(iNode.isFunction) {
@@ -220,7 +273,12 @@ function setNodeMap(newmap)
 
 // Add a getter for the current image
 const getCurrentImage = () => {
-  return nodeMap.get('currentImage') || null
+  return nodeMap.get('currentImage')
+}
+
+// Add a getter for image modifications
+const getImageModifications = () => {
+  return nodeMap.get('imageModifications') || {}
 }
 
 return{
@@ -247,6 +305,9 @@ return{
       interpretGameText,
       getNodeMap,
       setNodeMap,
-      getCurrentImage
+      getCurrentImage,
+      getImageModifications,
+      currentImage,
+      imageModifications
 }
 });
