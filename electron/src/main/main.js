@@ -6,8 +6,13 @@ const { autoUpdater } = require('electron-updater');
 const path = require('path');
 const fs = require('fs');
 
+
 const isDev = !app.isPackaged;
-const logFile = path.join(__dirname, 'log.txt');
+//users also get a log file in their appdata.
+const logFile = path.join(app.getPath('userData'), 'log.txt');
+// Path to the savegames folder
+const saveGamesFolder = path.join(app.getPath('userData'), 'savegames');
+
 
 //start logging!
 function log(msg) {
@@ -117,14 +122,30 @@ async function openGameDialog() {
   const { canceled, filePaths } = await dialog.showOpenDialog(mainWindow, {
     title: 'Open Game File',
     filters: [
-      { name: 'Game Files', extensions: ['game.json'] }
+      { name: 'Game Files', extensions: ['quill'] }
     ],
     properties: ['openFile']
   });
   
   if (!canceled && filePaths.length > 0) {
-    const gameData = fs.readFileSync(filePaths[0], 'utf8');
-    const gameDataJson = JSON.parse(gameData);
+    log("file path"+ filePaths[0]);
+    let gameData = fs.readFileSync(filePaths[0], 'utf8');
+    let gameDataJson = JSON.parse(gameData);
+    //look for a savegame for this game
+    const saveFilePath=await checkForSaveGame(gameDataJson.title);
+    log("save file path"+ saveFilePath);
+
+    //if there is a savegame, load it. In the future we can work with using multiple savegames. It won't be hard to rework, it already saves them all.
+    if (saveFilePath) {
+      try {
+        let saveData = fs.readFileSync(saveFilePath, 'utf-8');
+        gameDataJson = JSON.parse(saveData);
+        log(`loaded savegame: ${saveData.slice(0, 200)}...`);
+      } catch (e) {
+        log(`❌ Failed to load save file: ${e.stack || e}`);
+      }
+    }
+
     mainWindow.webContents.send('load-game-data', gameDataJson);
   }
 }
@@ -160,18 +181,44 @@ ipcMain.handle('open-game-file', async () => {
   return null;
 });
 
+
+// this listens for the event from the renderer process, because thats where all the data we need is. 
 ipcMain.handle('save-game-file', async (event, gameData) => {
-  const { canceled, filePath } = await dialog.showSaveDialog(mainWindow, {
-    filters: [{ name: 'Game Files', extensions: ['game.json'] }],
-    properties: ['showOverwriteConfirmation']
-  });
+  log("save game file called"+ gameData);
+  //get the title first so it knows where to put it
+  const gameDataParsed = JSON.parse(gameData);
+  const gameTitle = gameDataParsed.title;
+  try
+  {
+    const savePath=path.join(saveGamesFolder, gameTitle);
   
-  if (!canceled && filePath) {
-    fs.writeFileSync(filePath, gameData);
+  
+    if(!fs.existsSync(savePath) )
+    {
+      fs.mkdirSync(savePath,{recursive:true});
+    }
+
+    const saveFilePath = path.join(savePath, 'save.json');
+    log("save file path"+ saveFilePath);
+    fs.writeFileSync(saveFilePath, gameData);
     return true;
+
   }
-  return false;
+  catch(e)
+  {
+    log(e);
+    return false;
+  }
 });
+
+
+//better seperation of concerns having this function declaration here instead of in openGameDialog
+async function checkForSaveGame(gameTitle) {
+  log("check for save game called"+ gameTitle);
+  const savePath = path.join(saveGamesFolder, gameTitle, 'save.json');
+  log("save file path"+ savePath);
+  return fs.existsSync(savePath) ? savePath : null;
+}
 
 // Access to game engine file
 ipcMain.handle('load-game-engine', async () => {

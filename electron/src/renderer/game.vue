@@ -118,6 +118,18 @@ const handleInput = () => {
   };
 
 
+
+//this function will save the current nodemap to the offline players savegames; it will be folders with the game id as the name
+const saveGame = () => {
+  //we want to get the current game from gamelogic, since as far as i can see its not passed by ref.
+  let fullGame=GameLogic.getGame();
+  //and of course, flatten it to make it json serializable
+  fullGame.nodeMap=mapToSerializable(fullGame.nodeMap);
+  fullGame=JSON.stringify(fullGame);
+  console.log("saving game",fullGame);
+  window.electronAPI.saveGameFile(fullGame);
+}
+
 const restartGame = () => {
   GameLogic.restartGame();
 };
@@ -130,10 +142,20 @@ const quitGame = () => {
 onMounted(() => {
   window.electronAPI.onLoadGameData((data) => {
       console.log("loaded game data", data);
+      //here is where we're going to need to check if we have a savegame in the users appdata
       Game=data;
       Game.nodeMap=serializableToMap(Game.nodeMap)
       GameLogic.start(Game);
+
   })  
+
+  //see savegame function
+  window.electronAPI.onMenuSaveGame(() => {
+    console.log("saving game");
+    saveGame();
+  })  
+
+
   startTypingEffect();
 });
 </script>
@@ -148,8 +170,6 @@ onMounted(() => {
     </div>
     <div class="game-playarea">
       <div class="game-controls">
-      <button @click="saveGame">Save</button>
-      <button @click="loadGame">Load</button>
       <button @click="restartGame">Restart</button>
       <button @click="quitGame">Quit</button>
 

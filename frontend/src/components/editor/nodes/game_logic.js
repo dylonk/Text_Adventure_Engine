@@ -179,6 +179,14 @@ function setNodeMap(newmap)
   nodeMap=newmap;
 }
 
+//made a function for getting the full game. makes metadata easier in my game.vue.
+function getGame()
+{
+  const gameToReturn=originalGame;
+  gameToReturn.nodeMap=nodeMap;
+  return gameToReturn;
+}
+
 return{
       start, //initializes game
       restartGame,
@@ -202,6 +210,7 @@ return{
       interpretUserText,
       interpretGameText,
       getNodeMap,
-      setNodeMap
+      setNodeMap,
+      getGame
 }
 });

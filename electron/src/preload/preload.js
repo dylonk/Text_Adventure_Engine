@@ -14,6 +14,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   },
   
   saveGameFile: async (gameData) => {
+    console.log("save game file called", gameData);
     return await ipcRenderer.invoke('save-game-file', gameData);
   },
   
@@ -22,7 +23,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   onLoadGameData: (callback) => {
     ipcRenderer.on('load-game-data', (event, data) => callback(data));
   },
-  
+
+
+  // this one sends a savegame signal to the renderer
   onMenuSaveGame: (callback) => {
     ipcRenderer.on('menu-save-game', () => callback());
   }
