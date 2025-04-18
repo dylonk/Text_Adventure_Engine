@@ -8,5 +8,8 @@
     "build:all": "npm run build:web && npm run build:electron",
     "build:web": "cd frontend && npm run build",
     "build:electron": "cd electron && npm run build"
+  },
+  "dependencies": {
+    "adm-zip": "^0.5.16"
   }
 }

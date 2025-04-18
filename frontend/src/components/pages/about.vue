@@ -4,6 +4,9 @@ import globalNavBar from '@/components/standardjs/navbar.vue'
 function goToAbout() {
       this.$router.push('/about')
 }
+
+
+
 </script>
 <template>
     <globalNavBar/>
@@ -21,6 +24,7 @@ function goToAbout() {
         <div id="about-text">
             <p>Play from a wide variety of user generated adventures</p>
         </div>
+        <a href=https://github.com/dylonk/Text_Adventure_Engine/releases/download/v1.0.0/Text-Adventure-Electron-Setup-1.0.0.exe download>Download for Windows</a>
         <div id="credits">
             <p>Created by:</p>
             <div id="creditsNames">

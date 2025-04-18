@@ -4,6 +4,9 @@
 const { app, BrowserWindow, Menu, dialog, ipcMain } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const path = require('path');
+const AdmZip = require('adm-zip');
+const os = require('os');
+const { v4: uuidv4 } = require('uuid'); // for temp folder names
 const fs = require('fs');
 
 const isDev = !app.isPackaged;
@@ -117,15 +120,40 @@ async function openGameDialog() {
   const { canceled, filePaths } = await dialog.showOpenDialog(mainWindow, {
     title: 'Open Game File',
     filters: [
-      { name: 'Game Files', extensions: ['game.json'] }
+      { name: 'Game Files', extensions: ['zip'] }
     ],
     properties: ['openFile']
   });
   
+  //ifit finds it, get the zip path and make a temp folder that the zip extracts to.
   if (!canceled && filePaths.length > 0) {
-    const gameData = fs.readFileSync(filePaths[0], 'utf8');
+    const zipPath = filePaths[0];
+    const tempDir= path.join(os.tmpdir(), `text-adventure-${uuidv4()}`);  
+    fs.mkdirSync(tempDir);
+    const zip = new AdmZip(zipPath);
+    zip.extractAllTo(tempDir, true);
+    //find the game.json in the zip, it becomes gameData
+    const gameJsonPath = path.join(tempDir, 'game.json');
+    const gameData = JSON.parse(fs.readFileSync(gameJsonPath, 'utf8'));
     const gameDataJson = JSON.parse(gameData);
     mainWindow.webContents.send('load-game-data', gameDataJson);
+
+  function rewriteImagePaths(obj) {
+    if (typeof obj === 'string' && obj.startsWith('assets/images/')) {
+      return path.join(tempDir, obj); // full local path
+    } else if (Array.isArray(obj)) {
+      return obj.map(rewriteImagePaths);
+    } else if (typeof obj === 'object' && obj !== null) {
+      for (let key in obj) {
+        obj[key] = rewriteImagePaths(obj[key]);
+      }
+    }
+    return obj;
+  }
+
+  rewriteImagePaths(gameData);
+  mainWindow.webContents.send('load-game-data', gameData);
+
   }
 }
 

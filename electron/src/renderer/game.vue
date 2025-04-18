@@ -139,7 +139,7 @@ onMounted(() => {
 </script>
 
 <template>    
-
+<div class="main-container">
   <div
     class="game-container"
     ref="gameContainer"
@@ -172,7 +172,7 @@ onMounted(() => {
       <input v-model="userInput" @keyup.enter="handleInput" placeholder="Enter your command..." autofocus />
     </div>
   </div>
-
+</div>
 
 </template>
 
@@ -329,5 +329,9 @@ onMounted(() => {
   font-size: 1rem;
   margin-bottom: 20px;
   color: white;
+}
+
+.main-container{
+   display:flex; flex-direction: columns; height: 100 dvh; width: 100dvw; 
 }
 </style>

@@ -8,6 +8,8 @@ import { useGameStore } from '../editor/nodes/game_logic.js'
 import axios from 'axios';
 import { fetchUserData } from '@/components/standardjs/fetchUserData';
 import speakerIcon from '../../assets/Images/speaker_icon.png';
+import JSZip from 'jszip';
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // for Vite
 
 
@@ -123,19 +125,49 @@ async function downloadGame() {
     nodeMap: mapToSerializable(GameLogic.getNodeMap())
   };
 
-  const gameJson = JSON.stringify(gameToDownload);
-  const blob = new Blob([gameJson], { type: "application/json" });
+  const zip=new JSZip();
+  const imagesFolder = zip.folder("assets/images");
+  const imgurUrls = extractImgurUrls(gameToDownload);
 
-    // Create a download link
-  const gameTitle = fetchedGame.title || "text-adventure";
+  //saves all the images to the images folder
+  for (const url of imgurUrls) {
+    try {
+      const filename = url.split('/').pop();
+      const response = await fetch(url);
+      const blob = await response.blob();
+      imagesFolder.file(filename, blob);
+    } catch (err) {
+      console.warn("Failed to download image:", url, err);
+    }
+  }
+
+  zip.file("game.json", JSON.stringify(gameToDownload, null, 2));
+
+    // Create and download the zip
+  const content = await zip.generateAsync({ type: "blob" });
   const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = `${gameTitle}.game.json`;
-  
-  // Trigger the download
+  link.href = URL.createObjectURL(content);
+  link.download = `${props.gameTitle}.zip`;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
+}
+
+
+//this extracts all the imgur urls from a game for packing into a zip above.
+function extractImgurUrls(obj) {
+  const urls = new Set();
+
+  function recurse(value) {
+    if (typeof value === 'string' && value.startsWith('https://i.imgur.com/')) {
+      urls.add(value);
+    } else if (typeof value === 'object' && value !== null) {
+      Object.values(value).forEach(recurse);
+    }
+  }
+
+  recurse(obj);
+  return Array.from(urls);
 }
 
 const loadGameFromFile = (event) => {

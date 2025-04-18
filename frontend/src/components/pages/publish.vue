@@ -1,7 +1,7 @@
 <script>
 import globalNavBar from '@/components/standardjs/navbar.vue';
-import Toastify from '../../../../electron/node_modules/toastify-js/src/toastify';
-import 'toastify-js/src/toastify.css';
+import Toastify from 'toastify-js';
+//import 'toastify-js/src/toastify.css';
 import Project from './project.vue';
 import { useProjectStore } from '../editor/project_store';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // for Vite
