@@ -15,6 +15,8 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
   const edges = ref([]);
   const syncer = ref(0)
   const idCounter = ref(1);
+  const projectImages = ref({}) // list of all the image links. key is image name, value is the link. Used for downloading images UNIMPLEMENTED
+
   
   // Collection of all nodes. Must be synced on any node or edge change
   let globalNodes = new Map([ 
@@ -41,7 +43,6 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
     pathway: 0,
     custom: 0,
     image: 0,
-    modify_image: 0,
   });
   function incrementCount(key) {
     if (key in object_count) {
@@ -403,6 +404,7 @@ const getParam=(id,paramName)=>{
           gNode.objectName = node.data.object_name
           gNode.properties = node.data.properties ? {...node.data.properties}:{}
           gNode.n = childNodes //Stores node IDs
+          gNode.images = {}
           // no need for global edge store with compiled games
         }
         if(gNode.isFunction){
@@ -709,6 +711,7 @@ const getParam=(id,paramName)=>{
     getLocalNodeIDs,
     getCurrentCanvasName,
     getGlobalNodes,
+    projectImages,
     syncer,
     globalSync,
     localSync,

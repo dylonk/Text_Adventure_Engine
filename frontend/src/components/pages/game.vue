@@ -333,17 +333,6 @@ onMounted(() => {
     </div>
       <div class="game-screen">
         <div class="game-image-display">
-          <img 
-            v-if="GameLogic.getCurrentImage()" 
-            :src="GameLogic.getCurrentImage()" 
-            alt="Game Image"
-            :class="{
-              'fade-effect': GameLogic.getImageModifications()?.fade?.enabled
-            }"
-            :style="{
-              '--fade-duration': `${GameLogic.getImageModifications()?.fade?.duration || 2000}ms`
-            }"
-          >
         </div>
         <div class="game-text-area">
           <div v-for="output in GameLogic.outputQueue" class="game-text">
