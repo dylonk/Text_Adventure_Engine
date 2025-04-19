@@ -17,7 +17,7 @@ const props = defineProps({
 <style scoped>
 .h-container{
     margin: v-bind('outerMargin');
-    width:auto;
+    width:100%;
     height:max-content;
     display:flex;
     flex-direction: column;

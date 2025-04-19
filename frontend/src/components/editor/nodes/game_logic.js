@@ -46,6 +46,13 @@ const getNode = (nodeID, notifyConsole=false) => { //get node from nodemap
   if(notifyConsole) console.log("[GAME] getNode(",nodeID,") is",nodeExists)
   return nodeExists
 }
+const getNodeByName = (name) =>{
+  nodeMap.forEach((node, id) => {
+    console.log(node)
+    if(node.hasOwnProperty("objectName") && node.objectName == name){ console.log("Found", name); return node.obj }
+  })
+  return null;
+}
 const updateNode = (inputNode) => { //modify node (for updating values within map)
   nodeMap.set(inputNode.id,inputNode)
   return
@@ -129,6 +136,35 @@ const func = (iNode) => { // function node functions
 
       break;
     }
+    case "setlocation":{
+      let target = getNodeByName(funcParams[0].vals[0])
+      if(target == null) break;
+      console.log("Target found", target)
+      let targetParent = getNode(target.parentID)
+      console.log("Searching for destination")
+      let destination = getNodeByName(funcParams[1].vals[0])
+      console.log("Destination found", destination);
+
+      if(target==null||targetParent==null||destination==null){
+        console.log("[GAME] setlocation had null return", target, targetParent, destination)
+        processNode(nextNodeFromHandle(0))
+        break;
+      }
+
+      target.parentID = destination.id // add new destination id to parent
+      targetParent = targetParent.n.filter(child => child != target.id) // remove child from parent
+      destination.push(target.id) // add child to destination
+
+      updateNode(target)
+      updateNode(targetParent)
+      updateNode(destination)
+
+      scopeSyncer.value = !scopeSyncer.value
+      console.log("[GAME] setlocation successful",target,targetParent,destination)
+      processNode(nextNodeFromHandle(0))
+
+      break;
+    }
 
   }
 }
@@ -202,6 +238,7 @@ return{
       interpretUserText,
       interpretGameText,
       getNodeMap,
-      setNodeMap
+      setNodeMap,
+      getNodeByName,
 }
 });

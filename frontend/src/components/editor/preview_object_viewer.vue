@@ -12,6 +12,11 @@ function renderObjectView(){
   GL.scopeSyncer =! GL.scopeSyncer
 }
 
+const OVUpdater = computed(()=>{
+  renderObjectView()
+  return GL.scopeSyncer
+})
+
 
 </script>
 
@@ -29,11 +34,12 @@ function renderObjectView(){
 @import url("https://fonts.googleapis.com/css2?family=Scada");
 .asset_browser {
   height:100%;
+  width:250px;
   display: flex;
   font-size:large;
   justify-content: center;
   flex-direction: column;
-  background: rgb(227, 227, 227);
+  background: #3c3c3c;
   justify-content: space-between;
 }
 .asset-browser-hr{
@@ -49,13 +55,12 @@ function renderObjectView(){
 h3 {
   font-weight:100; 
   font-size:20px;
-  color: rgb(121, 121, 121);
+  color: rgb(255, 255, 255);
   
   padding-right:10px;
   padding-left:10px;
   text-align: center;
   width:auto;
-  border-bottom: rgb(186, 186, 186) 3px groove;
 
 }
 
@@ -74,12 +79,9 @@ li {
 .objects-container {
   height: 100%;
   overflow-y:scroll;
-  border: inset  rgb(190, 190, 190) 2px;
   overflow-x:scroll;
-  border-radius: 10px;
-  background: rgb(192, 201, 212);
-  width:200px;
-  margin:10px;
+  width:auto;
+  background: rgb(135, 135, 135);
 }
 
 details div {

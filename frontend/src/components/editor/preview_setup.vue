@@ -26,11 +26,13 @@ function setProperty(property, input){
                         <h3>Properties</h3>
                         <h3 style="background-color:#8cbc75; color:white; font-weight:bold;font-size:large;">{{GL.getNode(Number(GL.objectViewerSelected)).objectName}}</h3>
                         <div class="property-title"></div>
-                        <div v-for="(value,property) in GL.getNode(Number(GL.objectViewerSelected), true).properties">
-                            <HContainer style="border-bottom:1px rgb(200,200,200) solid;">
-                            <div class="property-title">{{ property }}</div>
-                            <input class="property-input" :value="value" @input="setProperty(property,$event.target.value);">
-                            </HContainer>
+                        <div class="properties-container">
+                            <div v-for="(value,property) in GL.getNode(Number(GL.objectViewerSelected), true).properties">
+                                <HContainer style="border-bottom:1px rgb(200,200,200) solid;">
+                                <div class="property-title">{{ property }}</div>
+                                <input class="property-input" :value="value" @input="setProperty(property,$event.target.value);">
+                                </HContainer>
+                            </div>
                         </div>
                     </div>
                 </VContainer>
@@ -39,10 +41,16 @@ function setProperty(property, input){
     </div>
 </template>
 <style scoped>
+    .properties-container{
+        overflow-x:scroll;
+        overflow-y:hidden;
+    }
     .mod-panel{
         background: rgb(227, 227, 227);
         width:220px;
         height:100%;
+        display:flex;
+        flex-direction: column;
     }
     .mod-panel hr{
         border-top: groove 3px rgb(225, 225, 225);
@@ -53,9 +61,10 @@ function setProperty(property, input){
         background:rgb(85, 85, 85);
     }
     .mod-subpanel{
-        height:200px;
+        height:100%;
+        flex: 1 0 0;
         background:rgb(241, 241, 241);
-        overflow-y:auto;
+        overflow-y:hidden;
     }
     h3{
         color:rgb(255, 255, 255);

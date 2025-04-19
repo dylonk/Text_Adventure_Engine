@@ -22,7 +22,7 @@ import tbMid from '../../assets/Images/editor/toolbox-mid-posterized.png'
                     <TBNode type="pathway" display_type="Pathway"/>
                     <TBNode type="custom" display_type="Custom"/>
             <a class="tb_subtitle">Interactive</a>
-                    <TBNode type="output" display_type="Console Output"/>
+                    <TBNode type="consoleoutput" display_type="Console Output"/>
                     <TBNode type="prompt" display_type="Prompt"/>
                     <TBNode type="unimplemented" display_type="Wait"/>
                     <TBNode type="image" display_type="Image"/>
@@ -37,7 +37,7 @@ import tbMid from '../../assets/Images/editor/toolbox-mid-posterized.png'
             <a class="tb_subtitle">Path Control</a>
                 <TBNode type="unimplemented" display_type="If"/>
                 <TBNode type="unimplemented" display_type="Return"/>
-                <TBNode type="unimplemented" display_type="Location"/>
+                <TBNode type="setlocation" display_type="Set Location"/>
                 <TBNode type="unimplemented" display_type="On Player"/>
                 <TBNode type="unimplemented" display_type="On Visible"/>
                 <TBNode type="unimplemented" display_type="End Game"/>

@@ -46,10 +46,12 @@ const getNode = (nodeID, notifyConsole=false) => { //get node from nodemap
   if(notifyConsole) console.log("[GAME] getNode(",nodeID,") is",nodeExists)
   return nodeExists
 }
+
 const updateNode = (inputNode) => { //modify node (for updating values within map)
   nodeMap.set(inputNode.id,inputNode)
   return
 }
+
 
 
 
@@ -129,6 +131,7 @@ const func = (iNode) => { // function node functions
 
       break;
     }
+
 
   }
 }

@@ -13,6 +13,7 @@ import AwaitNode from './function/interaction/await.vue'
 import ActionNode from './function/interaction/action.vue'
 import UnimplementedNode from './function/interaction/unimplemented.vue'
 import OutputNode from './function/interaction/output.vue'
+import SetLocationNode from './function/interaction/setlocation.vue'
 
 
 export{ //exports both tb and real nodes
@@ -30,4 +31,5 @@ export{ //exports both tb and real nodes
     UnimplementedNode,
     ImageNode,
     OutputNode,
+    SetLocationNode,
 }
