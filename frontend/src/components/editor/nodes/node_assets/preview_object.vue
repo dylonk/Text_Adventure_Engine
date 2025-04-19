@@ -48,6 +48,21 @@ function setSelectedObject(){
             </div>
         </HContainer>
     </div>
+    <div v-else-if="GL.getNode(id).type == 'player'" class="row-player"  @click="setSelectedObject()">
+        <HContainer style="width:100%;" spacing="0px">
+
+            &nbsp;
+            <div v-for="i in nodeDepth" class="indent">●</div>
+            <div v-if="GL.getNode(id).n.length>0">
+                <div class="arrow" v-if="displayTree==true" @click="toggleTree()">⏷</div>
+                <div class="arrow" v-else @click="toggleTree()">⏵</div>
+            </div>
+            <div class="arrow-disabled" v-else>
+                ⏵
+            </div>
+            <div class="object-name"> &nbsp {{ GL.getNode(id).objectName }} </div>
+        </HContainer>
+    </div>
     <div v-else-if="id == GL.canvasID" class="row-active"  @click="setSelectedObject()">
         <HContainer style="width:100%;" spacing="0px">
 
@@ -137,7 +152,7 @@ function setSelectedObject(){
         -ms-user-select: none; /* IE 10 and IE 11 */
         user-select: none; /* Standard syntax */
         width:100%;
-        background:rgb(137, 204, 203);
+        background:rgb(161, 167, 227);
     }
     .row{
         -webkit-user-select: none; /* Safari */
@@ -152,6 +167,16 @@ function setSelectedObject(){
         user-select: none; /* Standard syntax */
         width:100%;
         background:rgb(193, 237, 208);
+    }
+    .row-player{
+        -webkit-user-select: none; /* Safari */
+        -ms-user-select: none; /* IE 10 and IE 11 */
+        user-select: none; /* Standard syntax */
+        width:100%;
+        background:rgb(67, 224, 120);
+    }
+    .row-player .object-name{
+        color:white;
     }
     .row-active{
         -webkit-user-select: none; /* Safari */
@@ -181,10 +206,10 @@ function setSelectedObject(){
 
     }
     .row-Selected:hover{
-        background:rgb(146, 180, 204);
+        background:rgb(141, 148, 211);
     }
     .row-inScope:hover{
-        background:rgb(163, 217, 200);
+        background:rgb(176, 163, 217);
     }
 
     .arrow{

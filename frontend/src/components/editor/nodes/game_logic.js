@@ -195,6 +195,7 @@ const func = (iNode) => { // function node functions
     }
     case "image":{
       processNode(nextNodeFromHandle(0))
+      break;
     }
 
   }

@@ -382,10 +382,19 @@ const getParam=(id,paramName)=>{
     return;
   }
 
-  const getAllNodes = () => {
-    console.log("[EDITOR]🦠💯 getAllNodes()")
-    return Array.from(globalNodes.values()).flatMap(canv => canv.n)    
-    
+  const getAllNodes = (onlyObjects=false, returnType="node") => {
+    console.log("[EDITOR]🦠💯 getAllNodes(onlyObjects=",onlyObjects,"returnType=",returnType,")")
+    let returnedNodes = Array.from(globalNodes.values()).flatMap(canv => canv.n)    
+    let tReturnedNodes = []
+    if(onlyObjects==true) returnedNodes = returnedNodes.filter((node)=>node.data.hasOwnProperty('isObject'))
+    if(returnType=="title" && onlyObjects == true){
+      for(let i = 0 ; i < returnedNodes.length; i++){
+        tReturnedNodes.push(returnedNodes[i].data.object_name)
+      }
+      returnedNodes = tReturnedNodes
+    }
+    console.log("[EDITOR]🦠💯 returnedNodes=",returnedNodes)
+    return returnedNodes
   };
 
   const GameNode = (node, childNodes=[]) => { //Simplifies the nodes for reading and altering

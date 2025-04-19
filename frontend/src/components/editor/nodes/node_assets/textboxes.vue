@@ -82,7 +82,7 @@ function updateResponse(index,newResponse){
         width:200px;
         height:100px;
         background:rgb(255, 255, 255);
-        /* border:solid v-bind('node_colors.prompt_fg') 1px; */
+        border:solid gray 1px;
         border-radius:3px;
     }
     .textbox_container{
