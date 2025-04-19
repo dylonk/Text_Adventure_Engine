@@ -94,8 +94,8 @@ const toggleTTS = () => {
 
   watch(displayText, (newValue, oldValue) => {
     if(displayText.value.length >= text.value.length && ttsTog.value == 1) {
-      console.log('New words');
       let newWords = displayText.value.replace(words.value, "");
+      newWords = newWords + GameLogic.output;
       words.value = displayText.value;
       newWords = newWords.split('<br>').join('');
       newWords = newWords.split('<span class=\'user-input\'>>').join('');
