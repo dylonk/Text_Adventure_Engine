@@ -59,6 +59,7 @@ const updateNode = (inputNode) => { //modify node (for updating values within ma
 const processNode = (iNode) =>{
   if(iNode == null){ 
     console.log("[GAME] Reached end of path")
+    outputText("End of game reached.")
     return;
   }
   
@@ -84,8 +85,15 @@ const processNode = (iNode) =>{
       }
       nodeMap.set('imageModifications', defaultMods)
       imageModifications.value = defaultMods
-      outputText("Displaying image...")
     }
+    // Continue to next node after processing image
+    if(iNode.edgesOut && Object.keys(iNode.edgesOut).length > 0) {
+      const nextNode = nextNodeFromHandle(0)
+      if(nextNode) {
+        processNode(nextNode)
+      }
+    }
+    return
   }
   
   // Handle image modification nodes
@@ -126,19 +134,28 @@ const processNode = (iNode) =>{
     // Store updated modifications
     nodeMap.set('imageModifications', currentMods)
     imageModifications.value = currentMods
-    outputText("Applying image modifications...")
+    // Continue to next node after processing modification
+    if(iNode.edgesOut && Object.keys(iNode.edgesOut).length > 0) {
+      const nextNode = nextNodeFromHandle(0)
+      if(nextNode) {
+        processNode(nextNode)
+      }
+    }
+    return
   }
   
   if(iNode.isFunction) {
     func(iNode)
   }
 
-  // Only process next node if current node has edges
+  // Process next node if current node has edges
   if(iNode.edgesOut && Object.keys(iNode.edgesOut).length > 0) {
     const nextNode = nextNodeFromHandle(0)
     if(nextNode) {
       processNode(nextNode)
     }
+  } else {
+    outputText("End of game reached.")
   }
 }
 
@@ -190,9 +207,7 @@ const nextNodeFromHandle = (sourceHandleIndex, sourceNodeID=activeNode) => {
     targetNode = getNode(sourceNodeID).edgesOut[sourceHandleIndex]
     activeNode = targetNode
   }
-  // TODO: make sure something happens when next handle is null (outside of this function of course)
   console.log("[GAME] next node from ID", oldActiveNode ,"handle",sourceHandleIndex,"is",targetNode)
-  if(targetNode==null) outputText("End of game logic reached");
   targetNode = getNode(targetNode)
   return targetNode
 }
