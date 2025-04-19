@@ -22,9 +22,12 @@ let activeNode = 1 // the node of which the path is currently on
 let prevPositions = [] //ONLY PUSHED WHEN AWAIT OR OTHER PATH ABDUCTOR IS CALLED. For when the path is abducted by an await or similar watcher node so the path knows where to return to.
 let watching = [] //lists all ids of await function nodes in scope
 
+// Add new refs for image handling
+const currentImage = ref(null)
+const imageModifications = ref({})
 
 const start = (compiledGame) =>{
-  output.value = "Game initialized"
+  output.value = '<div class="game-text-content">hello</div>\n<div class="game-text-content">Game initialized</div>'
   outputQueue.value = []
   choices=[];
   activeNode = 1;
@@ -54,19 +57,108 @@ const updateNode = (inputNode) => { //modify node (for updating values within ma
 
 
 const processNode = (iNode) =>{
-  if(iNode == null){ output.value="End of game reached"; return;}
-  // Add awaits to choices here
+  if(iNode == null){ 
+    console.log("[GAME] Reached end of path")
+    return;
+  }
+  
   activeNode = iNode.id
-  console.log("[GAME] 🦠🔍 Parsing node:",iNode.id)
+  console.log("[GAME] 🦠🔍 Parsing node:", iNode.id)
   console.log("[GAME] 🦠🔍 Parsed node is:", iNode)
-  if(iNode.isFunction){
+  
+  // Handle image nodes
+  if(iNode.type === 'image' || iNode.display_type === 'Image') {
+    console.log("[GAME] Processing image node:", iNode)
+    if(iNode.data?.properties?.imgur_link || iNode.properties?.imgur_link) {
+      const imageUrl = iNode.data?.properties?.imgur_link || iNode.properties?.imgur_link
+      console.log("[GAME] Found image URL:", imageUrl)
+      // Store the current image URL in the nodeMap and ref
+      nodeMap.set('currentImage', imageUrl)
+      currentImage.value = imageUrl
+      // Reset image modifications when new image is loaded
+      const defaultMods = {
+        fade: { enabled: false, duration: 2000 },
+        blur: { enabled: false, amount: 0 },
+        brightness: { enabled: false, amount: 100 },
+        contrast: { enabled: false, amount: 100 }
+      }
+      nodeMap.set('imageModifications', defaultMods)
+      imageModifications.value = defaultMods
+      outputText("Displaying image...")
+    }
+  }
+  
+  // Handle image modification nodes
+  if(iNode.type === 'modify_image' || iNode.display_type === 'ModifyImage') {
+    console.log("[GAME] Processing image modification node:", iNode)
+    const currentMods = nodeMap.get('imageModifications') || {}
+    const props = iNode.data?.properties || iNode.properties || {}
+    
+    // Update modifications based on node properties
+    if(props.fade_enabled) {
+      currentMods.fade = {
+        enabled: true,
+        duration: props.fade_duration || 2000
+      }
+    }
+    
+    if(props.blur_enabled) {
+      currentMods.blur = {
+        enabled: true,
+        amount: props.blur_amount || 5
+      }
+    }
+    
+    if(props.brightness_enabled) {
+      currentMods.brightness = {
+        enabled: true,
+        amount: props.brightness_amount || 100
+      }
+    }
+    
+    if(props.contrast_enabled) {
+      currentMods.contrast = {
+        enabled: true,
+        amount: props.contrast_amount || 100
+      }
+    }
+    
+    // Store updated modifications
+    nodeMap.set('imageModifications', currentMods)
+    imageModifications.value = currentMods
+    outputText("Applying image modifications...")
+  }
+  
+  if(iNode.isFunction) {
     func(iNode)
+  }
+
+  // Only process next node if current node has edges
+  if(iNode.edgesOut && Object.keys(iNode.edgesOut).length > 0) {
+    const nextNode = nextNodeFromHandle(0)
+    if(nextNode) {
+      processNode(nextNode)
+    }
   }
 }
 
-const outputText = (text) =>{
-  if(output.value!="")output.value += `\n`+text
-  else output.value += text
+const appendToOutput = (content) => {
+  if (output.value === "") {
+    output.value = content
+  } else {
+    output.value = output.value + "\n" + content
+  }
+}
+
+const outputText = (text, imageUrl = null) => {
+  console.log("[GAME] outputText called with:", { text, imageUrl })
+  
+  if (imageUrl) {
+    appendToOutput(`<div class="game-image"><img src="${imageUrl}" alt="Game Image"></div>`)
+  }
+  if (text && text.trim() !== "") {
+    appendToOutput(`<div class="game-text-content">${text}</div>`)
+  }
 }
 const textNext = () =>{
   outputQueue.value.push(output.value)
@@ -187,6 +279,16 @@ function getGame()
   return gameToReturn;
 }
 
+// Add a getter for the current image
+const getCurrentImage = () => {
+  return nodeMap.get('currentImage')
+}
+
+// Add a getter for image modifications
+const getImageModifications = () => {
+  return nodeMap.get('imageModifications') || {}
+}
+
 return{
       start, //initializes game
       restartGame,
@@ -211,6 +313,10 @@ return{
       interpretGameText,
       getNodeMap,
       setNodeMap,
-      getGame
+      getGame,
+      getCurrentImage,
+      getImageModifications,
+      currentImage,
+      imageModifications
 }
 });
