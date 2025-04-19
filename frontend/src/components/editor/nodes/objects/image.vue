@@ -12,12 +12,13 @@ const NS = useNodesStore()
 
 const defaultObjData = {
   display_type: "Image",
+  function_name: "image",
   properties: {
     imgur_link: "",
   },
 }
 
-NS.contributeNodeData(props.id, defaultObjData, true)
+NS.contributeNodeData(props.id, defaultObjData)
 
 // Reactive local input bound to property
 const imgurLink = ref(NS.getNodeData(props.id, "properties")?.imgur_link || "")

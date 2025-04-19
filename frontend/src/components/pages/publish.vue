@@ -44,7 +44,7 @@ export default {
       }
     },
     async publishGame() {
-      if (!this.title || !this.description || this.thumbnail) {
+      if (!this.title || !this.description) {
         this.showToast("Please fill in all fields before publishing.", "error");
         return;
       }

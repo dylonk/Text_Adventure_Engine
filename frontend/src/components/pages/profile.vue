@@ -25,7 +25,7 @@ const router = useRouter();
 async function fetchMyGames() {
     try {
         userID.value=await fetchUserData("_id");    //gets your id
-        const response = await axios.get(`${API_BASE_URL}/games/?userId=${userID}`);//response is any games that mtch the userid
+        const response = await axios.get(`${API_BASE_URL}/games/?userId=${userID.value}`);//response is any games that mtch the userid
         myGames.value = response.data.map(game => ({
         id: game.id,
         title: game.title,
@@ -41,7 +41,7 @@ async function deleteGame(gameId) {
 
     try {
         const token = localStorage.getItem('token');  // Get the token from localStorage
-        axios.post(`${API_BASE_URL}/games/${gameId}/delete`, null, {
+        axios.post(`${API_BASE_URL}/games/delete`, {id:gameId}, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
