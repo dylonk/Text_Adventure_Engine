@@ -1,9 +1,9 @@
 <script setup>
-import { defineProps, ref, watch, computed } from 'vue'
+import { defineProps, ref, watch, computed,onMounted } from 'vue'
 import { useNodesStore } from '../../node_store.js'
 import FunctionBase from '../func_base.vue'
 import CameraImage from '@/assets/Images/camera.png'
-import { HandleOut, HandleIn, HContainer, VContainer,SmallButton } from '../../node_assets/n-component-imports.js'
+import { HandleOut, HandleIn, HContainer, VContainer,SmallButton, Dropdown } from '../../node_assets/n-component-imports.js'
 
 const props = defineProps({
   id: { default: -1 },
@@ -39,12 +39,14 @@ function addImage(){
   lastImgAdded.value=imageName
 }
 function updateImgSrc(imageName){
-  imgSrc.value = NS.getProjectImageLink(imageName)
+  imgSrc.value = NS.getProjectImageLink(imageName)? NS.getProjectImageLink(imageName) : ""
   console.log("[EDITOR] Image source updated:", imageName, imgSrc.value)
 }
 onMounted(()=>{
-  console.log("Mounted, ",NS.getParam(props.id,"Image_Selection_dropdown")[0])
-  imgSrc.value = NS.getProjectImageLink(NS.getParam(props.id,"Image_Selection_dropdown")[0])
+  const selectionName = NS.getParam(props.id,"Image_Selection_dropdown")
+  if(selectionName){
+    imgSrc.value = NS.getProjectImageLink(selectionName)
+  }
 })
 </script>
 
