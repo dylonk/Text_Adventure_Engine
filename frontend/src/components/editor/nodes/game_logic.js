@@ -5,7 +5,7 @@ export const useGameStore = defineStore('game', () => {
 
 let nodeMap = new Map() // map of nodes stored by ID not name!!
 let originalGame = {} // write only
-let imageMap = {} // should NOT be edited during the game, its just for synchronizing the images to their respective links
+let imageMap = {} // should NOT be edited during the game, its just for synchronizing the images to their respective links {key is name, value is link}
 const output = ref("This should not appear, output is not being set")
 const outputQueue = ref([])
 let choices = []
@@ -63,6 +63,8 @@ const updateNode = (inputNode) => { //modify node (for updating values within ma
   nodeMap.set(inputNode.id,inputNode)
   return
 }
+
+
 
 const getImages = (currentCanvas) => { //this formatting is so that Game.vue can use the canvas ref to live update the images
   imagesArray = currentCanvas

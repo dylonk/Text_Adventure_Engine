@@ -27,6 +27,10 @@ const ProjectSchema = new mongoose.Schema({
     type: Number,
     default: 1
   },
+  projectImages:{
+    type: Object,
+    default: {}
+  },
   object_count: {
     total: {
       type: Number,
