@@ -64,7 +64,7 @@ function showContextMenu(event) {
   // Use raw screen coordinates (NOT screenToFlowCoordinate)
   contextMenuPosition.value = {
     x: event.clientX,
-    y: event.clientY,
+    y: event.clientY-130,
   };
 
   event.preventDefault(); // prevents browser's right-click menu

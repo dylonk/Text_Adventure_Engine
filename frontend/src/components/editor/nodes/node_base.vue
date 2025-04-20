@@ -157,7 +157,7 @@ onMounted(()=>{
 
 <template>
     <div v-if="data.tbStyle" class="node_container" :draggable="draggable" @dragstart="onDragStart($event, props.type)"
-        @contextmenu="showContextMenu($event, props.type, props.id)">
+        @contextmenu.prevent.stop="showContextMenu($event, props.type, props.id)">
         <div v-if="data.isObject"  class="node_title">
         
         

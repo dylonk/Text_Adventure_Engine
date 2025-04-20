@@ -760,6 +760,8 @@ const copyNode = (id) => {
 //was a little torn about whether to put this in canvas or not but we've been having all this functionality in nodestore so far.
 const pasteNode = (x, y) => {
   const node = clipboardNode.value;
+  x-=500;
+  y-=300;
   const newNode = {
     type: node.type,
     position: {
