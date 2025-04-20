@@ -204,8 +204,10 @@
         name: projectName.value,
         nodes: nodesArray,
         object_count: nodesStore.object_count,
-        idCounter: nodesStore.idCounter
+        idCounter: nodesStore.idCounter,
+        projectImages: nodesStore.getProjectImages(), // help here dylan :J
       };
+      console.log("PISSSSSSSSS",nodesStore.getProjectImages())
       return projectData;
     }
     
@@ -323,6 +325,7 @@
 
     //helper function, just loads the project data into the store from it's jsonified state
     function loadProjectData(projectData) { //it needs to do this to convert stuff back into a map
+      console.log("[DEBUG] projectData=",projectData)
       const nodesMap = new Map(
         projectData.nodes.map(item => [item.id, item.data])
       );
@@ -332,6 +335,9 @@
       //nodesStore.globalNodes = nodesMap;
       nodesStore.idCounter = projectData.idCounter;
       nodesStore.object_count = projectData.object_count;
+      console.log("[DEBUG] PROJECT IMAGES",projectData.projectImages)
+      nodesStore.setProjectImages(projectData.projectImages);
+
       // console.log(nodesStore.globalNodes);
       // console.log(nodesStore.getGlobalNodes());
       nodesStore.setGlobalNodes(nodesMap);

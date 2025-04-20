@@ -42,7 +42,6 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
     npc: 0,
     pathway: 0,
     custom: 0,
-    image: 0,
   });
   function incrementCount(key) {
     if (key in object_count) {
@@ -118,9 +117,7 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
       node.type == "item" ||
       node.type == "pathway" ||
       node.type == "npc" ||
-      node.type == "custom" ||
-      node.type == "image" ||
-      node.type == "modify_image"
+      node.type == "custom"
     ){
       incrementCount(node.type);
       console.log("[EDITOR]🦠➕ object name should be", node.type + object_count[node.type]);
@@ -185,6 +182,24 @@ const renameNode = (id) => {
     }
   };
 
+  const getProjectImageNames = () => {
+    const imageNames = Object.keys(projectImages.value)
+    console.log("[EDITOR] retrieved project images", imageNames)
+    return imageNames
+  }
+
+  const pushProjectImage = (imageName, imageLink) => {
+    projectImages.value[imageName]=imageLink
+    console.log("[EDITOR] Project Images are now:", projectImages.value)
+  }
+
+  const getProjectImageLink = (imageName) => {
+    
+    console.log("[EDITOR] Image for node is ",projectImages.value[imageName])
+    return projectImages.value[imageName]
+  }
+
+
 const contributeNodeData = (id, inputData) => { // For creating the data that will be with the node initially, only runs through once.
 
     console.log("[EDITOR]💾🫳🏽 ContributeNodeData(id=",id,"inputData=,",inputData,")");
@@ -210,7 +225,7 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
 
 const contributeFunctionParameters = (id,paramName, paramArray) => { 
   console.log("[EDITOR]🔧🫳🏽 contributeFunctionParameters(",id,paramName,paramArray,")")
-  let param = {name: paramName,vals: paramArray} // MUST ALWAYS BE AN ARRAY
+  let param = {name: paramName,vals: paramArray} // paramArray MUST ALWAYS BE AN ARRAY
   const nodeExists = getNode(id)
   if(!nodeExists){
     return;
@@ -234,8 +249,8 @@ const getParam=(id,paramName)=>{
   console.log("[EDITOR]🔧🔙 getParam(",id,paramName,")")
 
   const nodeExists = getNode(id)
-  if(!nodeExists){
-    return;
+  if(!nodeExists || !nodeExists.data.hasOwnProperty("function_params")){
+    return null;
   }
   for(const parameter of nodeExists.data.function_params){
     if(paramName == parameter.name){
@@ -243,6 +258,7 @@ const getParam=(id,paramName)=>{
       return parameter.vals;
     }
   }
+
 }
 
   const getNodeData = (id, dataProperty = "") => {  // DO NOT USE IN A WATCHER OR COMPUTE FUNCTION (spam) gets data of node safely. dataProperty to be subbed in instances where you'd do something like node.data.obj_name for safety
@@ -413,7 +429,7 @@ const getParam=(id,paramName)=>{
           gNode.objectName = node.data.object_name
           gNode.properties = node.data.properties ? {...node.data.properties}:{}
           gNode.n = childNodes //Stores node IDs
-          gNode.images = {}
+          gNode.images = {} // images that the canvas currently is displaying.
           // no need for global edge store with compiled games
         }
         if(gNode.isFunction){
@@ -576,6 +592,16 @@ const getParam=(id,paramName)=>{
       }
     }
   };
+  const getProjectImages = () =>{ //for compiler
+    let destructuredImages = {}
+    for (const [key, value] of Object.entries(projectImages.value)) {
+      destructuredImages[key]=value
+    }
+    return destructuredImages
+  }
+  const setProjectImages = (imagesObject) =>{ // for compiler
+    projectImages.value = imagesObject
+  }
   const getNodeProperties = (id, doGlobal=false) => { // DO NOT USE IN A WATCHER OR COMPUTE FUNCTION (spam), returns an array
     console.log("[EDITOR]⚙️⬅️ getNodeProperties(id=", id, ",doGlobal=", doGlobal,")")
     const nodeExists = getNode(id,true,true);
@@ -667,6 +693,7 @@ const getParam=(id,paramName)=>{
     object_count.custom = 0;
     globalSync();
     idCounter.value = 1;
+    projectImages.value={}
     canvasID.value = 0;
 
   // Default global nodes (Player) -------------------
@@ -720,7 +747,9 @@ const getParam=(id,paramName)=>{
     getLocalNodeIDs,
     getCurrentCanvasName,
     getGlobalNodes,
-    projectImages,
+    getProjectImageNames,
+    pushProjectImage,
+    getProjectImageLink,
     syncer,
     globalSync,
     localSync,
@@ -741,6 +770,9 @@ const getParam=(id,paramName)=>{
     addHandle,
     addEdge,
     updateEdge,
+    projectImages,
+    getProjectImages,
+    setProjectImages,
     deleteEdge,
     deleteEdgeByHandle,
     getEdge,

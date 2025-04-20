@@ -1,8 +1,9 @@
 <script setup>
-import { defineProps, ref, watch, computed } from 'vue'
+import { defineProps, ref, watch, computed, onMounted } from 'vue'
 import { useNodesStore } from '../node_store.js'
 import FunctionBase from '../function/func_base.vue'
-import { HandleOut, HandleIn, HContainer, VContainer,SmallButton } from '../node_assets/n-component-imports.js'
+import CameraImage from '../../../../assets/Images/camera.png'
+import { HandleOut, HandleIn, HContainer, VContainer,SmallButton, Dropdown } from '../node_assets/n-component-imports.js'
 
 const props = defineProps({
   id: { default: -1 },
@@ -13,51 +14,71 @@ const NS = useNodesStore()
 const defaultObjData = {
   display_type: "Image",
   function_name: "image",
-  selectedImage: null,
 }
-const imageName = {
-  paramName: "imageName",
-  params: []
-}
-
-
-NS.contributeFunctionParameters(props.id,imageName.paramName,imageName.params); // a little confusing, but this adds 1 param to function_params in the style [response_textboxes(name), textbox1(parameter index 0),textbox2(parameter index 1)]
 
 NS.contributeNodeData(props.id, defaultObjData)
 
+
 // Reactive local input bound to property
-const imgurLink = ref(NS.getNodeData(props.id, "properties")?.imgur_link || "")
+const imgSrc = ref(CameraImage)
+const inputLink = ref("")
+const lastImgAdded = ref("")
 
-// Update store when input changes
-watch(imgurLink, (val) => {
-  NS.setNodeProperty(props.id, "imgur_link", val)
+function addImage(){
+  if(inputLink.value==""){
+    alert("No image link present")
+    return;
+  }
+  const imageName = prompt("Create a unique name for your image")
+  if(imageName==null){
+    alert("Image name cannot be empty")
+    return;
+  }
+  NS.pushProjectImage(imageName,inputLink.value)
+  inputLink.value = ""
+  lastImgAdded.value=imageName
+}
+function updateImgSrc(imageName){
+  imgSrc.value = NS.getProjectImageLink(imageName)
+  console.log("[EDITOR] Image source updated:", imageName, imgSrc.value)
+}
+onMounted(()=>{
+  console.log("Mounted, ",NS.getParam(props.id,"Image_Selection_dropdown")[0])
+  imgSrc.value = NS.getProjectImageLink(NS.getParam(props.id,"Image_Selection_dropdown")[0])
 })
-
-const imgurURL = computed(() => imgurLink.value)
 </script>
 
 <template>
   <FunctionBase :id="id">
     <HContainer outerMargin="5px">
       <HandleIn :id="id" />
-    <VContainer outerMargin="0px">
-      <SmallButton :id="id" text="Add Image"></SmallButton>
-      <img
-        v-if="imgurURL"
-        :src="imgurURL"
-        alt="Imgur Image"
-        class="image-preview"
-      />
-
-      <div v-else class="italic text-xs text-gray-400 text-center p-2">
-        No image set. Provide an Imgur link.
+    <VContainer>
+      <div class="image-preview">
+        <img v-if="imgSrc"
+          :src="imgSrc"
+          alt="Imgur Image"
+          class="image-preview"
+        />
+        <div v-else class="italic text-xs text-gray-400 text-center p-2" style="background:#2a2a2a; color:white; padding:2px;border-radius:3px">
+          No image set. Select an image below.
+        </div>
       </div>
-      <input
-        v-model="imgurLink"
-        placeholder="Paste an Imgur .jpg or .png URL"
-        class="w-full border p-1 rounded text-sm"
-      />
+      <Dropdown dropdownType="images" :id="id" title="Image Selection" @dropdown-updated="(name) => updateImgSrc(name)" displayHorizontal="true"></Dropdown>
+        <div style="border:#808080 solid 1px;border-radius:5px;">
+          <VContainer style="padding:10px;">
+          <div style="color:black;">Add a new image</div>
+          <HContainer>
+            <input
+            class="nodrag"
+            v-model="inputLink"
+            placeholder="Paste an Imgur .jpg or .png URL"
+            />
 
+            <SmallButton :id="id" text="Enter" :defaultSelection="lastImgAdded" @click="addImage()"></SmallButton>
+          </HContainer>
+          </VContainer>
+
+      </div>
     </VContainer>
     <HandleOut :id="id" />
   </HContainer>
@@ -66,10 +87,10 @@ const imgurURL = computed(() => imgurLink.value)
 
 <style scoped>
 .image-preview {
-  max-width: 100px;
-  max-height: 100px;
+  width: 100%;
+  height: 100px;
   object-fit: contain;
-  border: 1px solid #ccc;
+  background: #2b2b2b;
   border-radius: 4px;
 }
 </style>

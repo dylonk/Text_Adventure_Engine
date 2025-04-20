@@ -12,7 +12,7 @@ const router = express.Router();
  router.post('/save', async (req, res) => {
     console.log("save request send");
     try {
-      const { id, userId,name,nodes,idCounter,object_count} = req.body;  
+      const { id, userId,name,nodes,idCounter,object_count, projectImages} = req.body;  
       console.log("id is", id, "name is", name);  //ok, so it successfully gets ID and name of the project
       console.log("sent user id is", userId);
       //console.log("requser id is", req.user._id);
@@ -24,7 +24,8 @@ const router = express.Router();
           name: name,
           nodes: nodes,              
           idCounter: idCounter,
-          object_count: object_count
+          object_count: object_count,
+          projectImages: projectImages,
         },                    // Update object
         { upsert: true, new: true }  // Options
       );
