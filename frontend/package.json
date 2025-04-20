@@ -17,6 +17,7 @@
     "@vue-flow/minimap": "^1.5.0",
     "axios": "^1.7.9",
     "flatted": "^3.3.3",
+    "jszip": "^3.10.1",
     "lodash": "^4.17.21",
     "pinia": "^2.2.8",
     "toastify-js": "^1.12.0",

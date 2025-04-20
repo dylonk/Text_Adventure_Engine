@@ -11,6 +11,7 @@ const outputQueue = ref([])
 let choices = []
 let promptchoices = []
 let watchchoices = []
+let currentImages = []
 
 // syncers
 const progressionSyncer = ref(false) // confusing value, but it just alternates between true and false per tick so that outside elements can update if need be
@@ -80,7 +81,6 @@ const addImageToViewport = (imageObject) => {
   //IMAGE MUST BE IN FORMAT
   // imageObject{name:"name",xpos,ypos,... whatever data}
   // Offline images, maybe store images by name when downloading the zip?
-
 }
 
 

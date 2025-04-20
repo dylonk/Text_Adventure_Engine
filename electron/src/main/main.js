@@ -3,6 +3,9 @@
 // Electron imports
 const { app, BrowserWindow, Menu, dialog, ipcMain } = require('electron');
 const { autoUpdater } = require('electron-updater');
+const AdmZip = require('adm-zip');
+const os = require('os');
+const { v4: uuidv4 } = require('uuid'); // for temp folder names
 const path = require('path');
 const fs = require('fs');
 
@@ -122,15 +125,22 @@ async function openGameDialog() {
   const { canceled, filePaths } = await dialog.showOpenDialog(mainWindow, {
     title: 'Open Game File',
     filters: [
-      { name: 'Game Files', extensions: ['quill'] }
+      { name: 'Game Files', extensions: ['zip'] }
     ],
     properties: ['openFile']
   });
   
   if (!canceled && filePaths.length > 0) {
-    log("file path"+ filePaths[0]);
-    let gameData = fs.readFileSync(filePaths[0], 'utf8');
+    const zipPath = filePaths[0];
+    const tempDir= path.join(os.tmpdir(), `text-adventure-${uuidv4()}`);  
+    fs.mkdirSync(tempDir);
+    const zip = new AdmZip(zipPath);
+    zip.extractAllTo(tempDir, true);
+    //find the game.json in the zip, it becomes gameData
+    const gameJsonPath = path.join(tempDir, 'game.json');
+    const gameData = JSON.parse(fs.readFileSync(gameJsonPath, 'utf8'));
     let gameDataJson = JSON.parse(gameData);
+    
     //look for a savegame for this game
     const saveFilePath=await checkForSaveGame(gameDataJson.title);
     log("save file path"+ saveFilePath);
@@ -147,8 +157,30 @@ async function openGameDialog() {
     }
 
     mainWindow.webContents.send('load-game-data', gameDataJson);
+
+
+    
+  function rewriteImagePaths(obj) {
+    if (typeof obj === 'string' && obj.startsWith('assets/images/')) {
+      return path.join(tempDir, obj); // full local path
+    } else if (Array.isArray(obj)) {
+      return obj.map(rewriteImagePaths);
+    } else if (typeof obj === 'object' && obj !== null) {
+      for (let key in obj) {
+        obj[key] = rewriteImagePaths(obj[key]);
+      }
+    }
+    return obj;
+  }
+
+  rewriteImagePaths(gameData);
+  mainWindow.webContents.send('load-game-data', gameData);
+
   }
 }
+
+
+
 
 // App lifecycle events
 app.whenReady().then(() => {

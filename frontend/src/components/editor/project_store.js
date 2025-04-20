@@ -122,12 +122,15 @@
         title: title,
         description: description,
         //thumbnail: thumbnail,
-        nodeMap: thisGame.nodeMap
+        nodeMap: thisGame.nodeMap,
+        images: nodesStore.getProjectImages()
       };
 
       // Here you would typically send this to your backend
       try {
+        console.log("images are", Game.images);
         console.log('Exporting game:', JSON.stringify(Game));
+        console.log("images are", JSON.stringify(Game.images));
         const response = await fetch(`${API_BASE_URL}/games/save`, {  //tries to POST the data to the game save route in backend
           method: 'POST',
           headers: {
@@ -189,7 +192,7 @@
       }
     }
 
-    //so we don't repeat ourselves. just compiles the project into a projectData 
+    //so we don't repeat ourselves. just compiles the project into a projectData. This is used for saving a PROJECT, not compiling into a GAME.
     function compileProject()
     {
       const nodesArray = Array.from(nodesStore.getGlobalNodes().entries()).map(([id, nodeData]) => {

@@ -36,11 +36,11 @@ const router = express.Router();
   }
 });
 
- // Route to save a project
+ // Route to project to become a game
  router.post('/save', async (req, res) => {
     console.log("save request send");
     try {
-      const { id, userId,title,description,nodeMap} = req.body;  
+      const { id, userId,title,description,nodeMap,images} = req.body;  
       console.log("id is", id, "title is", title);  //ok, so it successfully gets ID and name of the project
       console.log("sent user id is", userId);
       console.log("Received nodemap:", nodeMap);  // Log the nodeMap to see what's being passed
@@ -57,7 +57,8 @@ const router = express.Router();
           title: title,
           description: description,
           //thumbnail: thumbnail,
-          nodeMap: nodeMap
+          nodeMap: nodeMap,
+          images: images
         },                    // Update object
         { upsert: true, new: true }  // Options
       );

@@ -39,14 +39,6 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
     globalNodes=newNodes;
   }
 
-  function getClipboardNode()
-  {
-    return clipboardNode;
-  };
-  function setClipboardNode(newNode)
-  {
-    clipboardNode=newNode;
-  }
 
   const object_count = reactive({
     //For making unique object names

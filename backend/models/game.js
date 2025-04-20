@@ -30,6 +30,11 @@ const GameSchema = new mongoose.Schema({
     default: []
   },
 
+  images:{
+    type: mongoose.Schema.Types.Mixed, // the object of images and keys to their weblinks.
+    default: []
+  }
+
 
 
 }, 

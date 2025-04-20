@@ -3,11 +3,16 @@ import { ref } from "vue"
 
 export const useGameStore = defineStore('game', () => {
 
-let nodeMap = new Map()
+let nodeMap = new Map() // map of nodes stored by ID not name!!
 let originalGame = {} // write only
-const output = ref("TEST")
+let imageMap = {} // should NOT be edited during the game, its just for synchronizing the images to their respective links {key is name, value is link}
+const output = ref("This should not appear, output is not being set")
 const outputQueue = ref([])
 let choices = []
+let promptchoices = []
+let watchchoices = []
+let currentImages = []
+
 // syncers
 const progressionSyncer = ref(false) // confusing value, but it just alternates between true and false per tick so that outside elements can update if need be
 const scopeSyncer = ref(false) // when the position of an item is changed, this ticks for the asset browser
@@ -24,8 +29,9 @@ let watching = [] //lists all ids of await function nodes in scope
 
 
 const start = (compiledGame) =>{
-  output.value = "Game initialized"
   outputQueue.value = []
+  output.value = "Game initialized"
+  archiveOutput()
   choices=[];
   activeNode = 1;
   nodeMap = compiledGame.nodeMap
@@ -46,12 +52,36 @@ const getNode = (nodeID, notifyConsole=false) => { //get node from nodemap
   if(notifyConsole) console.log("[GAME] getNode(",nodeID,") is",nodeExists)
   return nodeExists
 }
-
+const getNodeByName = (name) =>{
+  nodeMap.forEach((node, id) => {
+    if(node.hasOwnProperty("objectName") && node.objectName == name){
+      console.log("Found", name); return node.obj 
+    }
+  })
+  return null;
+}
 const updateNode = (inputNode) => { //modify node (for updating values within map)
   nodeMap.set(inputNode.id,inputNode)
   return
 }
 
+
+
+const getImages = (currentCanvas) => { //this formatting is so that Game.vue can use the canvas ref to live update the images
+  imagesArray = currentCanvas
+  let nodeExists = getNode(currentCanvas)
+  if(!nodeExists || !nodeExists.hasOwnProperty("images")){
+    return [];
+  }
+  return Object.values(nodeExists.images) // returns an array of the objects images
+}
+
+const addImageToViewport = (imageObject) => {
+  //PAY ATTENTION
+  //IMAGE MUST BE IN FORMAT
+  // imageObject{name:"name",xpos,ypos,... whatever data}
+  // Offline images, maybe store images by name when downloading the zip?
+}
 
 
 
@@ -70,7 +100,7 @@ const outputText = (text) =>{
   if(output.value!="")output.value += `\n`+text
   else output.value += text
 }
-const textNext = () =>{
+const archiveOutput = () =>{
   outputQueue.value.push(output.value)
   output.value = ""
 }
@@ -91,6 +121,7 @@ const markScope = () =>{
     node.inScope = true
   }
   updateNode(node)
+  return;
 }
 
 const nextNodeFromHandle = (sourceHandleIndex, sourceNodeID=activeNode) => {
@@ -113,10 +144,12 @@ const func = (iNode) => { // function node functions
   console.log("[GAME] func( ",funcName,",",funcParams,")",iNode)
   switch(funcName){
     case "start":{
+      archiveOutput()
       processNode(nextNodeFromHandle(0))
       break;
     }
     case "prompt":{ // most of the prompt logic is not handled here, just sets the choices and output
+      allowInput.value = true
       choices = []
       outputText(funcParams[0].vals[0]) //Console Output
       for(let i = 0; i < funcParams[1].vals.length; i++){
@@ -131,7 +164,41 @@ const func = (iNode) => { // function node functions
 
       break;
     }
+    case "setlocation":{
+      let target = getNodeByName(funcParams[0].vals[0])
+      if(target == null){
+        break;
+      }
+      console.log("Target found", target)
+      let targetParent = getNode(target.parentID)
+      console.log("Searching for destination")
+      let destination = getNodeByName(funcParams[1].vals[0])
+      console.log("Destination found", destination);
 
+      if(target==null||targetParent==null||destination==null){
+        console.log("[GAME] setlocation had null return", target, targetParent, destination)
+        processNode(nextNodeFromHandle(0))
+        break;
+      }
+
+      target.parentID = destination.id // add new destination id to parent
+      targetParent = targetParent.n.filter(child => child != target.id) // remove child from parent
+      destination.push(target.id) // add child to destination
+
+      updateNode(target)
+      updateNode(targetParent)
+      updateNode(destination)
+
+      scopeSyncer.value = !scopeSyncer.value
+      console.log("[GAME] setlocation successful",target,targetParent,destination)
+      processNode(nextNodeFromHandle(0))
+
+      break;
+    }
+    case "image":{
+      processNode(nextNodeFromHandle(0))
+      break;
+    }
 
   }
 }
@@ -159,12 +226,12 @@ const userResponse=(text)=>{ // Compares user text to possible choices
   const userText = interpretUserText(text)
   for(let i = 0; i < choices.length; i++){
     if(userText[0] == choices[i].text){
-      textNext();
+      archiveOutput();
       processNode(nextNodeFromHandle(choices[i].handleID,choices[i].nodeID))
       return;
     }
   }
-  textNext();
+  archiveOutput();
   processNode(nextNodeFromHandle(0))
   return;
 }
@@ -181,8 +248,6 @@ function setNodeMap(newmap)
 {
   nodeMap=newmap;
 }
-
-//made a function for getting the full game. makes metadata easier in my game.vue.
 function getGame()
 {
   const gameToReturn=originalGame;
@@ -199,7 +264,7 @@ return{
       progressionSyncer,
       scopeSyncer,
       outputText,
-      textNext,
+      archiveOutput,
       initialized,
       objectViewerSelected,
       func,
@@ -214,6 +279,7 @@ return{
       interpretGameText,
       getNodeMap,
       setNodeMap,
+      getNodeByName,
       getGame
-}
+    }
 });
