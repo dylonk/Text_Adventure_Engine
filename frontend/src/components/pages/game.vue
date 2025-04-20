@@ -333,17 +333,6 @@ onMounted(() => {
     </div>
       <div class="game-screen">
         <div class="game-image-display">
-          <img 
-            v-if="GameLogic.getCurrentImage()" 
-            :src="GameLogic.getCurrentImage()" 
-            alt="Game Image"
-            :class="{
-              'fade-effect': GameLogic.getImageModifications()?.fade?.enabled
-            }"
-            :style="{
-              '--fade-duration': `${GameLogic.getImageModifications()?.fade?.duration || 2000}ms`
-            }"
-          >
         </div>
         <div class="game-text-area">
           <div v-for="output in GameLogic.outputQueue" class="game-text">
@@ -530,14 +519,14 @@ onMounted(() => {
   width: 100%;
   padding: 0.6rem;
   font-size: 1rem;
-  background: rgb(120, 120, 120);
-  color: rgb(0, 0, 0);
-  border:none;
+  background: rgb(0, 0, 0);
+  color: rgb(188, 188, 188);
+  border:rgb(85, 115, 21) 2px solid;
   outline:none;
 }
 .game-input input:focus{
-  background:rgb(197, 197, 197);
-  border:none;
+  background:rgb(62, 62, 62);
+  color:white;
 }
 
 .user-input {
@@ -555,7 +544,7 @@ onMounted(() => {
 
 .game-controls button {
   padding: 10px;
-  background: #e74c3c;
+  background: #5bba4f;
   border: none;
   color: #fff;
   font-size: 1rem;
@@ -566,10 +555,11 @@ onMounted(() => {
   box-shadow: 4px 4px 0 #000;
   border-radius: 4px;
   transition: background 0.2s;
+  overflow: hidden;
 }
 
 .game-controls button:hover {
-  background: #c0392b;
+  background: #1b9127;
 }
 
 .highlight {

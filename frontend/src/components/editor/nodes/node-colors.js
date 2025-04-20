@@ -23,10 +23,12 @@ const node_colors = {
     action_fg: "#942b63",
     image_bg: "#ffe6cc",
     image_fg: "#663300",
-    modify_image_bg: "#ffd9cc",
-    modify_image_fg: "#994d00",
-    output_fg: "#2BAE66",
-    output_bg: "#FCF6F5",
+    consoleoutput_fg: "#2BAE66",
+    consoleoutput_bg: "#FCF6F5",
+    setlocation_bg:"#fff400",
+    setlocation_fg:"#0082cb",
+    modifyimage_fg:"#eb34b4",
+    modifyimage_bg:"#ffb6a3",
 };
 
 export default node_colors;

@@ -237,7 +237,7 @@ onMounted(()=>{
 }
 
 .node_container:active{
-  outline:4px blue solid;
+  outline:2px blue solid;
 }
 
 

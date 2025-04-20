@@ -3,11 +3,15 @@ import { ref } from "vue"
 
 export const useGameStore = defineStore('game', () => {
 
-let nodeMap = new Map()
+let nodeMap = new Map() // map of nodes stored by ID not name!!
 let originalGame = {} // write only
-const output = ref("TEST")
+let imageMap = {} // should NOT be edited during the game, its just for synchronizing the images to their respective links
+const output = ref("This should not appear, output is not being set")
 const outputQueue = ref([])
 let choices = []
+let promptchoices = []
+let watchchoices = []
+
 // syncers
 const progressionSyncer = ref(false) // confusing value, but it just alternates between true and false per tick so that outside elements can update if need be
 const scopeSyncer = ref(false) // when the position of an item is changed, this ticks for the asset browser
@@ -22,14 +26,11 @@ let activeNode = 1 // the node of which the path is currently on
 let prevPositions = [] //ONLY PUSHED WHEN AWAIT OR OTHER PATH ABDUCTOR IS CALLED. For when the path is abducted by an await or similar watcher node so the path knows where to return to.
 let watching = [] //lists all ids of await function nodes in scope
 
-// Add new refs for image handling
-const currentImage = ref(null)
-const imageModifications = ref({})
 
 const start = (compiledGame) =>{
-  currentImage.value = null
-  output.value = "Game initialized"
   outputQueue.value = []
+  output.value = "Game initialized"
+  archiveOutput()
   choices=[];
   activeNode = 1;
   nodeMap = compiledGame.nodeMap
@@ -50,59 +51,54 @@ const getNode = (nodeID, notifyConsole=false) => { //get node from nodemap
   if(notifyConsole) console.log("[GAME] getNode(",nodeID,") is",nodeExists)
   return nodeExists
 }
+const getNodeByName = (name) =>{
+  nodeMap.forEach((node, id) => {
+    if(node.hasOwnProperty("objectName") && node.objectName == name){
+      console.log("Found", name); return node.obj 
+    }
+  })
+  return null;
+}
 const updateNode = (inputNode) => { //modify node (for updating values within map)
   nodeMap.set(inputNode.id,inputNode)
   return
 }
 
+const getImages = (currentCanvas) => { //this formatting is so that Game.vue can use the canvas ref to live update the images
+  imagesArray = currentCanvas
+  let nodeExists = getNode(currentCanvas)
+  if(!nodeExists || !nodeExists.hasOwnProperty("images")){
+    return [];
+  }
+  return Object.values(nodeExists.images) // returns an array of the objects images
+}
+
+const addImageToViewport = (imageObject) => {
+  //PAY ATTENTION
+  //IMAGE MUST BE IN FORMAT
+  // imageObject{name:"name",xpos,ypos,... whatever data}
+  // Offline images, maybe store images by name when downloading the zip?
+
+}
+
 
 
 const processNode = (iNode) =>{
-  if(iNode == null){ 
-    { output.value="End of game reached"; return;}
-  }
-  
+  if(iNode == null){ output.value="End of game reached"; return;}
+  // Add awaits to choices here
   activeNode = iNode.id
-  console.log("[GAME] 🦠🔍 Parsing node:", iNode.id)
+  console.log("[GAME] 🦠🔍 Parsing node:",iNode.id)
   console.log("[GAME] 🦠🔍 Parsed node is:", iNode)
-  
-  
-  // Handle image modification nodes
-
-  
-  if(iNode.isFunction) {
-    console.log("[GAME] 🦠🔍 Parsed node is a function node")
+  if(iNode.isFunction){
     func(iNode)
   }
-
-  // Only process next node if current node has edges
-  if(iNode.edgesOut && Object.keys(iNode.edgesOut).length > 0) {
-    const nextNode = nextNodeFromHandle(0)
-    if(nextNode) {
-      processNode(nextNode)
-    }
-  }
 }
 
-const appendToOutput = (content) => {
-  if (output.value === "") {
-    output.value = content
-  } else {
-    output.value = output.value + "\n" + content
-  }
+const outputText = (text) =>{
+  if(output.value!="")output.value += `\n`+text
+  else output.value += text
 }
-
-const outputText = (text, imageUrl = null) => {
-  console.log("[GAME] outputText called with:", { text, imageUrl })
-  
-  if (imageUrl) {
-    appendToOutput(`<div class="game-image"><img src="${imageUrl}" alt="Game Image"></div>`)
-  }
-  if (text && text.trim() !== "") {
-    appendToOutput(`<div class="game-text-content">${text}</div>`)
-  }
-}
-const textNext = () =>{
+const archiveOutput = () =>{
   outputQueue.value.push(output.value)
   output.value = ""
 }
@@ -123,6 +119,7 @@ const markScope = () =>{
     node.inScope = true
   }
   updateNode(node)
+  return;
 }
 
 const nextNodeFromHandle = (sourceHandleIndex, sourceNodeID=activeNode) => {
@@ -140,16 +137,17 @@ const nextNodeFromHandle = (sourceHandleIndex, sourceNodeID=activeNode) => {
 }
 
 const func = (iNode) => { // function node functions
-  console.log("[GAME] func( ",iNode.functionName,",",iNode.functionParams,")",iNode)
   const funcName = iNode.functionName
   const funcParams = iNode.functionParams
   console.log("[GAME] func( ",funcName,",",funcParams,")",iNode)
   switch(funcName){
     case "start":{
+      archiveOutput()
       processNode(nextNodeFromHandle(0))
       break;
     }
     case "prompt":{ // most of the prompt logic is not handled here, just sets the choices and output
+      allowInput.value = true
       choices = []
       outputText(funcParams[0].vals[0]) //Console Output
       for(let i = 0; i < funcParams[1].vals.length; i++){
@@ -164,70 +162,42 @@ const func = (iNode) => { // function node functions
 
       break;
     }
-
-    case "image":{
-      console.log("[GAME] Processing image node:", iNode)
-      if(iNode.data?.properties?.imgur_link || iNode.properties?.imgur_link) {
-        const imageUrl = iNode.data?.properties?.imgur_link || iNode.properties?.imgur_link
-        // Store the current image URL in the nodeMap and ref
-        nodeMap.set('currentImage', imageUrl)
-        currentImage.value = imageUrl
-        // Reset image modifications when new image is loaded
-        const defaultMods = {
-          fade: { enabled: false, duration: 2000 },
-          blur: { enabled: false, amount: 0 },
-          brightness: { enabled: false, amount: 100 },
-          contrast: { enabled: false, amount: 100 }
-        }
-        nodeMap.set('imageModifications', defaultMods)
-        imageModifications.value = defaultMods
+    case "setlocation":{
+      let target = getNodeByName(funcParams[0].vals[0])
+      if(target == null){
+        break;
       }
+      console.log("Target found", target)
+      let targetParent = getNode(target.parentID)
+      console.log("Searching for destination")
+      let destination = getNodeByName(funcParams[1].vals[0])
+      console.log("Destination found", destination);
+
+      if(target==null||targetParent==null||destination==null){
+        console.log("[GAME] setlocation had null return", target, targetParent, destination)
+        processNode(nextNodeFromHandle(0))
+        break;
+      }
+
+      target.parentID = destination.id // add new destination id to parent
+      targetParent = targetParent.n.filter(child => child != target.id) // remove child from parent
+      destination.push(target.id) // add child to destination
+
+      updateNode(target)
+      updateNode(targetParent)
+      updateNode(destination)
+
+      scopeSyncer.value = !scopeSyncer.value
+      console.log("[GAME] setlocation successful",target,targetParent,destination)
       processNode(nextNodeFromHandle(0))
 
       break;
     }
-    case "imageMod":{
-
-      console.log("[GAME] Processing image modification node:", iNode)
-      const currentMods = nodeMap.get('imageModifications') || {}
-      const props = iNode.data?.properties || iNode.properties || {}
-      
-      // Update modifications based on node properties
-      if(props.fade_enabled) {
-        currentMods.fade = {
-          enabled: true,
-          duration: props.fade_duration || 2000
-        }
-      }
-      
-      if(props.blur_enabled) {
-        currentMods.blur = {
-          enabled: true,
-          amount: props.blur_amount || 5
-        }
-      }
-      
-      if(props.brightness_enabled) {
-        currentMods.brightness = {
-          enabled: true,
-          amount: props.brightness_amount || 100
-        }
-      }
-      
-      if(props.contrast_enabled) {
-        currentMods.contrast = {
-          enabled: true,
-          amount: props.contrast_amount || 100
-        }
-      }
-      
-      // Store updated modifications
-      nodeMap.set('imageModifications', currentMods)
-      imageModifications.value = currentMods
+    case "image":{
       processNode(nextNodeFromHandle(0))
-
+      break;
     }
-    break;
+
   }
 }
 
@@ -254,12 +224,12 @@ const userResponse=(text)=>{ // Compares user text to possible choices
   const userText = interpretUserText(text)
   for(let i = 0; i < choices.length; i++){
     if(userText[0] == choices[i].text){
-      textNext();
+      archiveOutput();
       processNode(nextNodeFromHandle(choices[i].handleID,choices[i].nodeID))
       return;
     }
   }
-  textNext();
+  archiveOutput();
   processNode(nextNodeFromHandle(0))
   return;
 }
@@ -276,23 +246,11 @@ function setNodeMap(newmap)
 {
   nodeMap=newmap;
 }
-
-//made a function for getting the full game. makes metadata easier in my game.vue.
 function getGame()
 {
   const gameToReturn=originalGame;
   gameToReturn.nodeMap=nodeMap;
   return gameToReturn;
-}
-
-// Add a getter for the current image
-const getCurrentImage = () => {
-  return nodeMap.get('currentImage')
-}
-
-// Add a getter for image modifications
-const getImageModifications = () => {
-  return nodeMap.get('imageModifications') || {}
 }
 
 return{
@@ -304,7 +262,7 @@ return{
       progressionSyncer,
       scopeSyncer,
       outputText,
-      textNext,
+      archiveOutput,
       initialized,
       objectViewerSelected,
       func,
@@ -319,10 +277,7 @@ return{
       interpretGameText,
       getNodeMap,
       setNodeMap,
-      getGame,
-      getCurrentImage,
-      getImageModifications,
-      currentImage,
-      imageModifications
-}
+      getNodeByName,
+      getGame
+    }
 });

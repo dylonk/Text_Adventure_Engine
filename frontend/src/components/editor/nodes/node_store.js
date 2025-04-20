@@ -16,6 +16,8 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
   const edges = ref([]);
   const syncer = ref(0)
   const idCounter = ref(1);
+  const projectImages = ref({}) // list of all the image links. key is image name, value is the link. Used for downloading images UNIMPLEMENTED
+
   //clipboardNode is the node that is currently in the clipboard to be pasted
   let clipboardNode=  ref(null);
 
@@ -55,7 +57,6 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
     pathway: 0,
     custom: 0,
     image: 0,
-    modify_image: 0,
   });
   function incrementCount(key) {
     if (key in object_count) {
@@ -395,10 +396,19 @@ const getParam=(id,paramName)=>{
     return;
   }
 
-  const getAllNodes = () => {
-    console.log("[EDITOR]🦠💯 getAllNodes()")
-    return Array.from(globalNodes.values()).flatMap(canv => canv.n)    
-    
+  const getAllNodes = (onlyObjects=false, returnType="node") => {
+    console.log("[EDITOR]🦠💯 getAllNodes(onlyObjects=",onlyObjects,"returnType=",returnType,")")
+    let returnedNodes = Array.from(globalNodes.values()).flatMap(canv => canv.n)    
+    let tReturnedNodes = []
+    if(onlyObjects==true) returnedNodes = returnedNodes.filter((node)=>node.data.hasOwnProperty('isObject'))
+    if(returnType=="title" && onlyObjects == true){
+      for(let i = 0 ; i < returnedNodes.length; i++){
+        tReturnedNodes.push(returnedNodes[i].data.object_name)
+      }
+      returnedNodes = tReturnedNodes
+    }
+    console.log("[EDITOR]🦠💯 returnedNodes=",returnedNodes)
+    return returnedNodes
   };
 
   const GameNode = (node, childNodes=[]) => { //Simplifies the nodes for reading and altering
@@ -417,6 +427,7 @@ const getParam=(id,paramName)=>{
           gNode.objectName = node.data.object_name
           gNode.properties = node.data.properties ? {...node.data.properties}:{}
           gNode.n = childNodes //Stores node IDs
+          gNode.images = {}
           // no need for global edge store with compiled games
         }
         if(gNode.isFunction){
@@ -756,6 +767,7 @@ const pasteNode = (x, y) => {
     getLocalNodeIDs,
     getCurrentCanvasName,
     getGlobalNodes,
+    projectImages,
     syncer,
     globalSync,
     localSync,

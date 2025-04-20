@@ -9,7 +9,9 @@ import HandleIn from './handle_in.vue'
 import HandleOut from './handle_out.vue'
 import Tooltip from './tooltip.vue'
 import Textboxes from './textboxes.vue'
+import Dropdown from './dropdown.vue'
 export{
+    Dropdown,
     SmallButton,
     DebugInfo,
     HContainer,
