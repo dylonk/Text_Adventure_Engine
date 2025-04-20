@@ -22,6 +22,7 @@ const actionsByType = {
 //these are actions that all nodes have. You can always delete a node.
 commonActions: [
   {label: 'Delete', action: () => nodesStore.deleteNode(contextMenuId.value) },
+  {label: 'Copy', action: () => nodesStore.copyNode(contextMenuId.value) },
 ],
 //these are actions that all objects have. Rename node for now.
 objectActions: [

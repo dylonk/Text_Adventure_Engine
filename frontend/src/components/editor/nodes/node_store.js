@@ -3,6 +3,7 @@ import { reactive,computed, ref, toRaw } from 'vue';
 import {dataHas}  from './n-utils'
 import { stringify, parse,toJSON,fromJSON } from 'flatted';
 import node_colors from './node-colors.js'
+import cloneDeep from 'lodash/cloneDeep'
 
 
 
@@ -15,11 +16,15 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
   const edges = ref([]);
   const syncer = ref(0)
   const idCounter = ref(1);
+  //clipboardNode is the node that is currently in the clipboard to be pasted
+  let clipboardNode=  ref(null);
+
   
   // Collection of all nodes. Must be synced on any node or edge change
   let globalNodes = new Map([ 
     [0,{e:[],n:[]}] // Pop in global canvas because it's technically not a node with an id
   ])
+
 
 
   function getGlobalNodes()
@@ -30,6 +35,15 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
   function setGlobalNodes(newNodes)
   {
     globalNodes=newNodes;
+  }
+
+  function getClipboardNode()
+  {
+    return clipboardNode;
+  };
+  function setClipboardNode(newNode)
+  {
+    clipboardNode=newNode;
   }
 
   const object_count = reactive({
@@ -698,6 +712,39 @@ const getParam=(id,paramName)=>{
 
 
 
+//this makes a copy of the node with the given id and puts it in the clipboard
+//just because it's created doesn't mean it's added to the array. it shouldn't mess with anything
+const copyNode = (id) => {
+  const node = getNode(id);
+
+  // Avoid copying reactive/proxy properties
+  clipboardNode.value = cloneDeep({
+    type: node.type,
+    data: node.data,
+    position: { ...node.position }
+  });
+
+  console.log("[EDITOR]🦠📋 copyNode(id=", id, ")");
+};
+//adds a new node from the clipboard. takes position as argument.
+//was a little torn about whether to put this in canvas or not but we've been having all this functionality in nodestore so far.
+const pasteNode = (x, y) => {
+  const node = clipboardNode.value;
+  const newNode = {
+    type: node.type,
+    position: {
+      x,
+      y,
+    },
+    id: idCounter.value,
+    data: cloneDeep(node.data),
+    expandParent: true,
+  };
+
+  addNode(newNode);
+  globalSync();
+};
+
   return {
     //exporting functions
     nodes,
@@ -737,5 +784,7 @@ const getParam=(id,paramName)=>{
     contributeFunctionParameters,
     getParam,
     setGlobalNodes,
+    copyNode,
+    pasteNode
   };
 });

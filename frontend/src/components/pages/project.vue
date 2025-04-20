@@ -53,11 +53,21 @@ const fetchProjects = async () => {
 const deleteProject = async (id) => {
   if (!confirm("Are you sure you want to delete this project?")) return;
   try {
-    projectStore.deleteProject(id);
-    recentProjects.value = recentProjects.value.filter(project => project.id !== id);
-  } catch (error) {
-    console.warn("Error deleting project:", error);
-  }
+        const response = await fetch(`${API_BASE_URL}/projects/delete?id=${id}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        if (!response.ok) {
+          const errorDetail = await response.text();
+          throw new Error(`Failed to delete project: ${errorDetail}`);
+        }
+        // Remove the deleted project from the recentProjects list. a little redundant but lets it take effect immediately
+        recentProjects.value = recentProjects.value.filter(p => p.id !== id);
+      } catch (error) {
+        console.error('Failed to delete project', error);
+      }
 };
 
 // Rename project using projectStore

@@ -1,14 +1,15 @@
 <!---Each canvas is a component of an "Object". The world editor is a canvas that is a component of the global object-->
 <script setup>
 import { ref, markRaw,computed, watch, onMounted, onBeforeUnmount } from 'vue'
-import { VueFlow, ConnectionMode,applyNodeChanges, applyEdgeChanges } from '@vue-flow/core';
+import { useVueFlow,VueFlow, ConnectionMode,applyNodeChanges, applyEdgeChanges } from '@vue-flow/core';
 import CanvasBackground from './background.vue'
 import CanvasControls from './controls.vue'
 import useDragAndDrop from '../drag_drop.js';
 import { useNodesStore } from "../nodes/node_store.js"
 import { useProjectStore } from '../project_store';
+import ContextMenu from '../context_menu.vue';
 
-        
+const { screenToFlowCoordinate} = useVueFlow()
 // NEWNODEREQ
 import { PromptNode, OutputNode, StartNode, RoomNode, ItemNode, NpcNode, PlayerNode, PathwayNode, UnimplementedNode, CustomNode, AwaitNode, ActionNode, ImageNode, ModifyImageNode} from '../nodes/n-imports';
 
@@ -31,6 +32,58 @@ import { PromptNode, OutputNode, StartNode, RoomNode, ItemNode, NpcNode, PlayerN
 
 // Pinia store
 const nodesStore = useNodesStore();
+
+
+//contextmenu stuff
+const isContextMenuVisible = ref(false)
+const contextMenuId = ref(null)
+const contextMenuPosition = ref({ x: 0, y: 0 })
+const contextMenuActions=ref()
+
+
+const actionsByType = {
+
+//these are actions that can be taken when clicking an empty space on the canvas. for now, paste.
+canvasActions: [
+  {label: 'Paste', action: () => nodesStore.pasteNode(contextMenuPosition.value.x,contextMenuPosition.value.y) },
+],
+//these are actions that all objects have. Rename node for now.
+objectActions: [
+  {label: 'Rename', action: () => nodesStore.renameNode(contextMenuId.value) },
+]
+
+//later we can have actions for specific node types. I just don't know of any right now.
+//it will probably be mostly function nodes, considering objects are essentially all the same.
+}
+
+
+function showContextMenu(event) {
+  console.log("Context Menu Triggered:");
+  
+  // Use raw screen coordinates (NOT screenToFlowCoordinate)
+  contextMenuPosition.value = {
+    x: event.clientX,
+    y: event.clientY,
+  };
+
+  event.preventDefault(); // prevents browser's right-click menu
+  console.log("context menu position is ", contextMenuPosition.value);
+  isContextMenuVisible.value = true;
+
+  contextMenuActions.value = [...actionsByType.canvasActions];
+}
+// Handle action for context menu
+function handleContextMenuAction(action) {
+    console.log(action);
+  action.action()
+  isContextMenuVisible.value = false
+}
+
+// Close the context menu
+function closeContextMenu() {
+  isContextMenuVisible.value = false
+}
+
 
 
 const handleCtrlS = () => {
@@ -92,6 +145,7 @@ const onConnect = (connection) => {
         @connect="onConnect"
         @nodes-change="changes => applyNodeChanges(changes  , nodesStore.nodes)"
         @edges-change="changes => applyEdgeChanges(changes, nodesStore.edges)"
+        @contextmenu="showContextMenu($event)"
         :connection-mode="ConnectionMode.Strict"
         fit-view-on-init>
 
@@ -101,7 +155,13 @@ const onConnect = (connection) => {
         }"/>
         <CanvasControls></CanvasControls>
         </VueFlow>
-
+        <ContextMenu
+      v-if="isContextMenuVisible"
+      :position="contextMenuPosition"
+      :actions="contextMenuActions"
+      @action="handleContextMenuAction"
+      @hide-context-menu="closeContextMenu"
+    />
     </div>
 
 

@@ -1,7 +1,7 @@
 <script setup>
 import { defineProps, ref, watch, computed } from 'vue'
 import { useNodesStore } from '../../node_store.js'
-import FunctionBase from '../function/func_base.vue'
+import FunctionBase from '../func_base.vue'
 import { HandleOut, HandleIn, HContainer, VContainer } from '../../node_assets/n-component-imports.js'
 
 const props = defineProps({

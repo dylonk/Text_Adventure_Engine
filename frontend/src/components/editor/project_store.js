@@ -360,7 +360,6 @@
     }
 
 
-
     // Computed properties for project insights. Good idea but commenting out for now
     /*
     const nodeCount = computed(() => {
