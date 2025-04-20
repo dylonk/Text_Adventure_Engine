@@ -1,9 +1,7 @@
 <script setup>
 import globalNavBar from '@/components/standardjs/navbar.vue'
 
-function goToAbout() {
-      this.$router.push('/about')
-}
+
 </script>
 <template>
     <globalNavBar/>

@@ -66,7 +66,7 @@ const onRegisterSubmit = async (event) => {
     const result = await response.json();
     console.log(result.message);
     alert('Registration successful!');
-    router.push('/login');
+    router.push({name: 'User'});
   } catch (error) {
     console.error('Error:', error);
     alert('Registration failed');

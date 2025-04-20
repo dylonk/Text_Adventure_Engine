@@ -16,9 +16,7 @@ const router = useRouter();
 const recentGames = ref([]);
 const searchQuery = ref('');
 
-function goToHome() {
-      this.$router.push('/')
-}
+
 
 // Watch for changes in searchQuery and filter games
 watch(searchQuery, () => {

@@ -25,7 +25,6 @@ const authenticateToken = (req, res, next) => {
 };
 
 // User registration route
-// User registration route
 router.post('/register', async (req, res) => {
     console.log("register request send");
     const { username, email, password, confirmPassword } = req.body;
@@ -40,8 +39,8 @@ router.post('/register', async (req, res) => {
         if (existingUser) {
             return res.status(400).json({ error: 'Username already exists' });  // Return JSON for error
         }
-
-        hashedPassword=password;
+        const salt = await bcrypt.genSalt(10); // Generate a salt
+        const hashedPassword = await bcrypt.hash(password, salt); // Hash the password
         const user = new User({ username, email, password: hashedPassword });
 
         await user.save();
@@ -63,7 +62,7 @@ router.post('/login', async (req, res) => {
       if (!user) return res.status(400).send('Invalid credentials');
   
 
-        const isMatch = password === user.password;  // Compare plaintext passwords
+      const isMatch = await bcrypt.compare(password, user.password); // ✅ Secure
 
         console.log("Provided password:", password);
         console.log("Stored hashed password:", user.password);
@@ -108,9 +107,11 @@ router.post('/update', authenticateToken, async (req, res) => { //this updates t
     try {
       const user = await User.findById(req.user.id);
       if (!user) return res.status(404).send('User not found');
+      const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(newPassword, salt);
   
       // Compare the provided current password with the pssword in database
-      const isMatch = (currentPassword === user.password);      //
+      const isMatch = await bcrypt.compare(currentPassword, user.password);
   
       if (!isMatch) return res.status(400).send('Current password is incorrect');
   
