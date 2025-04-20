@@ -2,6 +2,7 @@
 import { defineProps, ref, watch, computed } from 'vue'
 import { useNodesStore } from '../../node_store.js'
 import FunctionBase from '../func_base.vue'
+import CameraImage from '@/assets/Images/camera.png'
 import { HandleOut, HandleIn, HContainer, VContainer,SmallButton } from '../../node_assets/n-component-imports.js'
 
 const props = defineProps({
