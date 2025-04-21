@@ -11,7 +11,7 @@ import ContextMenu from '../context_menu.vue';
 
 const { screenToFlowCoordinate} = useVueFlow()
 // NEWNODEREQ
-import { PromptNode,SetLocationNode, OutputNode, StartNode, RoomNode, ItemNode, NpcNode, PlayerNode, PathwayNode, UnimplementedNode, CustomNode, AwaitNode, ActionNode, ImageNode, ModifyImageNode} from '../nodes/n-imports';
+import { PromptNode,SetLocationNode, OutputNode, StartNode, RoomNode, ItemNode, NpcNode, PlayerNode, PathwayNode, UnimplementedNode, CustomNode, AwaitNode, ActionNode, ImageNode, ModifyImageNode,WaitNode} from '../nodes/n-imports';
 
     const nodeTypes = {
         start: markRaw(StartNode),
@@ -23,6 +23,7 @@ import { PromptNode,SetLocationNode, OutputNode, StartNode, RoomNode, ItemNode, 
         custom: markRaw(CustomNode),
         await: markRaw(AwaitNode),
         action: markRaw(ActionNode),
+        wait: markRaw(WaitNode),
         player: markRaw(PlayerNode),
         unimplemented: markRaw(UnimplementedNode),
         image: markRaw(ImageNode),

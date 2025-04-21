@@ -1,8 +1,14 @@
 import {defineStore} from 'pinia'
 import { ref } from "vue"
 
-export const useGameStore = defineStore('game', () => {
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+
+export const useGameStore = defineStore('game', () => {
+  
 let nodeMap = new Map() // map of nodes stored by ID not name!!
 let originalGame = {} // write only
 let imageMap = {} // should NOT be edited during the game, its just for synchronizing the images to their respective links {key is name, value is link}
@@ -197,6 +203,15 @@ const func = (iNode) => { // function node functions
     }
     case "image":{
       processNode(nextNodeFromHandle(0))
+      break;
+    }
+    case "wait": {
+      const waitTime = parseInt(funcParams[0].vals[0]); // assuming this is a string number
+      console.log(`[GAME] ⏳ Waiting for ${waitTime}ms...`);
+      // Await the sleep, then process the next node
+      sleep(waitTime).then(() => {
+        processNode(nextNodeFromHandle(0));
+      });
       break;
     }
 
