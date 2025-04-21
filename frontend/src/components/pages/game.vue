@@ -8,7 +8,6 @@ import { useGameStore } from '../editor/nodes/game_logic.js'
 import axios from 'axios';
 import { fetchUserData } from '@/components/standardjs/fetchUserData';
 import speakerIcon from '../../assets/Images/speaker_icon.png';
-import JSZip from 'jszip';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // for Vite
 
 
@@ -116,7 +115,7 @@ async function fetchGame(gameTitle) {
   }
 }
 
-//this function downloads the game into a zip with an assets folder.
+
 async function downloadGame() {
   // Create a copy of the game data with the nodeMap converted to a serializable format
   const gameToDownload = {
@@ -124,31 +123,14 @@ async function downloadGame() {
     nodeMap: mapToSerializable(GameLogic.getNodeMap())
   };
 
-  //creates a new zip file
-  const zip=new JSZip();
-  const imagesFolder = zip.folder("assets/images");
-  const images = gameToDownload.images;
+  const gameJson = JSON.stringify(gameToDownload);
+  const blob = new Blob([gameJson], { type: "application/json" });
 
-  //saves all the images to the images folder
-  for (const [name, url] of Object.entries(images)) {
-  try {
-    const response = await fetch(url);
-    const blob = await response.blob();
-    imagesFolder.file(`${name}.jpeg`, blob); // "dog.jpeg", "whitedog.jpeg"
-  } catch (err) {
-    console.warn("Failed to download image:", url, err);
-  }
-}
-
-  zip.file("game.json", JSON.stringify(gameToDownload, null, 2));
-
-  // Create and download the zip
-  const content = await zip.generateAsync({ type: "blob" });
     // Create a download link
   const gameTitle = fetchedGame.title || "text-adventure";
   const link = document.createElement("a");
-  link.href = URL.createObjectURL(content);
-  link.download = `${props.gameTitle}.zip`;
+  link.href = URL.createObjectURL(blob);
+  link.download = `${gameTitle}.quill`;
   
   // Trigger the download
   document.body.appendChild(link);
@@ -251,8 +233,8 @@ const toggleTTS = () => {
 
   watch(displayText, (newValue, oldValue) => {
     if(displayText.value.length >= text.value.length && ttsTog.value == 1) {
-      console.log('New words');
       let newWords = displayText.value.replace(words.value, "");
+      newWords = newWords + GameLogic.output;
       words.value = displayText.value;
       newWords = newWords.split('<br>').join('');
       newWords = newWords.split('<span class=\'user-input\'>>').join('');
@@ -350,18 +332,16 @@ onMounted(() => {
       <div v-if="!isPreview" class="title" style="margin-left: auto;">{{fetchedGame.title}}</div>
     </div>
       <div class="game-screen">
-        <div class="game-image-display">  
-        </div>
-        <div class="game-text-area">
-          <div v-for="output in GameLogic.outputQueue" class="game-text">
-            <div v-if="output[0] == '>'" style="color:yellow">
-              {{ output }}
-            </div>
-            <div v-else style="color:gray" v-html="output">
-            </div>
+        <div style="margin-top:auto"></div>
+        <div v-for="output in GameLogic.outputQueue" class="game-text">
+          <div v-if="output[0] == '>'" style="color:yellow">
+            {{ output }}
           </div>
-          <div class="game-text" v-html="GameLogic.output"></div>
+          <div v-else style="color:gray">
+            {{ output }}
+          </div>
         </div>
+        <div class="game-text">{{ GameLogic.output }}</div>
       </div>
     <div class="game-input">  
       <input v-model="userInput" @keyup.enter="handleInput" placeholder="Enter your command..." autofocus />
@@ -381,7 +361,7 @@ onMounted(() => {
 
 <style scoped>
 .game-container {
-  flex: 1;
+  flex:1;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -391,13 +371,12 @@ onMounted(() => {
   font-family: monospace;
   position: relative;
 }
-
-.game-playarea {
-  width: 100%;
+.game-playarea{
+  width:100%;
   height: 100%;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+  flex:1;
+  display:flex;
+  flex-direction:column;
 }
 
 .game-container.preview {
@@ -446,80 +425,14 @@ onMounted(() => {
 }
 
 .game-screen {
-  display: flex;
-  flex-direction: column;
+  display:flex;
+  flex-direction:column;
   width: 100%;
-  height: 100%;
+  height:100%;
   overflow-y: auto;
   padding: 1rem;
   background-color: #2e2e2e;
   white-space: pre-line;
-}
-
-.game-image-display {
-  width: 100%;
-  height: 150px;
-  background-color: #252525;
-  border-bottom: 1px solid #404040;
-  margin-bottom: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-}
-
-.game-image-display img {
-  max-width: 90%;
-  max-height: 90%;
-  object-fit: contain;
-  border-radius: 4px;
-}
-
-.game-text-area {
-  flex: 1;
-  overflow-y: auto;
-  padding-right: 10px;
-}
-
-.game-text {
-  font-size: 1.2rem;
-  line-height: 1.5;
-  white-space: pre-wrap;
-  display: block;
-}
-
-.game-text-content {
-  color: #e0e0e0;
-  margin: 5px 0;
-}
-
-.game-image {
-  margin: 5px 0;
-  display: flex;
-  justify-content: center;
-  max-width: 10%;
-  max-height: 10%;
-  align-self: flex-start;
-}
-
-.game-image img {
-  width: 100%;
-  height: 100%;
-  border-radius: 4px;
-  border: 1px solid #404040;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-  object-fit: contain;
-}
-
-.game-output-content :deep(img) {
-  width: 10%;
-  max-height: 10vh;
-  border-radius: 4px;
-  border: 1px solid #404040;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-  margin: 5px 0;
-  display: block;
-  object-fit: contain;
 }
 
 .game-text-previous {
@@ -532,24 +445,25 @@ onMounted(() => {
   line-height: 1.5;
   color:goldenrod;
 }
+.game-text {
+  font-size: 1.2rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  display:block;
+}
 
 .game-input input {
   width: 100%;
   padding: 0.6rem;
   font-size: 1rem;
-  background: rgb(0, 0, 0);
-  color: rgb(188, 188, 188);
-  border:rgb(85, 115, 21) 2px solid;
+  background: rgb(120, 120, 120);
+  color: rgb(0, 0, 0);
+  border:none;
   outline:none;
 }
 .game-input input:focus{
-  background:rgb(62, 62, 62);
-  color:white;
-}
-
-.user-input {
-  color: #c0392b;
-  font-weight: bold;
+  background:rgb(197, 197, 197);
+  border:none;
 }
 
 .game-controls {
@@ -562,7 +476,7 @@ onMounted(() => {
 
 .game-controls button {
   padding: 10px;
-  background: #5bba4f;
+  background: #e74c3c;
   border: none;
   color: #fff;
   font-size: 1rem;
@@ -573,14 +487,18 @@ onMounted(() => {
   box-shadow: 4px 4px 0 #000;
   border-radius: 4px;
   transition: background 0.2s;
-  overflow: hidden;
 }
 
 .game-controls button:hover {
-  background: #1b9127;
+  background: #c0392b;
 }
 
 .highlight {
+  color: #c0392b;
+  font-weight: bold;
+}
+
+.user-input {
   color: #c0392b;
   font-weight: bold;
 }
@@ -594,15 +512,5 @@ onMounted(() => {
   font-size: 1rem;
   margin-bottom: 20px;
   color: white;
-}
-
-@keyframes fade {
-  0% { opacity: 1; }
-  50% { opacity: 0; }
-  100% { opacity: 1; }
-}
-
-.fade-effect {
-  animation: fade var(--fade-duration) infinite;
 }
 </style>
