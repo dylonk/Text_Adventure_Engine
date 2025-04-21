@@ -69,7 +69,9 @@ function displayListToggle(){
         <div class="nodrag" style="width:100%;">
             <div  class="dropdown-container">
                 <VContainer outer-margin="0px" spacing="0px">
-                    <div  v-on:click="generateList()" class="dropdown-selected">{{ NS.getParam(id,convertedTitle)[0] }}</div>
+                    <div v-if="!NS.getParam(id,convertedTitle)[0] == ''" v-on:click="generateList()" class="dropdown-selected">{{ NS.getParam(id,convertedTitle)[0]}}</div>
+                    <div v-else v-on:click="generateList()" class="dropdown-selected" style="color:#AAAAAA"> None selected </div>
+
                         <div v-if="displayList==true" style="max-height:100px; overflow-y:scroll;" class="nowheel">
                             <div v-if="dropdownList.value==[]"  class="dropdown-listentry">List is empty</div>
                             <div v-else v-for="(listentry,index) in dropdownList" class="dropdown-listentry" v-on:click="updateResponse(listentry); $emit('dropdown-updated',listentry)">

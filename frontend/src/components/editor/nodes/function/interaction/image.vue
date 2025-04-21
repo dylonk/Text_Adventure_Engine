@@ -3,7 +3,7 @@ import { defineProps, ref, watch, computed,onMounted } from 'vue'
 import { useNodesStore } from '../../node_store.js'
 import FunctionBase from '../func_base.vue'
 import CameraImage from '@/assets/Images/camera.png'
-import { HandleOut, HandleIn, HContainer, VContainer,SmallButton, Dropdown } from '../../node_assets/n-component-imports.js'
+import { HandleOut, HandleIn, HContainer, VContainer,SmallButton, Dropdown, InputField } from '../../node_assets/n-component-imports.js'
 
 const props = defineProps({
   id: { default: -1 },
@@ -54,21 +54,10 @@ onMounted(()=>{
   <FunctionBase :id="id">
     <HContainer outerMargin="5px">
       <HandleIn :id="id" />
-    <VContainer>
-      <div class="image-preview">
-        <img v-if="imgSrc"
-          :src="imgSrc"
-          alt="Imgur Image"
-          class="image-preview"
-        />
-        <div v-else class="italic text-xs text-gray-400 text-center p-2" style="background:#2a2a2a; color:white; padding:2px;border-radius:3px">
-          No image set. Select an image below.
-        </div>
-      </div>
-      <Dropdown dropdownType="images" :id="id" title="Image Selection" @dropdown-updated="(name) => updateImgSrc(name)" displayHorizontal="true"></Dropdown>
-        <div style="border:#808080 solid 1px;border-radius:5px;">
+    <VContainer spacing="10px">
+      <div style="border:#808080 solid 1px;background:white;border-radius:5px;">
           <VContainer style="padding:10px;">
-          <div style="color:black;">Add a new image</div>
+          <div style="color:black;">Add a new image to assets</div>
           <HContainer>
             <input
             class="nodrag"
@@ -81,6 +70,23 @@ onMounted(()=>{
           </VContainer>
 
       </div>
+      <div class="image-preview">
+        <img v-if="imgSrc"
+          :src="imgSrc"
+          alt="Imgur Image"
+          class="image-preview"
+        />
+        <div v-else class="italic text-xs text-gray-400 text-center p-2" style="background:#2a2a2a; color:white; padding:2px;border-radius:3px">
+          No image set. Select an image below.
+        </div>
+      </div>
+      <VContainer spacing="0px">
+      <Dropdown dropdownType="images" :id="id" title="Image Selection" @dropdown-updated="(name) => updateImgSrc(name)" displayHorizontal="true"></Dropdown>
+      <hr style="border-top:none; margin-top:10px;">
+      <InputField title="x position" :id="id"></InputField>
+      <InputField title="y position" :id="id"></InputField>
+
+      </VContainer>
     </VContainer>
     <HandleOut :id="id" />
   </HContainer>
@@ -89,8 +95,9 @@ onMounted(()=>{
 
 <style scoped>
 .image-preview {
-  width: 100%;
-  height: 100px;
+  align-self:center;
+  width: 250px;
+  height: 150px;
   object-fit: contain;
   background: #2b2b2b;
   border-radius: 4px;

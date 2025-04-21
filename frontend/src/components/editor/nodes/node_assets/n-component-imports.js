@@ -10,6 +10,7 @@ import HandleOut from './handle_out.vue'
 import Tooltip from './tooltip.vue'
 import Textboxes from './textboxes.vue'
 import Dropdown from './dropdown.vue'
+import InputField from './input_field.vue'
 export{
     Dropdown,
     SmallButton,
@@ -20,4 +21,5 @@ export{
     HandleOut,
     Tooltip,
     Textboxes,
+    InputField,
 }
