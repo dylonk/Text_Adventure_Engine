@@ -94,7 +94,12 @@ const updateNode = (inputNode) => { //modify node (for updating values within ma
   return
 }
 
-//this is used for variables in output
+
+
+
+
+
+//this is used for variables in output. It extracts everything from the braces and returns everything in the format blank.blank in an array.
 const extractBracesContent = (inputText) => {
   const regex = /\{([^}]+)\}/g;  // Match anything inside { }
   let matches = [];
@@ -107,13 +112,28 @@ const extractBracesContent = (inputText) => {
 
   return matches;  // Return all the extracted references
 };
-//this is used for variables in output. It takes something like room1.cleanliness and finds the value.
+
+//this is the same thing without the curly braces, used for extracting variables from conditions. still returns an array of all the variable strings.
+const extractVariableReferences = (inputText) => {
+  // Match things like room1.cleanliness or player.health (basic dot notation)
+  const regex = /\b([a-zA-Z_]\w*\.[a-zA-Z_]\w*)\b/g;
+  let matches = [];
+  let match;
+
+  while ((match = regex.exec(inputText)) !== null) {
+    matches.push(match[1]);
+  }
+
+  return matches;  // Return all the extracted references
+};
+
+
+
+//this is used for variables in output, as well as conditionals. It takes something like room1.cleanliness and finds the value.
 const getValueFromNode = (reference) => {
   const parts = reference.split('.');
   const nodeName = parts[0];
   const propertyName = parts[1];
-
-
 
   const node = getNodeByName(nodeName);
 
@@ -332,6 +352,42 @@ const func = (iNode) => { // function node functions
       sleep(waitTime).then(() => {
         processNode(nextNodeFromHandle(0));
       });
+      break;
+    }
+    case "if":
+    {
+      //its actually going to calculate all the conditions before it even runs and just store them as an array of bools. 
+      //The first true is the path it will take
+      //marginally more computation intensive? yeah. but easier to write on a deadline
+      const conditionBools=[];
+      //iterates through all the funcparams, which should be all the textboxes.
+      for(let i = 0; i < funcParams.length; i++){
+        let stringToEval=funcParams[i].vals[0];
+        console.log("[GAME] stringToEval before value extraction = ", stringToEval)
+
+        //extract all the variables in the string
+        let vars = extractVariableReferences(stringToEval);
+        //the below loop iterates through all the variables in the string and then replaces them with their values
+        vars.forEach(reference => {
+          const value = getValueFromNode(reference);
+          if (value !== null) {
+            stringToEval = stringToEval.replaceAll(reference, value);
+          }
+        });
+        //then pushes the result of the if or else to the bool array.
+        console.log("[GAME] stringToEval after value extraction = ", stringToEval)  
+        const bool = eval(stringToEval);
+        conditionBools.push(bool);
+      }
+
+      for(let i = 0; i < conditionBools.length; i++){
+        if(conditionBools[i]){
+          processNode(nextNodeFromHandle(i));
+          break;
+        }
+      } 
+      // If we got here, no condition was true, so follow the else handle
+      processNode(nextNodeFromHandle(conditionBools.length));
       break;
     }
 

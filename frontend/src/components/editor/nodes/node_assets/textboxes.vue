@@ -64,9 +64,17 @@ function updateResponse(index,newResponse){
         <div class="nodrag">
             <div v-for="(textbox,index) in NS.getParam(props.id,convertedTitle)" class="textbox_container">
                 <HContainer outer-margin="5px">
-                    <HandleIn v-if="handleInput=='true'"   :id="id"></HandleIn>
-                    <textarea :value="textbox" class="textbox_text" @input="updateResponse(index,$event.target.value); adjustTextarea"></textarea>
-                    <HandleOut v-if="handleOutput=='true'"  :id="id"></HandleOut>
+                    <HandleIn v-if="handleInput=='true'" :id="id" />
+                        <div style="display: flex; flex-direction: column; width: 100%;">
+                            <slot name="per-textbox-label" :index="index"> </slot>
+                            <textarea
+                            :value="textbox"
+                            class="textbox_text"
+                            @input="updateResponse(index, $event.target.value); adjustTextarea"
+                            ></textarea>
+                        </div>
+
+                        <HandleOut v-if="handleOutput=='true'" :id="id" />
                 </HContainer>
             </div>
         </div>

@@ -35,11 +35,11 @@ import tbMid from '../../assets/Images/editor/toolbox-mid-posterized.png'
             <a class="tb_subtitle">Path Control</a>
                 <TBNode type="setlocation" display_type="Set Location"/>
                 <TBNode type="playerenter" display_type="On Player Enter"/>
+                <TBNode type="if" display_type="If"/>
             <a class="tb_subtitle">TO IMPLEMENT</a>
                 <TBNode type="unimplemented" display_type="Extend Scope"/>
                 <TBNode type="unimplemented" display_type="Background"/>
                 <TBNode type="unimplemented" display_type="Sound"/>
-                <TBNode type="unimplemented" display_type="If"/>
                 <TBNode type="unimplemented" display_type="Return"/>
         
             </div>

@@ -17,12 +17,14 @@ import SetLocationNode from './function/interaction/setlocation.vue'
 import WaitNode from './function/interaction/wait.vue'  
 import SetPropertyNode from './function/interaction/setproperty.vue'
 import PlayerEnter from './function/interaction/playerenter.vue'
+import IfNode from './function/interaction/if.vue'
 
 
 export{ //exports both tb and real nodes
     TBNode,
     StartNode,
     PromptNode,
+    IfNode,
     RoomNode,
     ItemNode,
     NpcNode,
