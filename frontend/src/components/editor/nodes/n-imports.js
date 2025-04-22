@@ -16,6 +16,7 @@ import OutputNode from './function/interaction/output.vue'
 import SetLocationNode from './function/interaction/setlocation.vue'
 import WaitNode from './function/interaction/wait.vue'  
 import SetPropertyNode from './function/interaction/setproperty.vue'
+import PlayerEnter from './function/interaction/playerenter.vue'
 
 
 export{ //exports both tb and real nodes
@@ -30,6 +31,7 @@ export{ //exports both tb and real nodes
     CustomNode,
     AwaitNode,
     ActionNode,
+    PlayerEnter,
     UnimplementedNode,
     ImageNode,
     ModifyImageNode,

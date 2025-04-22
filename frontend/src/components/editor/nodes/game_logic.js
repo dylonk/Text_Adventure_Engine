@@ -305,7 +305,7 @@ const func = (iNode) => { // function node functions
       console.log( "check this out" ,funcParams[1].vals[0], funcParams[2].vals[0])
       let propertyName = funcParams[1].vals[0]
       let newValue = funcParams[2].vals[0]
-      target.data.properties[propertyName] = funcParams[2].vals[0]
+      target.properties[propertyName] = funcParams[2].vals[0]
       updateNode(target)
       console.log("[GAME] setproperty successful",target)
       processNode(nextNodeFromHandle(0))
