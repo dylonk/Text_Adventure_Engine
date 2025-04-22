@@ -47,6 +47,7 @@ const start = (compiledGame) =>{
   originalGame = compiledGame
   console.log("[GAME] Game initialized. nodeMap:",nodeMap)
   imageMap = compiledGame.images
+  console.log("[GAME] imageMap is ",imageMap)
   markScope()
   initialized.value = true
   processNode(getNode(1, true))
@@ -57,7 +58,13 @@ const restartGame = () =>{
 }
 
 const getImage = (name) => {
-  return imageMap[name]
+  console.log("[GAME] Image set to", name)
+  if(imageMap.hasOwnProperty(name)){
+    console.log("[GAME] Image successful!")
+    return imageMap[name]
+  }
+  console.log("[GAME] Image unsuccessful")
+  return null
 }
 
 const getNode = (nodeID, notifyConsole=false) => { //get node from nodemap
@@ -226,7 +233,7 @@ const nextNodeFromHandle = (sourceHandleIndex, sourceNodeID=activeNode) => {
 const func = (iNode) => { // function node functions
   const funcName = iNode.functionName
   const funcParams = iNode.functionParams
-  console.log("[GAME] func( ",funcName,",",funcParams,")",iNode)
+  console.log("[GAME] func( ",funcName,",",funcParams,")")
   switch(funcName){
     case "start":{
       archiveOutput()

@@ -17,6 +17,7 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
   const syncer = ref(0)
   const idCounter = ref(1);
   const projectImages = ref({}) // list of all the image links. key is image name, value is the link. Used for downloading images UNIMPLEMENTED
+  const allowUserInput = ref(true)
 
   //clipboardNode is the node that is currently in the clipboard to be pasted
   let clipboardNode=  ref(null);
@@ -477,6 +478,7 @@ const getParam=(id,paramName)=>{
       }
     }
     game.nodeMap=allNodes
+    game.images = projectImages.value
     console.log("[EDITOR]🚢🎮 GAME COMPILED",game)
     return game
   };
