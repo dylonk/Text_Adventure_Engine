@@ -33,7 +33,7 @@ import tbMid from '../../assets/Images/editor/toolbox-mid-posterized.png'
                     <TBNode type="unimplemented" display_type="Extend Scope"/>
                     <TBNode type="await" display_type="Await"/>
             <a class="tb_subtitle">Value</a>
-                    <TBNode type="unimplemented" display_type="Set Property"/>
+                    <TBNode type="setproperty" display_type="Set Property"/>
             <a class="tb_subtitle">Path Control</a>
                 <TBNode type="unimplemented" display_type="If"/>
                 <TBNode type="unimplemented" display_type="Return"/>

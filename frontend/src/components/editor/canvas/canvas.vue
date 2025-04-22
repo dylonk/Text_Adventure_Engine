@@ -11,7 +11,7 @@ import ContextMenu from '../context_menu.vue';
 
 const { screenToFlowCoordinate} = useVueFlow()
 // NEWNODEREQ
-import { PromptNode,SetLocationNode, OutputNode, StartNode, RoomNode, ItemNode, NpcNode, PlayerNode, PathwayNode, UnimplementedNode, CustomNode, AwaitNode, ActionNode, ImageNode, ModifyImageNode,WaitNode} from '../nodes/n-imports';
+import { PromptNode,SetLocationNode,SetPropertyNode, OutputNode, StartNode, RoomNode, ItemNode, NpcNode, PlayerNode, PathwayNode, UnimplementedNode, CustomNode, AwaitNode, ActionNode, ImageNode, ModifyImageNode,WaitNode} from '../nodes/n-imports';
 
     const nodeTypes = {
         start: markRaw(StartNode),
@@ -30,6 +30,7 @@ import { PromptNode,SetLocationNode, OutputNode, StartNode, RoomNode, ItemNode, 
         modifyimage: markRaw(ModifyImageNode),
         consoleoutput: markRaw(OutputNode),
         setlocation: markRaw(SetLocationNode),
+        setproperty: markRaw(SetPropertyNode),
     }
 
 // Pinia store

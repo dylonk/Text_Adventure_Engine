@@ -51,8 +51,8 @@ const defaultObjData =  { //This is the data that this component contributes. An
 <style scoped>
     .console_response_text{
         resize:none;
-        width:200px;
-        height:100px;
+        width:60px;
+        height:40px;
         background:rgb(255, 255, 255);
         /* border:solid v-bind('node_colors.prompt_fg') 1px; */
         border-radius:3px;

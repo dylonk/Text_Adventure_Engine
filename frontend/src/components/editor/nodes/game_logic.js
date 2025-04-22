@@ -19,6 +19,8 @@ let promptchoices = []
 let watchchoices = []
 let currentImages = []
 
+
+
 // syncers
 const progressionSyncer = ref(false) // confusing value, but it just alternates between true and false per tick so that outside elements can update if need be
 const scopeSyncer = ref(false) // when the position of an item is changed, this ticks for the asset browser
@@ -58,18 +60,93 @@ const getNode = (nodeID, notifyConsole=false) => { //get node from nodemap
   if(notifyConsole) console.log("[GAME] getNode(",nodeID,") is",nodeExists)
   return nodeExists
 }
-const getNodeByName = (name) =>{
-  nodeMap.forEach((node, id) => {
-    if(node.hasOwnProperty("objectName") && node.objectName == name){
-      console.log("Found", name); return node.obj 
+const getNodeByName = (name) => {
+  for (const [id, node] of nodeMap.entries()) {
+    if (node.hasOwnProperty("objectName") && node.objectName === name) {
+      console.log("Found", name);
+      if (node.obj == null) {
+        console.log("[GAME] getNodeByName(", name, ") is", node);
+        return node;
+      } else {
+        return node.obj;
+      }
     }
-  })
+  }
   return null;
-}
+};
+
 const updateNode = (inputNode) => { //modify node (for updating values within map)
   nodeMap.set(inputNode.id,inputNode)
   return
 }
+
+//this is used for variables in output
+const extractBracesContent = (inputText) => {
+  const regex = /\{([^}]+)\}/g;  // Match anything inside { }
+  let matches = [];
+  let match;
+
+  // Find all matches
+  while ((match = regex.exec(inputText)) !== null) {
+    matches.push(match[1]);  // match[1] is the content inside the curly braces
+  }
+
+  return matches;  // Return all the extracted references
+};
+//this is used for variables in output. It takes something like room1.cleanliness and finds the value.
+const getValueFromNode = (reference) => {
+  const parts = reference.split('.');
+  const nodeName = parts[0];
+  const propertyName = parts[1];
+
+  console.log(`[GAME] 🔍 Looking up reference: "${reference}"`);
+  console.log(`[GAME] 🧩 Parsed node = "${nodeName}", property = "${propertyName}"`);
+
+  const node = getNodeByName(nodeName);
+
+  if (!node) {
+    console.warn(`[GAME] ❌ Node not found for name "${nodeName}"`);
+    return null;
+  }
+
+  console.log(`[GAME] ✅ Found node:`, node);
+
+  if (!node.data) {
+    console.warn(`[GAME] ❌ Node "${nodeName}" has no data property`);
+    return null;
+  }
+
+  if (!node.data.properties) {
+    console.warn(`[GAME] ❌ Node "${nodeName}" has no 'properties' field in its data`);
+    return null;
+  }
+
+  if (!(propertyName in node.data.properties)) {
+    console.warn(`[GAME] ❌ Property "${propertyName}" not found in node "${nodeName}"'s properties`);
+    return null;
+  }
+
+  const value = node.data.properties[propertyName];
+  console.log(`[GAME] ✅ getValueFromNode("${reference}") =`, value);
+  return value;
+};
+
+//this function takes in a string and replaces all references to variables with their actual values
+const replaceBracesWithValues = (inputText) => {
+  // Extract all references inside curly braces
+  let extractedReferences = extractBracesContent(inputText);
+
+  // For each extracted reference, replace the placeholder in the input text with its value
+  extractedReferences.forEach(reference => {
+    const value = getValueFromNode(reference);  // Get the actual value for the reference
+    if (value !== null) {
+      // Replace the reference in the text with the actual value
+      inputText = inputText.replace(`{${reference}}`, value);
+    }
+  });
+
+  return inputText;
+};
 
 
 
@@ -165,9 +242,14 @@ const func = (iNode) => { // function node functions
       break;
     }
     case "output":{
-      outputText(funcParams[0].vals[0])
+      let outputTextWithReplacements = funcParams[0].vals[0];  // Get the input text (e.g., "{room1.cleanliness}")
+  
+      // Replace any curly-brace references with actual values
+      outputTextWithReplacements = replaceBracesWithValues(outputTextWithReplacements);
+    
+      // Output the final text with replaced values
+      outputText(outputTextWithReplacements);
       processNode(nextNodeFromHandle(0))
-
       break;
     }
     case "setlocation":{
@@ -200,6 +282,19 @@ const func = (iNode) => { // function node functions
       processNode(nextNodeFromHandle(0))
 
       break;
+    }
+
+    case "setproperty":{
+      let target = getNodeByName(funcParams[0].vals[0])
+      if(target == null){
+        break;
+      }
+      console.log("Target found", target)
+      target.data[funcParams[1].vals[0]] = funcParams[2].vals[0]
+      updateNode(target)
+      console.log("[GAME] setproperty successful",target)
+      processNode(nextNodeFromHandle(0))
+      break;  
     }
     case "image":{
       processNode(nextNodeFromHandle(0))

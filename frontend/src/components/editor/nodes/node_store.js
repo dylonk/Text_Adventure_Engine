@@ -264,7 +264,6 @@ const getParam=(id,paramName)=>{
       return parameter.vals;
     }
   }
-
 }
 
   const getNodeData = (id, dataProperty = "") => {  // DO NOT USE IN A WATCHER OR COMPUTE FUNCTION (spam) gets data of node safely. dataProperty to be subbed in instances where you'd do something like node.data.obj_name for safety
@@ -535,6 +534,7 @@ const getParam=(id,paramName)=>{
       //globalSync(); // might be necessary? SHAKY
       return nodeExists
   };
+
   const addEdge = (edge) => {
     console.log("[EDITOR]📏➕ Adding edge:", edge);
     // Check if the edge already exists

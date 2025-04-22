@@ -15,6 +15,7 @@ import UnimplementedNode from './function/interaction/unimplemented.vue'
 import OutputNode from './function/interaction/output.vue'
 import SetLocationNode from './function/interaction/setlocation.vue'
 import WaitNode from './function/interaction/wait.vue'  
+import SetPropertyNode from './function/interaction/setproperty.vue'
 
 
 export{ //exports both tb and real nodes
@@ -34,5 +35,7 @@ export{ //exports both tb and real nodes
     ModifyImageNode,
     OutputNode,
     SetLocationNode,
-    WaitNode
+    WaitNode,
+    SetPropertyNode
+
 }
