@@ -1,7 +1,6 @@
 <script setup>
 import { ref, onMounted, nextTick, computed, watch } from 'vue';
 import { useGameStore } from './game_logic.js'
-//import speakerIcon from '../../assets/Images/speaker_icon.png';
 
 
 //this version of game.vue is built for offline mode. It'll be a little more stripped down.
@@ -161,6 +160,7 @@ onMounted(() => {
 </script>
 
 <template>    
+<div { display:flex; flex-direction: columns; height: 100 dvh; width: 100dvw; } >
 <div class="main-container">
   <div
     class="game-container"
@@ -175,6 +175,13 @@ onMounted(() => {
 
 
       <div class="title" style="margin-left: auto;">{{Game.title}}</div>
+      <div class="game-image-display">
+          <img 
+            v-if="GameLogic.currentImagePath" 
+            :src="GameLogic.currentImagePath" 
+            alt="Game Image"
+          >
+      </div>
     </div>
       <div class="game-screen">
         <div style="margin-top:auto"></div>
@@ -193,7 +200,7 @@ onMounted(() => {
     </div>
   </div>
 </div>
-
+</div>
 </template>
 
 <style scoped>
@@ -353,5 +360,70 @@ onMounted(() => {
 
 .main-container{
    display:flex; flex-direction: columns; height: 100 dvh; width: 100dvw; 
+}
+
+.game-image-display {
+  width: 100%;
+  height: fit-content;
+  max-height:50%;
+  background-color: #252525;
+  border-bottom: 1px solid #404040;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.game-image-display img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.game-text-area {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+.game-text {
+  font-size: 1.2rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  display: block;
+}
+
+.game-text-content {
+  color: #e0e0e0;
+  margin: 5px 0;
+}
+
+.game-image {
+  margin: 5px 0;
+  display: flex;
+  justify-content: center;
+  max-width: 10%;
+  max-height: 10%;
+  align-self: flex-start;
+}
+
+.game-image img {
+  width: 100%;
+  height: 100%;
+  border-radius: 4px;
+  border: 1px solid #404040;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  object-fit: contain;
+}
+
+.game-output-content :deep(img) {
+  width: 10%;
+  max-height: 10vh;
+  border-radius: 4px;
+  border: 1px solid #404040;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  margin: 5px 0;
+  display: block;
+  object-fit: contain;
 }
 </style>

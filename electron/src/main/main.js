@@ -139,43 +139,35 @@ async function openGameDialog() {
     //find the game.json in the zip, it becomes gameData
     const gameJsonPath = path.join(tempDir, 'game.json');
     const gameData = JSON.parse(fs.readFileSync(gameJsonPath, 'utf8'));
-    let gameDataJson = JSON.parse(gameData);
     
     //look for a savegame for this game
-    const saveFilePath=await checkForSaveGame(gameDataJson.title);
+    const saveFilePath=await checkForSaveGame(gameData.title);
     log("save file path"+ saveFilePath);
 
     //if there is a savegame, load it. In the future we can work with using multiple savegames. It won't be hard to rework, it already saves them all.
     if (saveFilePath) {
       try {
         let saveData = fs.readFileSync(saveFilePath, 'utf-8');
-        gameDataJson = JSON.parse(saveData);
-        log(`loaded savegame: ${saveData.slice(0, 200)}...`);
+        gameData = JSON.parse(saveData);
+        log(`Loaded savegame: ${JSON.stringify(gameData).slice(0, 200)}...`);
       } catch (e) {
         log(`❌ Failed to load save file: ${e.stack || e}`);
       }
     }
 
-    mainWindow.webContents.send('load-game-data', gameDataJson);
-
+    // Process image map to use full paths
+    if (gameData.images) {
+      for (const key in gameData.images) {
+        const imagePath = gameData.images[key];
+        if (typeof imagePath === 'string' && imagePath.startsWith('assets/images/')) {
+          gameData.images[key] = path.join(tempDir, imagePath);
+        }
+      }
+    }    
+    
+    mainWindow.webContents.send('load-game-data', gameData);
 
     
-  function rewriteImagePaths(obj) {
-    if (typeof obj === 'string' && obj.startsWith('assets/images/')) {
-      return path.join(tempDir, obj); // full local path
-    } else if (Array.isArray(obj)) {
-      return obj.map(rewriteImagePaths);
-    } else if (typeof obj === 'object' && obj !== null) {
-      for (let key in obj) {
-        obj[key] = rewriteImagePaths(obj[key]);
-      }
-    }
-    return obj;
-  }
-
-  rewriteImagePaths(gameData);
-  mainWindow.webContents.send('load-game-data', gameData);
-
   }
 }
 

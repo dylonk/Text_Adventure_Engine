@@ -548,6 +548,20 @@ const getParam=(id,paramName)=>{
       console.error(`📏➕Edge from ${edge.source} to ${edge.target} already exists`);
       return;
     }
+
+    //checks if any edges exist from the current source
+    /*
+    console.log("[EDITOR]📏➕ Checking if any edges exist from the current source", edge.source)
+    const edgeDoubleSource = edges.value.find(
+      (e) => e.source === edge.source 
+    );
+
+    if(edgeDoubleSource){
+      console.error(`can't have multiple edges from source ${edge.source}`)
+      return;
+    }
+    */
+    
     // Ensure the edge has a unique ID if not provided
     if (!edge.id) {
       edge.id = `${edge.sourceHandle}>${edge.targetHandle}`;

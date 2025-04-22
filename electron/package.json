@@ -4,11 +4,16 @@
   "main": "src/main/main.js",
   "dependencies": {
     "@vitejs/plugin-vue": "^5.2.3",
+    "adm-zip": "^0.5.16",
     "electron-store": "^8.1.0",
     "electron-updater": "^6.6.2",
+    "fs": "^0.0.1-security",
+    "os": "^0.1.2",
+    "path": "^0.12.7",
     "pinia": "^2.1.7",
     "toastify": "^2.0.1",
-    "toastify-js": "^1.12.0"
+    "toastify-js": "^1.12.0",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "cpy-cli": "^5.0.0",

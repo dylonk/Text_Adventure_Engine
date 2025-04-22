@@ -30,7 +30,7 @@ const progressionSyncer = ref(false) // confusing value, but it just alternates 
 const scopeSyncer = ref(false) // when the position of an item is changed, this ticks for the asset browser
 const objectViewerSelected = ref(0)
 const initialized = ref(false)
-
+const isOnline = ref(false)
 const allowUserInput = ref(false) // ensures that user input is only accepted during specific times (i.e path hits a prompt node) and not mid logic or something
 
 let canvasID = ref(0)
@@ -39,7 +39,8 @@ let activeNode = 1 // the node of which the path is currently on
 let previousActiveNodes = [] //ONLY PUSHED WHEN AWAIT OR OTHER PATH ABDUCTOR IS CALLED. For when the path is abducted by an await or similar watcher node so the path knows where to return to.
 
 
-const start = (compiledGame) =>{
+const start = (compiledGame,online=true) =>{
+  isOnline.value = online
   outputQueue.value = []
   output.value = "Game initialized"
   archiveOutput()
@@ -61,6 +62,7 @@ const restartGame = () =>{
   start(originalGame)
 }
 
+//gets the image link from the name.
 const getImage = (name) => {
   console.log("[GAME] Image set to", name)
   if(imageMap.hasOwnProperty(name)){

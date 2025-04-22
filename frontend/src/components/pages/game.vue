@@ -8,6 +8,7 @@ import { useGameStore } from '../editor/nodes/game_logic.js'
 import axios from 'axios';
 import { fetchUserData } from '@/components/standardjs/fetchUserData';
 import speakerIcon from '../../assets/Images/speaker_icon.png';
+import JSZip from 'jszip';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // for Vite
 
 
@@ -126,15 +127,33 @@ async function downloadGame() {
     nodeMap: mapToSerializable(GameLogic.getNodeMap())
   };
 
-  const gameJson = JSON.stringify(gameToDownload);
-  const blob = new Blob([gameJson], { type: "application/json" });
+    //creates a new zip file
+    const zip=new JSZip();
+  const imagesFolder = zip.folder("assets/images");
+  const images = gameToDownload.images;
+
+  //saves all the images to the images folder
+  for (const [name, url] of Object.entries(images)) {
+  try {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    imagesFolder.file(`${name}.jpeg`, blob); // "dog.jpeg", "whitedog.jpeg"
+  } catch (err) {
+    console.warn("Failed to download image:", url, err);
+  }
+}
+
+  zip.file("game.json", JSON.stringify(gameToDownload, null, 2));
+
+  // Create and download the zip
+  const content = await zip.generateAsync({ type: "blob" });
 
     // Create a download link
   const gameTitle = fetchedGame.title || "text-adventure";
   const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = `${gameTitle}.quill`;
-  
+  link.href = URL.createObjectURL(content);
+  link.download = `${props.gameTitle}.zip`;
+
   // Trigger the download
   document.body.appendChild(link);
   link.click();
