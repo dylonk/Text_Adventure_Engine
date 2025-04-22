@@ -1,3 +1,4 @@
+import { property } from 'lodash';
 import {defineStore} from 'pinia'
 import { ref } from "vue"
 
@@ -65,11 +66,8 @@ const getNodeByName = (name) => {
     if (node.hasOwnProperty("objectName") && node.objectName === name) {
       console.log("Found", name);
       if (node.obj == null) {
-        console.log("[GAME] getNodeByName(", name, ") is", node);
         return node;
-      } else {
-        return node.obj;
-      }
+      } 
     }
   }
   return null;
@@ -99,8 +97,7 @@ const getValueFromNode = (reference) => {
   const nodeName = parts[0];
   const propertyName = parts[1];
 
-  console.log(`[GAME] 🔍 Looking up reference: "${reference}"`);
-  console.log(`[GAME] 🧩 Parsed node = "${nodeName}", property = "${propertyName}"`);
+
 
   const node = getNodeByName(nodeName);
 
@@ -290,7 +287,10 @@ const func = (iNode) => { // function node functions
         break;
       }
       console.log("Target found", target)
-      target.data[funcParams[1].vals[0]] = funcParams[2].vals[0]
+      console.log( "check this out" ,funcParams[1].vals[0], funcParams[2].vals[0])
+      let propertyName = funcParams[1].vals[0]
+      let newValue = funcParams[2].vals[0]
+      target.data.properties[propertyName] = funcParams[2].vals[0]
       updateNode(target)
       console.log("[GAME] setproperty successful",target)
       processNode(nextNodeFromHandle(0))
