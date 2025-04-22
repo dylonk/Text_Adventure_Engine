@@ -61,8 +61,9 @@ function setProperty(property, input){
         background:rgb(85, 85, 85);
     }
     .mod-subpanel{
-        height:100%;
-        flex: 1 0 0;
+        height:auto;
+        min-height:300px;
+        width:100%;
         background:rgb(241, 241, 241);
         overflow-y:hidden;
     }
