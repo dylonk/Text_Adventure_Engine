@@ -35,6 +35,8 @@ const node_colors = {
     wait_bg:"#cdc9c3",
     setproperty_fg:"#d64d4d",
     setproperty_bg:"#e39e54",
+    playerenter_fg:"#4d7358",
+    playerenter_bg:"#9ed670",
 };
 
 export default node_colors;
