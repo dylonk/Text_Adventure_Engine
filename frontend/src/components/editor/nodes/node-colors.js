@@ -1,3 +1,5 @@
+import Setproperty from "./function/interaction/setproperty.vue";
+
 const node_colors = {
     start_bg: "#E6FFFD",
     start_fg: "#4917B7",
@@ -29,6 +31,10 @@ const node_colors = {
     setlocation_fg:"#0082cb",
     modifyimage_fg:"#eb34b4",
     modifyimage_bg:"#ffb6a3",
+    wait_fg:"#746240",
+    wait_bg:"#cdc9c3",
+    setproperty_fg:"#d64d4d",
+    setproperty_bg:"#e39e54",
 };
 
 export default node_colors;
