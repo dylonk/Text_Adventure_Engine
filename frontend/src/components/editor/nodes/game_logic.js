@@ -1,6 +1,6 @@
 import { property } from 'lodash';
 import {defineStore} from 'pinia'
-import { ref } from "vue"
+import { ref, watch } from "vue"
 
 
 function sleep(ms) {
@@ -13,11 +13,14 @@ export const useGameStore = defineStore('game', () => {
 let nodeMap = new Map() // map of nodes stored by ID not name!!
 let originalGame = {} // write only
 let imageMap = {} // should NOT be edited during the game, its just for synchronizing the images to their respective links {key is name, value is link}
+
+
 const output = ref("This should not appear, output is not being set")
 const outputQueue = ref([])
+
 let choices = []
-let promptchoices = []
-let watchchoices = []
+let watchchoices = [] // calculated when rooms are entered for the first time (These values would never change in the same room, so we get to save some performance there)
+
 let currentImagePath = ref(null)
 
 
@@ -28,13 +31,12 @@ const scopeSyncer = ref(false) // when the position of an item is changed, this 
 const objectViewerSelected = ref(0)
 const initialized = ref(false)
 
-const allowInput = ref(false) // ensures that user input is only accepted during specific times (i.e path hits a prompt node) and not mid logic or something
+const allowUserInput = ref(false) // ensures that user input is only accepted during specific times (i.e path hits a prompt node) and not mid logic or something
 
 let canvasID = ref(0)
 
 let activeNode = 1 // the node of which the path is currently on
-let prevPositions = [] //ONLY PUSHED WHEN AWAIT OR OTHER PATH ABDUCTOR IS CALLED. For when the path is abducted by an await or similar watcher node so the path knows where to return to.
-let watching = [] //lists all ids of await function nodes in scope
+let previousActiveNodes = [] //ONLY PUSHED WHEN AWAIT OR OTHER PATH ABDUCTOR IS CALLED. For when the path is abducted by an await or similar watcher node so the path knows where to return to.
 
 
 const start = (compiledGame) =>{
@@ -42,7 +44,9 @@ const start = (compiledGame) =>{
   output.value = "Game initialized"
   archiveOutput()
   choices=[];
+  watchchoices=[];
   activeNode = 1;
+  currentImagePath.value = null;
   nodeMap = compiledGame.nodeMap
   originalGame = compiledGame
   console.log("[GAME] Game initialized. nodeMap:",nodeMap)
@@ -241,22 +245,16 @@ const func = (iNode) => { // function node functions
       break;
     }
     case "prompt":{ // most of the prompt logic is not handled here, just sets the choices and output
-      allowInput.value = true
       choices = []
       let outputTextWithReplacements = funcParams[0].vals[0];  // Get the input text (e.g., "{room1.cleanliness}")
       // Replace any curly-brace references with actual values
       outputTextWithReplacements = replaceBracesWithValues(outputTextWithReplacements);
       // Output the final text with replaced values
       outputText(outputTextWithReplacements);
-
-
-
-
-
-
       for(let i = 0; i < funcParams[1].vals.length; i++){
         addChoice(funcParams[1].vals[i],iNode.id,i+1)
       }
+      allowUserInput.value = true;
       console.log("[GAME] prompt function choices = ", choices)
       break;
     }
@@ -274,6 +272,7 @@ const func = (iNode) => { // function node functions
     case "setlocation":{
       let target = getNodeByName(funcParams[0].vals[0])
       if(target == null){
+        console.log("[GAME] setlocation target null")
         break;
       }
       console.log("Target found", target)
@@ -289,8 +288,11 @@ const func = (iNode) => { // function node functions
       }
 
       target.parentID = destination.id // add new destination id to parent
-      targetParent = targetParent.n.filter(child => child != target.id) // remove child from parent
-      destination.push(target.id) // add child to destination
+      destination.n.push(target.id) // add child to destination
+
+
+      var index = targetParent.n.indexOf(target.id)
+      if(index !== -1) targetParent.n.splice(index,1)
 
       updateNode(target)
       updateNode(targetParent)
@@ -356,6 +358,7 @@ return interpretedTexts
 
 const userResponse=(text)=>{ // Compares user text to possible choices
   console.log("[GAME] userResponse was", text)
+  allowUserInput.value = false;
   const userText = interpretUserText(text)
   for(let i = 0; i < choices.length; i++){
     if(userText[0] == choices[i].text){
@@ -411,6 +414,7 @@ return{
       addChoice,
       markScope,
       interpretUserText,
+      allowUserInput,
       interpretGameText,
       getNodeMap,
       setNodeMap,

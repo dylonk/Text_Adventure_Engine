@@ -249,15 +249,34 @@ const toggleTTS = () => {
     }
   });
 
-const handleInput = () => {
+
+const textInput = ref(null);
+const gameScreenText = ref(null);
+
+async function handleInput(){
       displayText.value += `<br><br><span class='user-input'>> ${userInput.value}</span>`;
       GameLogic.userResponse(userInput.value);
       nextTick(() => {
       });
       GameLogic.outputQueue.push(">> "+userInput.value)
       userInput.value = "";
+      await nextTick();
+      const div = gameScreenText.value;
+      div.scrollTop = div.scrollHeight
+    };
 
-  };
+
+
+
+  watch(() => GameLogic.allowUserInput, (newVal) => {
+  if (newVal) {
+    nextTick(() => {
+      if (textInput.value) {
+        textInput.value.focus();
+      }
+    });
+  }
+});
 
   // const processCommand = (command) => {
   //   if (command === "approach unicorn") {
@@ -334,17 +353,21 @@ onMounted(() => {
       </div>
       <div v-if="!isPreview" class="title" style="margin-left: auto;">{{fetchedGame.title}}</div>
     </div>
-      <div class="game-screen">
-        <div class="game-image-display">
+      <div class="game-image-display">
           <img 
             v-if="GameLogic.currentImagePath" 
             :src="GameLogic.currentImagePath" 
             alt="Game Image"
           >
-        </div>
+      </div>
+      <div class="game-screen" ref="gameScreenText">
+        
         <div style="margin-top:auto"></div>
         <div v-for="output in GameLogic.outputQueue" class="game-text">
           <div v-if="output[0] == '>'" style="color:yellow">
+            {{ output }}
+          </div>
+          <div v-else-if="output[0] == '!'" style="color:red">
             {{ output }}
           </div>
           <div v-else style="color:gray">
@@ -354,7 +377,8 @@ onMounted(() => {
         <div class="game-text">{{ GameLogic.output }}</div>
       </div>
     <div class="game-input">  
-      <input v-model="userInput" @keyup.enter="handleInput" placeholder="Enter your command..." autofocus />
+      <input v-if="GameLogic.allowUserInput" ref="textInput" v-model="userInput" @keyup.enter="handleInput()" placeholder="Enter your command..." autofocus />
+      <div v-else class="input-disabled">Waiting...</div>
     </div>
 
     </div>
@@ -466,8 +490,19 @@ onMounted(() => {
   width: 100%;
   padding: 0.6rem;
   font-size: 1rem;
+  height:40px;
   background: rgb(120, 120, 120);
   color: rgb(0, 0, 0);
+  border:none;
+  outline:none;
+}
+.game-input .input-disabled{
+  width: 100%;
+  padding: 0.6rem;
+  height:40px;
+  font-size: 1rem;
+  background: rgb(120, 120, 120);
+  color: rgb(57, 57, 57);
   border:none;
   outline:none;
 }
@@ -527,10 +562,10 @@ onMounted(() => {
 
 .game-image-display {
   width: 100%;
-  height: 150px;
+  height: fit-content;
+  max-height:50%;
   background-color: #252525;
   border-bottom: 1px solid #404040;
-  margin-bottom: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -538,10 +573,9 @@ onMounted(() => {
 }
 
 .game-image-display img {
-  max-width: 90%;
-  max-height: 90%;
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
-  border-radius: 4px;
 }
 
 .game-text-area {
