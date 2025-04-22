@@ -18,7 +18,7 @@ const outputQueue = ref([])
 let choices = []
 let promptchoices = []
 let watchchoices = []
-let currentImages = []
+let currentImagePath = ref(null)
 
 
 
@@ -46,6 +46,7 @@ const start = (compiledGame) =>{
   nodeMap = compiledGame.nodeMap
   originalGame = compiledGame
   console.log("[GAME] Game initialized. nodeMap:",nodeMap)
+  imageMap = compiledGame.images
   markScope()
   initialized.value = true
   processNode(getNode(1, true))
@@ -53,6 +54,10 @@ const start = (compiledGame) =>{
 
 const restartGame = () =>{
   start(originalGame)
+}
+
+const getImage = (name) => {
+  return imageMap[name]
 }
 
 const getNode = (nodeID, notifyConsole=false) => { //get node from nodemap
@@ -231,7 +236,17 @@ const func = (iNode) => { // function node functions
     case "prompt":{ // most of the prompt logic is not handled here, just sets the choices and output
       allowInput.value = true
       choices = []
-      outputText(funcParams[0].vals[0]) //Console Output
+      let outputTextWithReplacements = funcParams[0].vals[0];  // Get the input text (e.g., "{room1.cleanliness}")
+      // Replace any curly-brace references with actual values
+      outputTextWithReplacements = replaceBracesWithValues(outputTextWithReplacements);
+      // Output the final text with replaced values
+      outputText(outputTextWithReplacements);
+
+
+
+
+
+
       for(let i = 0; i < funcParams[1].vals.length; i++){
         addChoice(funcParams[1].vals[i],iNode.id,i+1)
       }
@@ -297,6 +312,7 @@ const func = (iNode) => { // function node functions
       break;  
     }
     case "image":{
+      currentImagePath.value = getImage(funcParams[0].vals[0])
       processNode(nextNodeFromHandle(0))
       break;
     }
@@ -370,9 +386,11 @@ return{
       restartGame,
       getNode, //getnode
       updateNode, //modifynode
+      getImage,
       canvasID,
       progressionSyncer,
       scopeSyncer,
+      currentImagePath,
       outputText,
       archiveOutput,
       initialized,
