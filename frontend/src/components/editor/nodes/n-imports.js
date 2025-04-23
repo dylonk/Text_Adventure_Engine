@@ -19,12 +19,13 @@ import SetPropertyNode from './function/interaction/setproperty.vue'
 import PlayerEnter from './function/interaction/playerenter.vue'
 import IfNode from './function/interaction/if.vue'
 import ReturnPlayerNode from './function/interaction/returnplayer.vue'
-
+import RepeaterNode from './function/interaction/repeater.vue'
 
 export{ //exports both tb and real nodes
     TBNode,
     StartNode,
     PromptNode,
+    RepeaterNode,
     IfNode,
     ReturnPlayerNode,
     RoomNode,

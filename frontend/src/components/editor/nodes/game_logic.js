@@ -101,9 +101,13 @@ const getParameter = (node, paramIndex, retrieveArray=true) => { // safer way of
   if(retrieveArray==false){
     return node.functionParams[paramIndex].vals[0]
   }
-  else return functionParams[paramIndex].vals
+  else return node.functionParams[paramIndex].vals
 }
-
+const setParameter = (node, paramIndex, newParam) =>{ //accepts array or sole value
+  if(Array.isArray(newParam)) node.functionParams[paramIndex].vals = newParam
+  else node.functionParams[paramIndex].vals = [newParam]
+  updateNode(node)
+}
 //this is used for variables in output. It extracts everything from the braces and returns everything in the format blank.blank in an array.
 const extractBracesContent = (inputText) => {
   const regex = /\{([^}]+)\}/g;  // Match anything inside { }
@@ -492,6 +496,24 @@ const func = (iNode) => { // function node functions
       });
       break;
     }
+    case "repeater":{
+      let loopQuantity = getParameter(iNode,0) // [index 0 is current, index 1 is original]
+      if(loopQuantity.length==1){
+        loopQuantity.push(loopQuantity[0])
+      }
+      loopQuantity[0]-=1;
+      setParameter(iNode,0,loopQuantity)
+      if(loopQuantity[0]<=0){
+        loopQuantity[0] = loopQuantity[1]
+        setParameter(iNode,0,loopQuantity)
+        processNode(nextNodeFromHandle(1,iNode.id))
+        break;
+      }
+      else{
+        processNode(nextNodeFromHandle(0,iNode.id))
+        break;
+      }
+    }
     case "if":
     {
       //its actually going to calculate all the conditions before it even runs and just store them as an array of bools. 
@@ -626,6 +648,7 @@ return{
       outputQueue,
       getChildrenOfType,
       getParameter,
+      setParameter,
       processNode,
       nextNodeFromHandle,
       userResponse,

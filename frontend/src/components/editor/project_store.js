@@ -210,7 +210,6 @@
         idCounter: nodesStore.idCounter,
         projectImages: nodesStore.getProjectImages(), // help here dylan :J
       };
-      console.log("PISSSSSSSSS",nodesStore.getProjectImages())
       return projectData;
     }
     

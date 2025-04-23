@@ -41,6 +41,8 @@ const node_colors = {
     if_fg:"#a21414",
     returnplayer_fg:"#e13434",
     returnplayer_bg:"#b6f0b3",
+    repeater_fg:"#a61111",
+    repeater_bg:"#ea4a4a",
 };
 
 export default node_colors;
