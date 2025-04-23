@@ -2,6 +2,7 @@
 import globalNavBar from '@/components/standardjs/navbar.vue'
 import axios from 'axios';
 import { ref, onMounted,watch } from 'vue';   
+import skyImage from '@/assets/Images/editor/sky.png'
 import game from './game.vue';
 import { useRouter } from 'vue-router';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // for Vite
@@ -116,9 +117,10 @@ input[type=search]:focus {
     gap: 20px;
     padding: 20px;
     justify-content: center;
+    background:rgb(25,25,25);
+
     text-align: center;
     width: 100%;
-    background:rgb(25,25,25);
     grid-auto-rows: minmax(250px, auto);  /* Adjust height dynamically */
     color:white;
 }

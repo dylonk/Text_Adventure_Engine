@@ -577,9 +577,12 @@ const getParam=(id,paramName)=>{
     tgtHandleIndex = tgtHandleIndex[1]
     srcHandleIndex = srcHandleIndex[1]
 
-
-    getNode(Number(edge.source)).data.outputEdges[Number(srcHandleIndex)]=Number(edge.target)
-    getNode(Number(edge.target)).data.inputEdges[Number(tgtHandleIndex)]=Number(edge.source)
+    const edgeSrc =  getNode(Number(edge.source))
+    if(!edgeSrc.data.hasOwnProperty('outputEdges')) edgeSrc.data.outputEdges = {}
+    edgeSrc.data.outputEdges[Number(srcHandleIndex)]=Number(edge.target)
+    const edgeTgt = getNode(Number(edge.target))
+    if(!edgeTgt.data.hasOwnProperty('inputEdges')) edgeTgt.data.inputEdges = {}
+    edgeTgt.data.inputEdges[Number(tgtHandleIndex)]=Number(edge.source)
 
     // node.data.srcHandles = 0 //source handles
     // node.data.tgtHandles
@@ -616,6 +619,7 @@ const getParam=(id,paramName)=>{
   };
   const getProjectImages = () =>{ //for compiler
     let destructuredImages = {}
+    if(projectImages==undefined || projectImages.value==undefined || projectImages.value==null) return {}
     for (const [key, value] of Object.entries(projectImages.value)) {
       destructuredImages[key]=value
     }
