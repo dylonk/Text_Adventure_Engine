@@ -202,6 +202,8 @@ const replaceBracesWithValues = (inputText) => {
 
 const processNode = (iNode) =>{
   if(iNode == null){
+    allowUserInput.value = true;
+    if(debug>=1) console.log("[GAME] End of logic reached")
     return;
   }
   // Add awaits to choices here
@@ -362,7 +364,7 @@ const nodeSwapLocation = (targetNode, destinationNode,useDestinationParent=false
 }
 
 
-const nextNodeFromHandle = (sourceHandleIndex, sourceNodeID=activeNode) => {
+const nextNodeFromHandle = (sourceHandleIndex, sourceNodeID=activeNode) => { // returns type NODE
   let targetNode = null; //null insists that a node isn't found, 
   let oldActiveNode = sourceNodeID
   if(getNode(sourceNodeID).hasOwnProperty("edgesOut") && getNode(sourceNodeID).edgesOut.hasOwnProperty(sourceHandleIndex)){
@@ -372,12 +374,9 @@ const nextNodeFromHandle = (sourceHandleIndex, sourceNodeID=activeNode) => {
   // TODO: make sure something happens when next handle is null (outside of this function of course)
   if(debug>=1)console.log("[GAME] next node from ID", oldActiveNode ,"handle",sourceHandleIndex,"is",targetNode)
   if(targetNode==null){
-    archiveOutput
-    outputText("End of game logic reached");
-    if(debug>=1) console.log("End of game nodeMap:", nodeMap)
     return null;
   }
-   targetNode = getNode(targetNode)
+  targetNode = getNode(targetNode)
   return targetNode
 }
 
@@ -433,7 +432,8 @@ const func = (iNode) => { // function node functions
 
 
       if(target.type=='player') {
-        prevPlayerPositions.push(nextNodeFromHandle(0))
+        const nextNodeId =  nextNodeFromHandle(0,iNode.id).id
+        prevPlayerPositions.push(nextNodeId)
         if(debug>=1) console.log("[GAME] setlocation added to prevPlayerPositions", prevPlayerPositions)
       }
         nodeSwapLocation(target,destination)
@@ -445,7 +445,10 @@ const func = (iNode) => { // function node functions
     case "returnplayer":{
       const playerNode = getNode(2)
       const returnLocation = getParameter(iNode,0,false)
-      const prevPlayerNode = getNode(prevPlayerPositions.pop())
+      let prevPlayerNode = null;
+      if(returnLocation!="") prevPlayerNode = getNode(prevPlayerPositions.pop())
+      console.log("!!!!",returnLocation, prevPlayerNode)
+
       if(prevPlayerNode==null) break;
 
       if(returnLocation=='Room Beginning'){
@@ -454,7 +457,7 @@ const func = (iNode) => { // function node functions
         break;
       }
       if(returnLocation=='Previous Set Location'){
-        nodeSwapLocation(playerNode, prevPlayerNode)
+        nodeSwapLocation(playerNode, prevPlayerNode,true)
         break;
       }
 
