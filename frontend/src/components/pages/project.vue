@@ -132,7 +132,7 @@ function loadProject(id) {
       </div>
       
       <div class="right-container">
-        <button class="project-button" style="background:rgb(220,170,0)" @click="newProject">New Project</button>
+        <button class="project-button" style="background:#7fb723" @click="newProject">New Project</button>
         <button class="project-button" style="background:cadetblue" @click="loadProjectFile">Load Project From File</button>
       </div>
     </div>

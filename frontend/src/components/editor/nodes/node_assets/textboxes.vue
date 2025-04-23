@@ -1,5 +1,5 @@
 <script setup>
-import { ref, defineProps, computed } from 'vue';
+import { ref, defineProps, computed ,onMounted, nextTick} from 'vue';
 import { SmallButton, HContainer, HandleIn, HandleOut } from './n-component-imports.js';
 
 let response_id = 0;
@@ -32,9 +32,11 @@ const defaultArgs =  { //This is the data that this component contributes. Any e
   NS.contributeFunctionParameters(props.id,defaultArgs.paramName,defaultArgs.params); // a little confusing, but this adds 1 param to function_params in the style [response_textboxes(name), textbox1(parameter index 0),textbox2(parameter index 1)]
 //------------------------------IMPORTANT END-------------------------------------------
 
-const adjustTextarea = () => {
-  textarea.value.style.height = 'auto';
-  textarea.value.style.height = `${textarea.value.scrollHeight}px`;
+function adjustTextarea(event){
+  const textarea = event.target;
+  
+  textarea.style.height = 'auto';
+  textarea.style.height = `${textarea.scrollHeight}px`;
 };
 
 function addResponse(){
@@ -50,6 +52,14 @@ function updateResponse(index,newResponse){
     NS.globalSync()
 }
 
+onMounted(() => {
+  nextTick(() => {
+    document.querySelectorAll('.textbox_text').forEach(textarea => {
+      textarea.style.height = 'auto';
+      textarea.style.height = `${textarea.scrollHeight}px`;
+    });
+  });
+});
 </script>
 
 
@@ -61,7 +71,7 @@ function updateResponse(index,newResponse){
         <SmallButton v-if="allowButtons=='true'" :id="id" text="-" @click="removeResponse(index)"></SmallButton>
         </HContainer>
 
-        <div class="nodrag">
+        <div class="nodrag nowheel">
             <div v-for="(textbox,index) in NS.getParam(props.id,convertedTitle)" class="textbox_container">
                 <HContainer outer-margin="5px">
                     <HandleIn v-if="handleInput=='true'" :id="id" />
@@ -70,7 +80,7 @@ function updateResponse(index,newResponse){
                             <textarea
                             :value="textbox"
                             class="textbox_text"
-                            @input="updateResponse(index, $event.target.value); adjustTextarea"
+                            @input="event => { updateResponse(index, event.target.value); adjustTextarea(event); }"
                             ></textarea>
                         </div>
 
@@ -88,7 +98,9 @@ function updateResponse(index,newResponse){
     .textbox_text{
         resize:none;
         width:200px;
-        height:100px;
+        resize:none;
+        overflow:scroll;
+        max-height: 150px;
         background:rgb(255, 255, 255);
         border:solid gray 1px;
         border-radius:3px;

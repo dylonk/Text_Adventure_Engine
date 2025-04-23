@@ -27,13 +27,11 @@ import tbMid from '../../assets/Images/editor/toolbox-mid-posterized.png'
                     <TBNode type="wait" display_type="Wait"/>
                     <TBNode type="image" display_type="Image"/>
                     <TBNode type="modifyimage" display_type="Modify Image"/>
-
-            <a class="tb_subtitle">Watchers</a>
-                    <TBNode type="await" display_type="Await"/>
             <a class="tb_subtitle">Value</a>
-                    <TBNode type="setproperty" display_type="Set Property"/>
-            <a class="tb_subtitle">Path Control</a>
+                <TBNode type="setproperty" display_type="Set Property"/>
                 <TBNode type="setlocation" display_type="Set Location"/>
+            <a class="tb_subtitle">Path Control</a>
+                <TBNode type="await" display_type="Await"/>
                 <TBNode type="playerenter" display_type="On Player Enter"/>
                 <TBNode type="if" display_type="If"/>
             <a class="tb_subtitle">TO IMPLEMENT</a>

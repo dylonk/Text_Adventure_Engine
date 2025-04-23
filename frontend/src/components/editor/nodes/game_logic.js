@@ -326,7 +326,6 @@ const func = (iNode) => { // function node functions
 
       break;
     }
-
     case "setproperty":{
       let target = getNodeByName(funcParams[0].vals[0])
       if(target == null){
@@ -391,6 +390,14 @@ const func = (iNode) => { // function node functions
       // If we got here, no condition was true, so follow the else handle
       processNode(nextNodeFromHandle(conditionBools.length));
       break;
+    }
+    case "playerenter":{
+      processNode(nextNodeFromHandle(0))
+      break
+    }
+    case "await":{
+      processNode(nextNodeFromHandle(0))
+      break  
     }
 
   }

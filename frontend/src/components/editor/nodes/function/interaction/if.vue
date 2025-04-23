@@ -64,12 +64,8 @@ const elseHandleIndex = computed(() => {
         
         <!-- Dedicated Else handle (not a textbox) -->
         <HContainer outerMargin="5px">
-            <div class="else-section">
                 <div class="else-label">Else</div>
-                <div class="handle-container">
-                    <HandleOut :id="id" />
-                </div>
-            </div>
+                <HandleOut :id="id" />
         </HContainer>
     </FunctionBase>
 </template>
@@ -98,6 +94,7 @@ const elseHandleIndex = computed(() => {
     }
     .response_title{
         display:flex;
+        font-size:smaller;
     }
     .else-section {
         display: flex;
@@ -109,9 +106,5 @@ const elseHandleIndex = computed(() => {
         font-weight: bold;
         margin-right: 10px;
     }
-    .handle-container {
-        flex-grow: 1;
-        display: flex;
-        justify-content: flex-end;
-    }
+
 </style>

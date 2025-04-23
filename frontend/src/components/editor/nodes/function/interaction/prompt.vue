@@ -19,7 +19,6 @@ const NS = useNodesStore()
 const defaultObjData =  { //This is the data that this component contributes. Any existing properties within the functional node data will be replaced
     display_type:"Prompt",
     function_name: 'prompt',
-    function_params: [],
   }
   console.log("prompt.vue: ReferenceID is = " + props.id)
   NS.contributeNodeData(props.id,defaultObjData,true);
