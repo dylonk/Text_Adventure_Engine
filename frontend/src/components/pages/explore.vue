@@ -77,6 +77,8 @@ onMounted(fetchGames);
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@700&display=swap');
+@import 'https://fonts.googleapis.com/css2?family=Syne+Mono&display=swap';
+@import url("https://fonts.googleapis.com/css2?family=Scada");
 
 #section-bar {
     position: relative;
@@ -127,11 +129,12 @@ input[type=search]:focus {
     flex-direction: column;
     align-items: center;
     font-size: 28px;
+    border-radius: 5px;
     width: fit-content;
     height: fit-content;
-    background-color: #2c2f33;
-    color: #e0e0e0;
-    border: 2px solid #e0e0e0;
+    background-color: #ffffff;
+    color: #000000;
+    border: 1px solid #8e8e8e;
     margin: 5px;
     padding: 10px;
     position: relative;
@@ -140,15 +143,20 @@ input[type=search]:focus {
 }
 
 .gametitle {
-    font-weight: bold;
+  
     font-size: 20px;
-    border-bottom: 2px solid #e0e0e0;
+    font-family:'Scada';
     padding-bottom: 10px;
     margin-bottom: 10px;
 }
 
+.gamepic{
+  width:150px;
+  height:150px;
+}
 .gamepic img {
-    border: 2px solid #e0e0e0;
+    border: 1px solid #8e8e8e;
+    border-radius: 4px;
     width: 150px;
     height: 150px;
     object-fit: cover;
@@ -157,7 +165,7 @@ input[type=search]:focus {
 }
 
 .game:hover {
-    background-color: #e74c3c;
+    background-color: #c9dfe6;
     color: #000;
     transform: scale(1.02);
     transition: all 0.1s ease-in-out;
