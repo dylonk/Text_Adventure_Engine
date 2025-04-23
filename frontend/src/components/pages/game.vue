@@ -375,6 +375,7 @@ onMounted(() => {
       <div class="game-image-display">
           <img 
             v-if="GameLogic.currentImagePath" 
+            class="game-image"
             :src="GameLogic.currentImagePath" 
             alt="Game Image"
           >
@@ -414,20 +415,22 @@ onMounted(() => {
 
 <style scoped>
 .game-container {
-  flex:1;
+  flex-grow:1;
   display: flex;
   flex-direction: row;
   align-items: center;
+  overflow:hidden;
   justify-content: center;
   background-color: black;
+  max-height:100%;
   color: white;
   font-family: monospace;
   position: relative;
 }
 .game-playarea{
   width:100%;
-  height: 100%;
-  flex:1;
+  max-height:100%;
+  height:100%;
   display:flex;
   flex-direction:column;
 }
@@ -443,6 +446,7 @@ onMounted(() => {
 .right-side {
   width: fit-content;
   height: 100%;
+
   top: 0;
 }
 
@@ -480,8 +484,8 @@ onMounted(() => {
 .game-screen {
   display:flex;
   flex-direction:column;
+  flex-grow: 1;
   width: 100%;
-  height:100%;
   overflow-y: auto;
   padding: 1rem;
   background-color: #2e2e2e;
@@ -501,6 +505,7 @@ onMounted(() => {
 .game-text {
   font-size: 1.2rem;
   line-height: 1.5;
+  max-height: 100%;
   white-space: pre-wrap;
   display:block;
 }
@@ -581,8 +586,7 @@ onMounted(() => {
 
 .game-image-display {
   width: 100%;
-  height: fit-content;
-  max-height:50%;
+  max-height:40%;
   background-color: #252525;
   border-bottom: 1px solid #404040;
   display: flex;
@@ -591,9 +595,8 @@ onMounted(() => {
   overflow: hidden;
 }
 
-.game-image-display img {
-  max-width: 100%;
-  max-height: 100%;
+.game-image {
+  height:100%;
   object-fit: contain;
 }
 
@@ -615,14 +618,6 @@ onMounted(() => {
   margin: 5px 0;
 }
 
-.game-image {
-  margin: 5px 0;
-  display: flex;
-  justify-content: center;
-  max-width: 10%;
-  max-height: 10%;
-  align-self: flex-start;
-}
 
 .game-image img {
   width: 100%;
