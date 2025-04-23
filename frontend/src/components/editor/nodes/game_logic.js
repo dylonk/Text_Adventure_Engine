@@ -113,6 +113,102 @@ const extractBracesContent = (inputText) => {
 
   return matches;  // Return all the extracted references
 };
+
+
+
+
+// Parse and evaluate a simple expression safely
+const safeEvaluate = (expression) => {
+  // Convert string numbers to actual numbers
+  expression = expression.replace(/\b\d+(\.\d+)?\b/g, match => match);
+  
+  // Handle equality check (==)
+  if (expression.includes("==")) {
+    const [left, right] = expression.split("==").map(s => s.trim());
+    return parseValue(left) == parseValue(right);
+  }
+  
+  // Handle inequality check (!=)
+  if (expression.includes("!=")) {
+    const [left, right] = expression.split("!=").map(s => s.trim());
+    return parseValue(left) != parseValue(right);
+  }
+  
+  // Handle greater than or equal (>=)
+  if (expression.includes(">=")) {
+    const [left, right] = expression.split(">=").map(s => s.trim());
+    return parseValue(left) >= parseValue(right);
+  }
+  
+  // Handle less than or equal (<=)
+  if (expression.includes("<=")) {
+    const [left, right] = expression.split("<=").map(s => s.trim());
+    return parseValue(left) <= parseValue(right);
+  }
+  
+  // Handle greater than (>)
+  if (expression.includes(">")) {
+    const [left, right] = expression.split(">").map(s => s.trim());
+    return parseValue(left) > parseValue(right);
+  }
+  
+  // Handle less than (<)
+  if (expression.includes("<")) {
+    const [left, right] = expression.split("<").map(s => s.trim());
+    return parseValue(left) < parseValue(right);
+  }
+  
+  // Handle AND (&&)
+  if (expression.includes("&&")) {
+    const [left, right] = expression.split("&&").map(s => s.trim());
+    return safeEvaluate(left) && safeEvaluate(right);
+  }
+  
+  // Handle OR (||)
+  if (expression.includes("||")) {
+    const [left, right] = expression.split("||").map(s => s.trim());
+    return safeEvaluate(left) || safeEvaluate(right);
+  }
+  
+  // Handle boolean values
+  if (expression.trim() === "true") return true;
+  if (expression.trim() === "false") return false;
+  
+  // If it's just a single value, return it as a boolean
+  return !!parseValue(expression);
+};
+
+// Parse a value into its appropriate type
+const parseValue = (value) => {
+  value = value.trim();
+  
+  // Handle numbers
+  if (/^-?\d+(\.\d+)?$/.test(value)) {
+    return parseFloat(value);
+  }
+  
+  // Handle strings with quotes
+  if ((value.startsWith('"') && value.endsWith('"')) || 
+      (value.startsWith("'") && value.endsWith("'"))) {
+    return value.substring(1, value.length - 1);
+  }
+  
+  // Handle booleans
+  if (value === "true") return true;
+  if (value === "false") return false;
+  
+  // Handle undefined and null
+  if (value === "undefined") return undefined;
+  if (value === "null") return null;
+  
+  // Return as is (likely a variable that will be replaced)
+  return value;
+};
+
+
+
+
+
 //this is the same thing without the curly braces, used for extracting variables from conditions. still returns an array of all the variable strings.
 const extractVariableReferences = (inputText) => {
   // Match things like room1.cleanliness or player.health (basic dot notation)
@@ -128,8 +224,9 @@ const extractVariableReferences = (inputText) => {
 };
 
 
-
-const getValueFromNode = (reference) => { //this is used for variables in output, as well as conditionals. It takes something like room1.cleanliness and finds the value.
+//this is used for variables in output, as well as conditionals. It takes something like room1.cleanliness and finds the value.
+//something like room1.location will be a little different becuse it's not an acutal data property. Thats what the if statements are for
+const getValueFromNode = (reference) => { 
 
   const parts = reference.split('.');
   const nodeName = parts[0];
@@ -153,8 +250,24 @@ const getValueFromNode = (reference) => { //this is used for variables in output
     if(debug>=2) console.warn(`[GAME] ❌ Node "${nodeName}" has no 'properties' field in its data`);
     return null;
   }
-
-  if (!(propertyName in node.data.properties)) {
+  //can also get the location. well have to make sure nobody uses a custom "location" property
+  if(propertyName=="location"){
+      const locId=node.parentID;
+      console.log("[GAME] locId", locId)
+      if(locId==0) return "Global";
+      else{
+        const locNode = getNode(locId);
+        console.log("[GAME] locNode", locNode)
+        if(locNode==null) {
+          return "Unknown";
+        }
+        else {
+          console.log("[GAME] locNode.data.objectName", locNode.objectName)
+          return locNode.objectName;
+        }
+      }
+  }
+  else if (!(propertyName in node.data.properties)) {
     if(debug>=2) console.warn(`[GAME] ❌ Property "${propertyName}" not found in node "${nodeName}"'s properties`);
     return null;
   }
@@ -462,12 +575,17 @@ const func = (iNode) => { // function node functions
         vars.forEach(reference => {
           const value = getValueFromNode(reference);
           if (value !== null) {
-            stringToEval = stringToEval.replaceAll(reference, value);
+
+            // Replace the reference in the text with the actual value
+            //also add quotes if the value is a string
+            const replacement = typeof value === 'string' ? 
+            `"${value}"` : value;
+            stringToEval = stringToEval.replaceAll(reference, replacement);
           }
         });
         //then pushes the result of the if or else to the bool array.
         console.log("[GAME] stringToEval after value extraction = ", stringToEval)  
-        const bool = eval(stringToEval);
+        const bool = safeEvaluate(stringToEval);
         conditionBools.push(bool);
       }
 
