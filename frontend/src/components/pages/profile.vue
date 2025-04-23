@@ -290,6 +290,7 @@ body {
     margin: 0 auto 1rem; /* Center the avatar */
     margin-top: 15px;
     border: 3px solid #f1f1f1;
+    background:rgb(25, 51, 184);
 }
 
 
