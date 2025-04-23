@@ -132,8 +132,8 @@ function loadProject(id) {
       </div>
       
       <div class="right-container">
-        <button class="project-button" @click="newProject">New Project</button>
-        <button class="project-button" @click="loadProjectFile">Load Project From File</button>
+        <button class="project-button" style="background:rgb(220,170,0)" @click="newProject">New Project</button>
+        <button class="project-button" style="background:cadetblue" @click="loadProjectFile">Load Project From File</button>
       </div>
     </div>
 
@@ -146,11 +146,10 @@ function loadProject(id) {
           class="project-box"
         >
           <div class="project-title">{{ project.title }}</div>
-          <img :src="project.image" alt="Project image" class="project-image" />
           <div class="project-actions">
             <button class="action-button" @click="loadProject(project.id)">Open</button>
             <button class="action-button delete" @click="deleteProject(project.id)">Delete</button>
-            <button class="action-button rename" @click="renameProject(project.id)">Rename</button>
+            <button class="action-button rename"  @click="renameProject(project.id)">Rename</button>
           </div>
         </div>
       </div>
@@ -197,7 +196,7 @@ function loadProject(id) {
   padding: 25px;
   border-radius: 10px;
   text-align: center;
-  min-width: 300px;
+  width:100%;
 }
 
 .left-container {
@@ -218,6 +217,7 @@ function loadProject(id) {
   box-shadow: 6px 6px 0 #000;
   padding: 25px;
   border-radius: 10px;
+  justify-items: center;
   text-align: center;
   width: 70%;
   margin-top: 50px;
@@ -231,13 +231,16 @@ function loadProject(id) {
 
 .projects-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 15px;
+  grid-template-columns: repeat(auto-fill, minmax(235px, 1fr));
+  gap: 15px 10px;
+  justify-content: center;
+
 }
 
 .project-box {
   background: #e74c3c;
   border: 2px solid #e0e0e0;
+  width:min-content;
   box-shadow: 4px 4px 0 #000;
   border-radius: 6px;
   padding: 12px;
@@ -252,6 +255,7 @@ function loadProject(id) {
 
 .project-title {
   font-size: 1rem;
+  
   margin-bottom: 10px;
   padding: 6px;
   background: #c0392b;
@@ -283,6 +287,27 @@ function loadProject(id) {
   border-radius: 4px;
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.project-button {
+  font-size: 0.9rem;
+  padding: 20px 10px;
+  border: 2px solid white;
+  box-shadow: 4px 4px 0 #000;
+
+  background: #c0392b;
+  color: white;
+  width:100%;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'Pixelify Sans', sans-serif;
+  font-size:large;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.project-button:hover {
+  transform: translateY(-5px);
+  box-shadow: 6px 6px 0 #000;
 }
 
 .action-button:hover {
