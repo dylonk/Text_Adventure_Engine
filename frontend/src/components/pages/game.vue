@@ -337,8 +337,9 @@ const quitGame = () => {
   alert("Game Over. Refresh to start again.");
 };
 
+const gamelogicOutput = ref("")
+
 onMounted(() => {
-  startTypingEffect();
 });
 </script>
 
@@ -380,7 +381,7 @@ onMounted(() => {
             alt="Game Image"
           >
       </div>
-      <div class="game-screen" ref="gameScreenText">
+      <div v-if="GameLogic.initialized" class="game-screen" ref="gameScreenText">
         
         <div style="margin-top:auto"></div>
         <div v-for="output in GameLogic.outputQueue" class="game-text">
@@ -394,7 +395,7 @@ onMounted(() => {
             {{ output }}
           </div>
         </div>
-        <div class="game-text">{{ GameLogic.output }}</div>
+        <div v-if="GameLogic.output!=null" class="game-text">{{ GameLogic.output }}</div>
       </div>
     <div class="game-input">  
       <input v-if="GameLogic.allowUserInput" ref="textInput" v-model="userInput" @keyup.enter="handleInput()" placeholder="Enter your command..." autofocus />

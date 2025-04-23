@@ -38,7 +38,7 @@ let prevActiveNodes = [] // For AWAIT. Logic may not necessarily be occurring in
 const start = (compiledGame,online=true) =>{
   isOnline.value = online
   outputQueue.value = []
-  output.value = "Game initialized"
+  output.value = "Game initialized (If stuck here, press restart!)"
   allowUserInput.value = false;
   archiveOutput()
   choices=[];
@@ -51,6 +51,7 @@ const start = (compiledGame,online=true) =>{
   imageMap = compiledGame.images
   if(debug>=2) console.log("[GAME] imageMap is ",imageMap)
   markScope()
+
   initialized.value = true
   processNode(getNode(1, true))
 }
@@ -197,7 +198,8 @@ const replaceBracesWithValues = (inputText) => {
 
 const processNode = (iNode) =>{
   if(iNode == null){
-    output.value="End of game reached";
+    archiveOutput();
+    outputText("End of game reached");
     if(debug>=1) console.log("[GAME] End of game nodeMap:", nodeMap)
 
     return;

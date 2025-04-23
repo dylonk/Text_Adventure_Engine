@@ -82,28 +82,29 @@ onMounted(fetchGames);
     display: flex;
     flex-direction: row;
     border-bottom: 2px solid #e0e0e0;
-    padding-top: 20px;
-    padding-bottom: 20px;
-    justify-content: center;
+    padding: 10px;
     font-size: 36px;
-    background-color: rgba(44, 47, 51, 0.9);
+    background-color: #e0e0e0;
     color: #e0e0e0;
+    border-bottom: 2px gray solid;
     letter-spacing: 2px;
-}
+  
+  }
 
 input[type=search] {
-    border: 2px solid #e0e0e0;
+    border: 2px inset #989898;
     padding: 10px;
     width: 40%;
-    text-align: center;
-    background-color: transparent;
-    color: #e0e0e0;
-    font-weight: bold;
+    border-radius: 8px;
+    background-color: white;
+    color: #858585;
 }
 
 input[type=search]:focus {
     outline: none;
-    border-color: #e74c3c;
+    color:black;
+    
+    border-color: #80c6ff;
 }
 
 .games-section {
