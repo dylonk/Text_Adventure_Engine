@@ -48,7 +48,7 @@ const fetchGames = async () => {
     recentGames.value = response.data.map(game => ({
       id: game.id,
       title: game.title,
-      image: 'https://talentclick.com/wp-content/uploads/2021/08/placeholder-image.png'
+      thumbnail:game.thumbnail
     }));
   } catch (error) {
     console.warn('Error fetching projects:', error);

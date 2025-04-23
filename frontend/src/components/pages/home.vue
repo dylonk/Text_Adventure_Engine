@@ -20,7 +20,7 @@ const fetchGames = async () => {
     games.value = response.data.map(game => ({
       id: game.id,
       title: game.title,
-      image: 'https://i.pinimg.com/736x/13/34/75/133475f2b4de23314a01df9a61f85436.jpg'
+      thumbnail: game.thumbnail
     }));
 
     games.value.push({
@@ -74,7 +74,7 @@ onMounted(fetchGames);
           >
             <div class="game-title">{{ game.title }}</div>
             <div class="game-pic">
-              <img :src="game.image" alt="Game image" />
+              <img :src="game.thumbnail" alt="Game image" />
             </div>
           </div>
         </div>
