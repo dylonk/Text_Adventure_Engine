@@ -33,12 +33,12 @@ import tbMid from '../../assets/Images/editor/toolbox-mid-posterized.png'
             <a class="tb_subtitle">Path Control</a>
                 <TBNode type="await" display_type="Await"/>
                 <TBNode type="playerenter" display_type="On Player Enter"/>
+                <TBNode type="returnplayer" display_type="Return Player"/>
                 <TBNode type="if" display_type="If"/>
             <a class="tb_subtitle">TO IMPLEMENT</a>
                 <TBNode type="unimplemented" display_type="Extend Scope"/>
                 <TBNode type="unimplemented" display_type="Background"/>
                 <TBNode type="unimplemented" display_type="Sound"/>
-                <TBNode type="unimplemented" display_type="Return"/>
         
             </div>
         <img onload="this.width*=0.8" :src="tbBottom" class="tb-scroll-image-bottom">
