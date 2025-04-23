@@ -55,9 +55,9 @@ onMounted(fetchGames);
     <img class="background-image" src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/62508b06-f9a8-4fb5-a6f9-ac6a2f035569/d8l5iy6-0e7dcbf9-ae26-4131-91d5-8d9cd568d199.png/v1/fill/w_999,h_800/stock___stone_wall_and_arch_png_by_artreferencesource_d8l5iy6-pre.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9ODIwIiwicGF0aCI6IlwvZlwvNjI1MDhiMDYtZjlhOC00ZmI1LWE2ZjktYWM2YTJmMDM1NTY5XC9kOGw1aXk2LTBlN2RjYmY5LWFlMjYtNDEzMS05MWQ1LThkOWNkNTY4ZDE5OS5wbmciLCJ3aWR0aCI6Ijw9MTAyNCJ9XV0sImF1ZCI6WyJ1cm46c2VydmljZTppbWFnZS5vcGVyYXRpb25zIl19.BgITDiff1TAZ5siEbOt_hxvN2kHG_hDkGmqej83Z5tk">
       <div class="main-grid">
       <!-- Left Grid: Hero Section -->
-      <div class="left-grid">
+      <div class="right-grid">
         <div id="hero">
-          <h1 class="hero-title">Text Adventure Game Engine</h1>
+          <h1 class="hero-title">MagiQuill, a browser based text adventure engine!</h1>
           <button class="explore-button" @click="goToExplore">Explore</button>
         </div>
       </div>
@@ -89,46 +89,34 @@ onMounted(fetchGames);
 #home-container {
   position: relative;
   flex: 1;
-  max-width:100%;
+  max-width:100dvw;
+  overflow-y:scroll;
   overflow-x:clip;
-  height:auto;
   font-family: 'Pixelify Sans', sans-serif;
   background:rgb(25, 25, 25);
-  z-index:-2;
 
 }
 
 .background-image{
   position:absolute;
   right:20%;
-  width:60dvw;
-  height:100%;
+  top:100px;
+  width:100vmin;
+  
 }
 /* Main Grid */
 .main-grid {
   position:relative;
   margin:auto;
   top:120px;
-  max-height:75%;
+  justify-content: center;
   display:flex;
-  grid-template-columns: 50% 50%;
-  gap: 30px;
-  width: 70%;
+  height:fit-content;
+  gap: 10%;
+  align-items: stretch;
+  width: 60%;
   z-index:2;
   /* margin: 120px auto 0 auto; */
-}
-
-/* Left Grid: Hero Section */
-.left-grid {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  max-width:45%;
-  background: rgba(44, 47, 51, 0.9);
-  border: 2px solid #e0e0e0;
-  box-shadow: 6px 6px 0 #000;
-  padding: 25px;
-  border-radius: 10px;
 }
 
 #hero {
@@ -136,21 +124,25 @@ onMounted(fetchGames);
 }
 
 .hero-title {
-  font-size: 4.5rem;
+  font-size: 3em;
   margin-bottom: 25px;
   text-shadow: 5px 5px 0 #000;
   color: #e0e0e0;
 }
 
 .explore-button {
-  font-size: 1.5rem;
-  padding: 18px 36px;
+  font-size: 1.5em;
+  align-self:flex-end;
+  padding: 15px;
+  font-family: 'Pixelify Sans', sans-serif;
   border: 2px solid #e0e0e0;
-  background: #e74c3c;
+  background: #1474b9;
   box-shadow: 6px 6px 0 #000;
   color: #fff;
   cursor: pointer;
   border-radius: 6px;
+  margin-bottom:20px;
+  margin-top:40px;
   transition: background 0.2s, transform 0.2s;
 }
 
@@ -168,8 +160,10 @@ onMounted(fetchGames);
   background: rgba(44, 47, 51, 0.9);
   border: 2px solid #e0e0e0;
   box-shadow: 6px 6px 0 #000;
+  width:35%;
+  overflow: clip;
+  min-width:280px;
   padding: 25px;
-  max-width:45%;
   border-radius: 10px;
 }
 
