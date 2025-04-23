@@ -13,7 +13,7 @@ export const useGameStore = defineStore('game', () => {
 
 // syncers for outside use
 const progressionSyncer = ref(false) // confusing value, but it just alternates between true and false per tick so that outside elements can update if need be
-const scopeSyncer = ref(false) // when the position of an item is changed, this ticks for the asset browser
+const scopeSyncer = ref(true) // when the position of an item is changed, this ticks for the asset browser
 const objectViewerSelected = ref(0) // for the editor preview
 const initialized = ref(false)
 const isOnline = ref(false)
@@ -37,16 +37,20 @@ let prevActiveNodes = [] // For AWAIT. Logic may not necessarily be occurring in
 
 const start = (compiledGame,online=true) =>{
   isOnline.value = online
-  outputQueue.value = []
-  output.value = "Game initialized (If stuck here, press restart!)"
-  allowUserInput.value = false;
-  archiveOutput()
-  choices=[];
-  watchchoices=[];
-  activeNode = 1;
-  currentImagePath.value = null;
-  nodeMap = compiledGame.nodeMap
   originalGame = compiledGame
+  nodeMap = compiledGame.nodeMap
+  watchchoices=[];
+  choices=[];
+  currentImagePath.value = null;
+  allowUserInput.value = false;
+  outputQueue.value = []
+  output.value = ""
+
+  sleep(10)
+
+  outputText("Game initialized (If stuck here, press restart!)")
+  archiveOutput()
+  activeNode = 1;
   if(debug>=1) console.log("[GAME] Game initialized. nodeMap:",nodeMap)
   imageMap = compiledGame.images
   if(debug>=2) console.log("[GAME] imageMap is ",imageMap)
@@ -92,12 +96,12 @@ const getNodeByName = (name) => {
 };
 
 const getParameter = (node, paramIndex, retrieveArray=true) => { // safer way of retrieving nodes than accessing arrays on nodes that may or may not exist
-  if(!node.hasOwnProperty('funcParams')) { if(debug>=2) console.log("[GAME] getParameter on node that does not have funcParams"); return null;}
-  if(node.funcParams.length <= paramIndex) { if(debug>=2) console.log("[GAME] getParameter index accessed outside of bounds"); return null;}
+  if(!node.hasOwnProperty('functionParams')) { if(debug>=2) console.log("[GAME] getParameter on node that does not have funcParams", node); return null;}
+  if(node.functionParams.length <= paramIndex) { if(debug>=2) console.log("[GAME] getParameter index accessed outside of bounds", node); return null;}
   if(retrieveArray==false){
-    return node.funcParams[paramIndex].vals[0]
+    return node.functionParams[paramIndex].vals[0]
   }
-  else return funcParams[paramIndex].vals
+  else return functionParams[paramIndex].vals
 }
 
 //this is used for variables in output. It extracts everything from the braces and returns everything in the format blank.blank in an array.
@@ -198,10 +202,8 @@ const replaceBracesWithValues = (inputText) => {
 
 const processNode = (iNode) =>{
   if(iNode == null){
-    archiveOutput();
-    outputText("End of game reached");
-    if(debug>=1) console.log("[GAME] End of game nodeMap:", nodeMap)
-
+    allowUserInput.value = true;
+    if(debug>=1) console.log("[GAME] End of logic reached")
     return;
   }
   // Add awaits to choices here
@@ -243,7 +245,7 @@ function calculateAwaits(node){
     let child = getNode(nodeChildren[i])
     if(child==null) continue;
     if(child.type == 'await'){
-      const choiceText = getParameter(child,0) // gets the first param
+      const choiceText = getParameter(child,0,false) // gets the first param
       const nodeID = nodeChildren[i].id
       const handleID = 0;
       nodeAwaitChoices.push(addChoice(choiceText,nodeID,handleID,false))
@@ -254,14 +256,16 @@ function calculateAwaits(node){
 }
 
 const getChildrenOfType = (typeToRetrieve, parent, onlyRetrieveFirstInstance=true) => { // returns node id (or ids) of matching children. For use in nodes like PlayerEnter
+  if(debug>=1) console.log("[GAME] getChildrenOfType", typeToRetrieve, "on parent",parent.objectName)
+  if(parent==null) return null;
   const parentChildren = parent.n
   if(onlyRetrieveFirstInstance){
     for(let i = 0; i < parentChildren.length; i++){
       const child = getNode(parentChildren[i])
       if(child==null) continue;
       if(child.type == typeToRetrieve){
-        if(debug>=1) console.log("[GAME] getChildrenOfType, child of type", typeToRetrieve, "found at node",child.id)
-        return child.id
+        if(debug>=1) console.log("[GAME] getChildrenOfType", typeToRetrieve,"found! value is",child.id)
+        return child.id 
       } 
     }
   }
@@ -314,21 +318,53 @@ const markScope = () =>{ // Marks the scope of the nodes that are being watched 
   }
 
   // Calculate awaits for player's children
+  const playerChildren = playerParent.n
+  for(let i = 0; i<playerChildren.length;i++){
 
+  }
 
   return;
 }
-const onPlayerSwitchRoom = () => { // Must be performed upon a player room change, updates scope, gets the node to start on
+
+const syncScope =()=>{
+  scopeSyncer.value = false
+  scopeSyncer.value = true
+}
+
+const nodeSwapLocation = (targetNode, destinationNode,useDestinationParent=false) => { // Must be performed upon a player room change, updates scope, gets the node to start on
+  
+  if(debug>=2){
+    console.log("[GAME] nodeSwapLocation", targetNode, destinationNode, useDestinationParent)
+  }
+  
+  let nextNode = null
+  if(useDestinationParent==true){ // for when you want to swap based on a previous active node
+    nextNode=destinationNode
+    destinationNode=getNode(destinationNode.parentID)
+  }
+  let targetParent = getNode(targetNode.parentID)
+  targetNode.parentID = destinationNode.id // add new destination id to parent
+  destinationNode.n.push(targetNode.id) // add child to destination
+  const index = targetParent.n.indexOf(targetNode.id)
+  if(index !== -1) targetParent.n.splice(index,1) // cut out child
+  console.log("!!!",targetNode,targetParent,destinationNode)
+  updateNode(targetNode)
+  updateNode(targetParent)
+  updateNode(destinationNode)
+
   markScope()
   const player = getNode(2) 
-  const foundPlayerEnterNode = getNode(getChildrenOfType("playerenter",player)) // gets the first playerEnter node in the room
-  scopeSyncer.value = !scopeSyncer.value
-  processNode(foundPlayerEnterNode)
-  return
+  syncScope()
+
+  if(useDestinationParent==false){ // assumes starting node is beginning
+    nextNode = getNode(getChildrenOfType("playerenter",getNode(player.parentID))) // gets the first playerEnter node in the room
+  }
+  processNode(nextNode)
+
 }
 
 
-const nextNodeFromHandle = (sourceHandleIndex, sourceNodeID=activeNode) => {
+const nextNodeFromHandle = (sourceHandleIndex, sourceNodeID=activeNode) => { // returns type NODE
   let targetNode = null; //null insists that a node isn't found, 
   let oldActiveNode = sourceNodeID
   if(getNode(sourceNodeID).hasOwnProperty("edgesOut") && getNode(sourceNodeID).edgesOut.hasOwnProperty(sourceHandleIndex)){
@@ -338,10 +374,9 @@ const nextNodeFromHandle = (sourceHandleIndex, sourceNodeID=activeNode) => {
   // TODO: make sure something happens when next handle is null (outside of this function of course)
   if(debug>=1)console.log("[GAME] next node from ID", oldActiveNode ,"handle",sourceHandleIndex,"is",targetNode)
   if(targetNode==null){
-    outputText("End of game logic reached");
-    if(debug>=1) console.log("End of game nodeMap:", nodeMap)
+    return null;
   }
-   targetNode = getNode(targetNode)
+  targetNode = getNode(targetNode)
   return targetNode
 }
 
@@ -387,32 +422,44 @@ const func = (iNode) => { // function node functions
         break;
       }
       if(debug>=1) console.log("[GAME] setLocation Target found", target.id)
-      let targetParent = getNode(target.parentID)
-      if(debug>=1) console.log("[GAME] setLocation Searching for destination")
       let destination = getNodeByName(funcParams[1].vals[0])
-      if(debug>=1) console.log("[GAME] setLocation Destination found", destination.id)
-
-      if(target==null||targetParent==null||destination==null){
-        console.log("[GAME] setlocation had null return", target, targetParent, destination)
+      if(target==null||destination==null){
+        console.log("[GAME] setlocation had null return", target, destination)
         processNode(nextNodeFromHandle(0))
         break;
       }
-
-      target.parentID = destination.id // add new destination id to parent
-      destination.n.push(target.id) // add child to destination
+      if(debug>=1) console.log("[GAME] setLocation Destination found", destination.id)
 
 
-      var index = targetParent.n.indexOf(target.id)
-      if(index !== -1) targetParent.n.splice(index,1)
-
-      updateNode(target)
-      updateNode(targetParent)
-      updateNode(destination)
-
-      onPlayerSwitchRoom()
-
-      if(debug>=1) console.log("[GAME] setlocation successful",target,targetParent,destination)
+      if(target.type=='player') {
+        const nextNodeId =  nextNodeFromHandle(0,iNode.id).id
+        prevPlayerPositions.push(nextNodeId)
+        if(debug>=1) console.log("[GAME] setlocation added to prevPlayerPositions", prevPlayerPositions)
+      }
+        nodeSwapLocation(target,destination)
+      if(debug>=1) console.log("[GAME] setlocation successful",target,destination)
       // processNode(nextNodeFromHandle(0)) TODO: ADD RETURNS
+
+      break;
+    }
+    case "returnplayer":{
+      const playerNode = getNode(2)
+      const returnLocation = getParameter(iNode,0,false)
+      let prevPlayerNode = null;
+      if(returnLocation!="") prevPlayerNode = getNode(prevPlayerPositions.pop())
+      console.log("!!!!",returnLocation, prevPlayerNode)
+
+      if(prevPlayerNode==null) break;
+
+      if(returnLocation=='Room Beginning'){
+        const destination = getNode(prevPlayerNode.parentID)
+        nodeSwapLocation(playerNode,destination)
+        break;
+      }
+      if(returnLocation=='Previous Set Location'){
+        nodeSwapLocation(playerNode, prevPlayerNode,true)
+        break;
+      }
 
       break;
     }
@@ -425,7 +472,7 @@ const func = (iNode) => { // function node functions
       console.log( "check this out" ,funcParams[1].vals[0], funcParams[2].vals[0])
       let propertyName = funcParams[1].vals[0]
       let newValue = funcParams[2].vals[0]
-      target.properties[propertyName] = funcParams[2].vals[0]
+      target.properties[propertyName] = newValue
       updateNode(target)
       console.log("[GAME] setproperty successful",target)
       processNode(nextNodeFromHandle(0))
@@ -564,12 +611,13 @@ return{
       getNode, //getnode
       updateNode, //modifynode
       getImage,
-      onPlayerSwitchRoom,
+      nodeSwapLocation,
       canvasID,
       progressionSyncer,
       scopeSyncer,
       currentImagePath,
       outputText,
+      syncScope,
       archiveOutput,
       initialized,
       objectViewerSelected,
