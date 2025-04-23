@@ -5,6 +5,7 @@ import globalNavBar from '@/components/standardjs/navbar.vue';
 import clickSound from '@/assets/sounds/click.wav';
 import moreSound from '@/assets/sounds/more.wav';
 import { useProjectStore } from '../editor/project_store';
+import loadCircle from '@/assets/Images/loading.gif';
 import axios from 'axios';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // for Vite
 
@@ -12,7 +13,9 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // for Vite
 const router = useRouter();
 const recentProjects = ref([]);
 const userId = ref('');
+
 const projectStore = useProjectStore(); // Using projectStore globally
+const isProjectsLoaded = ref(false)
 
 const fetchProjects = async () => {
   try {
@@ -44,6 +47,8 @@ const fetchProjects = async () => {
       title: project.name,
       image: 'https://talentclick.com/wp-content/uploads/2021/08/placeholder-image.png'
     }));
+    isProjectsLoaded.value = true
+
   } catch (error) {
     console.warn('Error fetching projects:', error);
   }
@@ -139,7 +144,8 @@ function loadProject(id) {
 
     <div class="recent-projects">
       <h2 class="section-title">Open Recents</h2>
-      <div class="projects-grid">
+      <img v-if="!isProjectsLoaded" :src="loadCircle" style="height:30%;">
+      <div v-else class="projects-grid">
         <div 
           v-for="project in recentProjects" 
           :key="project.id" 
@@ -179,7 +185,7 @@ function loadProject(id) {
 }
 
 .main-grid {
-  display: grid;
+  display: flex;
   grid-template-columns: 50% 50%;
   gap: 30px;
   width: 70%;

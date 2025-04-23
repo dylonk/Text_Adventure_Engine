@@ -1,7 +1,10 @@
 <script setup>
 import { ref, onMounted } from 'vue';
+import Toastify from 'toastify-js';
+import 'toastify-js/src/toastify.css';
 import globalNavBar from '@/components/standardjs/navbar.vue';
 import wizardPfp from '@/assets/Images/wizardpfp.png';
+import loadCircle from '@/assets/Images/loading.gif';
 import { fetchUserData } from '@/components/standardjs/fetchUserData';
 import { HContainer } from '../editor/nodes/node_assets/n-component-imports';
 import { useRouter } from 'vue-router';
@@ -109,8 +112,24 @@ async function saveProfile() {
         if (response.ok) {
 
             console.log('Profile updated successfully, profile info image=', profileImage.value);
+            Toastify({
+                text: "Profile successfully updated!",
+                duration: 3000,
+                gravity: 'top',
+                position: 'right',
+                backgroundColor: '#27ae60',// Green for success, Red for error
+                stopOnFocus: true,
+            }).showToast();
         } else {
             console.error('Failed to update profile');
+            Toastify({
+                text: "Failed to update profile!",
+                duration: 3000,
+                gravity: 'top',
+                position: 'right',
+                backgroundColor: 'red',// Green for success, Red for error
+                stopOnFocus: true,
+            }).showToast();
         }
     } catch (error) {
         console.error('Error updating profile:', error);
@@ -139,6 +158,8 @@ function updatePFP(){
   }
 }
 // Fetch user profile when the component is mounted
+const isMounted = ref(false);
+
 onMounted(async() => {
         username.value = await fetchUserData('username');
         console.log("fetched username", username.value);
@@ -148,7 +169,8 @@ onMounted(async() => {
         console.log("fetched email", email.value);
         profileImage.value = await fetchUserData('profileImage');
         console.log("fetched profileImage", profileImage.value);
-        fetchMyGames();
+        isMounted.value = true;        
+        //fetchMyGames(); Doesn't seem to work
 });
 </script>
 <template>
@@ -156,8 +178,10 @@ onMounted(async() => {
         <globalNavBar/>
         <div class="profile-content">
             <div class="profile-picture-container">
-                    <img v-if="profileImage!=''&&profileImage!=null" :src="profileImage" alt="Profile Picture" />
-                    <img v-else :src="wizardPfp"  alt="Profile Picture">
+                    <img v-if="!isMounted" :src="loadCircle"  style="width:20%; height:20%; position: relative; top:38%; left:38%;" alt="Profile Picture">
+                    <img v-else-if="profileImage!=''&&profileImage!=null" :src="profileImage" alt="Profile Picture" />
+                    <img v-else :src="wizardPfp" alt="Profile Picture" />
+
                 </div>
             <div class="profile-header">
 
@@ -198,7 +222,7 @@ onMounted(async() => {
                     <button @click="saveProfile">Save Profile</button>
                 </div>
             </div>
-    <div class="user-games">
+    <!-- <div class="user-games">
       <h2 class="section-title">Your Games</h2>
       <div class="games-grid">
         <div 
@@ -214,7 +238,7 @@ onMounted(async() => {
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
         </div>
     </div>
 </template>

@@ -32,17 +32,13 @@ const router = useRouter(); // Access the Vue Router for navigation
         <RouterLink class="nav_btn" to="/project" active-class="active">Create</RouterLink><!-- I think they should be rendered conditionally-->
         <RouterLink class="nav_btn" to="/user" active-class="active">Profile</RouterLink>
         <RouterLink class="nav_btn" to="/about" active-class="active">About</RouterLink>
-
-
-
-        <!-- Conditional rendering based on whether the user is logged in -->
-        <template v-if="displayUsername">
-            <span class="hello-user">Hello {{ displayUsername || "ERROR NO USER. SHOULD NOT BE SEEN" }}!</span>
-            <button @click="logOut" class="logout-btn">Log Out</button>
-        </template>
-        <template v-else>
-            <RouterLink class="login_btn" to="/auth" active-class="active">Login</RouterLink>
-        </template>
+        <div style="display:flex; width:fit-content; margin-left:auto;   flex-shrink: 0;">
+            <div v-if="displayUsername">
+                <span class="hello-user">Hello {{ displayUsername || "ERROR NO USER. SHOULD NOT BE SEEN" }}!</span>
+                <button @click="logOut" class="login_btn">Log Out</button>
+            </div>
+            <RouterLink v-else class="login_btn" to="/auth">Login</RouterLink>
+        </div>
     </div>
 </template>
 
@@ -52,9 +48,11 @@ const router = useRouter(); // Access the Vue Router for navigation
 .navbar {
     position:sticky;
     display: flex;
+    overflow-x:clip;
+    align-self: flex-start;
     top: 0;
     width: 100vw;
-    height: fit-content;
+    height: 60px;
     padding: 10px;
     background-color: rgba(64, 64, 64,1);
     font-family: Arial, Helvetica, sans-serif;
@@ -63,9 +61,6 @@ const router = useRouter(); // Access the Vue Router for navigation
 }
 
 
-.nav_btn:first-child {
-    margin-left: auto; 
-}   
 .nav_btn {
     font-family: 'Syne Mono', monospace;
     font-size: 22px;
@@ -81,13 +76,14 @@ const router = useRouter(); // Access the Vue Router for navigation
 .login_btn {
     font-family: 'Syne Mono', monospace;
     font-size: 22px;
+    min-width:max-content;
     margin-left: auto;
-    margin-right: 10px;
-    background: rgb(255, 255, 255);
-    border: 2px solid #e0e0e0; /* Added for consistency */
+    display:inline-block;
+    height:40px;
+    background: #e0e0e0;
     border-radius: 5px;
     box-shadow: 2px 2px 0 #000; /* Added for brutal morphic style */
-    color: rgb(188, 188, 188);
+    color: rgb(163, 163, 163);
 }
 
 .hello-user {
@@ -98,15 +94,5 @@ const router = useRouter(); // Access the Vue Router for navigation
     margin-right: 10px;
 }
 
-.logout-btn {
-    font-family: 'Pixelify Sans';
-    font-size: 22px;
-    height: calc(min-content + 10px);
-    margin-left: 10px;
-    background: rgb(255, 255, 255);
-    border: 2px solid #e0e0e0; /* Added for consistency */
-    border-radius: 5px;
-    box-shadow: 2px 2px 0 #000; /* Added for brutal morphic style */
-    color: rgb(188, 188, 188);
-}
+
 </style>

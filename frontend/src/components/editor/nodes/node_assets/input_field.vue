@@ -43,8 +43,8 @@ function updateResponse(newResponse){
         <div class="nodrag">
                 <HContainer outer-margin="0px">
                     <HandleIn v-if="handleInput=='true'"   :id="id"></HandleIn>
-                    <div v-if="title!=''" style="text-wrap-mode:nowrap;"> {{ title }}</div>
-                    <textarea :value="NS.getParam(props.id,convertedTitle)[0]" class="textbox_text" @input="updateResponse($event.target.value)"></textarea>
+                    <div v-if="title!=''"> {{ title }}</div>
+                    <textarea :value="NS.getParam(props.id,convertedTitle)[0]" class="inputfield_text" @input="updateResponse($event.target.value)"></textarea>
                     <HandleOut v-if="handleOutput=='true'"  :id="id"></HandleOut>
                 </HContainer>
         </div>
@@ -55,10 +55,12 @@ function updateResponse(newResponse){
 
 
 <style scoped>
-    .textbox_text{
+    .inputfield_text{
         resize:none;
         width:100%;
         min-width:80px;
+        text-wrap-mode:nowrap;
+        overflow-x:scroll;
         height:20px;
         margin:none;
         background:rgb(255, 255, 255);
