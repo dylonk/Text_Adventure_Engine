@@ -9,11 +9,10 @@ const GL = useGameStore();
 
 // Use computed properties to observe the nodes in the store. Any with object_type_list will be displayed
 function renderObjectView(){
-  GL.scopeSyncer =! GL.scopeSyncer
+  GL.syncScope()
 }
 
 const OVUpdater = computed(()=>{
-  renderObjectView()
   return GL.scopeSyncer
 })
 
@@ -23,8 +22,8 @@ const OVUpdater = computed(()=>{
 <template>
     <div class="asset_browser">
       <h3>Game View</h3>
-      <div v-if="GL.scopeSyncer!=null" class="objects-container" @click="renderObjectView()">
-        <PreviewObject v-if="GL.initialized" id="0" nodeDepth="0"/>
+      <div class="objects-container" @click="renderObjectView()">
+        <PreviewObject v-if="GL.initialized && OVUpdater" id="0" nodeDepth="0"/>
       </div>
     </div>
 </template>
