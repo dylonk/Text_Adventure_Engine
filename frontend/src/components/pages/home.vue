@@ -1,35 +1,52 @@
 <script setup>
+import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
+
+// Components and assets
 import globalNavBar from '@/components/standardjs/navbar.vue';
 import clickSound from '@/assets/sounds/click.wav';
 import moreSound from '@/assets/sounds/more.wav';
-import explorer from'@/assets/Images/More.jpg';
+import explorer from '@/assets/Images/More.jpg';
 
 const router = useRouter();
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
+const games = ref([]);
 
+const fetchGames = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/games/`);
+    games.value = response.data.map(game => ({
+      id: game.id,
+      title: game.title,
+      image: 'https://i.pinimg.com/736x/13/34/75/133475f2b4de23314a01df9a61f85436.jpg'
+    }));
 
-// Navigate to explore page
+    games.value.push({
+      id: 'more',
+      title: 'More Games?',
+      image: explorer // or use static path string idk
+    });
+  } catch (error) {
+    console.warn('Error fetching games:', error);
+  }
+};
+
+function onGameClick(index) {
+  const game = games.value[index];
+  if (game.title === 'More Games?') {
+    router.push('/explore');
+  } else {
+    router.push(`/game/${game.title}`);
+  }
+}
+
 function goToExplore() {
   router.push('/explore');
 }
 
-// Dummy data for popular games
-const games = [
-  { id: 1, title: 'Fake Game 1', image: 'https://i.pinimg.com/736x/13/34/75/133475f2b4de23314a01df9a61f85436.jpg' },
-  { id: 2, title: 'Fake Game 2', image: 'https://i.pinimg.com/736x/13/34/75/133475f2b4de23314a01df9a61f85436.jpg' },
-  { id: 3, title: 'Fake Game 3', image: 'https://i.pinimg.com/736x/13/34/75/133475f2b4de23314a01df9a61f85436.jpg' },
-  { id: 4, title: 'Fake Game 4', image: 'https://i.pinimg.com/736x/13/34/75/133475f2b4de23314a01df9a61f85436.jpg' },
-  { id: 5, title: 'Fake Game 5', image: 'https://i.pinimg.com/736x/13/34/75/133475f2b4de23314a01df9a61f85436.jpg' },
-  { id: 6, title: 'More Games?', image: explorer}
-];
-
-function onGameClick(index) {
-  if(index < 5)
-    router.push({name: 'GamePage', params: { info: `testData${index}`} });
-  else
-    router.push({name: 'Explore'});
-}
+onMounted(fetchGames);
 </script>
 
 <template>
