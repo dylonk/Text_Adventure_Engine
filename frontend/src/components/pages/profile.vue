@@ -32,7 +32,7 @@ async function fetchMyGames() {
         myGames.value = response.data.map(game => ({
         id: game.id,
         title: game.title,
-        image: 'https://talentclick.com/wp-content/uploads/2021/08/placeholder-image.png'
+        thumbnail: game.thumbnail
         }));
     } catch (error) {
         console.warn('Error fetching games:', error);
@@ -162,15 +162,11 @@ const isMounted = ref(false);
 
 onMounted(async() => {
         username.value = await fetchUserData('username');
-        console.log("fetched username", username.value);
         currentPassword.value = await fetchUserData('password');
-        console.log("fetched password", currentPassword.value);
         email.value = await fetchUserData('email');
-        console.log("fetched email", email.value);
         profileImage.value = await fetchUserData('profileImage');
-        console.log("fetched profileImage", profileImage.value);
         isMounted.value = true;        
-        //fetchMyGames(); Doesn't seem to work
+        fetchMyGames(); 
 });
 </script>
 <template>
@@ -222,7 +218,7 @@ onMounted(async() => {
                     <button @click="saveProfile">Save Profile</button>
                 </div>
             </div>
-    <!-- <div class="user-games">
+     <div class="user-games">
       <h2 class="section-title">Your Games</h2>
       <div class="games-grid">
         <div 
@@ -238,7 +234,7 @@ onMounted(async() => {
           </div>
         </div>
       </div>
-    </div> -->
+    </div> 
         </div>
     </div>
 </template>
