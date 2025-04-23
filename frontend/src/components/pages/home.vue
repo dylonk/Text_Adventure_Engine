@@ -198,10 +198,9 @@ onMounted(fetchGames);
     display: flex;
     flex-direction: column;
     align-items: center;
-    font-size: 28px;
     border-radius: 5px;
     width: 160px;
-    background-color: #afe2df;
+    background-color: #d55454;
     color: #000000;
     border: 1px solid #000000;
     margin: 5px;
@@ -212,9 +211,11 @@ onMounted(fetchGames);
 }
 
 .gametitle {
-    font-size: 20px;
+    font-size: 16px;
     font-family:'Scada';
     display:block;
+    color:white;
+    font-weight:medium;
     white-space: nowrap;
     text-align: center;
     margin:10px;
@@ -228,7 +229,7 @@ onMounted(fetchGames);
 .gamepic{
   width:135px;
   border-radius: 4px;
-  border: 1px solid #000000;
+  border: 1px solid #ffffff;
   height:135px;
   aspect-ratio: 1/1;
   overflow: clip;
