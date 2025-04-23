@@ -8,7 +8,9 @@ import globalNavBar from '@/components/standardjs/navbar.vue';
 import clickSound from '@/assets/sounds/click.wav';
 import moreSound from '@/assets/sounds/more.wav';
 import explorer from '@/assets/Images/defaultgameimage.jpg';
+import play from '@/assets/Images/play.png';
 
+const playButton = ref(play)
 const explorerImage = ref(explorer)
 
 const router = useRouter();
@@ -71,12 +73,13 @@ onMounted(fetchGames);
           <div
             v-for="(game, index) in games.slice(0, 4)"
             :key="game.id"
-            class="game-square"
-            @click="onGameClick(index)"
+            class="game"
           >
-            <div class="game-title">{{ game.title }}</div>
-            <div class="game-pic">
-              <img :src="game.thumbnail|| explorerImage" alt="Game image" />
+            <div class="gametitle">{{ game.title }}</div>
+            <div class="gamepic"             @click="onGameClick(index)"
+            >
+              <img class="thumbnail" :src="game.thumbnail|| explorerImage" alt="Game image" />
+              <img class="overlay-play" :src="play">
             </div>
           </div>
         </div>
@@ -87,6 +90,7 @@ onMounted(fetchGames);
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Scada");
 
 #home-container {
   position: relative;
@@ -129,7 +133,7 @@ onMounted(fetchGames);
   font-size: 3em;
   margin-bottom: 25px;
   text-shadow: 5px 5px 0 #000;
-  color: #e0e0e0;
+  color: #ffffff;
 }
 
 .explore-button {
@@ -137,7 +141,7 @@ onMounted(fetchGames);
   align-self:flex-end;
   padding: 15px;
   font-family: 'Pixelify Sans', sans-serif;
-  border: 2px solid #e0e0e0;
+  border: 2px solid #ffffff;
   background: #7cbcbb;
   text-shadow: 2px 2px 0 #000;
 
@@ -178,7 +182,7 @@ onMounted(fetchGames);
   font-size: 2rem;
   margin-bottom: 25px;
   text-shadow: 3px 3px 0 #000;
-  color: #e0e0e0;
+  color: #ffffff;
 }
 
 .games-grid {
@@ -189,49 +193,74 @@ onMounted(fetchGames);
   gap: 20px;
 }
 
-.game-square {
-  background: #e74c3c;
-  border: 2px solid #e0e0e0;
-  width:150px;
-  height: 100%;
-  box-shadow: 4px 4px 0 #000;
-  border-radius: 6px;
-  padding: 12px;
-  text-align: center;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+
+.game {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 28px;
+    border-radius: 5px;
+    width: 160px;
+    background-color: #afe2df;
+    color: #000000;
+    border: 1px solid #000000;
+    margin: 5px;
+    padding: 10px;
+    position: relative;
+    text-transform: uppercase;
+    box-shadow: 6px 6px 0 #000;
 }
 
-.game-square:hover {
-  transform: translateY(-5px);
-  box-shadow: 6px 6px 0 #000;
+.gametitle {
+    font-size: 20px;
+    font-family:'Scada';
+    display:block;
+    white-space: nowrap;
+    text-align: center;
+    margin:10px;
+    margin-top:5px;
+    text-overflow: ellipsis;
+    overflow:hidden;
+    text-wrap:nowrap;
+    width:140px;
 }
 
-.game-square:active {
-  transform: scale(0.95);
-}
-
-.game-title {
-  font-size: 0.8dvw;
-  margin-bottom: 10px;
-  text-wrap: nowrap;
-  padding: 6px;
-  background: #c0392b;
-  color: #fff;
-  border: 2px solid #e0e0e0;
-  box-shadow: 2px 2px 0 #000;
-}
-
-.game-pic img {
-  width: 100%;
-  height: auto;
-  object-fit: cover;
+.gamepic{
+  width:135px;
+  border-radius: 4px;
+  border: 1px solid #000000;
+  height:135px;
   aspect-ratio: 1/1;
-  border: 2px solid #e0e0e0;
-  box-shadow: inset 2px 2px 0 #000;
+  overflow: clip;
 }
-.game-pic{
-  width: 100%;
+.gamepic .thumbnail {
+    border-radius: 4px;
+    width: 135px;
+    height: 135px;
+    object-fit: cover;
+    box-shadow: inset 2px 2px 0 #000;
+    filter: brightness(0.85);
+}
+.overlay-play{
+  display:none;
+  position:absolute;
+  width: 65px;
+  height: 65px;
+  left:29%;
+  bottom:28%;
+}
+.gamepic:hover .overlay-play{
+  display:inline;
+}
+.gamepic:hover .thumbnail{
+  filter: brightness(90%) blur(4px) grayscale(30%);
+}
 
+.game:hover {
+    color: #000;
+    transform: scale(1.01) translate(0px, -3px);
+
+    transition: all 0.1s ease-in-out;
 }
+
 </style>

@@ -4,6 +4,8 @@ import axios from 'axios';
 import { ref, onMounted,watch } from 'vue';   
 import skyImage from '@/assets/Images/editor/sky.png'
 import defaultThumbnail from '@/assets/Images/defaultgameimage.jpg'
+import playButton from '@/assets/Images/play.png'
+
 import game from './game.vue';
 import { useRouter } from 'vue-router';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // for Vite
@@ -12,7 +14,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // for Vite
 const router = useRouter();
 const sky = ref(skyImage)
 const defaultThumb = ref(defaultThumbnail)
-
+const play = ref(playButton)
 
 
 const recentGames = ref([]);
@@ -66,11 +68,14 @@ onMounted(fetchGames);
     </form>
     <div :style="{ backgroundImage: 'url(' + sky + ')' , flex: 1, height: '100%' }">
       <div v-if="recentGames.length>0" class="games-section" >
-            <div class="game" @click="goToGame(game.title)" v-for="game in filterGames()" :key="i"> <!--lOOP FROM BACKEND -->
+            <div class="game" v-for="game in filterGames()" :key="i"> <!--lOOP FROM BACKEND -->
                 <div class="gametitle">{{game.title}}</div>
-                <div class="gamepic"><img :src="game.thumbnail||defaultThumb"> </div>
+                <div class="gamepic" @click="goToGame(game.title)">
+                  <img :src="game.thumbnail||defaultThumb" class="thumbnail"> 
+                  <img :src="play" class="overlay-play">
+                </div>
+                  </div>
             </div>
-      </div>
     </div>
 
 </template>
@@ -153,8 +158,9 @@ input[type=search]:focus {
 .gamepic{
   width:150px;
   height:150px;
+  overflow: clip;
 }
-.gamepic img {
+.gamepic .thumbnail {
     border: 1px solid #8e8e8e;
     border-radius: 4px;
     width: 150px;
@@ -163,11 +169,25 @@ input[type=search]:focus {
     box-shadow: inset 2px 2px 0 #000;
     filter: brightness(0.85);
 }
+.overlay-play{
+  display:none;
+  position:absolute;
+  width: 75px;
+  height: 75px;
+  left:28%;
+  bottom:20%;
+}
+.gamepic:hover .overlay-play{
+  display:inline;
+}
+.gamepic:hover .thumbnail{
+  filter: brightness(90%) blur(4px) grayscale(30%);
+}
 
 .game:hover {
-    background-color: #c9dfe6;
     color: #000;
-    transform: scale(1.02);
+    transform: scale(1.02) translate(0px, -6px);
+
     transition: all 0.1s ease-in-out;
 }
 
