@@ -32,17 +32,48 @@ export default {
         stopOnFocus: true,
       }).showToast();
     },
-    handleThumbnailUpload(event) {
+
+      //uploads thumbnail LOCALLY using base64. only uploaded to imgur on publish
+      handleThumbnailUpload(event) {
       const file = event.target.files[0];
-      if (file) {
-        this.thumbnail = file;
+      if (file && file.type.startsWith("image/")) {
+        this.thumbnail = file; // store the File object
         const reader = new FileReader();
         reader.onload = (e) => {
-          this.thumbnailPreview = e.target.result; // update preview
+          this.thumbnailPreview = e.target.result; // base64 for preview only
         };
         reader.readAsDataURL(file);
+      } else {
+        this.showToast("Please select a valid image file.", "error");
       }
     },
+    async uploadThumbnailToImgur(file) {
+    const clientId = '91d4304a4949af6'; // Imgur Client ID
+
+    const formData = new FormData();
+    formData.append("image", file);
+
+    const response = await fetch("https://api.imgur.com/3/image", {
+      method: "POST",
+      headers: {
+        Authorization: `Client-ID ${clientId}`,
+      },
+      body: formData,
+    });
+
+    const result = await response.json();
+    if (!response.ok || !result.success) {
+      throw new Error(result?.data?.error || 'Upload failed');
+    }
+
+    return result.data.link; // <-- this is the image URL
+  },
+
+  
+
+
+
+  
     async publishGame() {
       if (!this.title || !this.description) {
         this.showToast("Please fill in all fields before publishing.", "error");
@@ -54,11 +85,14 @@ export default {
         console.log("Publishing Game:", this.title, this.description);
         console.log("Thumbnail:", this.thumbnail);
 
+        this.showToast("Uploading thumbnail...", "success");
+        const imageUrl = await this.uploadThumbnailToImgur(this.thumbnail); // Upload file
+
         const formData = new FormData();
         formData.append("title", this.title);
         formData.append("description", this.description);
         formData.append("thumbnail", this.thumbnail);
-        useProjectStore().exportGame(this.title, this.description, this.thumbnail);
+        useProjectStore().exportGame(this.title, this.description, imageUrl);
 
         // Simulated API call
         await new Promise(resolve => setTimeout(resolve, 2000)); // simulate delay of 2 seconds

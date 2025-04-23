@@ -67,7 +67,7 @@ onMounted(fetchGames);
       <div v-if="recentGames.length>0" class="games-section" >
             <div class="game" @click="goToGame(game.title)" v-for="game in filterGames()" :key="i"> <!--lOOP FROM BACKEND -->
                 <div class="gametitle">{{game.title}}</div>
-                <div class="gamepic"><img src="https://i.pinimg.com/736x/13/34/75/133475f2b4de23314a01df9a61f85436.jpg"> </div>
+                <div class="gamepic"><img :src="game.thumbnail"> </div>
             </div>
       </div>
     </div>

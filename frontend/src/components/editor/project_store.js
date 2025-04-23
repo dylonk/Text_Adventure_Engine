@@ -121,7 +121,7 @@
         userId: userid.value,
         title: title,
         description: description,
-        //thumbnail: thumbnail,
+        thumbnail: thumbnail,
         nodeMap: thisGame.nodeMap,
         images: nodesStore.getProjectImages()
       };

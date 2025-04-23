@@ -40,7 +40,7 @@ const router = express.Router();
  router.post('/save', async (req, res) => {
     console.log("save request send");
     try {
-      const { id, userId,title,description,nodeMap,images} = req.body;  
+      const { id, userId,title,description,nodeMap,images,thumbnail} = req.body;  
       console.log("id is", id, "title is", title);  //ok, so it successfully gets ID and name of the project
       console.log("sent user id is", userId);
       console.log("Received nodemap:", nodeMap);  // Log the nodeMap to see what's being passed
@@ -56,7 +56,7 @@ const router = express.Router();
           userId: userId,
           title: title,
           description: description,
-          //thumbnail: thumbnail,
+          thumbnail: thumbnail,
           nodeMap: nodeMap,
           images: images
         },                    // Update object
