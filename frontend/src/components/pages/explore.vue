@@ -9,7 +9,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // for Vite
 
 
 const router = useRouter();
-
+const sky = ref(skyImage)
 
 
 
@@ -63,17 +63,13 @@ onMounted(fetchGames);
     <form id="section-bar" action="placeholder" method="get">
         <input type="search" name="search-bar" placeholder="SEARCH" v-model="searchQuery">
     </form>
-    <div v-if="recentGames.length>0" class="games-section">
+    <div :style="{ backgroundImage: 'url(' + sky + ')' , flex: 1, height: '100%' }">
+      <div v-if="recentGames.length>0" class="games-section" >
             <div class="game" @click="goToGame(game.title)" v-for="game in filterGames()" :key="i"> <!--lOOP FROM BACKEND -->
                 <div class="gametitle">{{game.title}}</div>
                 <div class="gamepic"><img src="https://i.pinimg.com/736x/13/34/75/133475f2b4de23314a01df9a61f85436.jpg"> </div>
             </div>
-    </div>
-    <div v-else class="games-section">
-      <div class="game">
-                <div class="gametitle">Offline Title</div>
-                <div class="gamepic"><img src="https://i.pinimg.com/736x/13/34/75/133475f2b4de23314a01df9a61f85436.jpg"> </div>
-            </div>
+      </div>
     </div>
 
 </template>
@@ -117,7 +113,6 @@ input[type=search]:focus {
     gap: 20px;
     padding: 20px;
     justify-content: center;
-    background:rgb(25,25,25);
 
     text-align: center;
     width: 100%;

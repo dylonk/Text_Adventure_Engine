@@ -136,7 +136,9 @@ onMounted(fetchGames);
   padding: 15px;
   font-family: 'Pixelify Sans', sans-serif;
   border: 2px solid #e0e0e0;
-  background: #14b94e;
+  background: #7cdddb;
+  text-shadow: 2px 2px 0 #000;
+
   box-shadow: 6px 6px 0 #000;
   color: #fff;
   cursor: pointer;
@@ -147,7 +149,8 @@ onMounted(fetchGames);
 }
 
 .explore-button:hover {
-  background: #7ac02b;
+  
+  background: #69becb;
   transform: scale(1.1);
 }
 
