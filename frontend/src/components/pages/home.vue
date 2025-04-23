@@ -7,7 +7,9 @@ import axios from 'axios';
 import globalNavBar from '@/components/standardjs/navbar.vue';
 import clickSound from '@/assets/sounds/click.wav';
 import moreSound from '@/assets/sounds/more.wav';
-import explorer from '@/assets/Images/More.jpg';
+import explorer from '@/assets/Images/defaultgameimage.jpg';
+
+const explorerImage = ref(explorer)
 
 const router = useRouter();
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -67,14 +69,14 @@ onMounted(fetchGames);
         <h2 class="section-title">Popular Games</h2>
         <div class="games-grid">
           <div
-            v-for="(game, index) in games"
+            v-for="(game, index) in games.slice(0, 4)"
             :key="game.id"
             class="game-square"
             @click="onGameClick(index)"
           >
             <div class="game-title">{{ game.title }}</div>
             <div class="game-pic">
-              <img :src="game.thumbnail" alt="Game image" />
+              <img :src="game.thumbnail|| explorerImage" alt="Game image" />
             </div>
           </div>
         </div>
@@ -131,12 +133,12 @@ onMounted(fetchGames);
 }
 
 .explore-button {
-  font-size: 1.5em;
+  font-size: 2em;
   align-self:flex-end;
   padding: 15px;
   font-family: 'Pixelify Sans', sans-serif;
   border: 2px solid #e0e0e0;
-  background: #7cdddb;
+  background: #7cbcbb;
   text-shadow: 2px 2px 0 #000;
 
   box-shadow: 6px 6px 0 #000;
@@ -150,7 +152,7 @@ onMounted(fetchGames);
 
 .explore-button:hover {
   
-  background: #69becb;
+  background: #478690;
   transform: scale(1.1);
 }
 
@@ -163,10 +165,11 @@ onMounted(fetchGames);
   background: rgba(44, 47, 51, 0.9);
   border: 2px solid #e0e0e0;
   box-shadow: 6px 6px 0 #000;
-  width:35%;
   overflow: clip;
-  min-width:280px;
+  width:fit-content;
+  max-width:40%;
   padding: 25px;
+  padding-bottom:80px;
   border-radius: 10px;
 }
 
@@ -179,14 +182,18 @@ onMounted(fetchGames);
 }
 
 .games-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  flex: 1;
+  flex-wrap:wrap;
+  justify-content: center;
   gap: 20px;
 }
 
 .game-square {
   background: #e74c3c;
   border: 2px solid #e0e0e0;
+  width:150px;
+  height: 100%;
   box-shadow: 4px 4px 0 #000;
   border-radius: 6px;
   padding: 12px;
@@ -205,8 +212,9 @@ onMounted(fetchGames);
 }
 
 .game-title {
-  font-size: 1rem;
+  font-size: 0.8dvw;
   margin-bottom: 10px;
+  text-wrap: nowrap;
   padding: 6px;
   background: #c0392b;
   color: #fff;
@@ -221,5 +229,9 @@ onMounted(fetchGames);
   aspect-ratio: 1/1;
   border: 2px solid #e0e0e0;
   box-shadow: inset 2px 2px 0 #000;
+}
+.game-pic{
+  width: 100%;
+
 }
 </style>

@@ -3,6 +3,7 @@ import globalNavBar from '@/components/standardjs/navbar.vue'
 import axios from 'axios';
 import { ref, onMounted,watch } from 'vue';   
 import skyImage from '@/assets/Images/editor/sky.png'
+import defaultThumbnail from '@/assets/Images/defaultgameimage.jpg'
 import game from './game.vue';
 import { useRouter } from 'vue-router';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // for Vite
@@ -10,7 +11,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // for Vite
 
 const router = useRouter();
 const sky = ref(skyImage)
-
+const defaultThumb = ref(defaultThumbnail)
 
 
 
@@ -67,7 +68,7 @@ onMounted(fetchGames);
       <div v-if="recentGames.length>0" class="games-section" >
             <div class="game" @click="goToGame(game.title)" v-for="game in filterGames()" :key="i"> <!--lOOP FROM BACKEND -->
                 <div class="gametitle">{{game.title}}</div>
-                <div class="gamepic"><img :src="game.thumbnail"> </div>
+                <div class="gamepic"><img :src="game.thumbnail||defaultThumb"> </div>
             </div>
       </div>
     </div>
