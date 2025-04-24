@@ -40,19 +40,32 @@ const props = defineProps({
 //this function tries to find a savegame in the database.
 //if it finds one, it loads it into the game
 async function fetchSaveGame() {
+  //if it's a preview, just load the game from the project nd thats that.
+  if(props.isPreview) 
+  {
+    console.log("it's a preview, no savegame, starting");
+    GameLogic.start(NS.compileGame())
+    return;
+  }
   try {
-    console.log("fetching savegame");
+    console.log("fetching savegame, current fetched game",fetchedGame);
     const response = await axios.get(`${API_BASE_URL}/savegames/?gameId=${props.gameTitle}&userId=${userId}`);//response will be the savegame object
     //we then de-serialize the nodemap we get back
-    response.data[0].nodeMap=serializableToMap(response.data.nodeMap);
-    //and put the gamestate/game into the gamelogic. gamestate and game being essentially the same thing is very cool
-    console.log(response.data);
-    if(response.data==undefined){
-      if(isPreview) GameLogic.start(NS.compileGame())
-      else GameLogic.start()
+    //response.data[0] is the savegame
+    console.log(response.data[0]);
+    response.data[0].nodeMap=serializableToMap(response.data[0].nodeMap);
+    //if the response has a nodemap, load the nodemap into the fetchedgame. same game in all other respects, just different nodemap.
+    if(response.data[0].nodeMap)
+    {
+      fetchedGame.nodeMap=response.data[0].nodeMap;
+      console.log("fetched game image map",fetchedGame.imageMap);
+
     }
-    GameLogic.start(response.data.nodeMap);
+    console.log("starting game",fetchedGame);
+    GameLogic.start(fetchedGame);
+
 }
+
 
   catch (error) {
     console.warn('Error fetching savegame:', error);    
@@ -76,6 +89,7 @@ onMounted(async() => {
 
   //after fetching the game, check if we have a savegame. A little inefficient (if there's a savegame, the nodemap of the default game we already fetched is useless)
   //but it's easy and the datas so small that this shouldn't be a big issue
+  console.log("fetching savegame, current fetched game",fetchedGame);
   fetchSaveGame();  
 
   
@@ -116,8 +130,10 @@ async function fetchGame(gameTitle) {
     fetchedGame = response.data;
     //we have to de-jsonify it now. We don't have to do this for previews because the backend isn't involved
     fetchedGame.nodeMap = serializableToMap(fetchedGame.nodeMap);
+    console.log("fetched game image map",fetchedGame.images); 
     //start the game logic using the game data. The rest of the response is important too, it's displayed in the template
-    GameLogic.start(fetchedGame);
+    //GameLogic.start(fetchedGame);
+    console.log("finsihed fetching game",fetchedGame);
   } catch (error) {
     console.warn('Error fetching game:', error);    
   }
