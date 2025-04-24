@@ -96,14 +96,17 @@ onMounted(() => {
 
 <style scoped>
     .textbox_text{
-        resize:none;
-        width:200px;
-        resize:none;
-        overflow:scroll;
-        max-height: 150px;
+        resize: none;
+        width: 100%;
+        min-height: 48px;
+        height: auto;
+        overflow-y: auto;
         background:rgb(255, 255, 255);
         border:solid gray 1px;
         border-radius:3px;
+        padding: 4px;
+        box-sizing: border-box;
+        line-height: 1.5;
     }
     .textbox_container{
         /* color: v-bind('node_colors.prompt_fg'); */
