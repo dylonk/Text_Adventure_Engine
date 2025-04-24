@@ -591,7 +591,8 @@ onMounted(() => {
 
 .game-image-display {
   width: 100%;
-  height:35%;
+  height:30dvh;
+  min-height:30dvh;
   background-color: #252525;
   border-bottom: 1px solid #404040;
   display: flex;
