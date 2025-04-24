@@ -27,7 +27,7 @@ let imageMap = {} // should NOT be edited during the game, its just for synchron
 const output = ref("This should not appear, output is not being set")
 const outputQueue = ref([])
 let choices = []
-let watchchoices = [] // calculated when rooms are entered for the first time (These values would never change in the same room, so we get to save some performance there)
+let watchChoices = [] // calculated when rooms are entered for the first time (These values would never change in the same room, so we get to save some performance there)
 const currentImagePath = ref(null)
 const canvasID = ref(0)
 let canvasesInScope = {}
@@ -36,10 +36,11 @@ let prevPlayerPositions = [] // For SETLOCATION. Different from prevActiveNodes.
 let prevActiveNodes = [] // For AWAIT. Logic may not necessarily be occurring in the same room as the player is in. Example: Check time is called on player's watch. You don't want to move player position to the watch, but you do want the watch logic to run. Once RETURNLOGIC is called, the original position the logic was in is returned to
 
 const start = (compiledGame,online=true) =>{
+  console.log("[GAME] Compiled Game",compiledGame)
   isOnline.value = online
   originalGame = compiledGame
-  nodeMap = compiledGame.nodeMap
-  watchchoices=[];
+  nodeMap = originalGame.nodeMap
+  watchChoices=[];
   choices=[];
   currentImagePath.value = null;
   allowUserInput.value = false;
@@ -342,19 +343,25 @@ const archiveOutput = () =>{
 }
 // CHOICES NEED TO BE INTERPRETED AT CALL TIME, SOME SITUATIONS MAY NOT ALLOW FOR PRECOMPUTATION, SUCH AS IF A CHOICE HAS AN ALIAS THAT CHANGES BETWEEN THE TIMES OF THE ROOM CALCULATION AND THE PLAYER INTERACTING
 
-const addChoice = (choiceText, originNodeID, originHandleID, doPushChoice=true) =>{
+const addChoice = (choiceText, originNodeID, originHandleID, isAwait=false) =>{
   if(debug>=3) console.log("[GAME] addChoice(text=",choiceText,"originID=",originNodeID,"handleID=",originHandleID)
   const choice = {
     text: choiceText,
     nodeID: originNodeID,
     handleID: originHandleID,
   }
-  if(doPushChoice) choices.push(choice)
+  if(!isAwait){
+    choices.push(choice)
+  } 
+  else{
+    watchChoices.push(choice)
+  }
   return choice
 }
 
 function calculateAwaits(node){
-  if(node.hasOwnProperty('awaitChoices')) return node.awaitChoices;  // awaitChoices have already been calculated, just returning the precalculated choices
+  if(node==null) return []
+  //if(node.hasOwnProperty('awaitChoices')) return node.awaitChoices;  // awaitChoices have already been calculated, just returning the precalculated choices
   if(!node.hasOwnProperty('isObject') || !node.isObject) return [];
   let nodeAwaitChoices = [] 
   const nodeChildren = node.n
@@ -363,12 +370,11 @@ function calculateAwaits(node){
     if(child==null) continue;
     if(child.type == 'await'){
       const choiceText = getParameter(child,0,false) // gets the first param
-      const nodeID = nodeChildren[i].id
+      const nodeID = child.id
       const handleID = 0;
-      nodeAwaitChoices.push(addChoice(choiceText,nodeID,handleID,false))
+      nodeAwaitChoices.push(addChoice(choiceText,nodeID,handleID,true))
     }
   }
-  if(debug>=2) console.log("[GAME] Calculated Await choices for node",node.id,"are", nodeAwaitChoices)
   return nodeAwaitChoices
 }
 
@@ -406,6 +412,7 @@ const markScope = () =>{ // Marks the scope of the nodes that are being watched 
     markedNode.inScope  = false;
     updateNode(markedNode)
   }
+
   canvasesInScope = {} // Remove all canvases currently in scope
   let tChoices = []
 
@@ -413,11 +420,11 @@ const markScope = () =>{ // Marks the scope of the nodes that are being watched 
   // Calculate awaits for player
   let playerNode = getNode(2)
   if(playerNode==null){if(debug>=1)console.log("[GAME] markScope player is null"); return;}
-  tChoices = calculateAwaits(playerNode)
-  if(tChoices!=[]) playerNode.awaitChoices = tChoices;
-  playerNode.inScope = true;
-  canvasesInScope[Number(playerNode.id)] = tChoices
-  updateNode(playerNode)
+  // tChoices = calculateAwaits(playerNode)
+  // if(tChoices!=[]) playerNode.awaitChoices = tChoices;
+  // playerNode.inScope = true;
+  // canvasesInScope[Number(playerNode.id)] = tChoices // canvasesInScope = {'2':[tChoices]}
+  // updateNode(playerNode)
 
   // Calculate awaits for player sibling (player's parent's other children)
   let playerParent = getNode(playerNode.parentID)
@@ -426,22 +433,60 @@ const markScope = () =>{ // Marks the scope of the nodes that are being watched 
     for(let i = 0; i < playerSiblings.length;i++){
       let playerSibling = getNode(playerSiblings[i])
       if(playerSibling==null) continue; 
-      tChoices = calculateAwaits(playerSibling)
-      if(tChoices!=[]) playerSibling.awaitChoices=tChoices;
+      tChoices = calculateAwaits(playerSibling) // calculates awaits for each node in 
       playerSibling.inScope=true;
+      if(tChoices!=[]){ 
+        playerSibling.awaitChoices=tChoices;
+      }
       canvasesInScope[Number(playerSibling.id)] = tChoices
       updateNode(playerSibling)
     }
   }
 
   // Calculate awaits for player's children
-  const playerChildren = playerParent.n
+  const playerChildren = playerNode.n
   for(let i = 0; i<playerChildren.length;i++){
+    let playerChild = getNode(playerChildren[i])
+    if(playerChild==null) continue
+    tChoices = calculateAwaits(playerChild)
+    playerChild.inScope=true;
 
+    if(tChoices!=[]){
+      playerChild.awaitChoices=tChoices;
+    }
+    canvasesInScope[Number(playerChild.id)] = tChoices
+    updateNode(playerChild)
   }
 
+  // Recursively calculate parent
+  let currentAncestor = playerNode
+  while(currentAncestor!=null){
+    currentAncestor = getAncestor(currentAncestor)
+    if(currentAncestor==null) continue;
+    tChoices = calculateAwaits(currentAncestor)
+    if(tChoices!=[]) {
+      currentAncestor.awaitChoices = tChoices
+    }
+    currentAncestor.inScope = true;
+
+    updateNode(currentAncestor)
+  }
+
+  console.log("[GAME] Nodes in scope are ", canvasesInScope)
+  console.log("[GAME] Await Choices are:",watchChoices)
   return;
 }
+
+
+const getAncestor = (node) => {
+  if(node==null) return null;
+  if(node.parentID == -1){
+    return null
+  }
+  return getNode(node.parentID)
+}
+
+
 
 const syncScope =()=>{
   scopeSyncer.value = false
@@ -464,11 +509,11 @@ const nodeSwapLocation = (targetNode, destinationNode,useDestinationParent=false
   destinationNode.n.push(targetNode.id) // add child to destination
   const index = targetParent.n.indexOf(targetNode.id)
   if(index !== -1) targetParent.n.splice(index,1) // cut out child
-  console.log("!!!",targetNode,targetParent,destinationNode)
   updateNode(targetNode)
   updateNode(targetParent)
   updateNode(destinationNode)
 
+  watchChoices = []
   markScope()
   const player = getNode(2) 
   syncScope()
@@ -476,6 +521,7 @@ const nodeSwapLocation = (targetNode, destinationNode,useDestinationParent=false
   if(useDestinationParent==false){ // assumes starting node is beginning
     nextNode = getNode(getChildrenOfType("playerenter",getNode(player.parentID))) // gets the first playerEnter node in the room
   }
+  console.log("[GAME] Watch choices are", watchChoices)
   processNode(nextNode)
 
 }
@@ -564,8 +610,6 @@ const func = (iNode) => { // function node functions
       const returnLocation = getParameter(iNode,0,false)
       let prevPlayerNode = null;
       if(returnLocation!="") prevPlayerNode = getNode(prevPlayerPositions.pop())
-      console.log("!!!!",returnLocation, prevPlayerNode)
-
       if(prevPlayerNode==null) break;
 
       if(returnLocation=='Room Beginning'){
@@ -691,22 +735,35 @@ console.log("[GAME] userResponse converted to", interpretedTexts)
 return interpretedTexts
 }
 
-const interpretGameText=(text)=>{
+const interpretGameText=(textObject)=>{
 // does the same as user Text but for anything that may be considered a 'choice' (prompts, awaits, whaaaatever)
 const interpretedTexts = []
-interpretedTexts.push(text.toLowerCase().replace(/\s/g, ""))
+interpretedTexts.push(textObject.toLowerCase().replace(/\s/g, ""))
 return interpretedTexts
 }
+
 
 const userResponse=(text)=>{ // Compares user text to possible choices
   console.log("[GAME] userResponse was", text)
   if(text == "printnodes") console.log("CONSOLE COMMAND, printnodes",nodeMap)
   allowUserInput.value = false;
   const userText = interpretUserText(text)
+  let interpretedChoices = []
+
   for(let i = 0; i < choices.length; i++){
-    if(userText[0] == choices[i].text){
+    interpretedChoices = interpretGameText(choices[i].text)
+    if(interpretedChoices.includes(userText[0])){
       archiveOutput();
       processNode(nextNodeFromHandle(choices[i].handleID,choices[i].nodeID))
+      return;
+    }
+  }
+  for(let i = 0;i <watchChoices.length;i++){
+    interpretedChoices = interpretGameText(watchChoices[i].text)
+    if(interpretedChoices.includes(userText[0])){
+      
+      archiveOutput();
+      processNode(nextNodeFromHandle(watchChoices[i].handleID,watchChoices[i].nodeID))
       return;
     }
   }
@@ -772,6 +829,7 @@ return{
       userResponse,
       addChoice,
       markScope,
+      getAncestor,
       interpretUserText,
       allowUserInput,
       interpretGameText,

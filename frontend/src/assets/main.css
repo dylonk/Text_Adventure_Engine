@@ -33,6 +33,12 @@ a,
   stroke-dasharray: 10;
   animation: dash 5s linear;
 }
+.vue-flow__edge .vue-flow__edge-default{
+  stroke-width: 3;
+  stroke: black;
+
+}
+
 .vue-flow__nodesselection-rect{
 
   touch-action: none;

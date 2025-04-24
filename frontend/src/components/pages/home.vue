@@ -71,7 +71,7 @@ onMounted(fetchGames);
         <h2 class="section-title">Popular Games</h2>
         <div class="games-grid">
           <div
-            v-for="(game, index) in games.slice(0, 4)"
+            v-for="(game, index) in games.slice(0, 6)"
             :key="game.id"
             class="game"
           >
@@ -120,7 +120,7 @@ onMounted(fetchGames);
   height:fit-content;
   gap: 10%;
   align-items: stretch;
-  width: 60%;
+  width: 90%;
   z-index:2;
   /* margin: 120px auto 0 auto; */
 }
@@ -170,8 +170,8 @@ onMounted(fetchGames);
   border: 2px solid #e0e0e0;
   box-shadow: 6px 6px 0 #000;
   overflow: clip;
-  width:fit-content;
-  max-width:40%;
+  width:max-content;
+  max-width:50%;
   padding: 25px;
   padding-bottom:80px;
   border-radius: 10px;

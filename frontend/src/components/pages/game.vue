@@ -47,6 +47,10 @@ async function fetchSaveGame() {
     response.data[0].nodeMap=serializableToMap(response.data.nodeMap);
     //and put the gamestate/game into the gamelogic. gamestate and game being essentially the same thing is very cool
     console.log(response.data);
+    if(response.data==undefined){
+      if(isPreview) GameLogic.start(NS.compileGame())
+      else GameLogic.start()
+    }
     GameLogic.start(response.data.nodeMap);
 }
 
@@ -587,7 +591,7 @@ onMounted(() => {
 
 .game-image-display {
   width: 100%;
-  max-height:40%;
+  height:35%;
   background-color: #252525;
   border-bottom: 1px solid #404040;
   display: flex;
