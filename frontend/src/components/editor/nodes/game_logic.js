@@ -74,7 +74,7 @@ const getImage = (name) => {
   return null
 }
 const getNode = (nodeID, notifyConsole=false) => { //get node from nodemap
-  if(nodeID == null) return null
+  if(nodeID == null || nodeID == undefined) return null
   let nodeExists = nodeMap.get(Number(nodeID))
   nodeExists = nodeExists!=null? nodeExists:null
   if(debug>=3) console.log("[GAME] getNode(",nodeID,") is",nodeExists)
@@ -599,7 +599,10 @@ const func = (iNode) => { // function node functions
         prevPlayerPositions.push(nextNodeId)
         if(debug>=1) console.log("[GAME] setlocation added to prevPlayerPositions", prevPlayerPositions)
       }
-        nodeSwapLocation(target,destination)
+      nodeSwapLocation(target,destination)
+      if(target.type!='player'){
+        processNode(nextNodeFromHandle(0))
+      }
       if(debug>=1) console.log("[GAME] setlocation successful",target,destination)
       // processNode(nextNodeFromHandle(0)) TODO: ADD RETURNS
 
