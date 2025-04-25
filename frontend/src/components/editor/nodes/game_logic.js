@@ -18,7 +18,7 @@ const objectViewerSelected = ref(0) // for the editor preview
 const initialized = ref(false)
 const isOnline = ref(false)
 const allowUserInput = ref(false) // ensures that user input is only accepted during specific times (i.e path hits a prompt node) and not mid logic or something
-let debug = 2 // 0 is what the user should be able to see, 1 is light dev debugging, 2 is heavy debugging, 3 includes getnode and very spammy ones
+let debug = 3 // 0 is what the user should be able to see, 1 is light dev debugging, 2 is heavy debugging, 3 includes getnode and very spammy ones
 
 // Actual game stuff starts here
 let nodeMap = new Map() // map of nodes stored by ID not name!!
@@ -88,6 +88,7 @@ const getNodeByName = (name) => {
   for (const [id, node] of nodeMap.entries()) {
     if (node.hasOwnProperty("objectName") && node.objectName === name) {
       if(debug>=1) console.log("[GAME] getNodeByName Found", name);
+      if(debug>=2) console.log("[GAME] getNodeByName node is", node);
       if (node.obj == null) {
         return node;
       } 
@@ -219,16 +220,20 @@ const parseValue = (value) => {
 
 
 //this is the same thing without the curly braces, used for extracting variables from conditions. still returns an array of all the variable strings.
+//should allow variables such as tom cruise.money as well, accounting for spaces
+//since tom cruise is not an actual variable name, but simply passed to getnodeby title
 const extractVariableReferences = (inputText) => {
   // Match things like room1.cleanliness or player.health (basic dot notation)
-  const regex = /\b([a-zA-Z_]\w*\.[a-zA-Z_]\w*)\b/g;
+  const regex = /([a-zA-Z_][\w ]*)\.([a-zA-Z_]\w*)/g;
   let matches = [];
   let match;
 
-  while ((match = regex.exec(inputText)) !== null) {
-    matches.push(match[1]);
-  }
 
+  while ((match = regex.exec(inputText)) !== null) {
+    const fullMatch = `${match[1].trim()}.${match[2].trim()}`;
+    matches.push(fullMatch);
+  }
+  if(debug>=2) console.log(`[GAME] ✅ Extracted variable references:`, matches);
   return matches;  // Return all the extracted references
 };
 
@@ -238,8 +243,8 @@ const extractVariableReferences = (inputText) => {
 const getValueFromNode = (reference) => { 
 
   const parts = reference.split('.');
-  const nodeName = parts[0];
-  const propertyName = parts[1];
+  const nodeName = parts[0].trim();
+  const propertyName = parts[1].trim();
 
   const node = getNodeByName(nodeName);
 
@@ -276,12 +281,12 @@ const getValueFromNode = (reference) => {
         }
       }
   }
-  else if (!(propertyName in node.data.properties)) {
+  else if (!(propertyName in node.properties)) {
     if(debug>=2) console.warn(`[GAME] ❌ Property "${propertyName}" not found in node "${nodeName}"'s properties`);
     return null;
   }
 
-  const value = node.data.properties[propertyName];
+  const value = node.properties[propertyName];
   if(debug>=2) console.log(`[GAME] ✅ getValueFromNode("${reference}") =`, value);
   return value;
 };
@@ -324,6 +329,14 @@ const processNode = (iNode) =>{
     if(debug>=1) console.log("[GAME] End of logic reached")
     return;
   }
+
+    // my attempted fix for the issue of prompt nodes getting skipped past.
+    if(allowUserInput.value === true) {
+      if(debug>=1) console.log("[GAME] Waiting for user input, pausing node processing")
+      return;
+    }
+  
+    
   // Add awaits to choices here
   activeNode = iNode.id
   if(debug>=3) console.log("[GAME] 🦠🔍 Parsing node:",iNode.id, iNode)
@@ -561,6 +574,7 @@ const func = (iNode) => { // function node functions
       // Output the final text with replaced values
       outputText(outputTextWithReplacements);
       for(let i = 0; i < funcParams[1].vals.length; i++){
+        console.log("[GAME] func prompt", funcParams[1].vals[i])
         addChoice(funcParams[1].vals[i],iNode.id,i+1)
       }
       allowUserInput.value = true;
@@ -633,12 +647,36 @@ const func = (iNode) => { // function node functions
         break;
       }
       if(debug>=1) console.log("[GAME] setLocation Target found", target.id, target.objectName)
-      console.log( "check this out" ,funcParams[1].vals[0], funcParams[2].vals[0])
       let propertyName = funcParams[1].vals[0]
       let newValue = funcParams[2].vals[0]
-      target.properties[propertyName] = newValue
+      if(debug>=1)console.log( "initial value of ", propertyName, " is " ,target.properties[propertyName])
+      // First ensure the current property value is treated as a number if it should be
+      let currentValue = target.properties[propertyName];
+      if (!isNaN(currentValue)) {
+        currentValue = Number(currentValue);
+      }
+      //it will either modify the value or set it depending on case
+      //it will either modify the value or set it depending on case
+      switch(newValue){
+        case "-":{
+          target.properties[propertyName] = currentValue - 1;
+          break;
+        }
+        case "+":{
+          target.properties[propertyName] = currentValue + 1;
+          break;
+        }
+        default:
+          // For non-increment/decrement cases, try to preserve the type
+          // Convert to number if it looks like a number
+          if (!isNaN(newValue)) {
+            target.properties[propertyName] = Number(newValue);
+          } else {
+            target.properties[propertyName] = newValue;
+          }
+      }
+      if(debug>=1)console.log( "changed value of ", propertyName, " is " ,target.properties[propertyName])
       updateNode(target)
-      console.log("[GAME] setproperty successful",target)
       processNode(nextNodeFromHandle(0))
       break;  
     }
