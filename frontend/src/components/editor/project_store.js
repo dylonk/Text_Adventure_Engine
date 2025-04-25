@@ -2,6 +2,9 @@
   import { ref, computed,markRaw } from 'vue';
   import { useNodesStore } from './nodes/node_store.js';  //imports from node store
   import { v4 as uuidv4 } from 'uuid';
+  import Toastify from 'toastify-js';
+  import 'toastify-js/src/toastify.css';
+
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 
   export const useProjectStore = defineStore('project', () => {
@@ -14,6 +17,8 @@
 
     //project settings This one doesn't really need to be arrayed because it doesn't need to persist through sessions
     const showPreview = ref(false);
+    const projectIsSaved = ref(false);
+
 
     // Method to rename the project
     function renameProject(newName) {
@@ -24,7 +29,7 @@
     }
 
     // Export project method
-    async function exportProject() {  //important function! exports/saves the project. Async because it needs to wait for user profile to be fetched
+    async function exportProject() {  //important function! saves the project. Async because it needs to wait for user profile to be fetched
       console.log("exportProject called");
       const token = localStorage.getItem('token');  //gotta get the token to make sure user logged in
       if (!token) {
@@ -73,9 +78,27 @@
           const errorDetail = await response.text();  // Get error response details
           throw new Error(`Exportfailed: ${errorDetail}`);
         }
+        projectIsSaved.value = true;
+        Toastify({
+          text: "✅ Project saved successfully!",
+          duration: 4000,
+          gravity: "top",
+          position: "right",
+          backgroundColor: "#4dab4d",
+          stopOnFocus: true,
+        }).showToast();
+        return projectData;
 
       } catch (error) {
         console.error('Failed to export project', error);
+        Toastify({
+          text: "❌ Failed to save project. Please try again.",
+          duration: 4000,
+          gravity: "top",
+          position: "right",
+          backgroundColor: "#ff4d4d",
+          stopOnFocus: true,
+        }).showToast();
         return null;
       }
     }

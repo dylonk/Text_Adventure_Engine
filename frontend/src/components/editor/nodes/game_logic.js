@@ -742,17 +742,25 @@ const func = (iNode) => { // function node functions
         const bool = safeEvaluate(stringToEval);
         conditionBools.push(bool);
       }
-
+      // Find first true condition (including if and elseIfs)
+      let foundTruthy = false;
       for(let i = 0; i < conditionBools.length; i++){
         if(conditionBools[i]){
           processNode(nextNodeFromHandle(i));
+          foundTruthy = true;
           break;
         }
       } 
-      // If we got here, no condition was true, so follow the else handle
-      processNode(nextNodeFromHandle(conditionBools.length));
+      
+      // If no condition was true, follow the else handle
+      // The else handle is always at index equal to total conditions
+      if (!foundTruthy) {
+        const elseHandleIndex = conditionBools.length;
+        processNode(nextNodeFromHandle(elseHandleIndex));
+      }
       break;
     }
+
     case "playerenter":{
       processNode(nextNodeFromHandle(0))
       break

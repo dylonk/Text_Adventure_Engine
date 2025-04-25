@@ -8,6 +8,8 @@ import useDragAndDrop from '../drag_drop.js';
 import { useNodesStore } from "../nodes/node_store.js"
 import { useProjectStore } from '../project_store';
 import ContextMenu from '../context_menu.vue';
+import Toastify from 'toastify-js';
+import 'toastify-js/src/toastify.css';
 
 const { screenToFlowCoordinate} = useVueFlow()
 // NEWNODEREQ
@@ -47,6 +49,16 @@ const contextMenuId = ref(null)
 const contextMenuPosition = ref({ x: 0, y: 0 })
 const contextMenuActions=ref()
 
+
+function onNodesChange(changes) {
+  applyNodeChanges(changes, nodesStore.nodes)
+  useProjectStore().projectIsSaved = false
+}
+
+function onEdgesChange(changes) {
+  applyEdgeChanges(changes, nodesStore.edges)
+  useProjectStore().projectIsSaved = false
+}
 
 const actionsByType = {
 
@@ -106,9 +118,13 @@ const keydownHandler = (event) => {
 };
 onMounted(() => {
     document.addEventListener('keydown', keydownHandler);
+    window.addEventListener('beforeunload', beforeUnloadHandler);
+
 });
 onBeforeUnmount(() => {
     document.removeEventListener('keydown', keydownHandler);
+    window.removeEventListener('beforeunload', beforeUnloadHandler);
+
 })
 
 const showPreview = false;
@@ -119,6 +135,15 @@ function onSwap(){
     //updateNodeInternals(nodesStore.getLocalNodeIDs())
 }
 
+//makes sure the project is saved before closing
+function beforeUnloadHandler(event) {
+  console.log("beforeUnloadHandler called");
+  if (!projectIsSaved.value) {  // This is a ref you need to track!
+    event.preventDefault();
+    event.returnValue = ''; // Required for modern browsers
+    return ''; // For older ones
+  }
+}
 
 const onConnect = (connection) => {
     console.log('Connection made:', connection);
@@ -150,8 +175,8 @@ const onConnect = (connection) => {
         @dragover="onDragOver" 
         @dragleave="onDragLeave" 
         @connect="onConnect"
-        @nodes-change="changes => applyNodeChanges(changes  , nodesStore.nodes)"
-        @edges-change="changes => applyEdgeChanges(changes, nodesStore.edges)"
+        @nodes-change="onNodesChange"
+        @edges-change="onEdgesChange"
         @contextmenu="showContextMenu($event)"
         :connection-mode="ConnectionMode.Strict"
         fit-view-on-init>
