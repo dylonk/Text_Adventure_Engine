@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 const router = express.Router();
 
 // Get JWT secret from environment variable
-const jwtSecret = process.env.JWT_SECRET || 'default_jwt_secret';
+const jwtSecret = process.env.JWT_SECRET;
 
 // Middleware to authenticate JWT token
 const authenticateToken = (req, res, next) => {
