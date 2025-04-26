@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 require('dotenv').config();
 const app = express();
-app.use(express.json());
+app.use(express.json({ limit: '1mb' }));
 app.use(express.static(path.join(__dirname, '..', 'frontend', 'public'))); // Serve static files from the 'public' directory
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));

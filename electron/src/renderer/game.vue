@@ -160,8 +160,8 @@ onMounted(() => {
 </script>
 
 <template>    
-<div { display:flex; flex-direction: columns; height: 100 dvh; width: 100dvw; } >
-<div class="main-container">
+<div style="display: flex; flex-direction: column; height: 100dvh; width: 100dvw;">
+  <div class="main-container">
   <div
     class="game-container"
     ref="gameContainer"

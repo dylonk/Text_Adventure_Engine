@@ -19,7 +19,7 @@ import globalNavBar from '@/components/standardjs/navbar.vue'
         <div id="about-text">
             <p>Play from a wide variety of user generated adventures</p>
         </div>
-        <a href=https://github.com/dylonk/Text_Adventure_Engine/releases/download/v1.0.0/Text-Adventure-Electron-Setup-1.0.0.exe download>Download for Windows</a>
+        <a href=https://github.com/dylonk/Text_Adventure_Engine/releases/download/v1.0.1/Text-Adventure-Electron-Setup-1.0.1.exe download>Download for Windows</a>
         <div id="credits">
             <p>Created by:</p>
             <div id="creditsNames">

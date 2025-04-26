@@ -136,6 +136,9 @@ async function downloadGame() {
   const imagesFolder = zip.folder("assets/images");
   const images = gameToDownload.images;
 
+
+  //if there even are images, download all the images and put them in the folder
+  if (images && Object.keys(images).length > 0) {
   //saves all the images to the images folder
   for (const [name, url] of Object.entries(images)) {
   try {
@@ -144,6 +147,7 @@ async function downloadGame() {
     imagesFolder.file(`${name}.jpeg`, blob); // "dog.jpeg", "whitedog.jpeg"
   } catch (err) {
     console.warn("Failed to download image:", url, err);
+  }
   }
 }
 
