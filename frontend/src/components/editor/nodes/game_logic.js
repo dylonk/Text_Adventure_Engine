@@ -751,10 +751,11 @@ const func = (iNode) => { // function node functions
           break;
         }
       } 
-      
       // If no condition was true, follow the else handle
       // The else handle is always at index equal to total conditions
       if (!foundTruthy) {
+        console.log("[GAME] no condition was true, following else handle");
+        console.log("[GAME] conditionBools = ", conditionBools)
         const elseHandleIndex = conditionBools.length;
         processNode(nextNodeFromHandle(elseHandleIndex));
       }
