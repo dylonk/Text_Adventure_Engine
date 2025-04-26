@@ -34,6 +34,14 @@
       const token = localStorage.getItem('token');  //gotta get the token to make sure user logged in
       if (!token) {
         console.log('No token found. Cannot save project');
+        Toastify({
+          text: "❌ Failed to save project. Please try again.",
+          duration: 4000,
+          gravity: "top",
+          position: "right",
+          backgroundColor: "#ff4d4d",
+          stopOnFocus: true,
+        }).showToast();
         return null;
       }
       try {
@@ -75,6 +83,14 @@
           body: JSON.stringify(projectData)   //json stringifies this data
                 });
         if (!response.ok) {
+          Toastify({
+            text: "❌ Failed to save project. Please try again.",
+            duration: 4000,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "#ff4d4d",
+            stopOnFocus: true,
+          }).showToast();
           const errorDetail = await response.text();  // Get error response details
           throw new Error(`Exportfailed: ${errorDetail}`);
         }
