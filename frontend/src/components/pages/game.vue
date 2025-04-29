@@ -9,7 +9,11 @@ import axios from 'axios';
 import { fetchUserData } from '@/components/standardjs/fetchUserData';
 import speakerIcon from '../../assets/Images/speaker_icon.png';
 import JSZip from 'jszip';
+import { HContainer } from '../editor/nodes/node_assets/n-component-imports.js';
+import Toastify from 'toastify-js';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // for Vite
+import { cloneDeep } from 'lodash';
+import { clone } from 'lodash';
 
 
 
@@ -42,19 +46,27 @@ const props = defineProps({
 async function fetchSaveGame() {
   try {
     console.log("fetching savegame");
+    if(isPreview){
+      console.log("game is preview")
+      GameLogic.start(NS.compileGame())
+      return;
+    }
     const response = await axios.get(`${API_BASE_URL}/savegames/?gameId=${props.gameTitle}&userId=${userId}`);//response will be the savegame object
+    console.log(response)
     //we then de-serialize the nodemap we get back
     response.data[0].nodeMap=serializableToMap(response.data.nodeMap);
     //and put the gamestate/game into the gamelogic. gamestate and game being essentially the same thing is very cool
-    console.log(response.data);
+    console.log("fetchSaveGame data=",response.data);
     if(response.data==undefined){
-      if(isPreview) GameLogic.start(NS.compileGame())
-      else GameLogic.start()
+      console.log("Could not find a savegame")
+      return;
     }
-    GameLogic.start(response.data.nodeMap);
+    console.log("loading game=",response.data[1])
+    GameLogic.loadGame(response.data[1].nodeMap);
 }
 
   catch (error) {
+    
     console.warn('Error fetching savegame:', error);    
   }
 }
@@ -95,15 +107,7 @@ function serializableToMap(obj) {
     return map;
   }
 
-  //yes, this function is a direct copypaste from project.store when i should have just imported both of these. Employers if you're looking at this 
-  //I will not do this when I am working for you
-  function mapToSerializable(map) {
-      const obj = {};
-      for (const [key, value] of map.entries()) {
-        obj[key] = value;
-      }
-      return obj;
-    }
+
 
 
 
@@ -126,10 +130,7 @@ async function fetchGame(gameTitle) {
 
 async function downloadGame() {
   // Create a copy of the game data with the nodeMap converted to a serializable format
-  const gameToDownload = {
-    ...fetchedGame,
-    nodeMap: mapToSerializable(GameLogic.getNodeMap())
-  };
+  const gameToDownload = GameLogic.saveGame()
 
     //creates a new zip file
     const zip=new JSZip();
@@ -166,6 +167,17 @@ async function downloadGame() {
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
+}
+
+const loadGame = () =>{
+  Toastify({
+            text: "Error loading game",
+            duration: 2000,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "#ff4d4d",
+            stopOnFocus: true,
+          }).showToast();
 }
 
 const loadGameFromFile = (event) => {
@@ -320,7 +332,6 @@ async function handleInput(){
 
 //saves a game to the backend
 async function saveGame () {
-
   const response=await fetch (`${API_BASE_URL}/savegames/save`, {
     method: 'POST',
     headers: {
@@ -329,7 +340,7 @@ async function saveGame () {
     body: JSON.stringify({
       gameId: fetchedGame.id,
       userId: userId.value,
-      nodeMap: mapToSerializable(GameLogic.getNodeMap())//gotta make sure this little guy is ready for jsonification
+      nodeMap: cloneDeep(GameLogic.saveGame())//gotta make sure this little guy is ready for jsonification
     })
   });
   console.log(userId.value);
@@ -337,7 +348,18 @@ async function saveGame () {
 
 
 
+
+
+
 const restartGame = () => {
+  Toastify({
+            text: "Restarting game",
+            duration: 2000,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "green",
+            stopOnFocus: true,
+          }).showToast();
   GameLogic.restartGame();
 };
 
@@ -367,19 +389,32 @@ onMounted(() => {
     
     
     <div class="game-playarea">
-      <div class="game-controls">
-      <button @click="saveGame">Save</button>
-      <button @click="loadGame">Load</button>
-      <button @click="restartGame">Restart</button>
-      <button @click="quitGame">Quit</button>
-      <button @click="downloadGame">Download</button>
-      <button @click="importGame">Load From File</button>
+      <div  class="game-controls">
+    
+      <HContainer v-if="isPreview" spacing="10px">
+        <button @click="restartGame" style="background:steelblue">Compile</button>
+        <button @click="downloadGame" style="background:steelblue">Download</button>
 
+      </HContainer>
+      <HContainer v-else spacing="10px">
+        <button @click="saveGame" >Save</button>
+        <button @click="fetchSaveGame">Load</button>
+        <button @click="restartGame">Restart</button>
+      </HContainer>
 
       <div class="tts-toggle">
         <button @click="toggleTTS"><img :src="speakerIcon" style="height:100%;padding:0rem; padding-top:0.25rem"/></button>
       </div>
-      <div v-if="!isPreview" class="title" style="margin-left: auto;">{{fetchedGame.title}}</div>
+      <div v-if="!isPreview"  style="margin-left: auto;">
+
+        <HContainer spacing="10px">
+          <div class="title">
+            {{fetchedGame.title}}
+          </div>
+          <button @click="downloadGame" style="background:#09d692">Download</button>
+          <button @click="importGame" style="background:steelblue">Load From File</button>
+        </HContainer>
+      </div>
     </div>
       <div class="game-image-display">
           <img 
@@ -404,6 +439,11 @@ onMounted(() => {
           </div>
         </div>
         <div v-if="GameLogic.output!=null" class="game-text">{{ GameLogic.output }}</div>
+      </div>
+      <div v-else class="game-screen" ref="gameScreenText">
+        
+        <div style="margin-top:auto"></div>
+
       </div>
     <div class="game-input">  
       <input v-if="GameLogic.allowUserInput" ref="textInput" v-model="userInput" @keyup.enter="handleInput()" placeholder="Enter your command..." autofocus />
@@ -437,7 +477,7 @@ onMounted(() => {
   position: relative;
 }
 .game-playarea{
-  width:100%;
+  width: 100dvw;
   max-height:100%;
   height:100%;
   display:flex;
@@ -583,7 +623,7 @@ onMounted(() => {
 
 .title{
   font-size: 1.5rem;
-  margin-bottom: 20px;
+  height: 100%;
   color: white;
 }
 .description{

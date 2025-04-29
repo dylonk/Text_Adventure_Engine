@@ -19,8 +19,8 @@ import globalNavBar from '@/components/standardjs/navbar.vue'
         <div id="about-text">
             <p>Play from a wide variety of user generated adventures</p>
         </div>
-        <a href=https://github.com/dylonk/Text_Adventure_Engine/releases/download/v1.0.1/Text-Adventure-Electron-Setup-1.0.1.exe download>Download for Windows</a>
-        <div id="credits">
+        <a class="download-container" href=https://github.com/dylonk/Text_Adventure_Engine/releases/download/v1.0.1/Text-Adventure-Electron-Setup-1.0.1.exe download>Download the Offline Player</a>
+        <div id="credits" style="margin-top:30px;">
             <p>Created by:</p>
             <div id="creditsNames">
                 <p>Timothy Erbert, Jean Affa, Carson Viator, Dylan Snyder, Kyle Youngquist</p>
@@ -50,6 +50,15 @@ import globalNavBar from '@/components/standardjs/navbar.vue'
     backdrop-filter:blur(20px);
     background-image:url(https://i.pinimg.com/736x/13/34/75/133475f2b4de23314a01df9a61f85436.jpg);
     background-size: 100% 100%;
+}
+
+.download-container{
+    font-size:30px;
+    color:blue;
+    text-decoration: underline;
+    background:rgba(255,255,255,.5);
+    padding:10px;
+    filter:blur(0.5)
 }
 
 .text-container{

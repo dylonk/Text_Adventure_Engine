@@ -1,7 +1,13 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, defineProps } from 'vue';
 import { useRouter } from 'vue-router';
 import {fetchUserData} from '@/components/standardjs/fetchUserData'
+
+
+const props = defineProps({
+    warnOnExit: false,
+})
+
 
 // Reactive state to store the username
 const displayUsername = ref('');

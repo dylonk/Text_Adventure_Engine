@@ -1,6 +1,7 @@
-import { property } from 'lodash';
+import { map, property } from 'lodash';
 import {defineStore} from 'pinia'
 import { ref, watch } from "vue"
+import { cloneDeep } from 'lodash';
 
 
 function sleep(ms) {
@@ -11,7 +12,7 @@ function sleep(ms) {
 export const useGameStore = defineStore('game', () => {
   
 
-// syncers for outside use
+// syncers for outside use BLEH
 const progressionSyncer = ref(false) // confusing value, but it just alternates between true and false per tick so that outside elements can update if need be
 const scopeSyncer = ref(true) // when the position of an item is changed, this ticks for the asset browser
 const objectViewerSelected = ref(0) // for the editor preview
@@ -22,7 +23,7 @@ let debug = 3 // 0 is what the user should be able to see, 1 is light dev debugg
 
 // Actual game stuff starts here
 let nodeMap = new Map() // map of nodes stored by ID not name!!
-let originalGame = {} // write only
+let originalNodeMap = null // write only, is an OBJECT
 let imageMap = {} // should NOT be edited during the game, its just for synchronizing the images to their respective links {key is name, value is link}
 const output = ref("This should not appear, output is not being set")
 const outputQueue = ref([])
@@ -35,17 +36,75 @@ let activeNode = 1 // the node of which the path is currently on
 let prevPlayerPositions = [] // For SETLOCATION. Different from prevActiveNodes. So it knows where to return the player if a return node is called
 let prevActiveNodes = [] // For AWAIT. Logic may not necessarily be occurring in the same room as the player is in. Example: Check time is called on player's watch. You don't want to move player position to the watch, but you do want the watch logic to run. Once RETURNLOGIC is called, the original position the logic was in is returned to
 
-const start = (compiledGame,online=true) =>{
+function serializableToMap(obj) {
+  if(obj == null){
+    return new Map()
+  }
+  const map = new Map();
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      map.set(Number(key), obj[key]);
+    }
+  }
+  return map;
+}
+
+//yes, this function is a direct copypaste from project.store when i should have just imported both of these. Employers if you're looking at this 
+//I will not do this when I am working for you
+function mapToSerializable(map) {
+    const obj = {};
+    for (const [key, value] of map.entries()) {
+      obj[key] = value;
+    }
+    return obj;
+}
+
+
+const start = (compiledGame=null,online=true) =>{
   console.log("[GAME] Compiled Game",compiledGame)
   isOnline.value = online
-  originalGame = compiledGame
-  nodeMap = originalGame.nodeMap
+  
+  if(compiledGame==null){
+    console.log("[GAME] Compiled game not present, setting value to originalNodeMap")
+    compiledGame = {
+      originalNodeMap:originalNodeMap,
+      nodeMap:serializableToMap(originalNodeMap),
+      images:imageMap,
+    }
+  }
+
+  if(compiledGame.hasOwnProperty('nodeMap')){
+    if(compiledGame.nodeMap instanceof Object){
+      nodeMap = serializableToMap(compiledGame.nodeMap)
+    }
+  }
+
+
+
+  console.log("!!!",originalNodeMap)
+  if(originalNodeMap==null){
+    console.log("[GAME] Setting original node map")
+    originalNodeMap = mapToSerializable(compiledGame.nodeMap) // setting original node map
+  } 
+
+  // if(originalNodeMap=={}||originalNodeMap==null){
+  //   originalNodeMap = compiledGame.nodeMap
+  // }
+  if(compiledGame!=null){
+    nodeMap = compiledGame.nodeMap
+  }
   watchChoices=[];
   choices=[];
   currentImagePath.value = null;
   allowUserInput.value = false;
+  activeNode = 1
+  prevActiveNodes = []
+  prevPlayerPositions = []
+  canvasesInScope = {}
+  canvasID.value = 0
   outputQueue.value = []
   output.value = ""
+
 
   sleep(10)
 
@@ -60,9 +119,15 @@ const start = (compiledGame,online=true) =>{
   initialized.value = true
   processNode(getNode(1, true))
 }
-const restartGame = () =>{
-  start(originalGame)
+
+const startFromLoad = () =>{
+
 }
+
+const restartGame = () =>{
+  start()
+}
+
 //gets the image link from the name.
 const getImage = (name) => {
   if(debug>=1) console.log("[GAME] Image set to", name)
@@ -609,9 +674,14 @@ const func = (iNode) => { // function node functions
 
 
       if(target.type=='player') {
-        const nextNodeId =  nextNodeFromHandle(0,iNode.id).id
-        prevPlayerPositions.push(nextNodeId)
-        if(debug>=1) console.log("[GAME] setlocation added to prevPlayerPositions", prevPlayerPositions)
+        const nextNodeId =  nextNodeFromHandle(0,iNode.id)
+        if(nextNodeId == null){
+          prevPlayerPositions.push(1) // FIXME, just goes back to start node if there is nothing afterwards.
+        }
+        else{
+          prevPlayerPositions.push(nextNodeId)
+          if(debug>=1) console.log("[GAME] setlocation added to prevPlayerPositions", prevPlayerPositions)  
+        }
       }
       nodeSwapLocation(target,destination)
       if(target.type!='player'){
@@ -847,10 +917,66 @@ function setNodeMap(newmap)
 }
 function getGame()
 {
-  const gameToReturn=originalGame;
+  const gameToReturn=originalNodeMap;
   gameToReturn.nodeMap=nodeMap;
   return gameToReturn;
 }
+const saveGame = () =>{ //BLEH
+  let savedGame = {
+    originalNodeMap:originalNodeMap,
+    nodeMap:mapToSerializable(cloneDeep(nodeMap)),
+    imageMap:imageMap,
+    output:output.value,
+    outputQueue:outputQueue.value,
+    choices:choices,
+    watchChoices:watchChoices,
+    currentImagePath:currentImagePath.value,
+    canvasID:canvasID.value,
+    activeNode:activeNode,
+    prevActiveNodes:prevActiveNodes,
+    prevPlayerPositions,prevPlayerPositions,
+  }
+  console.log("[GAME] Saving game as game object, game=",savedGame)
+  return savedGame
+}
+const loadGame = (game, online=true) =>{
+  console.log("[GAME] loadGame, game=",game)
+  if (!game || typeof game !== 'object') {
+    console.warn("Invalid game object provided to loadGame.");
+    return;
+  }
+
+  const requiredProps = [
+    'originalNodeMap', 'nodeMap', 'imageMap', 'output', 'outputQueue',
+    'choices', 'watchChoices', 'currentImagePath', 'canvasID',
+    'activeNode', 'prevActiveNodes', 'prevPlayerPositions'
+  ];
+
+  const missing = requiredProps.filter(prop => !(prop in game));
+  if (missing.length > 0) {
+    console.warn(`loadGame aborted. Missing properties: ${missing.join(', ')}`);
+    return;
+  }
+
+  originalNodeMap = game.originalNodeMap
+  nodeMap.value = serializableToMap(game.nodeMap)
+  imageMap = game.imageMap
+  output.value = game.output
+  outputQueue.value = game.outputQueue
+  choices = game.choices
+  watchChoices = game.watchChoices
+  currentImagePath.value = game.currentImagePath
+  canvasID.value = game.canvasID
+  activeNode = game.activeNode
+  prevActiveNodes = game.prevActiveNodes
+  prevPlayerPositions = game.prevPlayerPositions
+  
+  allowUserInput.value = true;
+  isOnline.value = online
+  initialized.value = true
+  processNode(activeNode.id)
+}
+
 
 return{
       start, //initializes game
@@ -886,6 +1012,8 @@ return{
       getNodeMap,
       setNodeMap,
       getNodeByName,
-      getGame
+      getGame,
+      saveGame,
+      loadGame,
     }
 });
