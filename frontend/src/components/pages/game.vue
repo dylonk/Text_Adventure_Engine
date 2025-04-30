@@ -420,7 +420,8 @@ const gamelogicOutput = ref("")
       <HContainer v-if="isPreview" spacing="10px">
         <button @click="compileGame" style="background:steelblue">Compile</button>
         <button @click="downloadGame" style="background:steelblue">Download</button>
-
+        <button @click="saveJSON()" >Save</button>
+        <button @click="loadGame()">Load</button>
       </HContainer>
       <HContainer v-else spacing="10px">
         <button @click="saveJSON()" >Save</button>

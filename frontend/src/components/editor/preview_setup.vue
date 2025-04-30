@@ -20,9 +20,6 @@ function setProperty(property, input){
                 <hr>
                 <VContainer>
                     <div class="mod-subpanel">
-                        <h3>Presets</h3>
-                    </div>
-                    <div class="mod-subpanel" style="height:100%">
                         <h3>Properties</h3>
                         <h3 style="background-color:#8cbc75; color:white; font-weight:bold;font-size:large;">{{GL.getNode(Number(GL.objectViewerSelected)).objectName}}</h3>
                         <div class="property-title"></div>
@@ -61,8 +58,7 @@ function setProperty(property, input){
         background:rgb(85, 85, 85);
     }
     .mod-subpanel{
-        height:auto;
-        min-height:300px;
+        height:100% !important;
         width:100%;
         background:rgb(241, 241, 241);
         overflow-y:hidden;

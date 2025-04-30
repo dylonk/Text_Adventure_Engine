@@ -81,11 +81,9 @@ const start = (compiledGame=null,online=true) =>{
 
 
 
-  console.log("!!!",originalNodeMap)
-  if(originalNodeMap==null){
+    console.log("!!!",originalNodeMap)
     console.log("[GAME] Setting original node map")
     originalNodeMap = mapToSerializable(compiledGame.nodeMap) // setting original node map
-  } 
 
   // if(originalNodeMap=={}||originalNodeMap==null){
   //   originalNodeMap = compiledGame.nodeMap
