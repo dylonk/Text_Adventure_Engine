@@ -81,8 +81,8 @@ onMounted(fetchGames);
                 </div>
                 </VContainer>
                 <div style="display:flex; flex-direction: column;">
-                  <div class="description" style="color:gray; height:min-content;margin-left:10px;font-weight: bold; margin-bottom: 5px;">description</div> 
-                  <div class="description" style="background: lightgrey; margin-left:10px; padding:6px;">
+                  <div class="description" style="color:#CCC; height:min-content;margin-left:10px; margin-bottom: 5px;">description</div> 
+                  <div class="description" style="background: #E9E9E9; margin-left:10px; padding:6px;">
                     {{ game.description }}
                   </div>
               </div>
@@ -209,10 +209,13 @@ input[type=search]:focus {
 
 .description{
   display:none;
-  text-align: justify;
+  text-align: left;
+  color:#444;
+  font-family: 'Scada';
   width:250px;
   height: 100%;
-  font-size:12px;
+  overflow-y: auto;
+  font-size:16px;
 }
 
 .game:hover .description{

@@ -59,8 +59,9 @@ import windowsLogo from '@/assets/Images/windows.png'
 .download-container{
     font-size:24px;
     color:rgb(255, 255, 255);
-    text-decoration: underline;
+    
     background: rgb(18, 21, 95);
+    outline:white solid 1px;
     padding:10px;
     border-radius: 5px;
     font-family:'Pixelify Sans';

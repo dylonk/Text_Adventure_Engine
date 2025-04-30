@@ -138,6 +138,25 @@ async function fetchGame(gameTitle) {
 }
 
 
+async function saveJSON(){
+  const gameJSON = GameLogic.saveGameAsJSON()
+  // Create and download the zip
+  const blob = new Blob([gameJSON], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = fetchedGame.title.replace(/\s/g, "") || "text-adventure";
+  a.download = a.download+'.json'
+  document.body.appendChild(a); // needed for Firefox
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+
+
+
 async function downloadGame() {
   // Create a copy of the game data with the nodeMap converted to a serializable format
   const gameToDownload = {
@@ -183,14 +202,32 @@ async function downloadGame() {
 }
 
 const loadGame = () =>{
-  Toastify({
-            text: "Error loading game",
-            duration: 2000,
-            gravity: "top",
-            position: "right",
-            backgroundColor: "#ff4d4d",
-            stopOnFocus: true,
-          }).showToast();
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json';
+
+  input.onchange = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    try {
+      const text = await file.text();
+      const gameJSON = JSON.parse(text);
+      GameLogic.loadJSON(gameJSON);
+    } catch (error) {
+      console.error("Error loading game:", error);
+      Toastify({
+        text: "Error loading game",
+        duration: 2000,
+        gravity: "top",
+        position: "right",
+        backgroundColor: "#ff4d4d",
+        stopOnFocus: true,
+      }).showToast();
+    }
+  };
+
+  input.click(); // Trigger file selection dialog
 }
 
 const loadGameFromFile = (event) => {
@@ -208,12 +245,7 @@ const loadGameFromFile = (event) => {
       
       // Store the game data and start the game
       fetchedGame = gameData;
-      GameLogic.start(fetchedGame);
-      
-      // Reset user input and display
-      userInput.value = "";
-      GameLogic.outputQueue = [];
-      
+      GameLogic.loadJSON(fetchedGame);      
     } catch (error) {
       console.error("Error loading game file:", error);
       alert("Invalid game file format. Please select a valid .game.json file.");
@@ -391,8 +423,8 @@ const gamelogicOutput = ref("")
 
       </HContainer>
       <HContainer v-else spacing="10px">
-        <button @click="saveGame" >Save</button>
-        <button @click="importGame">Load</button>
+        <button @click="saveJSON()" >Save</button>
+        <button @click="loadGame()">Load</button>
         <button @click="restartGame">Restart</button>
       </HContainer>
 
@@ -629,8 +661,7 @@ const gamelogicOutput = ref("")
 
 .game-image-display {
   width: 100%;
-  height:30dvh;
-  min-height:30dvh;
+  height:35dvh;
   background-color: #252525;
   border-bottom: 1px solid #404040;
   display: flex;

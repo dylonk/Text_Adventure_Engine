@@ -915,7 +915,9 @@ function getGame()
   gameToReturn.nodeMap=nodeMap;
   return gameToReturn;
 }
-const saveGame = () =>{ //BLEH
+
+
+const saveGameAsJSON = () =>{ //BLEH
   let savedGame = {
     originalNodeMap:originalNodeMap,
     nodeMap:mapToSerializable(cloneDeep(nodeMap)),
@@ -928,13 +930,14 @@ const saveGame = () =>{ //BLEH
     canvasID:canvasID.value,
     activeNode:activeNode,
     prevActiveNodes:prevActiveNodes,
-    prevPlayerPositions,prevPlayerPositions,
+    prevPlayerPositions:prevPlayerPositions,
   }
   console.log("[GAME] Saving game as game object, game=",savedGame)
-  return savedGame
+  return JSON.stringify(savedGame, null, 2)
 }
 
-const loadGame = (game, online=true) =>{
+const loadJSON = (gameJSON, online=true) =>{
+  let game = JSON.parse(JSON.stringify(gameJSON))
   console.log("[GAME] loadGame, game=",game)
   if (!game || typeof game !== 'object') {
     console.warn("Invalid game object provided to loadGame.");
@@ -1008,7 +1011,7 @@ return{
       setNodeMap,
       getNodeByName,
       getGame,
-      saveGame,
-      loadGame,
+      saveGameAsJSON,
+      loadJSON,
     }
 });
