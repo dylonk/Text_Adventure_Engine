@@ -641,44 +641,61 @@ const func = (iNode) => { // function node functions
 
       break;
     }
-    case "setproperty":{
-      let target = getNodeByName(funcParams[0].vals[0])
-      if(target == null){
+    case "setproperty": {
+      let target = getNodeByName(funcParams[0].vals[0]);
+      if (target == null) {
         break;
       }
-      if(debug>=1) console.log("[GAME] setLocation Target found", target.id, target.objectName)
-      let propertyName = funcParams[1].vals[0]
-      let newValue = funcParams[2].vals[0]
-      if(debug>=1)console.log( "initial value of ", propertyName, " is " ,target.properties[propertyName])
-      // First ensure the current property value is treated as a number if it should be
+    
+      if (debug >= 1) console.log("[GAME] setLocation Target found", target.id, target.objectName);
+    
+      let propertyName = funcParams[1].vals[0];
+      let newValue = funcParams[2].vals[0];
+    
+      if (debug >= 1) console.log("initial value of", propertyName, "is", target.properties[propertyName]);
+    
       let currentValue = target.properties[propertyName];
       if (!isNaN(currentValue)) {
         currentValue = Number(currentValue);
       }
-      //it will either modify the value or set it depending on case
-      //it will either modify the value or set it depending on case
-      switch(newValue){
-        case "-":{
-          target.properties[propertyName] = currentValue - 1;
-          break;
-        }
-        case "+":{
-          target.properties[propertyName] = currentValue + 1;
-          break;
-        }
-        default:
-          // For non-increment/decrement cases, try to preserve the type
-          // Convert to number if it looks like a number
-          if (!isNaN(newValue)) {
-            target.properties[propertyName] = Number(newValue);
-          } else {
-            target.properties[propertyName] = newValue;
+    
+      if (typeof newValue === 'string' && /^[-+]=/.test(newValue)) {
+        let op = newValue[0];
+        let amountStr = newValue.slice(2);
+        let amount = Number(amountStr);
+    
+        if (!isNaN(amount)) {
+          if (op === '+') {
+            target.properties[propertyName] = currentValue + amount;
+          } else if (op === '-') {
+            target.properties[propertyName] = currentValue - amount;
           }
+        } else {
+          console.warn("[GAME] Invalid numeric value after += or -=:", amountStr);
+        }
+      } else {
+        // Fallback to original logic
+        switch (newValue) {
+          case "-":
+            target.properties[propertyName] = currentValue - 1;
+            break;
+          case "+":
+            target.properties[propertyName] = currentValue + 1;
+            break;
+          default:
+            if (!isNaN(newValue)) {
+              target.properties[propertyName] = Number(newValue);
+            } else {
+              target.properties[propertyName] = newValue;
+            }
+        }
       }
-      if(debug>=1)console.log( "changed value of ", propertyName, " is " ,target.properties[propertyName])
-      updateNode(target)
-      processNode(nextNodeFromHandle(0))
-      break;  
+    
+      if (debug >= 1) console.log("changed value of", propertyName, "is", target.properties[propertyName]);
+    
+      updateNode(target);
+      processNode(nextNodeFromHandle(0));
+      break;
     }
     case "image":{
       currentImagePath.value = getImage(funcParams[0].vals[0])
