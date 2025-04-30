@@ -851,8 +851,7 @@ const interpretUserText=(text)=>{ //This is the system responsible for allowing 
 // $property{Object1,health} outputs the property
 
 // For now just pushing a stripped lowercase version of the usertext
-const interpretedTexts = []
-interpretedTexts.push(text.toLowerCase().replace(/\s/g, ""))
+const interpretedTexts = text.toLowerCase().replace(/\s/g, "")
 console.log("[GAME] userResponse converted to", interpretedTexts)
 return interpretedTexts
 }

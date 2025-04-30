@@ -21,7 +21,7 @@ import windowsLogo from '@/assets/Images/windows.png'
         <div id="about-text">
             <p></p>
         </div>
-        <a class="download-container" href=https://github.com/dylonk/Text_Adventure_Engine/releases/download/v1.0.1/Text-Adventure-Electron-Setup-1.0.1.exe download>
+        <a class="download-container" href=https://github.com/dylonk/Text_Adventure_Engine/releases/download/v1.0.1/Text.Adventure.Electron.Setup.1.0.1.exe download>
             Download the Offline Player for Windows
             <img style="height:36px; position: relative; top:10px; right:-5px" :src="windowsLogo">
         </a>
