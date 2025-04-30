@@ -189,10 +189,6 @@ const extractBracesContent = (inputText) => {
 
   return matches;  // Return all the extracted references
 };
-
-
-
-
 // Parse and evaluate a simple expression safely
 const safeEvaluate = (expression) => {
   // Convert string numbers to actual numbers
@@ -253,7 +249,6 @@ const safeEvaluate = (expression) => {
   // If it's just a single value, return it as a boolean
   return !!parseValue(expression);
 };
-
 // Parse a value into its appropriate type
 const parseValue = (value) => {
   value = value.trim();
@@ -280,11 +275,6 @@ const parseValue = (value) => {
   // Return as is (likely a variable that will be replaced)
   return value;
 };
-
-
-
-
-
 //this is the same thing without the curly braces, used for extracting variables from conditions. still returns an array of all the variable strings.
 //should allow variables such as tom cruise.money as well, accounting for spaces
 //since tom cruise is not an actual variable name, but simply passed to getnodeby title
@@ -413,8 +403,8 @@ const processNode = (iNode) =>{
 }
 
 const outputText = (text) =>{
-  if(output.value!="")output.value += `\n`+text
-  else output.value += text
+  archiveOutput()
+  output.value = text
 }
 const archiveOutput = () =>{
   outputQueue.value.push(output.value)
@@ -599,6 +589,9 @@ const nodeSwapLocation = (targetNode, destinationNode,useDestinationParent=false
 
   if(useDestinationParent==false){ // assumes starting node is beginning
     nextNode = getNode(getChildrenOfType("playerenter",getNode(player.parentID))) // gets the first playerEnter node in the room
+    if(nextNode==null){
+      nextNode = getNode(1) // goes back to start node
+    }
   }
   console.log("[GAME] Watch choices are", watchChoices)
   processNode(nextNode)
@@ -940,6 +933,7 @@ const saveGame = () =>{ //BLEH
   console.log("[GAME] Saving game as game object, game=",savedGame)
   return savedGame
 }
+
 const loadGame = (game, online=true) =>{
   console.log("[GAME] loadGame, game=",game)
   if (!game || typeof game !== 'object') {
@@ -971,10 +965,10 @@ const loadGame = (game, online=true) =>{
   activeNode = game.activeNode
   prevActiveNodes = game.prevActiveNodes
   prevPlayerPositions = game.prevPlayerPositions
-  
   allowUserInput.value = true;
   isOnline.value = online
   initialized.value = true
+
   processNode(activeNode.id)
 }
 

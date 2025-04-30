@@ -45,6 +45,11 @@ const props = defineProps({
 //if it finds one, it loads it into the game
 async function fetchSaveGame() {
   try {
+    if(isPreview){
+       GameLogic.start(NS.compileGame())
+       return
+    }
+    
     console.log("fetching savegame");
     const response = await axios.get(`${API_BASE_URL}/savegames/?gameId=${props.gameTitle}&userId=${userId}`);//response will be the savegame object
     //we then de-serialize the nodemap we get back
@@ -52,8 +57,7 @@ async function fetchSaveGame() {
     //and put the gamestate/game into the gamelogic. gamestate and game being essentially the same thing is very cool
     console.log(response.data);
     if(response.data==undefined){
-      if(isPreview) GameLogic.start(NS.compileGame())
-      else GameLogic.start()
+      GameLogic.start()
     }
     GameLogic.start(response.data.nodeMap);
 }
@@ -63,26 +67,33 @@ async function fetchSaveGame() {
   }
 }
 
+const compileGame = () =>{
+  Toastify({
+            text: "Compiling game and restarting!",
+            duration: 2000,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "green",
+            stopOnFocus: true,
+          }).showToast();
+  GameLogic.start(NS.compileGame())
+}
+
+
 const gameContainer = ref(null);
 
 onMounted(async() => {
   userId.value= await fetchUserData('_id');
-  
-
   if (props.isPreview) {
     GameLogic.start(NS.compileGame());
   } 
-
   //if it's not a preview, we're going to get a game from the database.
   else if (props.gameTitle) {
-  fetchGame(props.gameTitle);
+    fetchGame(props.gameTitle);
   }
-
   //after fetching the game, check if we have a savegame. A little inefficient (if there's a savegame, the nodemap of the default game we already fetched is useless)
   //but it's easy and the datas so small that this shouldn't be a big issue
   fetchSaveGame();  
-
-  
 });
 
 
@@ -97,17 +108,16 @@ function serializableToMap(obj) {
       }
     }
     return map;
-  }
-
+}
   //yes, this function is a direct copypaste from project.store when i should have just imported both of these. Employers if you're looking at this 
   //I will not do this when I am working for you
-  function mapToSerializable(map) {
+function mapToSerializable(map) {
       const obj = {};
       for (const [key, value] of map.entries()) {
         obj[key] = value;
       }
       return obj;
-    }
+}
 
 
 
@@ -232,11 +242,12 @@ const importGame = () => {
 };
 
 
+
 const text = computed(()=>{
   return GameLogic.output
 })
 
-
+const displayOutput = ref("")
 const displayText = ref("");
 const userInput = ref("");
 const typingIndex = ref(0);
@@ -306,10 +317,6 @@ async function handleInput(){
       const div = gameScreenText.value;
       div.scrollTop = div.scrollHeight
     };
-
-
-
-
   watch(() => GameLogic.allowUserInput, (newVal) => {
   if (newVal) {
     nextTick(() => {
@@ -320,20 +327,7 @@ async function handleInput(){
   }
 });
 
-  // const processCommand = (command) => {
-  //   if (command === "approach unicorn") {
-  //     displayText.value += "<br><br>The unicorn allows you to get closer, its eyes glowing with wisdom.";
-  //     progress.value += 20;
-  //   } else if (command === "explore path") {
-  //     displayText.value += "<br><br>You follow the glowing path deeper into the forest, mysteries ahead.";
-  //     progress.value += 30;
-  //   } else {
-  //     displayText.value += "<br><br>Nothing happens... Try something else.";
-  //   }
-  // };
-
-
-//saves a game to the backend
+//saves a game in nonzipped file format
 async function saveGame () {
 
   const response=await fetch (`${API_BASE_URL}/savegames/save`, {
@@ -367,14 +361,10 @@ const restartGame = () => {
   GameLogic.restartGame();
 };
 
-const quitGame = () => {
-  alert("Game Over. Refresh to start again.");
-};
-
 const gamelogicOutput = ref("")
 
-onMounted(() => {
-});
+
+
 </script>
 
 <template>
@@ -396,7 +386,7 @@ onMounted(() => {
       <div  class="game-controls">
     
       <HContainer v-if="isPreview" spacing="10px">
-        <button @click="restartGame" style="background:steelblue">Compile</button>
+        <button @click="compileGame" style="background:steelblue">Compile</button>
         <button @click="downloadGame" style="background:steelblue">Download</button>
 
       </HContainer>
@@ -413,10 +403,9 @@ onMounted(() => {
 
         <HContainer spacing="10px">
           <div class="title">
-            {{fetchedGame.title}}
+            {{props.gameTitle}}
           </div>
           <button @click="downloadGame" style="background:#09d692">Download</button>
-          <button @click="importGame" style="background:steelblue">Load From File</button>
         </HContainer>
       </div>
     </div>
@@ -627,6 +616,7 @@ onMounted(() => {
 
 .title{
   font-size: 1.5rem;
+  font-family: 'Pixelify Sans';
   height: 100%;
   color: white;
 }

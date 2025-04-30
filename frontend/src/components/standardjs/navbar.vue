@@ -37,7 +37,7 @@ const router = useRouter(); // Access the Vue Router for navigation
         <RouterLink class="nav_btn" to="/explore" active-class="active">Explore</RouterLink> 
         <RouterLink class="nav_btn" to="/project" active-class="active">Create</RouterLink><!-- I think they should be rendered conditionally-->
         <RouterLink class="nav_btn" to="/user" active-class="active">Profile</RouterLink>
-        <RouterLink class="nav_btn" to="/about" active-class="active">About</RouterLink>
+        <RouterLink class="nav_btn" to="/about" active-class="active">Download</RouterLink>
         <div style="display:flex; width:fit-content; margin-left:auto;   flex-shrink: 0;">
             <div v-if="displayUsername">
                 <span class="hello-user">Hello {{ displayUsername || "ERROR NO USER. SHOULD NOT BE SEEN" }}!</span>
