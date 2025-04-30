@@ -9,7 +9,11 @@ import axios from 'axios';
 import { fetchUserData } from '@/components/standardjs/fetchUserData';
 import speakerIcon from '../../assets/Images/speaker_icon.png';
 import JSZip from 'jszip';
+import { HContainer } from '../editor/nodes/node_assets/n-component-imports.js';
+import Toastify from 'toastify-js';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // for Vite
+import { cloneDeep } from 'lodash';
+import { clone } from 'lodash';
 
 
 
@@ -166,6 +170,17 @@ async function downloadGame() {
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
+}
+
+const loadGame = () =>{
+  Toastify({
+            text: "Error loading game",
+            duration: 2000,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "#ff4d4d",
+            stopOnFocus: true,
+          }).showToast();
 }
 
 const loadGameFromFile = (event) => {
@@ -337,7 +352,18 @@ async function saveGame () {
 
 
 
+
+
+
 const restartGame = () => {
+  Toastify({
+            text: "Restarting game",
+            duration: 2000,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "green",
+            stopOnFocus: true,
+          }).showToast();
   GameLogic.restartGame();
 };
 
@@ -367,19 +393,32 @@ onMounted(() => {
     
     
     <div class="game-playarea">
-      <div class="game-controls">
-      <button @click="saveGame">Save</button>
-      <button @click="loadGame">Load</button>
-      <button @click="restartGame">Restart</button>
-      <button @click="quitGame">Quit</button>
-      <button @click="downloadGame">Download</button>
-      <button @click="importGame">Load From File</button>
+      <div  class="game-controls">
+    
+      <HContainer v-if="isPreview" spacing="10px">
+        <button @click="restartGame" style="background:steelblue">Compile</button>
+        <button @click="downloadGame" style="background:steelblue">Download</button>
 
+      </HContainer>
+      <HContainer v-else spacing="10px">
+        <button @click="saveGame" >Save</button>
+        <button @click="importGame">Load</button>
+        <button @click="restartGame">Restart</button>
+      </HContainer>
 
       <div class="tts-toggle">
         <button @click="toggleTTS"><img :src="speakerIcon" style="height:100%;padding:0rem; padding-top:0.25rem"/></button>
       </div>
-      <div v-if="!isPreview" class="title" style="margin-left: auto;">{{fetchedGame.title}}</div>
+      <div v-if="!isPreview"  style="margin-left: auto;">
+
+        <HContainer spacing="10px">
+          <div class="title">
+            {{fetchedGame.title}}
+          </div>
+          <button @click="downloadGame" style="background:#09d692">Download</button>
+          <button @click="importGame" style="background:steelblue">Load From File</button>
+        </HContainer>
+      </div>
     </div>
       <div class="game-image-display">
           <img 
@@ -404,6 +443,11 @@ onMounted(() => {
           </div>
         </div>
         <div v-if="GameLogic.output!=null" class="game-text">{{ GameLogic.output }}</div>
+      </div>
+      <div v-else class="game-screen" ref="gameScreenText">
+        
+        <div style="margin-top:auto"></div>
+
       </div>
     <div class="game-input">  
       <input v-if="GameLogic.allowUserInput" ref="textInput" v-model="userInput" @keyup.enter="handleInput()" placeholder="Enter your command..." autofocus />
@@ -437,7 +481,7 @@ onMounted(() => {
   position: relative;
 }
 .game-playarea{
-  width:100%;
+  width: 100dvw;
   max-height:100%;
   height:100%;
   display:flex;
@@ -583,7 +627,7 @@ onMounted(() => {
 
 .title{
   font-size: 1.5rem;
-  margin-bottom: 20px;
+  height: 100%;
   color: white;
 }
 .description{
