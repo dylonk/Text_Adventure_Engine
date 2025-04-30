@@ -129,17 +129,14 @@ input[type=search]:focus {
 }
 
 .games-section {
-    display: inline-flex;
-    flex:1;
-    flex-wrap:wrap;
-    gap: 20px;
-    padding: 20px;
-    justify-content: center;
-
-    text-align: center;
-    width: 100%;
-    grid-auto-rows: minmax(250px, auto);  /* Adjust height dynamically */
-    color:white;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  padding: 20px;
+  width: 100%;
+  position: relative;
+  box-sizing: border-box;
 }
 
 .game {
@@ -191,7 +188,7 @@ input[type=search]:focus {
   position:relative;
   width: 75px;
   height: 75px;
-  left:0;
+  left:25%;
   bottom:80%;
 }
 .gamepic:hover .overlay-play{
@@ -212,7 +209,7 @@ input[type=search]:focus {
   text-align: left;
   color:#444;
   font-family: 'Scada';
-  width:250px;
+  width:150px;
   height: 100%;
   overflow-y: auto;
   font-size:16px;
