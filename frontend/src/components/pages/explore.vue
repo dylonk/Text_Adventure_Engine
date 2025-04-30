@@ -5,6 +5,7 @@ import { ref, onMounted,watch } from 'vue';
 import skyImage from '@/assets/Images/editor/sky.png'
 import defaultThumbnail from '@/assets/Images/defaultgameimage.jpg'
 import playButton from '@/assets/Images/play.png'
+import { HContainer,VContainer } from '../editor/nodes/node_assets/n-component-imports';
 
 import game from './game.vue';
 import { useRouter } from 'vue-router';
@@ -51,7 +52,8 @@ const fetchGames = async () => {
     recentGames.value = response.data.map(game => ({
       id: game.id,
       title: game.title,
-      thumbnail:game.thumbnail
+      thumbnail:game.thumbnail,
+      description:game.description,
     }));
   } catch (error) {
     console.warn('Error fetching projects:', error);
@@ -68,14 +70,25 @@ onMounted(fetchGames);
     </form>
     <div :style="{ backgroundImage: 'url(' + sky + ')' , flex: 1, height: '100%' }">
       <div v-if="recentGames.length>0" class="games-section" >
+
             <div class="game" v-for="game in filterGames()" :key="i"> <!--lOOP FROM BACKEND -->
+              <div class="hcontainer">
+                <VContainer spacing="0px" style="width:min-content">
                 <div class="gametitle">{{game.title}}</div>
                 <div class="gamepic" @click="goToGame(game.title)">
                   <img :src="game.thumbnail||defaultThumb" class="thumbnail"> 
-                  <img :src="play" class="overlay-play">
+                  <img :src="play" class="overlay-play">  
                 </div>
+                </VContainer>
+                <div style="display:flex; flex-direction: column;">
+                  <div class="description" style="color:#CCC; height:min-content;margin-left:10px; margin-bottom: 5px;">description</div> 
+                  <div class="description" style="background: #E9E9E9; margin-left:10px; padding:6px;">
+                    {{ game.description }}
                   </div>
+              </div>
+              </div>
             </div>
+        </div>
     </div>
 
 </template>
@@ -148,13 +161,17 @@ input[type=search]:focus {
 }
 
 .gametitle {
-  
+    width: 150px;
     font-size: 20px;
     font-family:'Scada';
     padding-bottom: 10px;
     margin-bottom: 10px;
 }
-
+.hcontainer{
+  display:flex;
+  flex-direction: row;
+  justify-items: stretch;
+}
 .gamepic{
   width:150px;
   height:150px;
@@ -171,11 +188,11 @@ input[type=search]:focus {
 }
 .overlay-play{
   display:none;
-  position:absolute;
+  position:relative;
   width: 75px;
   height: 75px;
-  left:28%;
-  bottom:20%;
+  left:0;
+  bottom:80%;
 }
 .gamepic:hover .overlay-play{
   display:inline;
@@ -187,8 +204,22 @@ input[type=search]:focus {
 .game:hover {
     color: #000;
     transform: scale(1.02) translate(0px, -6px);
-
     transition: all 0.1s ease-in-out;
+}
+
+.description{
+  display:none;
+  text-align: left;
+  color:#444;
+  font-family: 'Scada';
+  width:250px;
+  height: 100%;
+  overflow-y: auto;
+  font-size:16px;
+}
+
+.game:hover .description{
+  display:block;
 }
 
 </style>

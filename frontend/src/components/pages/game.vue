@@ -9,7 +9,11 @@ import axios from 'axios';
 import { fetchUserData } from '@/components/standardjs/fetchUserData';
 import speakerIcon from '../../assets/Images/speaker_icon.png';
 import JSZip from 'jszip';
+import { HContainer } from '../editor/nodes/node_assets/n-component-imports.js';
+import Toastify from 'toastify-js';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // for Vite
+import { cloneDeep } from 'lodash';
+import { clone } from 'lodash';
 
 
 
@@ -41,6 +45,11 @@ const props = defineProps({
 //if it finds one, it loads it into the game
 async function fetchSaveGame() {
   try {
+    if(isPreview){
+       GameLogic.start(NS.compileGame())
+       return
+    }
+    
     console.log("fetching savegame");
     const response = await axios.get(`${API_BASE_URL}/savegames/?gameId=${props.gameTitle}&userId=${userId}`);//response will be the savegame object
     //we then de-serialize the nodemap we get back
@@ -48,8 +57,7 @@ async function fetchSaveGame() {
     //and put the gamestate/game into the gamelogic. gamestate and game being essentially the same thing is very cool
     console.log(response.data);
     if(response.data==undefined){
-      if(isPreview) GameLogic.start(NS.compileGame())
-      else GameLogic.start()
+      GameLogic.start()
     }
     GameLogic.start(response.data.nodeMap);
 }
@@ -59,26 +67,33 @@ async function fetchSaveGame() {
   }
 }
 
+const compileGame = () =>{
+  Toastify({
+            text: "Compiling game and restarting!",
+            duration: 2000,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "green",
+            stopOnFocus: true,
+          }).showToast();
+  GameLogic.start(NS.compileGame())
+}
+
+
 const gameContainer = ref(null);
 
 onMounted(async() => {
   userId.value= await fetchUserData('_id');
-  
-
   if (props.isPreview) {
     GameLogic.start(NS.compileGame());
   } 
-
   //if it's not a preview, we're going to get a game from the database.
   else if (props.gameTitle) {
-  fetchGame(props.gameTitle);
+    fetchGame(props.gameTitle);
   }
-
   //after fetching the game, check if we have a savegame. A little inefficient (if there's a savegame, the nodemap of the default game we already fetched is useless)
   //but it's easy and the datas so small that this shouldn't be a big issue
   fetchSaveGame();  
-
-  
 });
 
 
@@ -93,17 +108,16 @@ function serializableToMap(obj) {
       }
     }
     return map;
-  }
-
+}
   //yes, this function is a direct copypaste from project.store when i should have just imported both of these. Employers if you're looking at this 
   //I will not do this when I am working for you
-  function mapToSerializable(map) {
+function mapToSerializable(map) {
       const obj = {};
       for (const [key, value] of map.entries()) {
         obj[key] = value;
       }
       return obj;
-    }
+}
 
 
 
@@ -122,6 +136,25 @@ async function fetchGame(gameTitle) {
     console.warn('Error fetching game:', error);    
   }
 }
+
+
+async function saveJSON(){
+  const gameJSON = GameLogic.saveGameAsJSON()
+  // Create and download the zip
+  const blob = new Blob([gameJSON], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = fetchedGame.title.replace(/\s/g, "") || "text-adventure";
+  a.download = a.download+'.json'
+  document.body.appendChild(a); // needed for Firefox
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+
 
 
 async function downloadGame() {
@@ -168,6 +201,35 @@ async function downloadGame() {
   document.body.removeChild(link);
 }
 
+const loadGame = () =>{
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json';
+
+  input.onchange = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    try {
+      const text = await file.text();
+      const gameJSON = JSON.parse(text);
+      GameLogic.loadJSON(gameJSON);
+    } catch (error) {
+      console.error("Error loading game:", error);
+      Toastify({
+        text: "Error loading game",
+        duration: 2000,
+        gravity: "top",
+        position: "right",
+        backgroundColor: "#ff4d4d",
+        stopOnFocus: true,
+      }).showToast();
+    }
+  };
+
+  input.click(); // Trigger file selection dialog
+}
+
 const loadGameFromFile = (event) => {
   const file = event.target.files[0];
   if (!file) return;
@@ -183,12 +245,7 @@ const loadGameFromFile = (event) => {
       
       // Store the game data and start the game
       fetchedGame = gameData;
-      GameLogic.start(fetchedGame);
-      
-      // Reset user input and display
-      userInput.value = "";
-      GameLogic.outputQueue = [];
-      
+      GameLogic.loadJSON(fetchedGame);      
     } catch (error) {
       console.error("Error loading game file:", error);
       alert("Invalid game file format. Please select a valid .game.json file.");
@@ -217,11 +274,12 @@ const importGame = () => {
 };
 
 
+
 const text = computed(()=>{
   return GameLogic.output
 })
 
-
+const displayOutput = ref("")
 const displayText = ref("");
 const userInput = ref("");
 const typingIndex = ref(0);
@@ -291,10 +349,6 @@ async function handleInput(){
       const div = gameScreenText.value;
       div.scrollTop = div.scrollHeight
     };
-
-
-
-
   watch(() => GameLogic.allowUserInput, (newVal) => {
   if (newVal) {
     nextTick(() => {
@@ -305,20 +359,7 @@ async function handleInput(){
   }
 });
 
-  // const processCommand = (command) => {
-  //   if (command === "approach unicorn") {
-  //     displayText.value += "<br><br>The unicorn allows you to get closer, its eyes glowing with wisdom.";
-  //     progress.value += 20;
-  //   } else if (command === "explore path") {
-  //     displayText.value += "<br><br>You follow the glowing path deeper into the forest, mysteries ahead.";
-  //     progress.value += 30;
-  //   } else {
-  //     displayText.value += "<br><br>Nothing happens... Try something else.";
-  //   }
-  // };
-
-
-//saves a game to the backend
+//saves a game in nonzipped file format
 async function saveGame () {
 
   const response=await fetch (`${API_BASE_URL}/savegames/save`, {
@@ -337,18 +378,25 @@ async function saveGame () {
 
 
 
-const restartGame = () => {
-  GameLogic.restartGame();
-};
 
-const quitGame = () => {
-  alert("Game Over. Refresh to start again.");
+
+
+const restartGame = () => {
+  Toastify({
+            text: "Restarting game",
+            duration: 2000,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "green",
+            stopOnFocus: true,
+          }).showToast();
+  GameLogic.restartGame();
 };
 
 const gamelogicOutput = ref("")
 
-onMounted(() => {
-});
+
+
 </script>
 
 <template>
@@ -367,19 +415,31 @@ onMounted(() => {
     
     
     <div class="game-playarea">
-      <div class="game-controls">
-      <button @click="saveGame">Save</button>
-      <button @click="loadGame">Load</button>
-      <button @click="restartGame">Restart</button>
-      <button @click="quitGame">Quit</button>
-      <button @click="downloadGame">Download</button>
-      <button @click="importGame">Load From File</button>
+      <div  class="game-controls">
+    
+      <HContainer v-if="isPreview" spacing="10px">
+        <button @click="compileGame" style="background:steelblue">Compile</button>
+        <button @click="downloadGame" style="background:steelblue">Download</button>
 
+      </HContainer>
+      <HContainer v-else spacing="10px">
+        <button @click="saveJSON()" >Save</button>
+        <button @click="loadGame()">Load</button>
+        <button @click="restartGame">Restart</button>
+      </HContainer>
 
       <div class="tts-toggle">
         <button @click="toggleTTS"><img :src="speakerIcon" style="height:100%;padding:0rem; padding-top:0.25rem"/></button>
       </div>
-      <div v-if="!isPreview" class="title" style="margin-left: auto;">{{fetchedGame.title}}</div>
+      <div v-if="!isPreview"  style="margin-left: auto;">
+
+        <HContainer spacing="10px">
+          <div class="title">
+            {{props.gameTitle}}
+          </div>
+          <button @click="downloadGame" style="background:#09d692">Download</button>
+        </HContainer>
+      </div>
     </div>
       <div class="game-image-display">
           <img 
@@ -404,6 +464,11 @@ onMounted(() => {
           </div>
         </div>
         <div v-if="GameLogic.output!=null" class="game-text">{{ GameLogic.output }}</div>
+      </div>
+      <div v-else class="game-screen" ref="gameScreenText">
+        
+        <div style="margin-top:auto"></div>
+
       </div>
     <div class="game-input">  
       <input v-if="GameLogic.allowUserInput" ref="textInput" v-model="userInput" @keyup.enter="handleInput()" placeholder="Enter your command..." autofocus />
@@ -437,7 +502,7 @@ onMounted(() => {
   position: relative;
 }
 .game-playarea{
-  width:100%;
+  width: 100dvw;
   max-height:100%;
   height:100%;
   display:flex;
@@ -583,7 +648,8 @@ onMounted(() => {
 
 .title{
   font-size: 1.5rem;
-  margin-bottom: 20px;
+  font-family: 'Pixelify Sans';
+  height: 100%;
   color: white;
 }
 .description{
@@ -595,8 +661,7 @@ onMounted(() => {
 
 .game-image-display {
   width: 100%;
-  height:30dvh;
-  min-height:30dvh;
+  height:35dvh;
   background-color: #252525;
   border-bottom: 1px solid #404040;
   display: flex;

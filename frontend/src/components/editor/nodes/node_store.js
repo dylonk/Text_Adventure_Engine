@@ -419,7 +419,8 @@ const getParam=(id,paramName)=>{
     return returnedNodes
   };
 
-  const GameNode = (node, childNodes=[]) => { //Simplifies the nodes for reading and altering
+  const GameNode = (iNode, childNodes=[]) => { //Simplifies the nodes for reading and altering
+    let node = cloneDeep(iNode)
     const gNode = {}
         gNode.id = node.id ? Number(node.id):0
         gNode.parentID = node.data.parentID||node.data.parentID==0 ? Number(node.data.parentID):-1
