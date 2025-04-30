@@ -2,7 +2,7 @@
 import { ref, defineProps, computed } from 'vue';
 import NodeBase from '../../node_base.vue'
 import { Handle, Position } from '@vue-flow/core';
-import { SmallButton, HContainer, HandleIn, HandleOut, Textboxes } from '../../node_assets/n-component-imports.js';
+import { SmallButton, HContainer, HandleIn, HandleOut, Textboxes, Dropdown } from '../../node_assets/n-component-imports.js';
 import node_colors from '../../node-colors';
 import FunctionBase from '../func_base.vue'
 let response_id = 0;
@@ -51,6 +51,9 @@ function autoResize() {
         :id="id"
         >
         <Textboxes handleOutput=true :id="id" startingQuantity=1 allowButtons=false title="Expected Phrase"></Textboxes>
+        <HContainer outerMargin="5px">
+            <Dropdown :id="id" title="Store Last Location" dropdownType="custom" :defaultList="['True','False']"></Dropdown>
+        </HContainer>
     </FunctionBase>
 
 

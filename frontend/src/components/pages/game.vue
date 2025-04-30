@@ -344,6 +344,9 @@ async function handleInput(){
       nextTick(() => {
       });
       GameLogic.outputQueue.push(">> "+userInput.value)
+
+      nextTick(() => {
+      });
       userInput.value = "";
       await nextTick();
       const div = gameScreenText.value;
@@ -420,7 +423,8 @@ const gamelogicOutput = ref("")
       <HContainer v-if="isPreview" spacing="10px">
         <button @click="compileGame" style="background:steelblue">Compile</button>
         <button @click="downloadGame" style="background:steelblue">Download</button>
-
+        <button @click="saveJSON()" >Save</button>
+        <button @click="loadGame()">Load</button>
       </HContainer>
       <HContainer v-else spacing="10px">
         <button @click="saveJSON()" >Save</button>
@@ -569,7 +573,7 @@ const gamelogicOutput = ref("")
 .game-text-previous {
   font-size: 1.2rem;
   line-height: 1.5;
-  color:rgb(211, 211, 211);
+  color:rgb(235, 235, 235);
 }
 .game-text-previous-player {
   font-size: 1.2rem;
@@ -661,17 +665,17 @@ const gamelogicOutput = ref("")
 
 .game-image-display {
   width: 100%;
-  height:35dvh;
   background-color: #252525;
   border-bottom: 1px solid #404040;
   display: flex;
+  flex-shrink:0;
   justify-content: center;
   align-items: center;
   overflow: hidden;
 }
 
 .game-image {
-  height:100%;
+  height:35dvh;
   object-fit: contain;
 }
 

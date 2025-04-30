@@ -81,11 +81,9 @@ const start = (compiledGame=null,online=true) =>{
 
 
 
-  console.log("!!!",originalNodeMap)
-  if(originalNodeMap==null){
+    console.log("!!!",originalNodeMap)
     console.log("[GAME] Setting original node map")
     originalNodeMap = mapToSerializable(compiledGame.nodeMap) // setting original node map
-  } 
 
   // if(originalNodeMap=={}||originalNodeMap==null){
   //   originalNodeMap = compiledGame.nodeMap
@@ -381,6 +379,13 @@ const replaceBracesWithValues = (inputText) => {
 
 const processNode = (iNode) =>{
   if(iNode == null){
+    if(prevActiveNodes.length!=0){
+      console.log("[GAME] end of logic reached, but drawing from prevActiveNodes")
+      const newActiveNode = prevActiveNodes.pop()
+      activeNode = newActiveNode
+      processNode(getNode(activeNode))
+      return;
+    }
     allowUserInput.value = true;
     if(debug>=1) console.log("[GAME] End of logic reached")
     return;
@@ -403,8 +408,8 @@ const processNode = (iNode) =>{
 }
 
 const outputText = (text) =>{
-  archiveOutput()
-  output.value = text
+  if(output.value!="")output.value += `\n`+text
+  else output.value += text
 }
 const archiveOutput = () =>{
   outputQueue.value.push(output.value)
@@ -606,7 +611,9 @@ const nextNodeFromHandle = (sourceHandleIndex, sourceNodeID=activeNode) => { // 
     targetNode = getNode(sourceNodeID).edgesOut[sourceHandleIndex]
     activeNode = targetNode
   }
-  // TODO: make sure something happens when next handle is null (outside of this function of course)
+  else{
+    console.log("[GAME] Missing edge in nextNodeFromHandle",sourceHandleIndex,sourceNodeID)
+  }
   if(debug>=1)console.log("[GAME] next node from ID", oldActiveNode ,"handle",sourceHandleIndex,"is",targetNode)
   if(targetNode==null){
     return null;
@@ -616,6 +623,7 @@ const nextNodeFromHandle = (sourceHandleIndex, sourceNodeID=activeNode) => { // 
 }
 
 const func = (iNode) => { // function node functions
+  choices = []
   const funcName = iNode.functionName
   const funcParams = iNode.functionParams
   if(debug>=2)console.log("[GAME] func( ",funcName,",",funcParams,")")
@@ -690,7 +698,7 @@ const func = (iNode) => { // function node functions
       const playerNode = getNode(2)
       const returnLocation = getParameter(iNode,0,false)
       let prevPlayerNode = null;
-      if(returnLocation!="") prevPlayerNode = getNode(prevPlayerPositions.pop())
+      if(returnLocation!="") prevPlayerNode = getNode(prevPlayerPositions.pop().id)
       if(prevPlayerNode==null) break;
 
       if(returnLocation=='Room Beginning'){
@@ -859,6 +867,8 @@ return interpretedTexts
 
 const userResponse=(text)=>{ // Compares user text to possible choices
   console.log("[GAME] userResponse was", text)
+  archiveOutput();
+
   if(text == "printnodes") console.log("CONSOLE COMMAND, printnodes",nodeMap)
   allowUserInput.value = false;
   const userText = interpretUserText(text)
@@ -866,8 +876,7 @@ const userResponse=(text)=>{ // Compares user text to possible choices
 
   for(let i = 0; i < choices.length; i++){
     interpretedChoices = interpretGameText(choices[i].text)
-    if(interpretedChoices.includes(userText[0])){
-      archiveOutput();
+    if(interpretedChoices.includes(userText[0])){      
       processNode(nextNodeFromHandle(choices[i].handleID,choices[i].nodeID))
       return;
     }
@@ -875,13 +884,15 @@ const userResponse=(text)=>{ // Compares user text to possible choices
   for(let i = 0;i <watchChoices.length;i++){
     interpretedChoices = interpretGameText(watchChoices[i].text)
     if(interpretedChoices.includes(userText[0])){
-      
-      archiveOutput();
+      console.log("[GAME] Await choice picked,",interpretedChoices, getParameter(getNode(watchChoices[i].nodeID),1,false))
+      if(getParameter(getNode(watchChoices[i].nodeID),1,false) == 'True'){
+        console.log("[GAME] Pushing activenode into prevActiveNodes")
+        prevActiveNodes.push(activeNode) 
+      }
       processNode(nextNodeFromHandle(watchChoices[i].handleID,watchChoices[i].nodeID))
       return;
     }
   }
-  archiveOutput();
   processNode(nextNodeFromHandle(0))
   return;
 }
