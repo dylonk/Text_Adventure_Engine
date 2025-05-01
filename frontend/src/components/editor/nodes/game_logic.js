@@ -875,14 +875,14 @@ const userResponse=(text)=>{ // Compares user text to possible choices
 
   for(let i = 0; i < choices.length; i++){
     interpretedChoices = interpretGameText(choices[i].text)
-    if(interpretedChoices.includes(userText[0])){      
+    if(interpretedChoices.includes(userText)){      
       processNode(nextNodeFromHandle(choices[i].handleID,choices[i].nodeID))
       return;
     }
   }
   for(let i = 0;i <watchChoices.length;i++){
     interpretedChoices = interpretGameText(watchChoices[i].text)
-    if(interpretedChoices.includes(userText[0])){
+    if(interpretedChoices.includes(userText)){
       console.log("[GAME] Await choice picked,",interpretedChoices, getParameter(getNode(watchChoices[i].nodeID),1,false))
       if(getParameter(getNode(watchChoices[i].nodeID),1,false) == 'True'){
         console.log("[GAME] Pushing activenode into prevActiveNodes")
