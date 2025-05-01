@@ -12,14 +12,14 @@ function sleep(ms) {
 export const useGameStore = defineStore('game', () => {
   
 
-// syncers for outside use BLEH
+// syncers for outside use 
 const progressionSyncer = ref(false) // confusing value, but it just alternates between true and false per tick so that outside elements can update if need be
 const scopeSyncer = ref(true) // when the position of an item is changed, this ticks for the asset browser
 const objectViewerSelected = ref(0) // for the editor preview
 const initialized = ref(false)
 const isOnline = ref(false)
 const allowUserInput = ref(false) // ensures that user input is only accepted during specific times (i.e path hits a prompt node) and not mid logic or something
-let debug = 3 // 0 is what the user should be able to see, 1 is light dev debugging, 2 is heavy debugging, 3 includes getnode and very spammy ones
+let debug = 5 // 0 is what the user should be able to see, 1 is light dev debugging, 2 is heavy debugging, 3 includes getnode and very spammy ones
 
 // Actual game stuff starts here
 let nodeMap = new Map() // map of nodes stored by ID not name!!
@@ -377,13 +377,13 @@ const replaceBracesWithValues = (inputText) => {
 //   // Offline images, maybe store images by name when downloading the zip?
 // }
 
-const processNode = (iNode) =>{
+const processNode = (iNode) =>{ //bleh
   if(iNode == null){
     if(prevActiveNodes.length!=0){
-      console.log("[GAME] end of logic reached, but drawing from prevActiveNodes")
       const newActiveNode = prevActiveNodes.pop()
       activeNode = newActiveNode
-      processNode(getNode(activeNode))
+      console.log("[GAME] end of logic reached, but drawing from prevActiveNodes", getNode(newActiveNode))
+      processNode(getNode(newActiveNode))
       return;
     }
     allowUserInput.value = true;
@@ -408,8 +408,8 @@ const processNode = (iNode) =>{
 }
 
 const outputText = (text) =>{
-  if(output.value!="")output.value += `\n`+text
-  else output.value += text
+  if(output.value!="")output.value += `\n• `+text
+  else output.value += '• '+text
 }
 const archiveOutput = () =>{
   outputQueue.value.push(output.value)
@@ -567,7 +567,7 @@ const syncScope =()=>{
   scopeSyncer.value = true
 }
 
-const nodeSwapLocation = (targetNode, destinationNode,useDestinationParent=false) => { // Must be performed upon a player room change, updates scope, gets the node to start on
+const nodeSwapLocation = (targetNode, destinationNode,useDestinationParent=false, goToRoomBeginning=true) => { // Must be performed upon a player room change, updates scope, gets the node to start on
   
   if(debug>=2){
     console.log("[GAME] nodeSwapLocation", targetNode, destinationNode, useDestinationParent)
@@ -592,10 +592,13 @@ const nodeSwapLocation = (targetNode, destinationNode,useDestinationParent=false
   const player = getNode(2) 
   syncScope()
 
-  if(useDestinationParent==false){ // assumes starting node is beginning
-    nextNode = getNode(getChildrenOfType("playerenter",getNode(player.parentID))) // gets the first playerEnter node in the room
-    if(nextNode==null){
-      nextNode = getNode(1) // goes back to start node
+  if(useDestinationParent==false){ // assumes starting node is beginning bleh
+    console.log("THIS IS WHAT IS TRIGGERING")
+    if(goToRoomBeginning){    
+      nextNode = getNode(getChildrenOfType("playerenter",getNode(player.parentID))) // gets the first playerEnter node in the room
+      if(nextNode==null){
+        nextNode = getNode(1) // goes back to start node
+      }
     }
   }
   console.log("[GAME] Watch choices are", watchChoices)
@@ -684,9 +687,11 @@ const func = (iNode) => { // function node functions
           prevPlayerPositions.push(nextNodeId)
           if(debug>=1) console.log("[GAME] setlocation added to prevPlayerPositions", prevPlayerPositions)  
         }
+        nodeSwapLocation(target,destination)
+
       }
-      nodeSwapLocation(target,destination)
-      if(target.type!='player'){
+      else{
+        nodeSwapLocation(target,destination,false,false)
         processNode(nextNodeFromHandle(0))
       }
       if(debug>=1) console.log("[GAME] setlocation successful",target,destination)
@@ -703,10 +708,12 @@ const func = (iNode) => { // function node functions
 
       if(returnLocation=='Room Beginning'){
         const destination = getNode(prevPlayerNode.parentID)
+        console.log("[GAME]BACK TO ROOM BEGINNING")
         nodeSwapLocation(playerNode,destination)
         break;
       }
       if(returnLocation=='Previous Set Location'){
+        console.log("[GAME]BACK TO PREV LOCATION")
         nodeSwapLocation(playerNode, prevPlayerNode,true)
         break;
       }
@@ -887,9 +894,10 @@ const userResponse=(text)=>{ // Compares user text to possible choices
       if(getParameter(getNode(watchChoices[i].nodeID),1,false) == 'True'){
         console.log("[GAME] Pushing activenode into prevActiveNodes")
         prevActiveNodes.push(activeNode) 
+        console.log('[GAME] PrevActiveNodes', getNode(prevActiveNodes))
       }
       processNode(nextNodeFromHandle(watchChoices[i].handleID,watchChoices[i].nodeID))
-      return;
+      return; //bleh
     }
   }
   processNode(nextNodeFromHandle(0))
@@ -927,7 +935,7 @@ function getGame()
 }
 
 
-const saveGameAsJSON = () =>{ //BLEH
+const saveGameAsJSON = () =>{ 
   let savedGame = {
     originalNodeMap:originalNodeMap,
     nodeMap:mapToSerializable(cloneDeep(nodeMap)),
