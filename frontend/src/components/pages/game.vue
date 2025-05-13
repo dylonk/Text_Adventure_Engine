@@ -334,6 +334,14 @@ const toggleTTS = () => {
     }
   });
 
+const commands_help = () => {
+  let currCommands = GameLogic.userResponse("commands");
+  GameLogic.outputQueue.push(currCommands);
+
+  nextTick(() => {
+  });
+};
+
 
 const textInput = ref(null);
 const gameScreenText = ref(null);
@@ -425,16 +433,17 @@ const gamelogicOutput = ref("")
         <button @click="downloadGame" style="background:steelblue">Download</button>
         <button @click="saveJSON()" >Save</button>
         <button @click="loadGame()">Load</button>
+        <button @click="commands_help">Help/Commands</button>
+        <button @click="toggleTTS"><img :src="speakerIcon" style="height:100%;padding:0rem; padding-top:0.25rem"/></button>
       </HContainer>
       <HContainer v-else spacing="10px">
         <button @click="saveJSON()" >Save</button>
         <button @click="loadGame()">Load</button>
         <button @click="restartGame">Restart</button>
+        <button @click="commands_help">Help/Commands</button>
+        <button @click="toggleTTS"><img :src="speakerIcon" style="height:100%;padding:0rem; padding-top:0.25rem"/></button>
       </HContainer>
 
-      <div class="tts-toggle">
-        <button @click="toggleTTS"><img :src="speakerIcon" style="height:100%;padding:0rem; padding-top:0.25rem"/></button>
-      </div>
       <div v-if="!isPreview"  style="margin-left: auto;">
 
         <HContainer spacing="10px">

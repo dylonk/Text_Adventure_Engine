@@ -812,31 +812,52 @@ return interpretedTexts
 
 const userResponse=(text)=>{ // Compares user text to possible choices
   console.log("[GAME] userResponse was", text)
-  if(text == "printnodes") console.log("CONSOLE COMMAND, printnodes",nodeMap)
-  allowUserInput.value = false;
-  const userText = interpretUserText(text)
-  let interpretedChoices = []
-
-  for(let i = 0; i < choices.length; i++){
-    interpretedChoices = interpretGameText(choices[i].text)
-    if(interpretedChoices.includes(userText[0])){
-      archiveOutput();
-      processNode(nextNodeFromHandle(choices[i].handleID,choices[i].nodeID))
-      return;
-    }
-  }
-  for(let i = 0;i <watchChoices.length;i++){
-    interpretedChoices = interpretGameText(watchChoices[i].text)
-    if(interpretedChoices.includes(userText[0])){
-      
-      archiveOutput();
-      processNode(nextNodeFromHandle(watchChoices[i].handleID,watchChoices[i].nodeID))
-      return;
-    }
-  }
   archiveOutput();
-  processNode(nextNodeFromHandle(0))
-  return;
+
+  if(text == "commands") {
+    let currChoices = "Available Commands: ";
+    for(let i = 0; i < choices.length; i++){
+      currChoices += interpretGameText(choices[i].text);
+      if(i < choices.length - 1){
+        currChoices += ", ";
+      }
+    }
+    for(let i = 0; i < watchChoices.length; i++){
+      currChoices += interpretGameText(watchChoices[i].text);
+      if(i < watchChoices.length - 1){
+        currChoices += ", ";
+      }
+    }
+    //console.log("CONSOLE COMMAND, commands || ", currChoices)
+    return currChoices;
+  }
+  else {
+    if(text == "printnodes") console.log("CONSOLE COMMAND, printnodes",nodeMap)
+    allowUserInput.value = false;
+    const userText = interpretUserText(text)
+    let interpretedChoices = []
+  
+    for(let i = 0; i < choices.length; i++){
+      interpretedChoices = interpretGameText(choices[i].text)
+      if(interpretedChoices.includes(userText[0])){
+        archiveOutput();
+        processNode(nextNodeFromHandle(choices[i].handleID,choices[i].nodeID))
+        return;
+      }
+    }
+    for(let i = 0;i <watchChoices.length;i++){
+      interpretedChoices = interpretGameText(watchChoices[i].text)
+      if(interpretedChoices.includes(userText[0])){
+        
+        archiveOutput();
+        processNode(nextNodeFromHandle(watchChoices[i].handleID,watchChoices[i].nodeID))
+        return;
+      }
+    }
+    archiveOutput();
+    processNode(nextNodeFromHandle(0))
+    return;
+  }
 }
 
 
