@@ -15,7 +15,7 @@ const currentPassword = ref('defaultPassword');
 const profileImage = ref("")
 const profileImageField = ref("")
 const newPassword = ref('');
-const confirmPassword = ref('');
+const confirmNewPassword = ref('');
 const email=ref('');
 const showAvatarModal = ref(false); // Modal state for changing avatars
 const selectedAvatar = ref('Felix');
@@ -76,7 +76,7 @@ try {
         body: JSON.stringify({
             currentPassword: currentPassword.value,
             newPassword: newPassword.value,
-            confirmNewPassword: confirmPassword.value
+            confirmNewPassword: confirmNewPassword.value
         })
     });
 
@@ -211,7 +211,7 @@ onMounted(async() => {
                     <label for="new-password">New Password</label>
                     <input type="password" id="new-password" v-model="newPassword" />
                     <label for="confirm-password">Confirm Password</label>
-                    <input type="password" id="confirm-password" v-model="confirmPassword" />
+                    <input type="password" id="confirm-password" v-model="confirmNewPassword" />
                     <button @click="changePassword">Update Password</button>
                 </div>
                 <div class="form-group">
