@@ -102,6 +102,14 @@ const toggleTTS = () => {
     }
   });
 
+const commands_help = () => {
+  let currCommands = GameLogic.userResponse("commands");
+  GameLogic.outputQueue.push(currCommands);
+
+  nextTick(() => {
+  });
+};
+
 const textInput = ref(null);
 const gameScreenText = ref(null);
 
@@ -163,6 +171,7 @@ onMounted(() => {
         <button @click="restartGame">Restart</button>
         <button @click="quitGame">Quit</button>
         <button @click="saveGame">Save</button>
+        <button @click="commands_help">Help/Commands</button>
         <div class="title" style="margin-left: auto;">{{Game.title}}</div>
       </div>
       
