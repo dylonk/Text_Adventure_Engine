@@ -44,6 +44,8 @@ function addResponse(){
     NS.globalSync()
 }
 function removeResponse(){
+    //updating this to remove the edge from the handle of the removed response
+    NS.deleteEdge(response_id)
     NS.getParam(props.id,convertedTitle.value).pop();
     NS.globalSync()
 }

@@ -24,15 +24,6 @@ const defaultObjData =  { //This is the data that this component contributes. An
   NS.contributeNodeData(props.id,defaultObjData,true);
 //------------------------------IMPORTANT END-------------------------------------------
 
-function addResponse(){
-    // responses.value.push({id:response_id++, text:""})
-}
-function removeResponse(){
-    // if(response_id>0){
-    //     responses.value.pop()
-    //     response_id--;
-    // }
-}
 
 function autoResize() {
     this.style.height = 'auto';

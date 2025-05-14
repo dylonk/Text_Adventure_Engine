@@ -187,8 +187,11 @@ const extractBracesContent = (inputText) => {
 
   return matches;  // Return all the extracted references
 };
+
 // Parse and evaluate a simple expression safely
 const safeEvaluate = (expression) => {
+  if(debug>=3) console.log("[GAME] safeEvaluate",expression)
+
   // Convert string numbers to actual numbers
   expression = expression.replace(/\b\d+(\.\d+)?\b/g, match => match);
   
@@ -247,6 +250,39 @@ const safeEvaluate = (expression) => {
   // If it's just a single value, return it as a boolean
   return !!parseValue(expression);
 };
+
+const safeSet = (expression) => {
+  // Convert string numbers to actual numbers
+  expression = expression.replace(/\b\d+(\.\d+)?\b/g, match => match);
+  
+  if(expression.includes("+")){
+    const [left, right] = expression.split("+").map(s => s.trim());
+    return parseValue(left) + parseValue(right);
+  }
+    if(expression.includes("-")){
+    const [left, right] = expression.split("-").map(s => s.trim());
+    return parseValue(left) - parseValue(right);
+  }
+    if(expression.includes("*")){
+    const [left, right] = expression.split("*").map(s => s.trim());
+    return parseValue(left) * parseValue(right);
+  }
+    if(expression.includes("/")){
+    const [left, right] = expression.split("/").map(s => s.trim());
+    return parseValue(left) / parseValue(right);
+  }
+
+  // If it's just a single value, return it as a boolean
+  return !!parseValue(expression);
+};
+
+
+//helper function to get type, considering they're all strings anyway. I'm starting to get worried at spaghetti code.
+const isStrictNumber = (val) => {
+  return typeof val === 'number' ||
+    (typeof val === 'string' && /^-?\d+(\.\d+)?$/.test(val.trim()));
+};
+
 // Parse a value into its appropriate type
 const parseValue = (value) => {
   value = value.trim();
@@ -273,6 +309,7 @@ const parseValue = (value) => {
   // Return as is (likely a variable that will be replaced)
   return value;
 };
+
 //this is the same thing without the curly braces, used for extracting variables from conditions. still returns an array of all the variable strings.
 //should allow variables such as tom cruise.money as well, accounting for spaces
 //since tom cruise is not an actual variable name, but simply passed to getnodeby title
@@ -722,37 +759,73 @@ const func = (iNode) => { // function node functions
     }
     case "setproperty":{
       let target = getNodeByName(funcParams[0].vals[0])
+      let valType="str";
+      //if we're dealing with a number, you can modify it, not just set it.
+      //in future updates we could allow modification of strings.
       if(target == null){
         break;
       }
-      if(debug>=1) console.log("[GAME] setLocation Target found", target.id, target.objectName)
+      if(debug>=1) console.log("[GAME] setProperty Target found", target.id, target.objectName)
       let propertyName = funcParams[1].vals[0]
       let newValue = funcParams[2].vals[0]
       if(debug>=1)console.log( "initial value of ", propertyName, " is " ,target.properties[propertyName])
       // First ensure the current property value is treated as a number if it should be
       let currentValue = target.properties[propertyName];
-      if (!isNaN(currentValue)) {
+      if (isStrictNumber(currentValue)) {
         currentValue = Number(currentValue);
+        valType = "num";
       }
-      //it will either modify the value or set it depending on case
-      //it will either modify the value or set it depending on case
-      switch(newValue){
-        case "-":{
-          target.properties[propertyName] = currentValue - 1;
-          break;
-        }
-        case "+":{
-          target.properties[propertyName] = currentValue + 1;
-          break;
-        }
-        default:
-          // For non-increment/decrement cases, try to preserve the type
-          // Convert to number if it looks like a number
-          if (!isNaN(newValue)) {
-            target.properties[propertyName] = Number(newValue);
-          } else {
-            target.properties[propertyName] = newValue;
+      //it will either modify the value or set it depending on case.
+      //two switch statements for the new value: one if the target is a number, one if the target is a string
+
+      if(valType == "num"){
+        switch(newValue){
+          //first off, a single + or single minus is a simple increment/decrement when dealing with a number.
+          case "--":{
+            target.properties[propertyName] = currentValue - 1;
+            break;
           }
+          case "++":{
+            target.properties[propertyName] = currentValue + 1;
+            break;
+          }
+
+          default:
+            //first, extract all the variables in the string and replace them with their number value.
+            let vars = extractVariableReferences(newValue);
+            //the below loop iterates through all the variables in the string and then replaces them with their values
+            vars.forEach(reference => {
+              const value = getValueFromNode(reference);
+              if (value !== null) {
+
+                // Replace the reference in the text with the actual value
+                const replacement = typeof value === 'string' ? 
+                `"${value}"` : value;
+                newValue = newValue.replaceAll(reference, replacement);
+              }
+            });
+
+            // Evaluate the resulting string to get the final value
+            newValue = safeSet(newValue);
+
+
+          
+            // For non-increment/decrement cases, try to preserve the type
+            // Convert to number if it looks like a number
+            if (!isNaN(newValue)) {
+              target.properties[propertyName] = Number(newValue);
+            } else {
+              target.properties[propertyName] = newValue;
+            }
+        }
+      }
+
+      //if the target is a string
+      else{
+        switch(newValue){
+          default:
+            target.properties[propertyName] = newValue;
+        }
       }
       if(debug>=1)console.log( "changed value of ", propertyName, " is " ,target.properties[propertyName])
       updateNode(target)
@@ -800,6 +873,7 @@ const func = (iNode) => { // function node functions
       //iterates through all the funcparams, which should be all the textboxes.
       for(let i = 0; i < funcParams.length; i++){
         let stringToEval=funcParams[i].vals[0];
+        if(!stringToEval){console.log("[GAME] stringToEval is null");break;}
         console.log("[GAME] stringToEval before value extraction = ", stringToEval)
 
         //extract all the variables in the string
