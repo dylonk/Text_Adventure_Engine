@@ -8,6 +8,8 @@ import PlayerNode from './objects/player.vue'
 import PathwayNode from './objects/pathway.vue'
 import CustomNode from './objects/custom.vue'
 import ImageNode from './function/interaction/image.vue'
+import inventoryMessageNode from './function/interaction/inventoryMessage.vue'
+import showInventoryMessagesNode from './function/interaction/showInventoryMessages.vue'
 import ModifyImageNode from './objects/modify_image.vue'
 import AwaitNode from './function/interaction/await.vue'
 import ActionNode from './function/interaction/action.vue'
@@ -39,6 +41,8 @@ export{ //exports both tb and real nodes
     PlayerEnter,
     UnimplementedNode,
     ImageNode,
+    inventoryMessageNode,
+    showInventoryMessagesNode,
     ModifyImageNode,
     OutputNode,
     SetLocationNode,

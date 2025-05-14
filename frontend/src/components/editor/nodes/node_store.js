@@ -4,6 +4,8 @@ import {dataHas}  from './n-utils'
 import { stringify, parse,toJSON,fromJSON } from 'flatted';
 import node_colors from './node-colors.js'
 import cloneDeep from 'lodash/cloneDeep'
+import { inventoryMessageNode } from './n-imports';
+import { add } from 'lodash';
 
 
 
@@ -88,8 +90,8 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
     edges.value = parse(stringify(canvas.e));
   }
 
-  // Add a node to the store
-  const addNode = (node) => {
+  // Add a node to the store. manually set parent id when you want the node placed somewhere other than the current canvas
+  const addNode = (node,parentID=null) => {
     console.log("[EDITOR]🦠➕ addNode: Before adding:", nodes);
     const nodeExists = nodes.value.find((n) => n.id === node.id);
     console.log("[EDITOR]🦠➕ addNode: Adding node:", {
@@ -104,19 +106,26 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
       console.error(`🦠➕Node with id ${node.id} already exists`);
       return;
     }
-    node.data.parentID = canvasID.value;
     node.data.tbStyle= true,
 
     node.data.srcHandles = 0 //source handles
     node.data.tgtHandles = 0 //target handles
     node.data.inputEdges = {}
     node.data.outputEdges = {}
+    if(parentID!=null){ // if the node is being added automatically, give it the correct parent id and depth
+      node.data.nodeDepth = 8;
+      node.data.parentID = parentID;
+      if(debug>=1) console.log("[EDITOR]🦠➕ parentID should be", node.data.parentID, "node depth should be", node.data.nodeDepth);
 
-    node.data.nodeDepth = 1;
-    if(canvasID.value != 0){
-      node.data.nodeDepth = getNode(canvasID.value, true).data.nodeDepth + 1
     }
-    
+    else{
+      node.data.parentID = canvasID.value;
+      node.data.nodeDepth = 1;
+      if(canvasID.value != 0){
+        node.data.nodeDepth = getNode(canvasID.value, true).data.nodeDepth + 1
+      }
+    }
+
 
     //adds the default names
     if (
@@ -143,9 +152,29 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
       console.log("[EDITOR]🦠➕ function added with id", node.id);
     }
     idCounter.value++;
-    globalSync(true);
-  };
+    //if the node is an item, we're going to also add a default inventory message node.
 
+    /*
+    if(node.type == "item"){
+      if(debug>=0) console.log("[EDITOR]🦠➕ Adding default inventory message");
+          const inventoryMessageNode = {
+            type: "inventoryMessage",
+            position: {x:0,y:0},
+            id:idCounter.value,    //increments id based on idcounter in node store
+            data: {
+              bg_color:computed(()=>node_colors[inventoryMessageNode.type+'_bg'] || 'red'),
+              fg_color:computed(()=>node_colors[inventoryMessageNode.type+'_fg'] || 'blue'),
+              nodeDepth: getNode(node.id, true).data.nodeDepth + 1
+            },
+            expandParent: true,
+            parentID: node.id,//the parent is the node initially placed
+          }
+      //inventoryMessageNode.data.function_params[0]=  "You have a " + node.data.object_name;  //default inventory message
+      addNode(inventoryMessageNode,node.id);
+      globalSync(true);
+    };
+      */
+  };
 
 
 const swapCanvas = (newid) =>{

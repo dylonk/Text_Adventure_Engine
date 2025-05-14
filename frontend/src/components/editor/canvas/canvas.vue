@@ -13,7 +13,7 @@ import 'toastify-js/src/toastify.css';
 
 const { screenToFlowCoordinate} = useVueFlow()
 // NEWNODEREQ
-import { PromptNode,IfNode,PlayerEnter,SetLocationNode,SetPropertyNode, OutputNode, StartNode, RoomNode, ItemNode, NpcNode, PlayerNode, PathwayNode, UnimplementedNode, CustomNode, AwaitNode, ActionNode, ImageNode, ModifyImageNode,WaitNode, ReturnPlayerNode, RepeaterNode} from '../nodes/n-imports';
+import { PromptNode,IfNode,PlayerEnter,SetLocationNode,inventoryMessageNode,showInventoryMessagesNode,SetPropertyNode, OutputNode, StartNode, RoomNode, ItemNode, NpcNode, PlayerNode, PathwayNode, UnimplementedNode, CustomNode, AwaitNode, ActionNode, ImageNode, ModifyImageNode,WaitNode, ReturnPlayerNode, RepeaterNode} from '../nodes/n-imports';
 
     const nodeTypes = {
         start: markRaw(StartNode),
@@ -23,6 +23,8 @@ import { PromptNode,IfNode,PlayerEnter,SetLocationNode,SetPropertyNode, OutputNo
         npc: markRaw(NpcNode),
         pathway: markRaw(PathwayNode),
         custom: markRaw(CustomNode),
+        inventoryMessage: markRaw(inventoryMessageNode),
+        showInventoryMessages: markRaw(showInventoryMessagesNode),
         await: markRaw(AwaitNode),
         action: markRaw(ActionNode),
         wait: markRaw(WaitNode),

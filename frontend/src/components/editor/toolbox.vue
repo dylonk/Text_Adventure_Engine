@@ -24,6 +24,8 @@ import tbMid from '../../assets/Images/editor/toolbox-mid-posterized.png'
             <a class="tb_subtitle">Interactive</a>
                     <TBNode type="consoleoutput" display_type="Console Output"/>
                     <TBNode type="prompt" display_type="Prompt"/>
+                    <TBNode type="inventoryMessage" display_type="Inventory Message"/>
+                    <TBNode type="showInventoryMessages" display_type="Show Inventory Messages"/>
                     <TBNode type="wait" display_type="Wait"/>
                     <TBNode type="image" display_type="Image"/>
                     <TBNode type="modifyimage" display_type="Modify Image"/>

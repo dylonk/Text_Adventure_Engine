@@ -1,4 +1,4 @@
-import { map, property } from 'lodash';
+import { get, map, property } from 'lodash';
 import {defineStore} from 'pinia'
 import { ref, watch } from "vue"
 import { cloneDeep } from 'lodash';
@@ -922,6 +922,36 @@ const func = (iNode) => { // function node functions
     case "await":{
       processNode(nextNodeFromHandle(0))
       break  
+    }
+    case "showInventoryMessages":{
+      //first part outputs the text in the textbox. eg "you check your pack..."
+      let outputTextWithReplacements = funcParams[0].vals[0];  // Get the input text (e.g., "{room1.cleanliness}")
+      // Replace any curly-brace references with actual values
+      outputTextWithReplacements = replaceBracesWithValues(outputTextWithReplacements);
+      // Output the final text with replaced values
+      outputText(outputTextWithReplacements)
+
+      //second part outputs the inventory messages
+      let playerChildren = getChildrenOfType("item",getNodeByName("player"),false)//should get all node ids of children of player with the type item (all items in inventory)
+      let iMessageNodes = []
+      if(debug>=2)console.log("[GAME] playerChildren = ", playerChildren)
+        
+      for(let node of playerChildren){  //goes through all the children of the player and adds all the inventory message nodes within to iMessageNodes
+        node = getNode(node)
+        iMessageNodes.push(getChildrenOfType("inventoryMessage",node))
+      }
+
+      for(let node of iMessageNodes){  //outputs all the inventory messages
+        node = getNode(node)
+        if(debug>=2)console.log("[GAME] node = ", node)
+        outputText(node.functionParams[0].vals[0])//should display the inventory messages
+      }
+      processNode(nextNodeFromHandle(0))
+      break
+    }
+    default: {
+      console.log("[GAME] Unrecognized node type:", nodeType);
+      break;
     }
 
   }
