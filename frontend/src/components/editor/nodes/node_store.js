@@ -741,6 +741,7 @@ const getParam=(id,paramName)=>{
     console.log("[EDITOR]🦠🫴 initNodes()");
     nodes.value = [];
     edges.value = [];
+    setGlobalNodes(new Map());  //I added of this line of code because the player and it's children were being preserved on init of new project.
     object_count.total = 0;
     object_count.room = 0;
     object_count.item = 0;
@@ -788,6 +789,7 @@ const getParam=(id,paramName)=>{
   // ---------------------------------------------------
 
     console.log("[EDITOR]🦠🫴 initNodes() done");
+    console.log("[EDITOR]🦠🫴 Project initted with nodes", nodes.value);
   };  
 
 

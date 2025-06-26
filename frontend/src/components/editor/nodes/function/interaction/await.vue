@@ -52,7 +52,7 @@ function autoResize() {
         >
         <Textboxes handleOutput=true :id="id" startingQuantity=1 allowButtons=false title="Expected Phrase"></Textboxes>
         <HContainer outerMargin="5px">
-            <Dropdown :id="id" title="Store Last Location" dropdownType="custom" :defaultList="['True','False']"></Dropdown>
+            <Dropdown :id="id" title="Store Last Location" dropdownType="custom" :defaultList="['True','False']" defaultSelection="false"></Dropdown>    
         </HContainer>
     </FunctionBase>
 

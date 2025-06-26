@@ -6,6 +6,7 @@ import clickSound from '@/assets/sounds/click.wav';
 import moreSound from '@/assets/sounds/more.wav';
 import { useProjectStore } from '../editor/project_store';
 import loadCircle from '@/assets/Images/loading.gif';
+import tutorial from '../editor/tutorial.vue';
 import axios from 'axios';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // for Vite
 
@@ -95,6 +96,14 @@ onMounted(fetchProjects);
 function newProject() {
   router.push('/create');
   projectStore.initProject();
+  tutorial.tutorialStep.value = null;
+}
+
+//this function inits a project, but with the tutorial
+function startTutorial() {
+  router.push('/create');
+  projectStore.initProject();
+  projectStore.startTutorial();
 }
 
 function loadProjectFile() {
@@ -139,6 +148,8 @@ function loadProject(id) {
       <div class="right-container">
         <button class="project-button" style="background:#7fb723" @click="newProject">New Project</button>
         <button class="project-button" style="background:cadetblue" @click="loadProjectFile">Load Project From File</button>
+        <button class="project-button" style="background:cadetblue" @click="startTutorial">Tutorial</button>
+
       </div>
     </div>
 

@@ -1,9 +1,9 @@
 <script setup>
-import { ref, onMounted, defineProps } from 'vue';
+import { ref, onMounted, defineProps,computed } from 'vue';
 import { useRouter } from 'vue-router';
 import {fetchUserData} from '@/components/standardjs/fetchUserData'
 
-const loggedIn = ref(localStorage.getItem('token') !== null);
+const loggedIn = computed(() => !!displayUsername.value);//if it's displaying the username, it means you're logged in.
 const props = defineProps({
     warnOnExit: false,
 })
@@ -11,6 +11,8 @@ const props = defineProps({
 
 // Reactive state to store the username
 const displayUsername = ref('');
+const allDataLoaded = ref(false); // this is so the v-if logged ins dont dissappear briefly when a new page loads, rather no navbar until all data is loaded
+
 
 // Function to log out the user
 function logOut() {
@@ -21,11 +23,10 @@ function logOut() {
 // Function to fetch the user's username
 
 
-// Call fetchUserProfile on mounted
-
-
+// Call fetchUserData on mounted
 onMounted(async() => {           //on mounted (whenever a new page loads, properly set the displyed username)
     displayUsername.value = await fetchUserData('username');
+    allDataLoaded.value = true; //whether there's a username or not, we have all the data we need now to display the taskbar.
 })
 
 const router = useRouter(); // Access the Vue Router for navigation
@@ -33,19 +34,21 @@ const router = useRouter(); // Access the Vue Router for navigation
 
 <template>
     <div class="navbar">
-        <RouterLink class="nav_btn" to="/" active-class="active">Home</RouterLink>
-        <RouterLink class="nav_btn" to="/explore" active-class="active">Explore</RouterLink> 
-        <RouterLink class="nav_btn" to="/project" active-class="active">Create</RouterLink><!-- I think they should be rendered conditionally-->
-        <div v-if="loggedIn">
-        <RouterLink class="nav_btn" to="/user" active-class="active">Profile</RouterLink>
-        </div>
-        <RouterLink class="nav_btn" to="/about" active-class="active">Download</RouterLink>
-        <div style="display:flex; width:fit-content; margin-left:auto;   flex-shrink: 0;">
-            <div v-if="displayUsername">
-                <span class="hello-user">Hello {{ displayUsername || "ERROR NO USER. SHOULD NOT BE SEEN" }}!</span>
-                <button @click="logOut" class="login_btn">Log Out</button>
+        <div v-if="allDataLoaded" style="display:contents;">
+            <RouterLink class="nav_btn" to="/" active-class="active">Home</RouterLink>
+            <RouterLink class="nav_btn" to="/explore" active-class="active">Explore</RouterLink> 
+            <div v-if="loggedIn">
+                <RouterLink class="nav_btn" to="/project" active-class="active">Create</RouterLink><!-- I think they should be rendered conditionally-->
+                <RouterLink class="nav_btn" to="/user" active-class="active">Profile</RouterLink>
             </div>
-            <RouterLink v-else class="login_btn" to="/auth">Login</RouterLink>
+            <RouterLink class="nav_btn" to="/about" active-class="active">Download</RouterLink>
+            <div style="display:flex; width:fit-content; margin-left:auto;   flex-shrink: 0;">
+                <div v-if="displayUsername">
+                    <span class="hello-user">Hello {{ displayUsername || "ERROR NO USER. SHOULD NOT BE SEEN" }}!</span>
+                    <button @click="logOut" class="login_btn">Log Out</button>
+                </div>
+                <RouterLink v-else class="login_btn" to="/auth">Login</RouterLink>
+            </div>
         </div>
     </div>
 </template>

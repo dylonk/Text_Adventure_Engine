@@ -12,7 +12,6 @@
     const projectName = ref('');
     const projectId = ref('');
     const userid = ref('');
-
     const nodesStore = useNodesStore();
 
     //project settings This one doesn't really need to be arrayed because it doesn't need to persist through sessions
@@ -286,6 +285,7 @@
         } catch (error) {
           console.error('Failed to open project', error);
         };
+        nodesStore.globalSync(); 
     }
 
     function openProjectFromFile(file = null) {
@@ -407,32 +407,25 @@
     }
 
 
-    // Computed properties for project insights. Good idea but commenting out for now
-    /*
-    const nodeCount = computed(() => {
-      const nodesStore = nodesStore;
-      return nodesStore.getAllNodes().length;
-    });
-
-    const roomCount = computed(() => {
-      const nodesStore = nodesStore;
-      return nodesStore.nodes.rooms.length;
-    });
-
-    const itemCount = computed(() => {
-      const nodesStore = nodesStore;
-      return nodesStore.nodes.items.length;
-    });
-
-    const promptCount = computed(() => {
-      const nodesStore = nodesStore;
-      return nodesStore.nodes.prompts.length;
-    });
-  */
 
 
 
 
+
+    //TUTORIAL MANAGEMENT FUNCTIONS
+    const tutorialStep=ref(null);
+    const startTutorial=()=>{
+      tutorialStep.value=1;
+    };
+    const endTutorial=()=>{
+      tutorialStep.value=null;
+    };
+    const nextTutorialStep=()=>{
+      tutorialStep.value=tutorialStep.value+1;
+    };
+    const prevTutorialStep=()=>{
+      tutorialStep.value=tutorialStep.value-1;
+    };
 
 
 
@@ -452,6 +445,11 @@
       openProject,
       deleteProject,
       exportGame,
+      tutorialStep,
+      startTutorial,
+      endTutorial,
+      nextTutorialStep,
+      prevTutorialStep
       
     };
 

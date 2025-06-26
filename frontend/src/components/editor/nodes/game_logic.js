@@ -192,14 +192,27 @@ const extractBracesContent = (inputText) => {
 const safeEvaluate = (expression) => {
   if(debug>=3) console.log("[GAME] safeEvaluate",expression)
 
+  //100==100 && "knight"=="knight"
+
   // Convert string numbers to actual numbers
   expression = expression.replace(/\b\d+(\.\d+)?\b/g, match => match);
   
-  // Handle equality check (==)
-  if (expression.includes("==")) {
-    const [left, right] = expression.split("==").map(s => s.trim());
-    return parseValue(left) == parseValue(right);
+  // Handle AND (&&)
+  if (expression.includes("&&")) {
+    const [left, right] = expression.split("&&").map(s => s.trim());
+    return safeEvaluate(left) && safeEvaluate(right);  
   }
+  
+  // Handle OR (||)
+  if (expression.includes("||")) {
+    const [left, right] = expression.split("||").map(s => s.trim());
+    return safeEvaluate(left) || safeEvaluate(right);
+  }
+
+  // Handle equality check (==)
+ if (expression.includes("==")) {
+  return evaluateBinary(expression, "==", (a, b) => a == b);
+}
   
   // Handle inequality check (!=)
   if (expression.includes("!=")) {
@@ -231,17 +244,7 @@ const safeEvaluate = (expression) => {
     return parseValue(left) < parseValue(right);
   }
   
-  // Handle AND (&&)
-  if (expression.includes("&&")) {
-    const [left, right] = expression.split("&&").map(s => s.trim());
-    return safeEvaluate(left) && safeEvaluate(right);
-  }
-  
-  // Handle OR (||)
-  if (expression.includes("||")) {
-    const [left, right] = expression.split("||").map(s => s.trim());
-    return safeEvaluate(left) || safeEvaluate(right);
-  }
+
   
   // Handle boolean values
   if (expression.trim() === "true") return true;
@@ -308,6 +311,14 @@ const parseValue = (value) => {
   
   // Return as is (likely a variable that will be replaced)
   return value;
+};
+
+// Helper function to evaluate functions with && and ||. It splits the expression by the operator and evaluates the left and right parts. currently only supports 2 parts
+const evaluateBinary = (expression, operator, comparator) => {
+  const parts = expression.split(new RegExp(`\\s*\\${operator}\\s*`));
+  if (parts.length !== 2) return false;
+  const [left, right] = parts;
+  return comparator(parseValue(left), parseValue(right));
 };
 
 //this is the same thing without the curly braces, used for extracting variables from conditions. still returns an array of all the variable strings.

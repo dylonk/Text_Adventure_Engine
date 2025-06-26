@@ -16,6 +16,15 @@ const props = defineProps({
 const displayList = ref(false)
 const dropdownList = ref([])
 
+//this allows for a default dropdown value, e.g. await nodes store location being set to "false"
+onMounted(() => {
+  const currentParam = NS.getParam(props.id, convertedTitle.value)[0];
+  if (!currentParam || currentParam === "") {
+    const initial = props.defaultSelection || props.defaultList[0] || "";
+    NS.getParam(props.id, convertedTitle.value)[0] = initial;
+    NS.globalSync();
+  }
+});
 
 //----------------------------!!IMPORTANT FOR NODE DATA MANIPULATION/FETCHING!!---------------------------------------------
 // ADD TO BE ABLE TO STORE OR RETRIEVE DYNAMIC INFORMATION FROM THE NODE ITSELF

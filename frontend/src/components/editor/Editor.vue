@@ -8,6 +8,7 @@ import Toolbar from './toolbar.vue'
 import CanvasSelector from './canvasSelector.vue'
 import gamePreview from '@/components/pages/game.vue'
 import { useProjectStore } from './project_store'
+import Tutorial from '@/components/editor/tutorial.vue'
 
 function updateAssets(){
   // Placeholder for update logic
@@ -25,6 +26,11 @@ function updateAssets(){
         class="previewScreen"
         :isPreview="true"
       ></gamePreview>
+
+      <Tutorial 
+      v-if="useProjectStore().tutorialStep"
+
+      />
       <Canvas v-if="!useProjectStore().showPreview" />
       <AssetBrowser v-if="!useProjectStore().showPreview" />
     </div>
@@ -47,6 +53,7 @@ function updateAssets(){
   height: 100%;
   flex-direction:column;
 }
+
 .editor-screenspace {
   width: 100vw;
   height: 100%;
