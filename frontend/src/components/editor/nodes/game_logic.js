@@ -190,13 +190,11 @@ const extractBracesContent = (inputText) => {
 
 // Parse and evaluate a simple expression safely
 const safeEvaluate = (expression) => {
+    //remove all quotes
+  expression =expression.replace(/["']/g, '');
   if(debug>=3) console.log("[GAME] safeEvaluate",expression)
 
-  //100==100 && "knight"=="knight"
 
-  // Convert string numbers to actual numbers
-  expression = expression.replace(/\b\d+(\.\d+)?\b/g, match => match);
-  
   // Handle AND (&&)
   if (expression.includes("&&")) {
     const [left, right] = expression.split("&&").map(s => s.trim());

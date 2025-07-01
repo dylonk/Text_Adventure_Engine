@@ -10,7 +10,7 @@ const tutorialTexts = [
     "Currently, you're in the global Canvas. There's a few things you can do here, but for now you can think of it as a sort of world map, a canvas in which all your rooms are stored.",
     "Try placing a room now by dragging a room node in from the toolbox on the left. It's the very first node type from the top.",
     "Great! Now that you have your node placed, you can right click it in the canvas and press 'rename' to give it a name. You can delete or copy/paste nodes from the same menu.",
-    "Now is a good time to introduce the object viewer on the right. If you've only been following the tutorial, you should see the player and the room you just made within the global canvas. Try clicking on the room you just made within the object viewer.",
+    "Now is a good time to introduce the object viewer on the right. Click the small arrow to the left of 'global' to expand it and show its children. If you've only been following the tutorial, you should see the player and the room you just made within the global canvas. Try clicking on the room you just made within the object viewer.",
     "You should now be looking at an empty canvas! This is the room you just made. You can tell which canvas you're in from the display in the top right, and you can collapse and uncollapse objects in the object viewer using the small arrows to the left of their names.",
     "Lets get started with some logic! The counterpart of an object node is a function node. While object nodes essentially exist just to hold and organize data, function nodes actually make things happen. ",
     "Go back to the 'global' canvas using the object viewer, and drag in a 'console output' node (The white one, just under the 'interactive' heading). This is the most basic function, and one you'll probably be using a lot. Click the text box within and type something.",
@@ -35,8 +35,9 @@ const tutorialTexts = [
     "In the 'condition' text box, type 'key.location!=player'. If you're familiar with coding, this style will probably feel natural to you, but if not you can press the 'help' button to see the syntax tips. This if statement evaluates whether or not the key is in the players inventory.",
     "Hook up the top condition (the one that fires if the player doesn't have the key) to the setlocation node you made earlier. If you want, you can also add a console output and hook it up to the 'else' statement, saying something like 'you already have the key'.",
     "Navigate back to the room's canvas and take a look at the door you just made. The horizontal grey and white text bars are *properties*. A property is essentially any aspect of an object that you want to control and use. For this door, we're going to want to track whether it's open or not.",
-    "Press the '+' button in the top right of the door node to add a property. Name it 'isOpen' and put the value as 'false '.",
-    ""
+    "Press the '+' button in the top right of the door node to add a property. Name it 'isOpen' and put the value as 'false'.",
+    "Now navigate to the door's canvas and drag in an await node that waits for 'open door'. Then add an if statement that checks whether the player both has the key and the door is closed: door.isOpen==false&&key.location==player.",
+    "now drag in a 'set property' node and hook it up to the top of the if statement. Set the target to the door, and the property to 'isOpen' and the new value to 'true'. Now when the player types 'open door', the door will open if they have the key. It's probably a good idea to also insert a console output node describing what happens in situtions like these, so the player knows they've done something!",
 
 
 ]
