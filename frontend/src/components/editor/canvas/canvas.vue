@@ -49,6 +49,7 @@ const nodesStore = useNodesStore();
 const isContextMenuVisible = ref(false)
 const contextMenuId = ref(null)
 const contextMenuPosition = ref({ x: 0, y: 0 })
+const pastePosition = ref({ x: 0, y: 0 })
 const contextMenuActions=ref()
 
 
@@ -64,9 +65,9 @@ function onEdgesChange(changes) {
 
 const actionsByType = {
 
-//these are actions that can be taken when clicking an empty space on the canvas. for now, paste.
+//these are actions that can be taken when right clicking an empty space on the canvas. for now, paste.
 canvasActions: [
-  {label: 'Paste', action: () => nodesStore.pasteNode(contextMenuPosition.value.x,contextMenuPosition.value.y) },
+  {label: 'Paste', action: () => nodesStore.pasteNode(pastePosition.value) },
 ],
 //these are actions that all objects have. Rename node for now.
 objectActions: [
@@ -92,6 +93,13 @@ function showContextMenu(event) {
   isContextMenuVisible.value = true;
 
   contextMenuActions.value = [...actionsByType.canvasActions];
+
+  //for accurate pasting. have to use screenToFlowCoordinate here like in drag and drop
+   pastePosition.value = screenToFlowCoordinate({
+          x: event.clientX,
+          y: event.clientY,
+        })
+
 }
 // Handle action for context menu
 function handleContextMenuAction(action) {

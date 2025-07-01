@@ -63,7 +63,6 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
 
 
   const globalSync = (important=false) => {
-    console.log(toRaw(globalNodes)); // Look at the raw value
     // Store current nodes and edges in canvas object
     if(important==true){
        syncer.value+=1; 
@@ -74,7 +73,6 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
     }
     // push to map
     globalNodes.set(canvasID.value,canvas);
-    console.log(`   🌎🔄 globalSync: `,globalNodes,`updated globalNodes at canvasID `,globalNodes.get(canvasID.value).n,`, nodes: `,nodes.value)
     // 
   }
   const localSync = () => { //gets nodes as they are within the global map
@@ -344,9 +342,9 @@ const getParam=(id,paramName)=>{
       console.error(`setNodeData: Node with id ${id} does not exist`);
       return;
     }
-    console.log("[EDITOR]Key/Value to input", inputKey,inputValue)
+    //console.log("[EDITOR]Key/Value to input", inputKey,inputValue)
     nodeExists.data[inputKey]=inputValue
-    console.log("[EDITOR]New data of node:", nodeExists.data)
+    //console.log("[EDITOR]New data of node:", nodeExists.data)
     globalSync();
     return;
   };
@@ -503,7 +501,8 @@ const getParam=(id,paramName)=>{
         allNodes.set(Number(node.id),GameNode(node))
         // add child node ids to parent
         const tNode2 = allNodes.get(Number(ID))
-        tNode2.n.push(Number(node.id))
+        console.log("[EDITOR]🚢🎮 tNode2",tNode2)
+        tNode2.n.push(Number(node.id))  //THERES A BUG THAT HAPPENS SOMETIMES ON THIS LINE THAT PREVENTS GAME FROM COMPILING
         allNodes.set(Number(ID),tNode2) 
       }
     }
@@ -803,23 +802,17 @@ const copyNode = (id) => {
   clipboardNode.value = cloneDeep({
     type: node.type,
     data: node.data,
-    position: { ...node.position }
   });
 
   console.log("[EDITOR]🦠📋 copyNode(id=", id, ")");
 };
 //adds a new node from the clipboard. takes position as argument.
 //was a little torn about whether to put this in canvas or not but we've been having all this functionality in nodestore so far.
-const pasteNode = (x, y) => {
+const pasteNode = (pos) => {
   const node = clipboardNode.value;
-  x-=500;
-  y-=300;
   const newNode = {
     type: node.type,
-    position: {
-      x,
-      y,
-    },
+    position: pos,
     id: idCounter.value,
     data: cloneDeep(node.data),
     expandParent: true,

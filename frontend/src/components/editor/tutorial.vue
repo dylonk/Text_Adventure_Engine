@@ -33,9 +33,9 @@ const tutorialTexts = [
     "Once you've done that, drag in a 'set location' node, set the target to the key, and the location to the player. This adds the key to the players inventory. If you feel like it, you can also add any other key-related awaits you want. 'examine key' is a good one to start with, hooked up to a console output describing the key.", 
     "Now, you don't want to be able to pick up the key if it's already in your inventory. It's time to learn about 'if' nodes. An if node chooses which path to move forward with, based on some condition. Drag one into the canvas, and hook it up in between the await node and the set location node. It should look like this INSERT IMAGE LATER.",
     "In the 'condition' text box, type 'key.location!=player'. If you're familiar with coding, this style will probably feel natural to you, but if not you can press the 'help' button to see the syntax tips. This if statement evaluates whether or not the key is in the players inventory.",
-    "Hook up the top condition (the one that fires if the player doesn' have the key) to the setlocation node you made earlier. If you want, you can also add a console output and hook it up to the 'else' statement, saying something like 'you already have the key'.",
+    "Hook up the top condition (the one that fires if the player doesn't have the key) to the setlocation node you made earlier. If you want, you can also add a console output and hook it up to the 'else' statement, saying something like 'you already have the key'.",
     "Navigate back to the room's canvas and take a look at the door you just made. The horizontal grey and white text bars are *properties*. A property is essentially any aspect of an object that you want to control and use. For this door, we're going to want to track whether it's open or not.",
-    "Press the '+' button in the top right of the door node to add a property. Name it 'isOpen' and put the value as 'false'.",
+    "Press the '+' button in the top right of the door node to add a property. Name it 'isOpen' and put the value as 'false '.",
     ""
 
 
@@ -66,7 +66,7 @@ const endTutorial=()=>{projectStore.endTutorial()};
 
 .tutorial-widget {
     position: absolute;
-    left: 990px;
+    left: 835px;
     font-size: small;
     background: rgb(7, 255, 44);
     width: 300px;
