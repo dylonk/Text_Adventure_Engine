@@ -13,6 +13,11 @@ const handleTitle = ref("badhandle")
 handleTitle.value = NS.addHandle(props.id,'source')
 
 
+//trying out a similar function to that found in handle_in, only with handle_out. This is so when an out handle is deleted
+function deleteEdges(){
+    NS.deleteEdgeByHandle(handleTitle.value)
+}
+
 </script>
 
 

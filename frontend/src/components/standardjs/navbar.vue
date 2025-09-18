@@ -37,10 +37,8 @@ const router = useRouter(); // Access the Vue Router for navigation
         <div v-if="allDataLoaded" style="display:contents;">
             <RouterLink class="nav_btn" to="/" active-class="active">Home</RouterLink>
             <RouterLink class="nav_btn" to="/explore" active-class="active">Explore</RouterLink> 
-            <div v-if="loggedIn">
-                <RouterLink class="nav_btn" to="/project" active-class="active">Create</RouterLink><!-- I think they should be rendered conditionally-->
-                <RouterLink class="nav_btn" to="/user" active-class="active">Profile</RouterLink>
-            </div>
+            <RouterLink class="nav_btn" to="/project" active-class="active" v-if="loggedIn">Create</RouterLink><!-- I think they should be rendered conditionally-->
+            <RouterLink class="nav_btn" to="/user" active-class="active" v-if="loggedIn">Profile</RouterLink>
             <RouterLink class="nav_btn" to="/about" active-class="active">Download</RouterLink>
             <div style="display:flex; width:fit-content; margin-left:auto;   flex-shrink: 0;">
                 <div v-if="displayUsername">

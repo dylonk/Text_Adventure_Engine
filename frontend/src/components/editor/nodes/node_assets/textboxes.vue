@@ -3,6 +3,8 @@ import { ref, defineProps, computed ,onMounted, nextTick} from 'vue';
 import { SmallButton, HContainer, HandleIn, HandleOut } from './n-component-imports.js';
 
 let response_id = 0;
+const handleIds = ref([]);//tracking the handle ids for the purpose of edge deletion by handle
+
 const props = defineProps({
     id: { default:-1},
     allowButtons: false,
@@ -39,15 +41,32 @@ function adjustTextarea(event){
   textarea.style.height = `${textarea.scrollHeight}px`;
 };
 
+function getLastHandleId() {    //used for deleting the edge of the last handle. 
+    const node = NS.getNode(props.id);
+    console.log(node);  
+    let minHandles= node.type=="if" ? 2 : 1     //if's are special cases because of the always-there else statement
+    if (node && node.data.srcHandles > minHandles) {
+        // The last handle index is srcHandles - 1 (since it increments after creating)
+        const lastHandleIndex = node.data.srcHandles - 1;
+        console.log(`Last handle ID: ${props.id}s${lastHandleIndex}`);
+        node.data.srcHandles--;
+        return `${props.id}s${lastHandleIndex}`;
+    }
+    return null;
+}
+
 function addResponse(){
     NS.getParam(props.id, convertedTitle.value).push("")
     NS.globalSync()
 }
 function removeResponse(){
     //updating this to remove the edge from the handle of the removed response
-    NS.deleteEdge(response_id)
-    NS.getParam(props.id,convertedTitle.value).pop();
+    //Is there some way to see the relevant edge from the textbox?
+    //I'll either have to add a variable to store the relevant edge (useful if we want to implement deleting specific prompts later)
+    NS.deleteEdgeByHandle(getLastHandleId())
+    NS.getParam(props.id,convertedTitle.value).pop();   
     NS.globalSync()
+
 }
 function updateResponse(index,newResponse){
     NS.getParam(props.id,convertedTitle.value)[index]=newResponse;
@@ -86,7 +105,8 @@ onMounted(() => {
                             ></textarea>
                         </div>
 
-                        <HandleOut v-if="handleOutput=='true'" :id="id" />
+                        <HandleOut v-if="handleOutput=='true'" :id="id"></HandleOut
+/>
                 </HContainer>
             </div>
         </div>
