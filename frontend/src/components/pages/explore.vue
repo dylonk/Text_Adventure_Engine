@@ -20,6 +20,7 @@ const play = ref(playButton)
 
 const recentGames = ref([]);
 const searchQuery = ref('');
+const expandedGame = ref(null);
 
 
 
@@ -36,6 +37,14 @@ const filterGames = () => {
   return recentGames.value.filter(game =>
     game.title.toLowerCase().includes(searchQuery.value.toLowerCase())
   );
+};
+
+const expandGame = (game) => {
+  expandedGame.value = game;
+};
+
+const closeExpanded = () => {
+  expandedGame.value = null;
 };
 
 //yeah, we're doing it by title not id. it makes the links prettier and we're making titles unique anyway.
@@ -71,24 +80,38 @@ onMounted(fetchGames);
     <div :style="{ backgroundImage: 'url(' + sky + ')' , flex: 1, height: '100%' }">
       <div v-if="recentGames.length>0" class="games-section" >
 
-            <div class="game" v-for="game in filterGames()" :key="i"> <!--lOOP FROM BACKEND -->
-              <div class="hcontainer">
-                <VContainer spacing="0px" style="width:min-content">
+            <div class="game" v-for="game in filterGames()" :key="game.id" @click="expandGame(game)"> 
+              <VContainer spacing="0px" style="width:min-content">
                 <div class="gametitle">{{game.title}}</div>
-                <div class="gamepic" @click="goToGame(game.title)">
+                <div class="gamepic">
                   <img :src="game.thumbnail||defaultThumb" class="thumbnail"> 
                   <img :src="play" class="overlay-play">  
                 </div>
-                </VContainer>
-                <div style="display:flex; flex-direction: column;">
-                  <div class="description" style="color:#CCC; height:min-content;margin-left:10px; margin-bottom: 5px;">description</div> 
-                  <div class="description" style="background: #E9E9E9; margin-left:10px; padding:6px;">
-                    {{ game.description }}
-                  </div>
-              </div>
-              </div>
+              </VContainer>
             </div>
         </div>
+    </div>
+
+    <!-- Expanded Game Overlay -->
+    <div v-if="expandedGame" class="overlay" @click.self="closeExpanded">
+      <div class="expanded-card">
+        <button class="close-btn" @click="closeExpanded">×</button>
+        <div class="expanded-content">
+          <div class="expanded-left">
+            <h2 class="expanded-title">{{expandedGame.title}}</h2>
+            <div class="expanded-thumbnail-container" @click="goToGame(expandedGame.title)">
+              <img :src="expandedGame.thumbnail||defaultThumb" class="expanded-thumbnail">
+              <img :src="play" class="expanded-play">
+            </div>
+          </div>
+          <div class="expanded-right">
+            <h3 class="desc-header">Description</h3>
+            <div class="expanded-description">
+              {{ expandedGame.description }}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
 </template>
@@ -155,6 +178,7 @@ input[type=search]:focus {
     position: relative;
     text-transform: uppercase;
     box-shadow: 6px 6px 0 #000;
+    cursor: pointer;
 }
 
 .gametitle {
@@ -164,11 +188,7 @@ input[type=search]:focus {
     padding-bottom: 10px;
     margin-bottom: 10px;
 }
-.hcontainer{
-  display:flex;
-  flex-direction: row;
-  justify-items: stretch;
-}
+
 .gamepic{
   width:150px;
   height:150px;
@@ -204,19 +224,140 @@ input[type=search]:focus {
     transition: all 0.1s ease-in-out;
 }
 
-.description{
-  display:none;
-  text-align: left;
-  color:#444;
-  font-family: 'Scada';
-  width:150px;
+/* Overlay Styles */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.expanded-card {
+  position: relative;
+  background-color: #ffffff;
+  border: 2px solid #8e8e8e;
+  border-radius: 8px;
+  box-shadow: 12px 12px 0 #000;
+  width: 80vw;
+  max-width: 1000px;
+  height: 70vh;
+  max-height: 600px;
+  padding: 30px;
+  overflow: hidden;
+}
+
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: #ff4444;
+  border: 2px solid #000;
+  color: white;
+  font-size: 32px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  line-height: 1;
+  box-shadow: 2px 2px 0 #000;
+}
+
+.close-btn:hover {
+  background: #ff0000;
+  transform: scale(1.1);
+}
+
+.expanded-content {
+  display: flex;
+  gap: 30px;
   height: 100%;
+}
+
+.expanded-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 300px;
+}
+
+.expanded-title {
+  font-family: 'Scada';
+  font-size: 32px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.expanded-thumbnail-container {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  cursor: pointer;
+}
+
+.expanded-thumbnail {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: 2px solid #8e8e8e;
+  border-radius: 8px;
+  box-shadow: inset 4px 4px 0 #000;
+  filter: brightness(0.85);
+}
+
+.expanded-play {
+  display: none;
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.expanded-thumbnail-container:hover .expanded-play {
+  display: block;
+}
+
+.expanded-thumbnail-container:hover .expanded-thumbnail {
+  filter: brightness(90%) blur(4px) grayscale(30%);
+}
+
+.expanded-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.desc-header {
+  font-family: 'Scada';
+  font-size: 24px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.expanded-description {
+  flex: 1;
+  background: #f5f5f5;
+  padding: 20px;
+  border: 2px solid #8e8e8e;
+  border-radius: 8px;
+  font-family: 'Scada';
+  font-size: 18px;
+  line-height: 1.6;
   overflow-y: auto;
-  font-size:16px;
+  color: #333;
 }
 
-.game:hover .description{
-  display:block;
-}
-
-</style>
+</style>  
