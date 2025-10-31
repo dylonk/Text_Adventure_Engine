@@ -1,11 +1,16 @@
 <script setup>
 import globalNavBar from '@/components/standardjs/navbar.vue'
 import axios from 'axios';
-import { ref, onMounted,watch } from 'vue';   
-import skyImage from '@/assets/Images/editor/sky.png'
+import { ref, onMounted, watch, onUnmounted } from 'vue';   
 import defaultThumbnail from '@/assets/Images/defaultgameimage.jpg'
 import playButton from '@/assets/Images/play.png'
 import { HContainer,VContainer } from '../editor/nodes/node_assets/n-component-imports';
+import cloud1 from '@/assets/Images/clouds/cloud1LQ.png'
+import cloud2 from '@/assets/Images/clouds/cloud2LQ.png'
+import cloud3 from '@/assets/Images/clouds/cloud3LQ.png'
+import cloud4 from '@/assets/Images/clouds/cloud4LQ.png'
+import cloud5 from '@/assets/Images/clouds/cloud5LQ.png'
+import cloud6 from '@/assets/Images/clouds/cloud6LQ.png'
 
 import game from './game.vue';
 import { useRouter } from 'vue-router';
@@ -13,7 +18,6 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // for Vite
 
 
 const router = useRouter();
-const sky = ref(skyImage)
 const defaultThumb = ref(defaultThumbnail)
 const play = ref(playButton)
 
@@ -21,6 +25,149 @@ const play = ref(playButton)
 const recentGames = ref([]);
 const searchQuery = ref('');
 const expandedGame = ref(null);
+
+// Cloud images array
+const cloudImages = [cloud1, cloud2, cloud3, cloud4, cloud5, cloud6];
+
+// Cloud data structure
+const clouds = ref([]);
+let cloudSpawnInterval = null;
+
+// Generate a normally-distributed random number
+// Uses Box-Muller transform to approximate normal distribution
+const randomNormal = () => {
+  // Generate two independent uniform random variables
+  const u1 = Math.random();
+  const u2 = Math.random();
+  // Box-Muller transform to get normal distribution (mean=0, std=1)
+  const z0 = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
+  return z0;
+};
+
+// Cloud layer configuration (3 layers for parallax effect)
+const speedConstant = 0.5
+const cloudLayers = [
+  { speed: 0.2*speedConstant, opacity: 0.4, scale: 2, name: 'back' },    // Background - slowest, darkest, smaller
+  { speed: 0.35*speedConstant, opacity: 0.8, scale: 1.7, name: 'mid' },     // Midground - medium speed
+  { speed: 0.5*speedConstant, opacity: 1.0, scale: 1.0, name: 'front' }    // Foreground - fastest, brightest, full size
+];
+
+// Generate random cloud
+const generateCloud = (layer, startLeft = null) => {
+  const randomCloud = cloudImages[Math.floor(Math.random() * cloudImages.length)];
+  const randomSize = 300 + Math.random() * 100; // 150-250px
+  
+  // Generate normally-distributed vertical position - centered at the very top
+  // Center is at 3% from top so clouds appear at the top edge
+  const centerPercent = -5; // Center position - negative to translate upward above top edge
+  const rangePercent = 20; // Range to allow clouds to spread a bit
+  const stdDev = rangePercent / 4; // Standard deviation to keep most values in range
+  
+  let normalValue = randomNormal() * stdDev + centerPercent;
+  // Allow negative values to translate clouds upward, extending into viewport
+  const randomTop = Math.max(-10, Math.min(15, normalValue)); // Clamp between -10% and 15% from top
+  
+  // If startLeft is provided, use it; otherwise start off-screen left
+  const initialLeft = startLeft !== null ? startLeft : -50;
+  const randomDelay = startLeft !== null ? 0 : Math.random() * 2; // Small delay for naturally spawned clouds
+  
+  // Duration varies by layer - slower layers take longer (creating parallax effect)
+  // Base duration is 30-60 seconds, adjusted by layer speed
+  const baseDuration = 30 + Math.random() * 30;
+  let duration = baseDuration / layer.speed;
+  
+  // Adjust duration based on starting position (clouds starting further left take longer)
+  if (startLeft !== null) {
+    const totalDistance = 170; // From -50% to 120%
+    const remainingDistance = 120 - startLeft;
+    const progressRatio = remainingDistance / totalDistance;
+    duration = duration * progressRatio; // Shorter duration for clouds starting further right
+  }
+  
+  return {
+    id: Date.now() + Math.random(),
+    image: randomCloud,
+    layer: layer,
+    size: randomSize * layer.scale,
+    top: randomTop + '%',
+    speed: layer.speed,
+    opacity: layer.opacity,
+    delay: randomDelay,
+    duration: duration,
+    startLeft: initialLeft
+  };
+};
+
+// Spawn new cloud
+const spawnCloud = () => {
+  // Randomly choose a layer (weighted towards more background clouds)
+  const layerRand = Math.random();
+  let layerIndex;
+  if (layerRand < 0.3) {
+    layerIndex = 0; // Back layer - 40% chance
+  } else if (layerRand < 0.5) {
+    layerIndex = 1; // Mid layer - 30% chance
+  } else {
+    layerIndex = 2; // Front layer - 30% chance
+  }
+  
+  clouds.value.push(generateCloud(cloudLayers[layerIndex]));
+};
+
+// Remove clouds that have moved off screen (limit array size to prevent memory issues)
+const cleanupClouds = () => {
+  if (clouds.value.length > 50) {
+    // Remove oldest clouds if we have too many
+    clouds.value = clouds.value.slice(-40);
+  }
+};
+
+// Handle animation end events for cleanup
+const handleCloudAnimationEnd = (cloudId) => {
+  clouds.value = clouds.value.filter(cloud => cloud.id !== cloudId);
+};
+
+// Initialize cloud system
+const initClouds = () => {
+  // Spawn initial clouds immediately distributed across the entire screen area
+  for (let i = 0; i < 20; i++) {
+    // Distribute clouds across the screen from off-screen left through visible area
+    // Range from -50% (off-screen left) to 120% (off-screen right)
+    let startLeft;
+    if (i < 12) {
+      // First 12 clouds distributed across the visible screen area (-10% to 110%)
+      startLeft = -10 + (i / 11) * 120; // Distribute from -10% to 110%
+    } else if (i < 18) {
+      // Next 6 clouds start off-screen left, ready to enter
+      startLeft = -50 + (i - 12) / 5 * 20; // Distribute from -50% to -10%
+    } else {
+      // Last 2 clouds start further off-screen for variety
+      startLeft = -50 - Math.random() * 30; // -50% to -80%
+    }
+    
+    // Randomly choose a layer
+    const layerRand = Math.random();
+    let layerIndex;
+    if (layerRand < 0.1) {
+      layerIndex = 0; // Back layer
+    } else if (layerRand < 0.35) {
+      layerIndex = 1; // Mid layer
+    } else {
+      layerIndex = 2; // Front layer
+    }
+    
+    // Spawn cloud at specific position immediately
+    clouds.value.push(generateCloud(cloudLayers[layerIndex], startLeft));
+  }
+  
+  // Continue spawning clouds at random intervals (off-screen left)
+  cloudSpawnInterval = setInterval(() => {
+    if (Math.random() > 0.3) { // 70% chance to spawn each interval
+      spawnCloud();
+    }
+    cleanupClouds(); // Periodically clean up old clouds
+  }, 8000 + Math.random() * 7000); // Every 8-15 seconds (less frequent)
+};
 
 
 
@@ -68,7 +215,16 @@ const fetchGames = async () => {
     console.warn('Error fetching projects:', error);
   }
 };
-onMounted(fetchGames);
+onMounted(() => {
+  fetchGames();
+  initClouds();
+});
+
+onUnmounted(() => {
+  if (cloudSpawnInterval) {
+    clearInterval(cloudSpawnInterval);
+  }
+});
 
 </script>
 
@@ -77,9 +233,28 @@ onMounted(fetchGames);
     <form id="section-bar" action="placeholder" method="get">
         <input type="search" name="search-bar" placeholder="SEARCH" v-model="searchQuery">
     </form>
-    <div :style="{ backgroundImage: 'url(' + sky + ')' , flex: 1, height: '100%' }">
+    <div class="game-page">
+      <!-- Cloud layers with parallax effect -->
+      <div class="cloud-container">
+        <div 
+          v-for="cloud in clouds" 
+          :key="cloud.id"
+          class="cloud"
+          :class="`cloud-${cloud.layer.name}`"
+          :style="{
+            backgroundImage: `url(${cloud.image})`,
+            width: cloud.size + 'px',
+            height: cloud.size + 'px',
+            top: cloud.top,
+            opacity: cloud.opacity,
+            animationDuration: cloud.duration + 's',
+            animationDelay: cloud.delay + 's',
+            '--start-left': (cloud.startLeft !== undefined ? cloud.startLeft : -100) + '%'
+          }"
+          @animationend="handleCloudAnimationEnd(cloud.id)"
+        ></div>
+      </div> 
       <div v-if="recentGames.length>0" class="games-section" >
-
             <div class="game" v-for="game in filterGames()" :key="game.id" @click="expandGame(game)"> 
               <VContainer spacing="0px" style="width:min-content">
                 <div class="gametitle">{{game.title}}</div>
@@ -151,6 +326,73 @@ input[type=search]:focus {
     border-color: #80c6ff;
 }
 
+.game-page{
+  flex: 1; 
+  height: '100%';
+  background:linear-gradient(0deg,rgb(180, 249, 255) 0%, rgb(136, 189, 242) 80%);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Cloud container - positioned absolutely behind content */
+.cloud-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 120%; /* Extend height to allow for upward translation */
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+/* Cloud base styles */
+.cloud {
+  position: absolute;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  will-change: transform;
+}
+
+/* Cloud animation - moves from left to right */
+@keyframes cloudMove {
+  from {
+    left: var(--start-left, -50%);
+  }
+  to {
+    left: 120%;
+  }
+}
+
+.cloud {
+  animation: cloudMove linear;
+  animation-fill-mode: both;
+}
+
+/* Layer-specific z-index for proper parallax layering */
+.cloud-back {
+  z-index: 1;
+  filter: brightness(0.7) contrast(1.1); /* Darker background clouds */
+}
+
+.cloud-mid {
+  z-index: 2;
+  filter: brightness(0.85);
+}
+
+.cloud-front {
+  z-index: 3;
+}
+
+/* Media query for mobile devices - scale clouds to half size */
+@media (max-width: 768px) {
+  .cloud {
+    transform: scale(0.5);
+    transform-origin: center center;
+  }
+}
+
 .games-section {
   display: flex;
   flex-wrap: wrap;
@@ -160,6 +402,7 @@ input[type=search]:focus {
   width: 100%;
   position: relative;
   box-sizing: border-box;
+  z-index: 10; /* Ensure games appear above clouds */
 }
 
 .game {
@@ -188,6 +431,9 @@ input[type=search]:focus {
     padding-bottom: 10px;
     margin-bottom: 10px;
 }
+.gametitle:hover{
+  text-decoration: underline;
+}
 
 .gamepic{
   width:150px;
@@ -215,13 +461,11 @@ input[type=search]:focus {
   display:inline;
 }
 .gamepic:hover .thumbnail{
-  filter: brightness(90%) blur(4px) grayscale(30%);
+  filter: brightness(50%);
 }
 
 .game:hover {
     color: #000;
-    transform: scale(1.02) translate(0px, -6px);
-    transition: all 0.1s ease-in-out;
 }
 
 /* Overlay Styles */
@@ -236,7 +480,6 @@ input[type=search]:focus {
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  backdrop-filter: blur(4px);
 }
 
 .expanded-card {
@@ -331,7 +574,7 @@ input[type=search]:focus {
 }
 
 .expanded-thumbnail-container:hover .expanded-thumbnail {
-  filter: brightness(90%) blur(4px) grayscale(30%);
+  filter: brightness(50%);
 }
 
 .expanded-right {
