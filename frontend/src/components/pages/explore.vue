@@ -596,7 +596,8 @@ input[type=search]:focus {
     border-radius: 5px;
     width: 15rem;
     height: fit-content;
-    background-color: #ffffff;
+    background-color: rgb(255, 255, 255);
+    box-shadow: 2px 2px 5px rgba(36, 29, 29, 0.426),-2px -2px 5px rgba(36, 29, 29, 0.426);
     color: #000000;
     margin: 5px;
     padding: 0.5rem;
@@ -631,7 +632,7 @@ input[type=search]:focus {
 
 .gameusername {
     font-size: 14px;
-    font-family: 'Scada';
+    font-family: 'Pixelify Sans', sans-serif;
     color: #666;
     white-space: nowrap;
     overflow: hidden;
