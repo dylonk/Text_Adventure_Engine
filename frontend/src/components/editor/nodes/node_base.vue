@@ -233,7 +233,7 @@ onMounted(()=>{
     display:flex;
     flex-direction: column;
     border-radius: 6px;
-    border-bottom:v-bind('data.fg_color') 4px solid;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3), 0 6px 20px 0 rgba(0, 0, 0, 0.3);
 }
 
 .node_container:active{
@@ -263,9 +263,7 @@ onMounted(()=>{
   color:v-bind('data.fg_color');
   background:v-bind('data.bg_color');
 }
-.node_container.tbStyle{
-  border-bottom:black 4px solid;
-}
+
 
 textarea{
     color:blue;

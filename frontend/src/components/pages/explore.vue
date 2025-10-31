@@ -1,10 +1,13 @@
 <script setup>
 import globalNavBar from '@/components/standardjs/navbar.vue'
 import axios from 'axios';
-import { ref, onMounted, watch, onUnmounted } from 'vue';   
+import { ref, onMounted, watch, onUnmounted, nextTick, computed } from 'vue';   
 import defaultThumbnail from '@/assets/Images/defaultgameimage.jpg'
 import playButton from '@/assets/Images/play.png'
 import { HContainer,VContainer } from '../editor/nodes/node_assets/n-component-imports';
+import fullStar from '@/assets/Images/stars/fullstar.png'
+import emptyStar from '@/assets/Images/stars/emptystar.png'
+import halfStar from '@/assets/Images/stars/halfstar.png'
 import cloud1 from '@/assets/Images/clouds/cloud1LQ.png'
 import cloud2 from '@/assets/Images/clouds/cloud2LQ.png'
 import cloud3 from '@/assets/Images/clouds/cloud3LQ.png'
@@ -25,6 +28,8 @@ const play = ref(playButton)
 const recentGames = ref([]);
 const searchQuery = ref('');
 const expandedGame = ref(null);
+const currentPage = ref(1);
+const itemsPerPage = ref(20); // Set to 1 for testing
 
 // Cloud images array
 const cloudImages = [cloud1, cloud2, cloud3, cloud4, cloud5, cloud6];
@@ -100,15 +105,20 @@ const generateCloud = (layer, startLeft = null) => {
 
 // Spawn new cloud
 const spawnCloud = () => {
+  // Don't spawn if there are already 8 or more clouds
+  if (clouds.value.length >= 8) {
+    return;
+  }
+  
   // Randomly choose a layer (weighted towards more background clouds)
   const layerRand = Math.random();
   let layerIndex;
-  if (layerRand < 0.3) {
-    layerIndex = 0; // Back layer - 40% chance
-  } else if (layerRand < 0.5) {
-    layerIndex = 1; // Mid layer - 30% chance
+  if (layerRand < 0.1) {
+    layerIndex = 0; // Back layer
+  } else if (layerRand < 0.35) {
+    layerIndex = 1; // Mid layer
   } else {
-    layerIndex = 2; // Front layer - 30% chance
+    layerIndex = 2; // Front layer
   }
   
   clouds.value.push(generateCloud(cloudLayers[layerIndex]));
@@ -130,18 +140,19 @@ const handleCloudAnimationEnd = (cloudId) => {
 // Initialize cloud system
 const initClouds = () => {
   // Spawn initial clouds immediately distributed across the entire screen area
-  for (let i = 0; i < 20; i++) {
+  // Limited to 8 clouds maximum
+  for (let i = 0; i < 8; i++) {
     // Distribute clouds across the screen from off-screen left through visible area
     // Range from -50% (off-screen left) to 120% (off-screen right)
     let startLeft;
-    if (i < 12) {
-      // First 12 clouds distributed across the visible screen area (-10% to 110%)
-      startLeft = -10 + (i / 11) * 120; // Distribute from -10% to 110%
-    } else if (i < 18) {
-      // Next 6 clouds start off-screen left, ready to enter
-      startLeft = -50 + (i - 12) / 5 * 20; // Distribute from -50% to -10%
+    if (i < 5) {
+      // First 5 clouds distributed across the visible screen area (-10% to 110%)
+      startLeft = -10 + (i / 4) * 120; // Distribute from -10% to 110%
+    } else if (i < 7) {
+      // Next 2 clouds start off-screen left, ready to enter
+      startLeft = -50 + ((i - 5) / 1) * 40; // Distribute from -50% to -10%
     } else {
-      // Last 2 clouds start further off-screen for variety
+      // Last cloud starts further off-screen for variety
       startLeft = -50 - Math.random() * 30; // -50% to -80%
     }
     
@@ -171,19 +182,69 @@ const initClouds = () => {
 
 
 
-// Watch for changes in searchQuery and filter games
-watch(searchQuery, () => {
-  filterGames(); // Re-filter the games when search input changes
-});
-
 // Filter the games based on search query
-const filterGames = () => {
+const filteredGames = computed(() => {
   if (!searchQuery.value) {
     return recentGames.value; // If no search query, show all games
   }
   return recentGames.value.filter(game =>
     game.title.toLowerCase().includes(searchQuery.value.toLowerCase())
   );
+});
+
+// Calculate total pages based on filtered games
+const totalPages = computed(() => {
+  return Math.max(1, Math.ceil(filteredGames.value.length / itemsPerPage.value));
+});
+
+// Get paginated games for current page
+const paginatedGames = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage.value;
+  const end = start + itemsPerPage.value;
+  return filteredGames.value.slice(start, end);
+});
+
+// Watch for changes in searchQuery and reset to page 1
+watch(searchQuery, async () => {
+  currentPage.value = 1; // Reset to first page when search changes
+  // Adjust font sizes after filtering
+  await nextTick();
+  adjustTitleFontSizes();
+});
+
+// Watch for changes in filtered games and reset to page 1 if current page is invalid
+watch(filteredGames, () => {
+  if (currentPage.value > totalPages.value) {
+    currentPage.value = 1;
+  }
+});
+
+// Pagination functions
+const goToPage = (page) => {
+  if (page >= 1 && page <= totalPages.value) {
+    currentPage.value = page;
+    nextTick(() => {
+      adjustTitleFontSizes();
+    });
+  }
+};
+
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++;
+    nextTick(() => {
+      adjustTitleFontSizes();
+    });
+  }
+};
+
+const prevPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value--;
+    nextTick(() => {
+      adjustTitleFontSizes();
+    });
+  }
 };
 
 const expandGame = (game) => {
@@ -210,14 +271,90 @@ const fetchGames = async () => {
       title: game.title,
       thumbnail:game.thumbnail,
       description:game.description,
+      username: game.username || 'unknown', // Default to 'unknown' if not in database
+      rating: game.rating || 2.5, // Default to 2.5 stars if not in database
     }));
+    // Adjust font sizes after games are loaded
+    await nextTick();
+    adjustTitleFontSizes();
   } catch (error) {
     console.warn('Error fetching projects:', error);
   }
 };
+
+// Function to adjust title font sizes to fit within container
+const adjustTitleFontSizes = () => {
+  const titleElements = document.querySelectorAll('.gametitle');
+  titleElements.forEach((element) => {
+    // Get the actual computed width of the container
+    const computedStyle = getComputedStyle(element);
+    // Use a more conservative width calculation to ensure text stays within padding
+    // Account for potential rounding errors and ensure titles don't exceed the 10px padding
+    // Increased buffer to prevent clipping (accounts for overflow, rounding, letter spacing)
+    const buffer = 8;
+    const containerWidth = element.offsetWidth - buffer;
+    if (containerWidth <= 0) return; // Skip if element is not visible
+    const maxFontSize = 20; // Maximum font size
+    const minFontSize = 10; // Minimum font size to prevent text from being too small
+    let fontSize = maxFontSize;
+    
+    // Create a temporary span to measure text width
+    const tempSpan = document.createElement('span');
+    tempSpan.style.position = 'absolute';
+    tempSpan.style.visibility = 'hidden';
+    tempSpan.style.whiteSpace = 'nowrap';
+    tempSpan.style.fontFamily = computedStyle.fontFamily;
+    tempSpan.style.fontWeight = computedStyle.fontWeight;
+    tempSpan.style.letterSpacing = computedStyle.letterSpacing; // Match letter spacing
+    tempSpan.style.textTransform = computedStyle.textTransform; // Match text transform
+    tempSpan.style.fontSize = maxFontSize + 'px';
+    tempSpan.textContent = element.textContent;
+    document.body.appendChild(tempSpan);
+    
+    // Binary search for the right font size
+    let low = minFontSize;
+    let high = maxFontSize;
+    while (low <= high) {
+      const mid = Math.floor((low + high) / 2);
+      tempSpan.style.fontSize = mid + 'px';
+      const width = tempSpan.offsetWidth;
+      
+      // Use a conservative check - ensure width is significantly less than containerWidth to prevent clipping
+      if (width < containerWidth - 2) {
+        fontSize = mid;
+        low = mid + 1;
+      } else {
+        high = mid - 1;
+      }
+    }
+    
+    // Clean up temp element
+    document.body.removeChild(tempSpan);
+    
+    // Apply the calculated font size
+    element.style.fontSize = fontSize + 'px';
+  });
+};
+
+// Function to get star images based on rating (0-5 scale)
+const getStarImage = (index, rating) => {
+  const starValue = rating - index;
+  if (starValue >= 1) {
+    return fullStar;
+  } else if (starValue >= 0.5) {
+    return halfStar;
+  } else {
+    return emptyStar;
+  }
+};
+
 onMounted(() => {
   fetchGames();
   initClouds();
+  // Adjust font sizes after initial render
+  nextTick(() => {
+    adjustTitleFontSizes();
+  });
 });
 
 onUnmounted(() => {
@@ -255,15 +392,58 @@ onUnmounted(() => {
         ></div>
       </div> 
       <div v-if="recentGames.length>0" class="games-section" >
-            <div class="game" v-for="game in filterGames()" :key="game.id" @click="expandGame(game)"> 
+            <div class="game" v-for="game in paginatedGames" :key="game.id" @click="expandGame(game)"> 
               <VContainer spacing="0px" style="width:min-content">
                 <div class="gametitle">{{game.title}}</div>
+                <div class="game-user-rating">
+                  <div class="gameusername">{{game.username || 'unknown'}}</div>
+                  <div class="gamestars">
+                    <img 
+                      v-for="i in 5" 
+                      :key="i" 
+                      :src="getStarImage(i - 1, game.rating || 2.5)" 
+                      class="star"
+                      alt="star"
+                    />
+                  </div>
+                </div>
                 <div class="gamepic">
                   <img :src="game.thumbnail||defaultThumb" class="thumbnail"> 
                   <img :src="play" class="overlay-play">  
                 </div>
               </VContainer>
             </div>
+        </div>
+        
+        <!-- Pagination Controls -->
+        <div v-if="totalPages > 1" class="pagination-container">
+          <button 
+            class="pagination-btn" 
+            @click="prevPage" 
+            :disabled="currentPage === 1"
+            :class="{ disabled: currentPage === 1 }"
+          >
+            ‹ Previous
+          </button>
+          <div class="pagination-numbers">
+            <button
+              v-for="page in totalPages"
+              :key="page"
+              class="pagination-number"
+              :class="{ active: page === currentPage }"
+              @click="goToPage(page)"
+            >
+              {{ page }}
+            </button>
+          </div>
+          <button 
+            class="pagination-btn" 
+            @click="nextPage" 
+            :disabled="currentPage === totalPages"
+            :class="{ disabled: currentPage === totalPages }"
+          >
+            Next ›
+          </button>
         </div>
     </div>
 
@@ -311,7 +491,7 @@ onUnmounted(() => {
   }
 
 input[type=search] {
-    border: 2px inset #989898;
+    border: 2px solid #989898;
     padding: 10px;
     width: 40%;
     border-radius: 8px;
@@ -331,7 +511,8 @@ input[type=search]:focus {
   height: '100%';
   background:linear-gradient(0deg,rgb(180, 249, 255) 0%, rgb(136, 189, 242) 80%);
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 /* Cloud container - positioned absolutely behind content */
@@ -394,15 +575,17 @@ input[type=search]:focus {
 }
 
 .games-section {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;
-  padding: 20px;
-  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr) );
+  grid-auto-rows: auto;
+  grid-gap: 32px;
+  padding: 4rem 20dvw;
+  margin: 0 auto;
   position: relative;
   box-sizing: border-box;
   z-index: 10; /* Ensure games appear above clouds */
+  overflow-y: visible;
+  min-height: fit-content;
 }
 
 .game {
@@ -411,40 +594,76 @@ input[type=search]:focus {
     align-items: center;
     font-size: 28px;
     border-radius: 5px;
-    width: fit-content;
+    width: 15rem;
     height: fit-content;
     background-color: #ffffff;
     color: #000000;
-    border: 1px solid #8e8e8e;
     margin: 5px;
-    padding: 10px;
+    padding: 0.5rem;
     position: relative;
     text-transform: uppercase;
-    box-shadow: 6px 6px 0 #000;
     cursor: pointer;
 }
 
+
 .gametitle {
-    width: 150px;
+    max-width: 100%;
+    height:20px;
     font-size: 20px;
     font-family:'Scada';
-    padding-bottom: 10px;
     margin-bottom: 10px;
+    white-space: nowrap;
+    min-height: 1.2em;
+    overflow: show;
+    box-sizing: border-box;
 }
 .gametitle:hover{
   text-decoration: underline;
 }
 
+.game-user-rating {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.gameusername {
+    font-size: 14px;
+    font-family: 'Scada';
+    color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-shrink: 1;
+}
+
+.gamestars {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+}
+
+.star {
+    width: 16px;
+    height: 16px;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+    flex-shrink: 0;
+}
+
 .gamepic{
-  width:150px;
-  height:150px;
+  width:14rem;
+  height:14rem;
   overflow: clip;
 }
 .gamepic .thumbnail {
-    border: 1px solid #8e8e8e;
     border-radius: 4px;
-    width: 150px;
-    height: 150px;
+    width: 14rem;
+    height: 14rem;
     object-fit: cover;
     box-shadow: inset 2px 2px 0 #000;
     filter: brightness(0.85);
@@ -601,6 +820,69 @@ input[type=search]:focus {
   line-height: 1.6;
   overflow-y: auto;
   color: #333;
+}
+
+/* Pagination Styles */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  padding: 20px;
+  z-index: 10;
+  position: relative;
+}
+
+.pagination-btn {
+  background-color: #ffffff;
+  border: none;
+  border-radius: 32px;
+  padding: 8px 16px;
+  font-size: 24px;
+  cursor: pointer;
+
+  color: #333;
+  transition: all 0.2s;
+}
+
+.pagination-btn:hover:not(.disabled) {
+  background-color: #e4e4e4;
+}
+
+.pagination-btn.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-numbers {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+.pagination-number {
+  background-color: #ffffff;
+  border: none;
+  border-radius: 32px;
+  padding: 8px 12px;
+  font-size: 18px;
+  font-family: 'Scada';
+  cursor: pointer;
+  color: #333;
+  transition: all 0.2s;
+  min-width: 40px;
+}
+
+.pagination-number:hover {
+  background-color: #f0f0f0;
+}
+
+.pagination-number.active {
+  background-color: #ffffff;
+  
+  outline:2px blue solid;
+  color: blue;
+  font-weight: bold;
 }
 
 </style>  
