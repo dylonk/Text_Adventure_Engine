@@ -3,6 +3,7 @@ import Toastify from 'toastify-js';
 import 'toastify-js/src/toastify.css';
 import Project from './project.vue';
 import { useProjectStore } from '../editor/project_store';
+import { fetchUserData } from '@/components/standardjs/fetchUserData';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // for Vite
 
 
@@ -90,7 +91,8 @@ export default {
         formData.append("title", this.title);
         formData.append("description", this.description);
         formData.append("thumbnail", this.thumbnail);
-        useProjectStore().exportGame(this.title, this.description, imageUrl);
+        const username = await fetchUserData('username');
+        useProjectStore().exportGame(this.title, this.description, imageUrl, username);
 
         // Simulated API call
         await new Promise(resolve => setTimeout(resolve, 2000)); // simulate delay of 2 seconds

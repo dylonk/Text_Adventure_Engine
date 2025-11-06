@@ -1,5 +1,5 @@
 // Responsible for creating html like page navigation
-import { createMemoryHistory, createRouter } from 'vue-router'
+import { createMemoryHistory, createWebHistory, createRouter } from 'vue-router'
 
 import HomeView from './home.vue'
 import AboutView from './about.vue'
@@ -12,26 +12,21 @@ import gamePageView from './GamePage.vue'
 import ProjectView from './project.vue'
 import Publish from './publish.vue'
 
-
-
-
-
-
-const routes = [
-    { path: '/', component: HomeView },
-    { path: '/about', component: AboutView },
-    { path: '/explore', component: ExploreView },
-    { path: '/create', component: CreateView },
-    { path: '/auth', component: LoginView },
-    { path: '/user', component: ProfileView },
-    { path: '/game', component: Game },
-    { path: '/gamePage', component: gamePageView },
-    { path: '/project', component: ProjectView },
-    { path: '/publish', component: Publish},
-]
+// const routes = [
+//     { path: '/', component: HomeView },
+//     { path: '/about', component: AboutView },
+//     { path: '/explore', component: ExploreView },
+//     { path: '/create', component: CreateView },
+//     { path: '/auth', component: LoginView },
+//     { path: '/user', component: ProfileView },
+//     { path: '/game', component: Game },
+//     { path: '/gamePage', component: gamePageView },
+//     { path: '/project', component: ProjectView },
+//     { path: '/publish', component: Publish},
+// ]
 
 const router = createRouter({
-    history: createMemoryHistory(),
+    history: createWebHistory(),
     routes: [
         { path: '/', name: 'Home', component: HomeView },
         { path: '/about', name: 'About', component: AboutView },
