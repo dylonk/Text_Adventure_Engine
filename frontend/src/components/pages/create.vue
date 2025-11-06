@@ -1,5 +1,4 @@
 <script setup>
-import globalNavBar from '@/components/standardjs/navbar.vue'
 import Editor from '@/components/editor/Editor.vue'
 
 function goToCreate() {
@@ -7,7 +6,6 @@ function goToCreate() {
 }
 </script>
 <template>
-    <globalNavBar></globalNavBar>
 <body class="create-container">
     <Editor/>
 </body>

@@ -1,6 +1,5 @@
 <script setup>
 import { ref, onMounted, nextTick, computed, watch } from 'vue';
-import globalNavBar from '@/components/standardjs/navbar.vue';
 import previewSetup from '@/components/editor/preview_setup.vue';
 import previewObjectViewer from '@/components/editor/preview_object_viewer.vue';
 import { useNodesStore } from '../editor/nodes/node_store.js';
@@ -410,10 +409,7 @@ const gamelogicOutput = ref("")
 
 </script>
 
-<template>
-  <globalNavBar v-if="!isPreview"/>
-    
-
+<template>    
   <div
     class="game-container"
     :class="[{ preview: isPreview}, $attrs.class]"

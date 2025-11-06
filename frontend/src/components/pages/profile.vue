@@ -2,7 +2,6 @@
 import { ref, onMounted } from 'vue';
 import Toastify from 'toastify-js';
 import 'toastify-js/src/toastify.css';
-import globalNavBar from '@/components/standardjs/navbar.vue';
 import wizardPfp from '@/assets/Images/wizardpfp.png';
 import loadCircle from '@/assets/Images/loading.gif';
 import { fetchUserData } from '@/components/standardjs/fetchUserData';
@@ -171,7 +170,6 @@ onMounted(async() => {
 </script>
 <template>
     <div class="profile-container">
-        <globalNavBar/>
         <div class="profile-content">
             <div class="profile-picture-container">
                     <img v-if="!isMounted" :src="loadCircle"  style="width:20%; height:20%; position: relative; top:38%; left:38%;" alt="Profile Picture">
@@ -250,12 +248,12 @@ onMounted(async() => {
 }
 
 body {
-    background-color: #181818;
-    color: #f1f1f1;
+    background-color: #ffffff;
+    color: #000000;
 }
 
 .profile-container{
-    background:#181818;
+    background:#ffffff;
     flex:1;
 }
 

@@ -1,11 +1,9 @@
 <script setup>
-import globalNavBar from '@/components/standardjs/navbar.vue'
 import windowsLogo from '@/assets/Images/windows.png'
 
 
 </script>
 <template>
-    <globalNavBar/>
     <div class="content">
     <div class="text-container">
         <div id="title">

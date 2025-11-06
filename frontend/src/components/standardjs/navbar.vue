@@ -17,16 +17,24 @@ const allDataLoaded = ref(false); // this is so the v-if logged ins dont dissapp
 // Function to log out the user
 function logOut() {
     localStorage.removeItem('token'); // Remove token from localStorage
+    displayUsername.value = ''; // Clear the username immediately
     router.push('/auth'); // Redirect to the login page
 }
 
 // Function to fetch the user's username
-
+async function refreshUserData() {
+    displayUsername.value = await fetchUserData('username');
+    allDataLoaded.value = true; //whether there's a username or not, we have all the data we need now to display the taskbar.
+}
 
 // Call fetchUserData on mounted
 onMounted(async() => {           //on mounted (whenever a new page loads, properly set the displyed username)
-    displayUsername.value = await fetchUserData('username');
-    allDataLoaded.value = true; //whether there's a username or not, we have all the data we need now to display the taskbar.
+    await refreshUserData();
+})
+
+// Expose the refresh function so parent components can call it
+defineExpose({
+    refreshUserData
 })
 
 const router = useRouter(); // Access the Vue Router for navigation

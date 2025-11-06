@@ -1,5 +1,4 @@
 <script>
-import globalNavBar from '@/components/standardjs/navbar.vue';
 import Toastify from 'toastify-js';
 import 'toastify-js/src/toastify.css';
 import Project from './project.vue';
@@ -10,7 +9,6 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // for Vite
 
 export default {
   components: {
-    globalNavBar
   },
   data() {
     return {
@@ -110,8 +108,6 @@ export default {
 
 <template>
   <div class="publish-container">
-    <globalNavBar />
-
     <div class="publish-page">
       <h1 class="publish-title">Publish Your Game</h1>
 

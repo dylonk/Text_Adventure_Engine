@@ -4,7 +4,6 @@ import { useRouter } from 'vue-router';
 import axios from 'axios';
 
 // Components and assets
-import globalNavBar from '@/components/standardjs/navbar.vue';
 import clickSound from '@/assets/sounds/click.wav';
 import moreSound from '@/assets/sounds/more.wav';
 import explorer from '@/assets/Images/defaultgameimage.jpg';
@@ -54,7 +53,6 @@ onMounted(fetchGames);
 </script>
 
 <template>
-  <globalNavBar />
   <div id="home-container">    
     <img class="background-image" src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/62508b06-f9a8-4fb5-a6f9-ac6a2f035569/d8l5iy6-0e7dcbf9-ae26-4131-91d5-8d9cd568d199.png/v1/fill/w_999,h_800/stock___stone_wall_and_arch_png_by_artreferencesource_d8l5iy6-pre.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9ODIwIiwicGF0aCI6IlwvZlwvNjI1MDhiMDYtZjlhOC00ZmI1LWE2ZjktYWM2YTJmMDM1NTY5XC9kOGw1aXk2LTBlN2RjYmY5LWFlMjYtNDEzMS05MWQ1LThkOWNkNTY4ZDE5OS5wbmciLCJ3aWR0aCI6Ijw9MTAyNCJ9XV0sImF1ZCI6WyJ1cm46c2VydmljZTppbWFnZS5vcGVyYXRpb25zIl19.BgITDiff1TAZ5siEbOt_hxvN2kHG_hDkGmqej83Z5tk">
       <div class="main-grid">

@@ -1,5 +1,4 @@
 <script setup>
-import globalNavBar from '@/components/standardjs/navbar.vue'
 import axios from 'axios';
 import { ref, onMounted, watch, onUnmounted, nextTick, computed } from 'vue';   
 import defaultThumbnail from '@/assets/Images/defaultgameimage.jpg'
@@ -366,7 +365,6 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <globalNavBar/>
     <form id="section-bar" action="placeholder" method="get">
         <input type="search" name="search-bar" placeholder="SEARCH" v-model="searchQuery">
     </form>
@@ -521,7 +519,7 @@ input[type=search]:focus {
   top: 0;
   left: 0;
   width: 100%;
-  height: 120%; /* Extend height to allow for upward translation */
+  height: 100%; /* Extend height to allow for upward translation */
   pointer-events: none;
   z-index: 0;
   overflow: hidden;
@@ -576,6 +574,7 @@ input[type=search]:focus {
 
 .games-section {
   display: grid;
+  flex: 1;
   grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr) );
   grid-auto-rows: auto;
   grid-gap: 32px;

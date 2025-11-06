@@ -1,5 +1,4 @@
 <script setup>
-import globalNavBar from '@/components/standardjs/navbar.vue'
 import { useRoute } from 'vue-router'
 import { ref, onMounted } from 'vue'
 
@@ -33,7 +32,6 @@ onMounted(async () => {
 </script>
 
 <template>
-    <globalNavBar/>
     <div id="page">
         <div id="image"><img :src=image></div>
         <div id="lower">

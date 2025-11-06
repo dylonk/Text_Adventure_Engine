@@ -1,8 +1,10 @@
 <script setup>
-import { ref } from 'vue';
-import globalNavBar from '@/components/standardjs/navbar.vue';
+import { ref, inject } from 'vue';
 import { useRouter } from 'vue-router';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // for Vite
+
+// Inject the refresh function from App.vue
+const refreshNavbar = inject('refreshNavbar', null);
 
 
 const formData = ref({
@@ -37,6 +39,10 @@ const onLoginSubmit = async (event) => {
     }
     const result = await response.json();
     localStorage.setItem('token', result.token);
+    // Refresh the navbar before navigating
+    if (refreshNavbar) {
+      refreshNavbar();
+    }
     router.push('/user');
   } catch (error) {
     console.error('Error:', error.message);
@@ -74,7 +80,6 @@ const onRegisterSubmit = async (event) => {
 </script>
 
 <template>
-  <globalNavBar />
   <div id="page">
     <div id="login">
       <div class="login-title">Login</div>

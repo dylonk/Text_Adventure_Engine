@@ -1,7 +1,6 @@
 <script setup>
 import { useRouter } from 'vue-router';
 import { ref, onMounted } from 'vue';
-import globalNavBar from '@/components/standardjs/navbar.vue';
 import clickSound from '@/assets/sounds/click.wav';
 import moreSound from '@/assets/sounds/more.wav';
 import { useProjectStore } from '../editor/project_store';
@@ -136,7 +135,6 @@ function loadProject(id) {
 </script>
 
 <template>
-  <globalNavBar />
   <div id="project-container">
     <div class="background-overlay"></div>
     
