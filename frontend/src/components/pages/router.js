@@ -39,7 +39,9 @@ const router = createRouter({
         { path: '/gamePage', component: gamePageView },
         { path: '/gamePage/:info', name: 'GamePage', component: gamePageView },
         { path: '/publish', component: Publish},
-        {path:'/savegames', name:'Savegames'}
+        {path:'/savegames', name:'Savegames'},
+        // Catch-all route: redirect any unmatched paths to home
+        { path: '/:pathMatch(.*)*', redirect: '/' }
 
     ],
     scrollBehavior(to, from, savedPosition){

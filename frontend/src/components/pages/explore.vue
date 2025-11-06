@@ -603,7 +603,6 @@ input[type=search]:focus {
     margin: 5px;
     padding: 0.5rem;
     position: relative;
-    text-transform: uppercase;
     cursor: pointer;
 }
 
