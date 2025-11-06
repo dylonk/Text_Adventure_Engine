@@ -24,7 +24,6 @@ const router = useRouter();
 const onLoginSubmit = async (event) => {
   event.preventDefault();
   const plainFormData = { ...formData.value };
-  console.log('Form data being sent for login:', plainFormData);
   try {
     const response = await fetch(`${API_BASE_URL}/auth/login`, {
       method: 'POST',

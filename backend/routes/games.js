@@ -40,7 +40,7 @@ const router = express.Router();
  router.post('/save', async (req, res) => {
     console.log("save request send");
     try {
-      const { id, userId,title,description,nodeMap,images,thumbnail} = req.body;  
+      const { id, userId,username,title,description,nodeMap,images,thumbnail} = req.body;  
       console.log("id is", id, "title is", title);  //ok, so it successfully gets ID and name of the project
       console.log("sent user id is", userId);
       console.log("Received nodemap:", nodeMap);  // Log the nodeMap to see what's being passed
@@ -54,6 +54,7 @@ const router = express.Router();
         { id: id },           // Filter to find the document
         {
           userId: userId,
+          username:username,
           title: title,
           description: description,
           thumbnail: thumbnail,
@@ -95,8 +96,14 @@ router.get('/', async (req, res) => {
       filter.userId = userId; // Only add this filter if userId is present
     }
 
-    const games = await Game.find(filter); // Filter if userId exists, otherwise get all
-    res.json(games);
+    const games = await Game.find(filter).populate('userId', 'username'); // Populate username from User model
+    // Transform the response to include username at the root level for easier frontend access
+    const gamesWithUsername = games.map(game => {
+      const gameObj = game.toObject();
+      gameObj.username = gameObj.userId?.username || 'unknown';
+      return gameObj;
+    });
+    res.json(gamesWithUsername);
   } catch (error) {
     console.error('Error fetching games:', error);
     res.status(500).json({ message: 'Error fetching games', error });

@@ -267,12 +267,14 @@ const fetchGames = async () => {
     const response = await axios.get(`${API_BASE_URL}/games/`);
     recentGames.value = response.data.map(game => ({
       id: game.id,
+      userid: game.userId,
       title: game.title,
       thumbnail:game.thumbnail,
-      description:game.description,
+      description:game.description || 'This game has no description',
       username: game.username || 'unknown', // Default to 'unknown' if not in database
       rating: game.rating || 2.5, // Default to 2.5 stars if not in database
     }));
+    console.log(recentGames.value)
     // Adjust font sizes after games are loaded
     await nextTick();
     adjustTitleFontSizes();
