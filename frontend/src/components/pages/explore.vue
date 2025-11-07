@@ -450,17 +450,21 @@ onUnmounted(() => {
     <!-- Expanded Game Overlay -->
     <div v-if="expandedGame" class="overlay" @click.self="closeExpanded">
       <div class="expanded-card">
-        <button class="close-btn" @click="closeExpanded">×</button>
         <div class="expanded-content">
           <div class="expanded-left">
-            <h2 class="expanded-title">{{expandedGame.title}}</h2>
             <div class="expanded-thumbnail-container" @click="goToGame(expandedGame.title)">
               <img :src="expandedGame.thumbnail||defaultThumb" class="expanded-thumbnail">
               <img :src="play" class="expanded-play">
             </div>
+            <h2 class="expanded-title">{{expandedGame.title}}</h2>
+            <div class="expanded-author">by {{expandedGame.username || 'unknown'}}</div>
           </div>
           <div class="expanded-right">
-            <h3 class="desc-header">Description</h3>
+            <div class="desc-header-container">
+              <h3 class="desc-header">Description</h3>
+              <button class="close-btn" @click="closeExpanded">×</button>
+            </div>
+            <hr class="hr-desc"></hr>
             <div class="expanded-description">
               {{ expandedGame.description }}
             </div>
@@ -472,7 +476,6 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-@import 'https://fonts.googleapis.com/css2?family=Syne+Mono&display=swap';
 @import url("https://fonts.googleapis.com/css2?family=Scada");
 
 #section-bar {
@@ -704,24 +707,20 @@ input[type=search]:focus {
 .expanded-card {
   position: relative;
   background-color: #ffffff;
-  border: 2px solid #8e8e8e;
   border-radius: 8px;
-  box-shadow: 12px 12px 0 #000;
   width: 80vw;
   max-width: 1000px;
   height: 70vh;
   max-height: 600px;
-  padding: 30px;
+  padding: 1.5rem;
   overflow: hidden;
 }
 
 .close-btn {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  background: #ff4444;
-  border: 2px solid #000;
-  color: white;
+  outline:none;
+  border:none;
+  background:none;
+  color: rgb(98, 98, 98);
   font-size: 32px;
   width: 40px;
   height: 40px;
@@ -732,11 +731,11 @@ input[type=search]:focus {
   justify-content: center;
   font-weight: bold;
   line-height: 1;
-  box-shadow: 2px 2px 0 #000;
+  margin-left:auto;
 }
 
 .close-btn:hover {
-  background: #ff0000;
+  color: rgb(0, 0, 0);
   transform: scale(1.1);
 }
 
@@ -755,16 +754,25 @@ input[type=search]:focus {
 
 .expanded-title {
   font-family: 'Scada';
-  font-size: 32px;
-  text-transform: uppercase;
-  margin-bottom: 20px;
+  color:black;
+  font-weight: 600;
+  font-size: 2rem;
   text-align: center;
 }
-
+.expanded-author{
+    font-size: 1rem;
+    font-family: 'RetroQuill', sans-serif;
+    color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-shrink: 1;
+    text-align:left;
+}
 .expanded-thumbnail-container {
   position: relative;
-  width: 300px;
-  height: 300px;
+  width: 18.75rem;
+  height: 18.75rem;
   cursor: pointer;
 }
 
@@ -772,10 +780,7 @@ input[type=search]:focus {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border: 2px solid #8e8e8e;
   border-radius: 8px;
-  box-shadow: inset 4px 4px 0 #000;
-  filter: brightness(0.85);
 }
 
 .expanded-play {
@@ -801,19 +806,23 @@ input[type=search]:focus {
   display: flex;
   flex-direction: column;
 }
-
+.desc-header-container{
+  display:flex;
+}
 .desc-header {
   font-family: 'Scada';
-  font-size: 24px;
-  color: #666;
+  font-size: 1.5rem;
+  color: #9d9d9d;
   margin-bottom: 10px;
+}
+.hr-desc{
+  border:none;
+  border-bottom:2px #9d9d9d solid;
 }
 
 .expanded-description {
   flex: 1;
-  background: #f5f5f5;
-  padding: 20px;
-  border: 2px solid #8e8e8e;
+  margin: 1rem 0;
   border-radius: 8px;
   font-family: 'Scada';
   font-size: 18px;

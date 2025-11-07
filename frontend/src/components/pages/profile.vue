@@ -40,15 +40,21 @@ async function fetchMyGames() {
 
 //deletes the game from the backend. Probably want to add a confirmation.
 async function deleteGame(gameId) {
+    // Prompt user for confirmation before deleting
+    if (!confirm("Are you sure you would like to delete this work? It cannot be recovered.")) {
+        return; // User cancelled the deletion
+    }
 
     try {
         const token = localStorage.getItem('token');  // Get the token from localStorage
-        axios.post(`${API_BASE_URL}/games/delete`, {id:gameId}, {
+        await axios.post(`${API_BASE_URL}/games/delete`, {id:gameId}, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             }
-        })
+        });
+        // Refresh the games list after successful deletion
+        fetchMyGames();
     }
     catch (error) {
         console.error('Error deleting game:', error);
@@ -217,7 +223,7 @@ onMounted(async() => {
                 </div>
             </div>
      <div class="user-games">
-      <h2 class="section-title">Your Games</h2>
+      <h2 class="section-title">My Published Games</h2>
       <div class="games-grid">
         <div 
           v-for="game in myGames" 
@@ -320,8 +326,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    background-color: #181818;
-    border: 2px solid #f1f1f1;
+    background:  #dbdbdb;
     padding: 10px;
 }
 
@@ -333,8 +338,6 @@ body {
 /* New style for email display */
 .email-display {
     padding: 10px;
-    border: 2px solid #181818;
-    background-color: #f1f1f1;
     color: #000000;
     font-size: 14px;
     font-weight: normal;
@@ -450,60 +453,60 @@ body {
 
 
 
-.my-games {
-  background: rgba(44, 47, 51, 0.9);
-  border: 2px solid #e0e0e0;
-  box-shadow: 6px 6px 0 #000;
+.user-games {
+  background:  #dbdbdb;
   padding: 25px;
-  border-radius: 10px;
-  text-align: center;
-  width: 70%;
+  width: 100%;
   margin-top: 50px;
 }
 
 .section-title {
   font-size: 2rem;
   margin-bottom: 20px;
-  color: #e0e0e0;
+  color: #000000;
 }
 
 .games-grid {
+  width:100%;
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 15px;
+  flex: 1;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr) );
+  grid-auto-rows: auto;
+  grid-gap: 32px;
+  justify-content: start;
+  position: relative;
+  box-sizing: border-box;
+  z-index: 10; /* Ensure games appear above clouds */
+  overflow-y: visible;
+  min-height: fit-content;
 }
 
 .game-box {
-  background: #e74c3c;
-  border: 2px solid #e0e0e0;
-  box-shadow: 4px 4px 0 #000;
-  border-radius: 6px;
+  background: #ffffff;
+  width:fit-content;
+  border-radius: 0.5rem;
   padding: 12px;
   text-align: center;
-  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 2px 2px 5px rgba(36, 29, 29, 0.426),-2px -2px 5px rgba(36, 29, 29, 0.426);
 }
 
 .game-box:hover {
-  transform: translateY(-5px);
-  box-shadow: 6px 6px 0 #000;
+  box-shadow: 2px 2px 5px rgba(36, 29, 29, 0.426),-2px -2px 5px rgba(36, 29, 29, 0.426);
 }
 
 .game-title {
   font-size: 1rem;
   margin-bottom: 10px;
   padding: 6px;
-  background: #c0392b;
-  color: #fff;
-  border: 2px solid #e0e0e0;
-  box-shadow: 2px 2px 0 #000;
+  background: #ffffff;
+  color: #000000;
 }
 
 .game-image {
-  width: 100%;
-  height: auto;
+  width: 16rem;
+  height: 16rem;
   object-fit: cover;
-  border: 2px solid #e0e0e0;
-  box-shadow: inset 2px 2px 0 #000;
+  border-radius:0.5rem;
 }
 
 .game-actions {
@@ -513,18 +516,33 @@ body {
 }
 
 .action-button {
-  font-size: 0.9rem;
+  font-size: 1rem;
   padding: 5px 10px;
-  border: 2px solid white;
-  background: #c0392b;
-  color: white;
+  border: none;
+  background: #ffffff;
+  color: rgb(0, 0, 0);
   border-radius: 4px;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+}
+.delete {
+  font-size: 1rem;
+  padding: 5px 10px;
+  border: none;
+  background:white;
+  color:#d4292e;
+
+  border-radius: 4px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
 }
 
 .action-button:hover {
   transform: translateY(-2px);
   box-shadow: 2px 2px 0 #000;
+}
+.delete:hover   {
+    background: #d4292e;
+    color: rgb(255, 255, 255);
 }
 </style>

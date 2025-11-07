@@ -51,6 +51,11 @@
         {
             "folderPath": "Text_Adventure_Engine\\frontend\\src\\components\\pages\\game.vue\\",
             "color": "foldercolorizer.color_ff66ff"
+        },
+        {
+            "folderPath": "vue",
+            "color": "foldercolorizer.color_33cc99",
+            "isForExtension": true
         }
     ]
 }

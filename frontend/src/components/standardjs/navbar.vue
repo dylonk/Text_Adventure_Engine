@@ -79,7 +79,7 @@ const router = useRouter(); // Access the Vue Router for navigation
 
 
 .nav_btn {
-    font-family: "Cascadia Mono", sans-serif;
+    font-family: "Scada", sans-serif;
     font-size: 22px;
     margin-left: 10px;
     color: rgb(165, 165, 165);
@@ -91,7 +91,7 @@ const router = useRouter(); // Access the Vue Router for navigation
 }
 
 .login_btn {
-    font-family: "Cascadia Mono", sans-serif;
+    font-family: "Scada";
     font-size: 22px;
     min-width:max-content;
     margin-left: auto;

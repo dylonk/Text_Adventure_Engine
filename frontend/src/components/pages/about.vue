@@ -67,16 +67,11 @@ import windowsLogo from '@/assets/Images/windows.png'
 
 .text-container{
     height:fit-content;
-
-    
     width:60%;
-    backdrop-filter:blur(5px);
     border: 2px white solid;
     background:rgba(71, 71, 71, 0.8);
     padding:10px;
     margin:30px;
-    filter:blur(0.7)
-
 }
 
 
@@ -88,13 +83,14 @@ import windowsLogo from '@/assets/Images/windows.png'
 }
 
 #about-text{
-    font-family:"Cascadia Mono", sans-serif;
+    font-family:'Scada';
     font-size: 25px;
     color:rgb(255, 255, 255);
     margin:2.5%;
 }
 
 #credits {
+    font-family:'Scada';
     font-size: 25px;
     color:rgb(200, 200, 200);
     margin:2.5%;
