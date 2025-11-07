@@ -220,7 +220,7 @@ onMounted(()=>{
 <style scoped>
 @import 'https://fonts.googleapis.com/css2?family=Syne+Mono&display=swap';
 *{
-        font-family: 'Syne Mono', monospace;
+        font-family: "Cascadia Mono", sans-serif;
 
 }
 
@@ -248,7 +248,7 @@ onMounted(()=>{
   margin-right:0px;
 }
 .node_title{
-    font-family: 'Syne Mono', monospace;
+    font-family: "Cascadia Mono", sans-serif;
     color:rgb(255, 255, 255);
     width:100%;
     font-weight: 800;

@@ -106,7 +106,6 @@ const start = (compiledGame=null,online=true) =>{
 
   sleep(10)
 
-  outputText("Game initialized (If stuck here, press restart!)")
   archiveOutput()
   activeNode = 1;
   if(debug>=1) console.log("[GAME] Game initialized. nodeMap:",nodeMap)

@@ -137,7 +137,6 @@ const onRegisterSubmit = async (event) => {
 <style scoped>
 /* For demonstration only. For a site-wide font, move the @import and body font-family
    rules to a global CSS file (e.g., frontend/src/assets/base.css or a global style in App.vue). */
-@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@700&display=swap');
 
 #page {
   display: flex;
@@ -145,7 +144,7 @@ const onRegisterSubmit = async (event) => {
   flex:1;
   background: #1d1f21;
   color: #e0e0e0;
-  font-family: 'Pixelify Sans', sans-serif;
+  font-family: 'RetroQuill', sans-serif;
   padding: 20px;
 }
 

@@ -79,7 +79,7 @@ const router = useRouter(); // Access the Vue Router for navigation
 
 
 .nav_btn {
-    font-family: 'Syne Mono', monospace;
+    font-family: "Cascadia Mono", sans-serif;
     font-size: 22px;
     margin-left: 10px;
     color: rgb(165, 165, 165);
@@ -87,11 +87,11 @@ const router = useRouter(); // Access the Vue Router for navigation
 }
 
 .nav_btn:hover {
-    color: #e74c3c; /* Change color on hover */
+    color: #ffffff; /* Change color on hover */
 }
 
 .login_btn {
-    font-family: 'Syne Mono', monospace;
+    font-family: "Cascadia Mono", sans-serif;
     font-size: 22px;
     min-width:max-content;
     margin-left: auto;
@@ -99,12 +99,13 @@ const router = useRouter(); // Access the Vue Router for navigation
     height:40px;
     background: #e0e0e0;
     border-radius: 5px;
-    box-shadow: 2px 2px 0 #000; /* Added for brutal morphic style */
     color: rgb(163, 163, 163);
+    outline:none;
+    border:none;
 }
 
 .hello-user {
-    font-family: 'Pixelify Sans';
+    font-family: 'RetroQuill';
     font-size: 22px;
     color: rgb(165, 165, 165);
     margin-left: auto;

@@ -238,13 +238,12 @@ onMounted(async() => {
 </template>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap');
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Pixelify Sans', sans-serif;
+    font-family: 'RetroQuill', sans-serif;
 }
 
 body {

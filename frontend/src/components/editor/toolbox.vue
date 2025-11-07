@@ -98,7 +98,7 @@ import tbMid from '../../assets/Images/editor/toolbox-mid-posterized.png'
 
 }
 .tb_subtitle{
-    font-family: "Syne Mono", serif;    
+    font-family: "Cascadia Mono", sans-serif;    
     font-size:20px;
     padding:4px;
     margin: 0 auto;

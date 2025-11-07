@@ -173,12 +173,11 @@ function loadProject(id) {
 </template>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@700&display=swap');
 
 #project-container {
   position: relative;
   flex:1;
-  font-family: 'Pixelify Sans', sans-serif;
+  font-family: 'RetroQuill', sans-serif;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -315,7 +314,7 @@ function loadProject(id) {
   width:100%;
   border-radius: 4px;
   cursor: pointer;
-  font-family: 'Pixelify Sans', sans-serif;
+  font-family: 'RetroQuill', sans-serif;
   font-size:large;
   transition: transform 0.2s, box-shadow 0.2s;
 }

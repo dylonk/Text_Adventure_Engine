@@ -1,5 +1,12 @@
 @import './base.css';
 
+@font-face {
+  font-family: 'RetroQuill';
+  src: url('./fonts/RetroQuill.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 #app {
   width:100%;
   font-weight: normal;

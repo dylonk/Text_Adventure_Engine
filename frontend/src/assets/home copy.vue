@@ -65,12 +65,11 @@ function onGameClick(index) {
 </template>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@700&display=swap');
 
 #home-container {
   position: relative;
   min-height: 100vh;
-  font-family: 'Pixelify Sans', sans-serif;
+  font-family: 'RetroQuill', sans-serif;
 }
 
 /* Background Overlay */

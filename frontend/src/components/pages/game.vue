@@ -657,7 +657,7 @@ const gamelogicOutput = ref("")
 
 .title{
   font-size: 1.5rem;
-  font-family: 'Pixelify Sans';
+  font-family: 'RetroQuill';
   height: 100%;
   color: white;
 }

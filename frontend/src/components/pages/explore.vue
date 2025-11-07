@@ -472,7 +472,6 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@700&display=swap');
 @import 'https://fonts.googleapis.com/css2?family=Syne+Mono&display=swap';
 @import url("https://fonts.googleapis.com/css2?family=Scada");
 
@@ -632,7 +631,7 @@ input[type=search]:focus {
 
 .gameusername {
     font-size: 14px;
-    font-family: 'Pixelify Sans', sans-serif;
+    font-family: 'RetroQuill', sans-serif;
     color: #666;
     white-space: nowrap;
     overflow: hidden;

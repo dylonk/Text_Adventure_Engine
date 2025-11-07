@@ -87,7 +87,6 @@ onMounted(fetchGames);
 </template>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@700&display=swap');
 @import url("https://fonts.googleapis.com/css2?family=Scada");
 
 #home-container {
@@ -96,7 +95,7 @@ onMounted(fetchGames);
   max-width:100dvw;
   overflow-y:scroll;
   overflow-x:clip;
-  font-family: 'Pixelify Sans', sans-serif;
+  font-family: 'RetroQuill', sans-serif;
   background:rgb(25, 25, 25);
 
 }
@@ -138,7 +137,7 @@ onMounted(fetchGames);
   font-size: 2em;
   align-self:flex-end;
   padding: 15px;
-  font-family: 'Pixelify Sans', sans-serif;
+  font-family: 'RetroQuill', sans-serif;
   border: 2px solid #ffffff;
   background: #7cbcbb;
   text-shadow: 2px 2px 0 #000;

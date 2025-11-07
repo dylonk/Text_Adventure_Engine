@@ -36,7 +36,6 @@ import windowsLogo from '@/assets/Images/windows.png'
 
 <style scoped>
 @import 'https://fonts.googleapis.com/css2?family=Syne+Mono&display=swap';
-@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@700&display=swap');
 @import 'https://fonts.googleapis.com/css2?family=Hurricane';
 
 
@@ -62,7 +61,7 @@ import windowsLogo from '@/assets/Images/windows.png'
     outline:white solid 1px;
     padding:10px;
     border-radius: 5px;
-    font-family:'Pixelify Sans';
+    font-family:'RetroQuill';
 
 }
 
@@ -83,13 +82,13 @@ import windowsLogo from '@/assets/Images/windows.png'
 
 #title {
     color:rgb(255, 255, 255);
-    font-family:'Pixelify Sans';
+    font-family:'RetroQuill';
     font-size: 48px;
     margin-top: 10px;
 }
 
 #about-text{
-    font-family:'Syne Mono';
+    font-family:"Cascadia Mono", sans-serif;
     font-size: 25px;
     color:rgb(255, 255, 255);
     margin:2.5%;
