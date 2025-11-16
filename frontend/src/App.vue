@@ -33,10 +33,14 @@ watch(() => router.currentRoute.value.path, (newPath, oldPath) => {
     </main>
 </div>
 </template>
-<style scoped>
+<style>
     main{
         height:100dvh;
         display:flex;
         flex-direction: column;
+    }
+
+	@media (max-width: 768px) {
+        html { font-size: 12px; }
     }
 </style>

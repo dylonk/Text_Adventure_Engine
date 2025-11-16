@@ -48,7 +48,7 @@ const router = useRouter(); // Access the Vue Router for navigation
             <RouterLink class="nav_btn" to="/project" active-class="active" v-if="loggedIn">Create</RouterLink><!-- I think they should be rendered conditionally-->
             <RouterLink class="nav_btn" to="/user" active-class="active" v-if="loggedIn">Profile</RouterLink>
             <RouterLink class="nav_btn" to="/about" active-class="active">Download</RouterLink>
-            <div style="display:flex; width:fit-content; margin-left:auto;   flex-shrink: 0;">
+            <div style="display:flex; width:fit-content; margin-left:auto; align-items: center;   flex-shrink: 0;">
                 <div v-if="displayUsername">
                     <span class="hello-user">Hello {{ displayUsername || "ERROR NO USER. SHOULD NOT BE SEEN" }}!</span>
                     <button @click="logOut" class="login_btn">Log Out</button>
@@ -69,7 +69,7 @@ const router = useRouter(); // Access the Vue Router for navigation
     align-self: flex-start;
     top: 0;
     width: 100vw;
-    height: 60px;
+    height: fit-content;
     padding: 10px;
     background-color: rgba(64, 64, 64,1);
     font-family: Arial, Helvetica, sans-serif;
@@ -80,7 +80,7 @@ const router = useRouter(); // Access the Vue Router for navigation
 
 .nav_btn {
     font-family: "Scada", sans-serif;
-    font-size: 22px;
+    font-size: 1.5rem;
     margin-left: 10px;
     color: rgb(165, 165, 165);
     transition: color 0.2s;
@@ -92,11 +92,11 @@ const router = useRouter(); // Access the Vue Router for navigation
 
 .login_btn {
     font-family: "Scada";
-    font-size: 22px;
+    font-size: 1.5rem;
     min-width:max-content;
     margin-left: auto;
     display:inline-block;
-    height:40px;
+    height:auto;
     background: #e0e0e0;
     border-radius: 5px;
     color: rgb(163, 163, 163);
@@ -106,7 +106,8 @@ const router = useRouter(); // Access the Vue Router for navigation
 
 .hello-user {
     font-family: 'RetroQuill';
-    font-size: 22px;
+    align-items:center;
+    font-size: 1.5rem;
     color: rgb(165, 165, 165);
     margin-left: auto;
     margin-right: 10px;

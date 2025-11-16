@@ -28,7 +28,7 @@ const recentGames = ref([]);
 const searchQuery = ref('');
 const expandedGame = ref(null);
 const currentPage = ref(1);
-const itemsPerPage = ref(20); // Set to 1 for testing
+const itemsPerPage = ref(8); // Set to 1 for testing
 
 // Cloud images array
 const cloudImages = [cloud1, cloud2, cloud3, cloud4, cloud5, cloud6];
@@ -423,7 +423,7 @@ onUnmounted(() => {
             :disabled="currentPage === 1"
             :class="{ disabled: currentPage === 1 }"
           >
-            ‹ Previous
+            ‹
           </button>
           <div class="pagination-numbers">
             <button
@@ -442,7 +442,7 @@ onUnmounted(() => {
             :disabled="currentPage === totalPages"
             :class="{ disabled: currentPage === totalPages }"
           >
-            Next ›
+            ›
           </button>
         </div>
     </div>
@@ -459,12 +459,12 @@ onUnmounted(() => {
             <h2 class="expanded-title">{{expandedGame.title}}</h2>
             <div class="expanded-author">by {{expandedGame.username || 'unknown'}}</div>
           </div>
+          <button class="close-btn" @click="closeExpanded">×</button>
           <div class="expanded-right">
             <div class="desc-header-container">
               <h3 class="desc-header">Description</h3>
-              <button class="close-btn" @click="closeExpanded">×</button>
             </div>
-            <hr class="hr-desc"></hr>
+            <!-- <hr class="hr-desc"></hr> -->
             <div class="expanded-description">
               {{ expandedGame.description }}
             </div>
@@ -568,20 +568,14 @@ input[type=search]:focus {
   z-index: 3;
 }
 
-/* Media query for mobile devices - scale clouds to half size */
-@media (max-width: 768px) {
-  .cloud {
-    transform: scale(0.5);
-    transform-origin: center center;
-  }
-}
+
 
 .games-section {
   display: grid;
   flex: 1;
   grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr) );
   grid-auto-rows: auto;
-  grid-gap: 32px;
+  grid-gap: 2rem;
   padding: 4rem 20dvw;
   margin: 0 auto;
   position: relative;
@@ -589,13 +583,14 @@ input[type=search]:focus {
   z-index: 10; /* Ensure games appear above clouds */
   overflow-y: visible;
   min-height: fit-content;
+  justify-items:center;
 }
 
 .game {
     display: flex;
     flex-direction: column;
     align-items: center;
-    font-size: 28px;
+    font-size: 1.6rem;
     border-radius: 5px;
     width: 15rem;
     height: fit-content;
@@ -612,11 +607,11 @@ input[type=search]:focus {
 .gametitle {
     max-width: 100%;
     height:20px;
-    font-size: 20px;
+    font-size: 1.25rem;
     font-family:'Scada';
     margin-bottom: 10px;
     white-space: nowrap;
-    min-height: 1.2em;
+    min-height: 1.2rem;
     overflow: show;
     box-sizing: border-box;
 }
@@ -633,7 +628,7 @@ input[type=search]:focus {
 }
 
 .gameusername {
-    font-size: 14px;
+    font-size: 0.9rem;
     font-family: 'RetroQuill', sans-serif;
     color: #666;
     white-space: nowrap;
@@ -706,7 +701,7 @@ input[type=search]:focus {
 
 .expanded-card {
   position: relative;
-  background-color: #ffffff;
+  background: white;
   border-radius: 8px;
   width: 80vw;
   max-width: 1000px;
@@ -726,6 +721,9 @@ input[type=search]:focus {
   height: 40px;
   border-radius: 50%;
   cursor: pointer;
+  position:absolute;
+  top:1rem;
+  right:1rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -749,7 +747,6 @@ input[type=search]:focus {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 300px;
 }
 
 .expanded-title {
@@ -810,10 +807,10 @@ input[type=search]:focus {
   display:flex;
 }
 .desc-header {
-  font-family: 'Scada';
+  font-family: 'RetroQuill';
   font-size: 1.5rem;
   color: #9d9d9d;
-  margin-bottom: 10px;
+  margin-bottom: 0.25rem;
 }
 .hr-desc{
   border:none;
@@ -837,7 +834,7 @@ input[type=search]:focus {
   justify-content: center;
   align-items: center;
   gap: 10px;
-  padding: 20px;
+  padding: 0 0 2rem 0;
   z-index: 10;
   position: relative;
 }
@@ -847,7 +844,7 @@ input[type=search]:focus {
   border: none;
   border-radius: 32px;
   padding: 8px 16px;
-  font-size: 24px;
+  font-size: 1.5rem;
   cursor: pointer;
 
   color: #333;
@@ -893,5 +890,14 @@ input[type=search]:focus {
   color: blue;
   font-weight: bold;
 }
-
+@media (max-width: 768px) {
+  .cloud {
+    transform: scale(0.5);
+    transform-origin: center center;
+  }
+  .games-section {
+    padding: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 0.5fr) );
+  }
+}
 </style>  
