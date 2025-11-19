@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, inject } from 'vue';
 import Toastify from 'toastify-js';
 import 'toastify-js/src/toastify.css';
 import wizardPfp from '@/assets/Images/wizardpfp.png';
@@ -8,6 +8,9 @@ import { fetchUserData } from '@/components/standardjs/fetchUserData';
 import { HContainer } from '../editor/nodes/node_assets/n-component-imports';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+
+// Inject the refresh function from App.vue
+const refreshNavbar = inject('refreshNavbar', null);
 const username = ref('Felix');  // I  'Felix' as the default username for the avatar nothing to do with anyones name
 const showChangePassword = ref(false);
 const currentPassword = ref('defaultPassword');
@@ -162,32 +165,46 @@ function updatePFP(){
     alert("Invalid image URL");
   }
 }
+
+// Function to log out the user
+function logOut() {
+    localStorage.removeItem('token'); // Remove token from localStorage
+    // Refresh the navbar before navigating
+    if (refreshNavbar) {
+        refreshNavbar();
+    }
+    router.push('/auth'); // Redirect to the login page
+}
 // Fetch user profile when the component is mounted
 const isMounted = ref(false);
+const isLoggedIn = ref(false);
 
 onMounted(async() => {
-        username.value = await fetchUserData('username');
-        currentPassword.value = await fetchUserData('password');
-        email.value = await fetchUserData('email');
-        profileImage.value = await fetchUserData('profileImage');
-        isMounted.value = true;        
-        fetchMyGames(); 
+        const fetchedUsername = await fetchUserData('username');
+        if (fetchedUsername) {
+            isLoggedIn.value = true;
+            username.value = fetchedUsername;
+            currentPassword.value = await fetchUserData('password');
+            email.value = await fetchUserData('email');
+            profileImage.value = await fetchUserData('profileImage');
+            fetchMyGames();
+        }
+        isMounted.value = true;
 });
 </script>
 <template>
     <div class="profile-container">
         <div class="profile-content">
-            <div class="profile-picture-container">
+            <div class="profile-picture-container" v-if="isLoggedIn">
                     <img v-if="!isMounted" :src="loadCircle"  style="width:20%; height:20%; position: relative; top:38%; left:38%;" alt="Profile Picture">
                     <img v-else-if="profileImage!=''&&profileImage!=null" :src="profileImage" alt="Profile Picture" />
                     <img v-else :src="wizardPfp" alt="Profile Picture" />
 
                 </div>
             <div class="profile-header">
-
                 <h1>Profile Settings</h1>
             </div>
-            <div class="profile-info">
+            <div class="profile-info" v-if="isLoggedIn">
                 
                 <div class="form-group">
                     <label for="profile-image-url">Profile Image URL</label>
@@ -218,11 +235,20 @@ onMounted(async() => {
                     <input type="password" id="confirm-password" v-model="confirmNewPassword" />
                     <button @click="changePassword">Update Password</button>
                 </div>
-                <div class="form-group">
+                <div class="form-group" v-if="isLoggedIn">
                     <button @click="saveProfile">Save Profile</button>
                 </div>
+                <div class="form-group">
+                    <button v-if="isLoggedIn" @click="logOut" class="logout-btn">Log Out</button>
+                    <RouterLink v-else to="/auth" class="login-btn-link">
+                        <button class="login-btn">Login</button>
+                    </RouterLink>
+                </div>
             </div>
-     <div class="user-games">
+            <div v-else class="not-logged-in-message">
+                <p>Please log in to view and edit your profile.</p>
+            </div>
+     <div class="user-games" v-if="isLoggedIn">
       <h2 class="section-title">My Published Games</h2>
       <div class="games-grid">
         <div 
@@ -260,6 +286,8 @@ body {
 .profile-container{
     background:#ffffff;
     flex:1;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .profile-content {
@@ -545,4 +573,43 @@ body {
     background: #d4292e;
     color: rgb(255, 255, 255);
 }
+
+.logout-btn {
+    background-color: #d4292e !important;
+    color: #ffffff !important;
+}
+
+.logout-btn:hover {
+    background-color: #b0201f !important;
+    color: #ffffff !important;
+}
+
+.login-btn-link {
+    text-decoration: none;
+    display: block;
+}
+
+.login-btn {
+    width: 100%;
+    background-color: #27ae60 !important;
+    color: #ffffff !important;
+}
+
+.login-btn:hover {
+    background-color: #229954 !important;
+    color: #ffffff !important;
+}
+
+.not-logged-in-message {
+    text-align: center;
+    padding: 2rem;
+    background: #dbdbdb;
+    margin-top: 2rem;
+}
+
+.not-logged-in-message p {
+    font-size: 1.2rem;
+    color: #000000;
+}
 </style>
+

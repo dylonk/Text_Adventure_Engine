@@ -182,10 +182,12 @@ function loadProject(id) {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .background-overlay {
-  background: url('@/assets/Images/stars.jpg') no-repeat center center/cover;
+  background: url('@/assets/Images/stars.jpg') repeat center center/cover;
   width: 100%;
   height: 100%;
   position: absolute;

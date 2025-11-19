@@ -139,7 +139,7 @@ function removeProperty(propertyKey){
 
 .property{
   display:flex;
-  font-family:Verdana, Geneva, Tahoma, sans-serif;
+  font-family:Scada, Geneva, Tahoma, sans-serif;
   font-weight: lighter;
   text-align: center;
   line-height: 20px;
@@ -151,7 +151,7 @@ function removeProperty(propertyKey){
 .property-title{
   display:flex;
   background: black;
-  font-family:Verdana, Geneva, Tahoma, sans-serif;
+  font-family:Scada, Geneva, Tahoma, sans-serif;
   font-weight: lighter;
   color:white;
   line-height: 25px;
@@ -165,7 +165,7 @@ function removeProperty(propertyKey){
 }
 .property-selected{
   display:flex;
-  font-family:Verdana, Geneva, Tahoma, sans-serif;
+  font-family:Scada, Geneva, Tahoma, sans-serif;
   font-weight: bold;
   color:rgb(51, 51, 51);
   padding:3px;

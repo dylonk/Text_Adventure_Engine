@@ -2,6 +2,7 @@
 import { ref, onMounted, defineProps,computed } from 'vue';
 import { useRouter } from 'vue-router';
 import {fetchUserData} from '@/components/standardjs/fetchUserData'
+import wizardPfp from '@/assets/Images/wizardpfp.png';
 
 const loggedIn = computed(() => !!displayUsername.value);//if it's displaying the username, it means you're logged in.
 const props = defineProps({
@@ -11,19 +12,15 @@ const props = defineProps({
 
 // Reactive state to store the username
 const displayUsername = ref('');
+const profileImage = ref('');
 const allDataLoaded = ref(false); // this is so the v-if logged ins dont dissappear briefly when a new page loads, rather no navbar until all data is loaded
 
 
-// Function to log out the user
-function logOut() {
-    localStorage.removeItem('token'); // Remove token from localStorage
-    displayUsername.value = ''; // Clear the username immediately
-    router.push('/auth'); // Redirect to the login page
-}
 
 // Function to fetch the user's username
 async function refreshUserData() {
     displayUsername.value = await fetchUserData('username');
+    profileImage.value = await fetchUserData('profileImage');
     allDataLoaded.value = true; //whether there's a username or not, we have all the data we need now to display the taskbar.
 }
 
@@ -46,12 +43,17 @@ const router = useRouter(); // Access the Vue Router for navigation
             <RouterLink class="nav_btn" to="/" active-class="active">Home</RouterLink>
             <RouterLink class="nav_btn" to="/explore" active-class="active">Explore</RouterLink> 
             <RouterLink class="nav_btn" to="/project" active-class="active" v-if="loggedIn">Create</RouterLink><!-- I think they should be rendered conditionally-->
-            <RouterLink class="nav_btn" to="/user" active-class="active" v-if="loggedIn">Profile</RouterLink>
             <RouterLink class="nav_btn" to="/about" active-class="active">Download</RouterLink>
             <div style="display:flex; width:fit-content; margin-left:auto; align-items: center;   flex-shrink: 0;">
-                <div v-if="displayUsername">
-                    <span class="hello-user">Hello {{ displayUsername || "ERROR NO USER. SHOULD NOT BE SEEN" }}!</span>
-                    <button @click="logOut" class="login_btn">Log Out</button>
+                <div v-if="displayUsername" style="display: flex; align-items: center; gap: 10px;">
+                    <span class="hello-user">{{ displayUsername || "userError" }}</span>
+                    <RouterLink to="/user" class="profile-picture-link">
+                        <img 
+                            :src="profileImage && profileImage != '' ? profileImage : wizardPfp" 
+                            alt="Profile Picture" 
+                            class="profile-picture"
+                        />
+                    </RouterLink>
                 </div>
                 <RouterLink v-else class="login_btn" to="/auth">Login</RouterLink>
             </div>
@@ -70,8 +72,8 @@ const router = useRouter(); // Access the Vue Router for navigation
     top: 0;
     width: 100vw;
     height: fit-content;
-    padding: 10px;
-    background-color: rgba(64, 64, 64,1);
+    padding: 0.625rem;
+    background-color: #182030;
     font-family: Arial, Helvetica, sans-serif;
     font-weight: bold;
     z-index: 100;
@@ -81,13 +83,14 @@ const router = useRouter(); // Access the Vue Router for navigation
 .nav_btn {
     font-family: "Scada", sans-serif;
     font-size: 1.5rem;
-    margin-left: 10px;
+    margin-left: 0.625rem;
     color: rgb(165, 165, 165);
-    transition: color 0.2s;
+    transition: none;
 }
 
 .nav_btn:hover {
     color: #ffffff; /* Change color on hover */
+    text-decoration: underline;
 }
 
 .login_btn {
@@ -102,6 +105,7 @@ const router = useRouter(); // Access the Vue Router for navigation
     color: rgb(163, 163, 163);
     outline:none;
     border:none;
+    transition: color 0.2s;
 }
 
 .hello-user {
@@ -111,6 +115,26 @@ const router = useRouter(); // Access the Vue Router for navigation
     color: rgb(165, 165, 165);
     margin-left: auto;
     margin-right: 10px;
+}
+
+.profile-picture-link {
+    display: inline-block;
+    cursor: pointer;
+    transition: transform 0.2s, opacity 0.2s;
+}
+
+.profile-picture-link:hover {
+    transform: scale(1.1);
+}
+
+.profile-picture {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    object-fit: cover;
+    background:rgb(206, 203, 21);
+    border: 2px solid rgb(206, 203, 21);
+    display: block;
 }
 
 

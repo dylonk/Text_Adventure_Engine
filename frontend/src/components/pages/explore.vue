@@ -368,7 +368,8 @@ onUnmounted(() => {
 
 <template>
     <form id="section-bar" action="placeholder" method="get">
-        <input type="search" name="search-bar" placeholder="SEARCH" v-model="searchQuery">
+        <input type="search" name="search-bar" placeholder="Find your next adventure!" v-model="searchQuery">
+        <button class="search-button">Search</button>
     </form>
     <div class="game-page">
       <!-- Cloud layers with parallax effect -->
@@ -482,31 +483,34 @@ onUnmounted(() => {
     position: relative;
     display: flex;
     flex-direction: row;
-    border-bottom: 2px solid #e0e0e0;
-    padding: 10px;
-    font-size: 36px;
-    background-color: #e0e0e0;
-    color: #e0e0e0;
-    border-bottom: 2px gray solid;
+    padding: 2px 10px 10px 10px;
+    font-size: 2rem;
     letter-spacing: 2px;
-  
+    background-color: #182030;
+
   }
 
 input[type=search] {
-    border: 2px solid #989898;
+    border: none;
     padding: 10px;
-    width: 40%;
-    border-radius: 8px;
-    background-color: white;
-    color: #858585;
+    width: 20rem;
+    min-width: 40%;
+    border-radius:  8px 0 0 8px ;
+    background-color: rgb(222, 222, 222);
+    color: #323232;
+}
+
+.search-button{
+  font:"Scada" 2rem;
+  border-radius: 0 8px 8px 0;
+  border:none;
 }
 
 input[type=search]:focus {
-    outline: none;
     color:black;
-    
-    border-color: #80c6ff;
-}
+    outline:none;
+    background: white;
+    }
 
 .game-page{
   flex: 1; 
@@ -575,7 +579,7 @@ input[type=search]:focus {
   flex: 1;
   grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr) );
   grid-auto-rows: auto;
-  grid-gap: 2rem;
+  grid-gap: 1.5rem;
   padding: 4rem 20dvw;
   margin: 0 auto;
   position: relative;
@@ -898,6 +902,9 @@ input[type=search]:focus {
   .games-section {
     padding: 2rem;
     grid-template-columns: repeat(auto-fit, minmax(15rem, 0.5fr) );
+  }
+  input[type=search]{
+    width:100%;
   }
 }
 </style>  
