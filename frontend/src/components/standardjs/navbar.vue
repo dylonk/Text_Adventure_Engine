@@ -97,8 +97,9 @@ const router = useRouter(); // Access the Vue Router for navigation
     font-size: 1.25rem;
     font-weight: 400;
     min-width:max-content;
-    padding:0.3rem 0.5rem;
+    padding:0.3rem 0.75rem;
     margin-left: auto;
+    margin-right:0.75;
     display:inline-block;
     height:auto;
     background:rgb(37, 121, 204);
@@ -108,7 +109,7 @@ const router = useRouter(); // Access the Vue Router for navigation
     border:none;
 }
 .login_btn:hover{
-    background:rgb(94, 123, 240);
+    background:rgb(176, 192, 255);
 }
 .hello-user {
     font-family: 'RetroQuill';

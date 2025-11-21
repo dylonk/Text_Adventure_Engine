@@ -29,7 +29,7 @@ const searchQuery = ref('');
 const searchInput = ref(''); // Separate ref for the input field
 const expandedGame = ref(null);
 const currentPage = ref(1);
-const itemsPerPage = ref(6); // Set to 1 for testing
+const itemsPerPage = ref(8); // Set to 1 for testing
 
 // Cloud images array
 const cloudImages = [cloud1, cloud2, cloud3, cloud4, cloud5, cloud6];
@@ -208,17 +208,11 @@ const paginatedGames = computed(() => {
 const performSearch = () => {
   searchQuery.value = searchInput.value;
   currentPage.value = 1; // Reset to first page when search changes
-  nextTick(() => {
-    adjustTitleFontSizes();
-  });
 };
 
 // Watch for changes in searchQuery and reset to page 1
 watch(searchQuery, async () => {
   currentPage.value = 1; // Reset to first page when search changes
-  // Adjust font sizes after filtering
-  await nextTick();
-  adjustTitleFontSizes();
 });
 
 // Watch for changes in filtered games and reset to page 1 if current page is invalid
@@ -287,65 +281,11 @@ const fetchGames = async () => {
     console.log(recentGames.value)
     // Adjust font sizes after games are loaded
     await nextTick();
-    adjustTitleFontSizes();
   } catch (error) {
     console.warn('Error fetching projects:', error);
   }
 };
 
-// Function to adjust title font sizes to fit within container
-const adjustTitleFontSizes = () => {
-  const titleElements = document.querySelectorAll('.gametitle');
-  titleElements.forEach((element) => {
-    // Get the actual computed width of the container
-    const computedStyle = getComputedStyle(element);
-    // Use a more conservative width calculation to ensure text stays within padding
-    // Account for potential rounding errors and ensure titles don't exceed the 10px padding
-    // Increased buffer to prevent clipping (accounts for overflow, rounding, letter spacing)
-    const buffer = 8;
-    const containerWidth = element.offsetWidth - buffer;
-    if (containerWidth <= 0) return; // Skip if element is not visible
-    const maxFontSize = 20; // Maximum font size
-    const minFontSize = 10; // Minimum font size to prevent text from being too small
-    let fontSize = maxFontSize;
-    
-    // Create a temporary span to measure text width
-    const tempSpan = document.createElement('span');
-    tempSpan.style.position = 'absolute';
-    tempSpan.style.visibility = 'hidden';
-    tempSpan.style.whiteSpace = 'nowrap';
-    tempSpan.style.fontFamily = computedStyle.fontFamily;
-    tempSpan.style.fontWeight = computedStyle.fontWeight;
-    tempSpan.style.letterSpacing = computedStyle.letterSpacing; // Match letter spacing
-    tempSpan.style.textTransform = computedStyle.textTransform; // Match text transform
-    tempSpan.style.fontSize = maxFontSize + 'px';
-    tempSpan.textContent = element.textContent;
-    document.body.appendChild(tempSpan);
-    
-    // Binary search for the right font size
-    let low = minFontSize;
-    let high = maxFontSize;
-    while (low <= high) {
-      const mid = Math.floor((low + high) / 2);
-      tempSpan.style.fontSize = mid + 'px';
-      const width = tempSpan.offsetWidth;
-      
-      // Use a conservative check - ensure width is significantly less than containerWidth to prevent clipping
-      if (width < containerWidth - 2) {
-        fontSize = mid;
-        low = mid + 1;
-      } else {
-        high = mid - 1;
-      }
-    }
-    
-    // Clean up temp element
-    document.body.removeChild(tempSpan);
-    
-    // Apply the calculated font size
-    element.style.fontSize = fontSize + 'px';
-  });
-};
 
 // Function to get star images based on rating (0-5 scale)
 const getStarImage = (index, rating) => {
@@ -362,10 +302,6 @@ const getStarImage = (index, rating) => {
 onMounted(() => {
   fetchGames();
   initClouds();
-  // Adjust font sizes after initial render
-  nextTick(() => {
-    adjustTitleFontSizes();
-  });
 });
 
 onUnmounted(() => {
@@ -404,7 +340,7 @@ onUnmounted(() => {
       </div> 
       <div v-if="recentGames.length>0" class="games-section" >
             <div class="game" v-for="game in paginatedGames" :key="game.id" @click="expandGame(game)"> 
-              <VContainer spacing="0px" style="width:min-content">
+              <VContainer spacing="0px" style="width:min-content; max-width: 100%;">
                 <div class="gametitle">{{game.title}}</div>
                 <div class="game-user-rating">
                   <div class="gameusername">{{game.username || 'unknown'}}</div>
@@ -626,14 +562,13 @@ input[type=search]:focus {
 
 
 .gametitle {
-    max-width: 90%;
-    height:20px;
+    max-width: 100%;
     font-size: 1.25rem;
     font-family:'Scada';
-    margin-bottom: 10px;
+    margin-bottom: 0;
     white-space: nowrap;
     min-height: 1.2rem;
-    overflow:show;
+    overflow:hidden;
     text-overflow: ellipsis;
     box-sizing: border-box;
 }
@@ -664,6 +599,7 @@ input[type=search]:focus {
     align-items: center;
     gap: 2px;
     flex-shrink: 0;
+    margin-left:auto;
 }
 
 .star {
@@ -922,11 +858,41 @@ input[type=search]:focus {
     transform-origin: center center;
   }
   .games-section {
-    padding: 2rem;
-    grid-template-columns: repeat(auto-fit, minmax(15rem, 0.5fr) );
+    padding: 2rem 2rem;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 2rem;
   }
+  .game {
+    width: 100%;
+    max-width: 20rem;
+  }
+  .game > div {
+    width: 100% !important;
+  }
+  .gametitle {
+    width: 100%;
+    max-width: 100%;
+  }
+  .gamepic {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+  }
+  .gamepic .thumbnail {
+    width: 100%;
+    height: 100%;
+  }
+  .gamepic:hover .overlay-play {
+    width:100%;
+    height:auto;
+    aspect-ratio: 1;
+  }
+
+
   input[type=search]{
     width:100%;
+    min-width:0;
   }
 }
 </style>  
