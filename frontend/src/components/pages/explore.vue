@@ -26,9 +26,10 @@ const play = ref(playButton)
 
 const recentGames = ref([]);
 const searchQuery = ref('');
+const searchInput = ref(''); // Separate ref for the input field
 const expandedGame = ref(null);
 const currentPage = ref(1);
-const itemsPerPage = ref(8); // Set to 1 for testing
+const itemsPerPage = ref(6); // Set to 1 for testing
 
 // Cloud images array
 const cloudImages = [cloud1, cloud2, cloud3, cloud4, cloud5, cloud6];
@@ -203,6 +204,15 @@ const paginatedGames = computed(() => {
   return filteredGames.value.slice(start, end);
 });
 
+// Function to perform search (called on Enter or button click)
+const performSearch = () => {
+  searchQuery.value = searchInput.value;
+  currentPage.value = 1; // Reset to first page when search changes
+  nextTick(() => {
+    adjustTitleFontSizes();
+  });
+};
+
 // Watch for changes in searchQuery and reset to page 1
 watch(searchQuery, async () => {
   currentPage.value = 1; // Reset to first page when search changes
@@ -367,9 +377,9 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <form id="section-bar" action="placeholder" method="get">
-        <input type="search" name="search-bar" placeholder="Find your next adventure!" v-model="searchQuery">
-        <button class="search-button">Search</button>
+    <form id="section-bar" @submit.prevent="performSearch">
+        <input type="search" name="search-bar" placeholder="Find your next adventure!" v-model="searchInput" @keyup.enter="performSearch">
+        <button type="button" class="search-button" @click="performSearch">Search</button>
     </form>
     <div class="game-page">
       <!-- Cloud layers with parallax effect -->
@@ -418,6 +428,9 @@ onUnmounted(() => {
         
         <!-- Pagination Controls -->
         <div v-if="totalPages > 1" class="pagination-container">
+
+          <div class="pagination-numbers">
+          </div>
           <button 
             class="pagination-btn" 
             @click="prevPage" 
@@ -426,7 +439,6 @@ onUnmounted(() => {
           >
             ‹
           </button>
-          <div class="pagination-numbers">
             <button
               v-for="page in totalPages"
               :key="page"
@@ -436,7 +448,7 @@ onUnmounted(() => {
             >
               {{ page }}
             </button>
-          </div>
+
           <button 
             class="pagination-btn" 
             @click="nextPage" 
@@ -483,7 +495,7 @@ onUnmounted(() => {
     position: relative;
     display: flex;
     flex-direction: row;
-    padding: 2px 10px 10px 10px;
+    padding: 0 0.75rem 0.75rem 0.75rem;
     font-size: 2rem;
     letter-spacing: 2px;
     background-color: #182030;
@@ -491,17 +503,22 @@ onUnmounted(() => {
   }
 
 input[type=search] {
+    font-family: 'Scada';
     border: none;
-    padding: 10px;
-    width: 20rem;
-    min-width: 40%;
+    padding: 0.75rem;
+    width: 30rem;
     border-radius:  8px 0 0 8px ;
     background-color: rgb(222, 222, 222);
-    color: #323232;
+    color: #182030;
 }
 
 .search-button{
-  font:"Scada" 2rem;
+  background:rgb(37, 121, 204);
+  color:white;
+  font-family:"Scada";
+  font-size:1rem;
+  font-weight: 400;
+  width:6rem;
   border-radius: 0 8px 8px 0;
   border:none;
 }
@@ -609,14 +626,15 @@ input[type=search]:focus {
 
 
 .gametitle {
-    max-width: 100%;
+    max-width: 90%;
     height:20px;
     font-size: 1.25rem;
     font-family:'Scada';
     margin-bottom: 10px;
     white-space: nowrap;
     min-height: 1.2rem;
-    overflow: show;
+    overflow:show;
+    text-overflow: ellipsis;
     box-sizing: border-box;
 }
 .gametitle:hover{
@@ -835,12 +853,14 @@ input[type=search]:focus {
 /* Pagination Styles */
 .pagination-container {
   display: flex;
+  width:100%;
   justify-content: center;
   align-items: center;
   gap: 10px;
   padding: 0 0 2rem 0;
   z-index: 10;
-  position: relative;
+  position: fixed;
+  bottom:0;
 }
 
 .pagination-btn {
@@ -848,7 +868,9 @@ input[type=search]:focus {
   border: none;
   border-radius: 32px;
   padding: 8px 16px;
-  font-size: 1.5rem;
+  font-size: 16px;
+  height:40px;
+  width:40px;
   cursor: pointer;
 
   color: #333;

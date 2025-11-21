@@ -46,7 +46,7 @@ const router = useRouter(); // Access the Vue Router for navigation
             <RouterLink class="nav_btn" to="/about" active-class="active">Download</RouterLink>
             <div style="display:flex; width:fit-content; margin-left:auto; align-items: center;   flex-shrink: 0;">
                 <div v-if="displayUsername" style="display: flex; align-items: center; gap: 10px;">
-                    <span class="hello-user">{{ displayUsername || "userError" }}</span>
+                    <RouterLink to="/user" class="hello-user">{{ displayUsername || "userError" }}</RouterLink>
                     <RouterLink to="/user" class="profile-picture-link">
                         <img 
                             :src="profileImage && profileImage != '' ? profileImage : wizardPfp" 
@@ -84,8 +84,7 @@ const router = useRouter(); // Access the Vue Router for navigation
     font-family: "Scada", sans-serif;
     font-size: 1.5rem;
     margin-left: 0.625rem;
-    color: rgb(165, 165, 165);
-    transition: none;
+    color: rgb(212, 218, 222);
 }
 
 .nav_btn:hover {
@@ -95,32 +94,37 @@ const router = useRouter(); // Access the Vue Router for navigation
 
 .login_btn {
     font-family: "Scada";
-    font-size: 1.5rem;
+    font-size: 1.25rem;
+    font-weight: 400;
     min-width:max-content;
+    padding:0.3rem 0.5rem;
     margin-left: auto;
     display:inline-block;
     height:auto;
-    background: #e0e0e0;
+    background:rgb(37, 121, 204);
     border-radius: 5px;
-    color: rgb(163, 163, 163);
+    color: rgb(255, 255, 255);
     outline:none;
     border:none;
-    transition: color 0.2s;
 }
-
+.login_btn:hover{
+    background:rgb(94, 123, 240);
+}
 .hello-user {
     font-family: 'RetroQuill';
     align-items:center;
     font-size: 1.5rem;
-    color: rgb(165, 165, 165);
+    color: rgb(212, 218, 222);
     margin-left: auto;
-    margin-right: 10px;
+    margin-right: 0.25rem;
+}
+.hello-user:hover{
+    text-decoration: underline;
 }
 
 .profile-picture-link {
     display: inline-block;
     cursor: pointer;
-    transition: transform 0.2s, opacity 0.2s;
 }
 
 .profile-picture-link:hover {
@@ -136,6 +140,10 @@ const router = useRouter(); // Access the Vue Router for navigation
     border: 2px solid rgb(206, 203, 21);
     display: block;
 }
-
+@media (max-width: 768px) {
+    .hello-user{
+        display:none;
+    }
+}
 
 </style>

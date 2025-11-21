@@ -188,6 +188,13 @@ onMounted(async() => {
             email.value = await fetchUserData('email');
             profileImage.value = await fetchUserData('profileImage');
             fetchMyGames();
+        } else {
+            // User is not logged in - clear token and redirect to login
+            localStorage.removeItem('token');
+            if (refreshNavbar) {
+                refreshNavbar();
+            }
+            router.push('/auth');
         }
         isMounted.value = true;
 });
