@@ -43,4 +43,7 @@ watch(() => router.currentRoute.value.path, (newPath, oldPath) => {
 	@media (max-width: 768px) {
         html { font-size: 12px; }
     }
+    @media (max-width: 384px){
+        html { font-size: 8px}
+    }
 </style>

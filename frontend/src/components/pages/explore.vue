@@ -360,8 +360,8 @@ onUnmounted(() => {
                 </div>
               </VContainer>
             </div>
-        </div>
-        
+      </div>
+      <div style="width:100%;height:60px;"></div>  
         <!-- Pagination Controls -->
         <div v-if="totalPages > 1" class="pagination-container">
 
@@ -457,6 +457,10 @@ input[type=search] {
   width:6rem;
   border-radius: 0 8px 8px 0;
   border:none;
+}
+.search-button:hover{
+  cursor: pointer;
+  background: rgb(63, 147, 231);
 }
 
 input[type=search]:focus {
@@ -591,7 +595,6 @@ input[type=search]:focus {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    flex-shrink: 1;
 }
 
 .gamestars {
@@ -667,6 +670,7 @@ input[type=search]:focus {
   max-height: 600px;
   padding: 1.5rem;
   overflow: hidden;
+  overflow-y:scroll
 }
 
 .close-btn {
@@ -702,6 +706,7 @@ input[type=search]:focus {
 }
 
 .expanded-left {
+  width:20rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -721,7 +726,6 @@ input[type=search]:focus {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    flex-shrink: 1;
     text-align:left;
 }
 .expanded-thumbnail-container {
@@ -759,6 +763,7 @@ input[type=search]:focus {
 .expanded-right {
   flex: 1;
   display: flex;
+  min-width: 0;
   flex-direction: column;
 }
 .desc-header-container{
@@ -776,14 +781,19 @@ input[type=search]:focus {
 }
 
 .expanded-description {
-  flex: 1;
   margin: 1rem 0;
+  height: 100%;
   border-radius: 8px;
   font-family: 'Scada';
   font-size: 18px;
   line-height: 1.6;
+  overflow-x: hidden;
   overflow-y: auto;
   color: #333;
+  text-wrap: wrap;
+  width: 100%;
+  box-sizing: border-box;
+  word-wrap: break-word;
 }
 
 /* Pagination Styles */
@@ -800,7 +810,8 @@ input[type=search]:focus {
 }
 
 .pagination-btn {
-  background-color: #ffffff;
+  background-color: #182030;
+  font-weight: 1000;
   border: none;
   border-radius: 32px;
   padding: 8px 16px;
@@ -808,8 +819,7 @@ input[type=search]:focus {
   height:40px;
   width:40px;
   cursor: pointer;
-
-  color: #333;
+  color: #ffffff;
   transition: all 0.2s;
 }
 
@@ -829,15 +839,15 @@ input[type=search]:focus {
 }
 
 .pagination-number {
-  background-color: #ffffff;
+  background-color: #182030;
   border: none;
   border-radius: 32px;
   padding: 8px 12px;
   font-size: 18px;
   font-family: 'Scada';
   cursor: pointer;
-  color: #333;
-  transition: all 0.2s;
+  color: #FFF;
+  
   min-width: 40px;
 }
 
@@ -846,10 +856,10 @@ input[type=search]:focus {
 }
 
 .pagination-number.active {
-  background-color: #ffffff;
-  
-  outline:2px blue solid;
-  color: blue;
+  background-color: #182030;
+  outline:2px #182030 solid;
+  color: rgb(255, 255, 255);
+  border:white 2px solid;
   font-weight: bold;
 }
 @media (max-width: 768px) {
@@ -860,11 +870,11 @@ input[type=search]:focus {
   .games-section {
     padding: 2rem 2rem;
     grid-template-columns: repeat(2, 1fr);
-    grid-gap: 2rem;
+    grid-gap: 0;
+    row-gap:2rem;
   }
   .game {
-    width: 100%;
-    max-width: 20rem;
+    width:clamp(10rem,40vw,20rem)
   }
   .game > div {
     width: 100% !important;
@@ -888,11 +898,15 @@ input[type=search]:focus {
     height:auto;
     aspect-ratio: 1;
   }
-
+  .expanded-content {
+    flex-direction: column;
+  }
+  .expanded-left{
+    width:100%;
+  }
 
   input[type=search]{
     width:100%;
-    min-width:0;
   }
 }
 </style>  

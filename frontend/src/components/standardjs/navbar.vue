@@ -96,20 +96,18 @@ const router = useRouter(); // Access the Vue Router for navigation
     font-family: "Scada";
     font-size: 1.25rem;
     font-weight: 400;
-    min-width:max-content;
     padding:0.3rem 0.75rem;
     margin-left: auto;
     margin-right:0.75;
     display:inline-block;
     height:auto;
-    background:rgb(37, 121, 204);
+    border: solid white 1px;
     border-radius: 5px;
     color: rgb(255, 255, 255);
     outline:none;
-    border:none;
 }
 .login_btn:hover{
-    background:rgb(176, 192, 255);
+    background:rgb(90, 97, 131);
 }
 .hello-user {
     font-family: 'RetroQuill';
