@@ -30,6 +30,7 @@ const searchInput = ref(''); // Separate ref for the input field
 const expandedGame = ref(null);
 const currentPage = ref(1);
 const itemsPerPage = ref(8); // Set to 1 for testing
+const isSearching = ref(false);
 
 // Cloud images array
 const cloudImages = [cloud1, cloud2, cloud3, cloud4, cloud5, cloud6];
@@ -206,8 +207,14 @@ const paginatedGames = computed(() => {
 
 // Function to perform search (called on Enter or button click)
 const performSearch = () => {
+  isSearching.value = true;
   searchQuery.value = searchInput.value;
   currentPage.value = 1; // Reset to first page when search changes
+  
+  // Fade out the white overlay after a short delay
+  setTimeout(() => {
+    isSearching.value = false;
+  }, 500); // 500ms fade duration
 };
 
 // Watch for changes in searchQuery and reset to page 1
@@ -318,6 +325,8 @@ onUnmounted(() => {
         <button type="button" class="search-button" @click="performSearch">Search</button>
     </form>
     <div class="game-page">
+      <!-- White overlay for search transition -->
+      <div v-if="isSearching" class="search-overlay"></div>
       <!-- Cloud layers with parallax effect -->
       <div class="cloud-container">
         <div 
@@ -356,10 +365,12 @@ onUnmounted(() => {
                 </div>
                 <div class="gamepic">
                   <img :src="game.thumbnail||defaultThumb" class="thumbnail"> 
-                  <img :src="play" class="overlay-play">  
                 </div>
               </VContainer>
             </div>
+      </div>
+      <div v-if="recentGames.length > 0 && filteredGames.length === 0" class="no-results-message">
+        No results for this query
       </div>
       <div style="width:100%;height:60px;"></div>  
         <!-- Pagination Controls -->
@@ -435,6 +446,7 @@ onUnmounted(() => {
     font-size: 2rem;
     letter-spacing: 2px;
     background-color: #182030;
+    z-index:13;
 
   }
 
@@ -476,6 +488,27 @@ input[type=search]:focus {
   position: relative;
   overflow-x: hidden;
   overflow-y: auto;
+}
+
+.search-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgb(136, 189, 242);
+  z-index: 12;
+  animation: fadeOut 0.7s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }
 
 /* Cloud container - positioned absolutely behind content */
@@ -547,6 +580,19 @@ input[type=search]:focus {
   justify-items:center;
 }
 
+.no-results-message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'RetroQuill', sans-serif;
+  font-size: 2rem;
+  color: #2b1cd1;
+  text-align: center;
+  z-index: 10;
+  pointer-events: none;
+}
+
 .game {
     display: flex;
     flex-direction: column;
@@ -562,8 +608,11 @@ input[type=search]:focus {
     padding: 0.5rem;
     position: relative;
     cursor: pointer;
+    transition:all 0.05s ease-out;
 }
-
+.game:hover{
+  transform:scale(1.05);
+}
 
 .gametitle {
     max-width: 100%;
@@ -638,9 +687,7 @@ input[type=search]:focus {
 .gamepic:hover .overlay-play{
   display:inline;
 }
-.gamepic:hover .thumbnail{
-  filter: brightness(50%);
-}
+
 
 .game:hover {
     color: #000;

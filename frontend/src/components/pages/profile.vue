@@ -25,6 +25,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // for Vite
 const myGames = ref([]);
 const userID=ref('');
 const router = useRouter();
+const activeTab = ref('user'); // Track which tab is active: 'user', 'games', 'settings'
 
 
 async function fetchMyGames() {
@@ -201,130 +202,324 @@ onMounted(async() => {
 </script>
 <template>
     <div class="profile-container">
+        <div class="profile-navigator">
+            <h3>Profile</h3>
+            <hr></hr>
+            <nav class="nav-menu">
+                <button 
+                    class="nav-item" 
+                    :class="{ active: activeTab === 'user' }"
+                    @click="activeTab = 'user'"
+                >
+                    User
+                </button>
+                <button 
+                    class="nav-item" 
+                    :class="{ active: activeTab === 'games' }"
+                    @click="activeTab = 'games'"
+                >
+                    My Games
+                </button>
+                <!-- <button 
+                    class="nav-item" 
+                    :class="{ active: activeTab === 'settings' }"
+                    @click="activeTab = 'settings'"
+                >
+                    Settings
+                </button> -->
+                <button @click="logOut" class="nav-item logout">Log Out</button>
+
+            </nav>
+        </div>
         <div class="profile-content">
-            <div class="profile-picture-container" v-if="isLoggedIn">
+            <!-- User Page -->
+            <div v-if="activeTab === 'user'" class="tab-content">
+                <div class="profile-header">
+                    <h1>Profile Settings</h1>
+                </div>
+                <div class="profile-picture-container" v-if="isLoggedIn">
                     <img v-if="!isMounted" :src="loadCircle"  style="width:20%; height:20%; position: relative; top:38%; left:38%;" alt="Profile Picture">
                     <img v-else-if="profileImage!=''&&profileImage!=null" :src="profileImage" alt="Profile Picture" />
                     <img v-else :src="wizardPfp" alt="Profile Picture" />
+                </div>
 
+                <div class="profile-info" v-if="isLoggedIn">
+                    <div class="form-group">
+                        <label for="profile-image-url">Profile Image URL</label>
+                        <HContainer>
+                            <input type="text" id="profile-image-url" v-model="profileImageField" placeholder="Enter image URL" />
+                            <button @click="updatePFP">Set Image</button>
+                        </HContainer>
+                    </div>
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" v-model="username" />
+                    </div>  
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <div class="email-display">{{ email }}</div>
+                    </div>
+                    <div class="form-group">
+                        <button @click="showChangePassword = true">Change Password</button>
+                    </div>
+                    <div class="form-group" v-if="showChangePassword">
+                        <label for="current-password">Current Password</label>
+                        <input type="password" id="current-password" v-model="currentPassword" />
+                        <label for="new-password">New Password</label>
+                        <input type="password" id="new-password" v-model="newPassword" />
+                        <label for="confirm-password">Confirm Password</label>
+                        <input type="password" id="confirm-password" v-model="confirmNewPassword" />
+                        <button @click="changePassword">Update Password</button>
+                    </div>
+                    <div class="form-group" v-if="isLoggedIn">
+                        <button @click="saveProfile">Save Profile</button>
+                    </div>
                 </div>
-            <div class="profile-header">
-                <h1>Profile Settings</h1>
+                <div v-else class="not-logged-in-message">
+                    <p>Please log in to view and edit your profile.</p>
+                </div>
             </div>
-            <div class="profile-info" v-if="isLoggedIn">
-                
-                <div class="form-group">
-                    <label for="profile-image-url">Profile Image URL</label>
 
-                    <HContainer>
-                    <input type="text" id="profile-image-url" v-model="profileImageField" placeholder="Enter image URL" />
-                    <button @click="updatePFP">Update PFP</button>
-                    </HContainer>
+            <!-- My Games Page -->
+            <div v-if="activeTab === 'games'" class="tab-content">
+                <div class="profile-header">
+                    <h1>My Published Games</h1>
                 </div>
-                <div class="form-group">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" v-model="username" />
-                </div>  
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <!-- Displaying the email instead of an input box -->
-                    <div class="email-display">{{ email }}</div>
+                <div class="user-games" v-if="isLoggedIn">
+                    <div class="games-grid">
+                        <div 
+                            v-for="game in myGames" 
+                            :key="game.id" 
+                            class="game-box"
+                        >
+                            <div class="game-title">{{ game.title }}</div>
+                            <img :src="game.thumbnail" alt="Game image" class="game-image" />
+                            <div class="game-actions">
+                                <button class="action-button" @click="openGame(game.title)">Play</button>
+                                <button class="action-button delete" @click="deleteGame(game.id)">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-if="myGames.length === 0" class="no-games-message">
+                        <p>You haven't published any games yet.</p>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <button @click="showChangePassword = true">Change Password</button>
-                </div>
-                <div class="form-group" v-if="showChangePassword">
-                    <label for="current-password">Current Password</label>
-                    <input type="password" id="current-password" v-model="currentPassword" />
-                    <label for="new-password">New Password</label>
-                    <input type="password" id="new-password" v-model="newPassword" />
-                    <label for="confirm-password">Confirm Password</label>
-                    <input type="password" id="confirm-password" v-model="confirmNewPassword" />
-                    <button @click="changePassword">Update Password</button>
-                </div>
-                <div class="form-group" v-if="isLoggedIn">
-                    <button @click="saveProfile">Save Profile</button>
-                </div>
-                <div class="form-group">
-                    <button v-if="isLoggedIn" @click="logOut" class="logout-btn">Log Out</button>
-                    <RouterLink v-else to="/auth" class="login-btn-link">
-                        <button class="login-btn">Login</button>
-                    </RouterLink>
+                <div v-else class="not-logged-in-message">
+                    <p>Please log in to view your games.</p>
                 </div>
             </div>
-            <div v-else class="not-logged-in-message">
-                <p>Please log in to view and edit your profile.</p>
+
+            <!-- Settings Page -->
+            <div v-if="activeTab === 'settings'" class="tab-content">
+                <div class="profile-header">
+                    <h1>Settings</h1>
+                </div>
+                <div class="settings-content" v-if="isLoggedIn">
+                    <p>Settings page coming soon...</p>
+                </div>
+                <div v-else class="not-logged-in-message">
+                    <p>Please log in to access settings.</p>
+                </div>
             </div>
-     <div class="user-games" v-if="isLoggedIn">
-      <h2 class="section-title">My Published Games</h2>
-      <div class="games-grid">
-        <div 
-          v-for="game in myGames" 
-          :key="game.id" 
-          class="game-box"
-        >
-          <div class="game-title">{{ game.title }}</div>
-          <img :src="game.thumbnail" alt="Game image" class="game-image" />
-          <div class="game-actions">
-            <button class="action-button" @click="openGame(game.title)">Play</button>
-            <button class="action-button delete" @click="deleteGame(game.id)">Delete</button>
-          </div>
-        </div>
-      </div>
-    </div> 
         </div>
     </div>
 </template>
 
 <style scoped>
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'RetroQuill', sans-serif;
-}
-
 body {
     background-color: #ffffff;
     color: #000000;
 }
 
 .profile-container{
-    background:#ffffff;
+    background:#dbdbdb;
     flex:1;
     overflow-x: hidden;
     overflow-y: auto;
+    display: flex;
+    flex-direction: row;
+}
+
+.profile-navigator {
+    width: 250px;
+    background: #f1f1f1;
+    border-right: 1px solid #dbdbdb;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+    position: sticky;
+    top: 0;
+    overflow-y: auto;
+    justify-content: center;
+    z-index: 10;
+}
+
+.nav-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 0 10px;
+}
+
+.nav-item {
+    padding: 15px 20px;
+    background: transparent;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    font-size: 1rem;
+    color: #000000;
+    transition: all 0.2s;
+    border-radius: 4px;
+    font-weight: normal;
+}
+.logout{
+    color:red;
+}
+.nav-item:hover {
+    background: #dbdbdb;
+    color: #000000;
+}
+
+.nav-item.active {
+    background: #181818;
+    color: #f1f1f1;
+    text-shadow: 0px 0px 1px #f1f1f1;
+}
+
+.nav-footer {
+    padding: 20px 10px;
+    border-top: 2px solid #dbdbdb;
+}
+
+.nav-logout-btn {
+    width: 100%;
+    padding: 15px 20px;
+    background-color: #d4292e;
+    color: #ffffff;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-weight: bold;
+    font-size: 1rem;
+    border-radius: 4px;
+}
+
+.nav-logout-btn:hover {
+    background-color: #b0201f;
+    color: #ffffff;
+}
+
+.nav-login-btn {
+    width: 100%;
+    padding: 15px 20px;
+    background-color: #27ae60;
+    color: #ffffff;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-weight: bold;
+    font-size: 1rem;
+    border-radius: 4px;
+}
+
+.nav-login-btn:hover {
+    background-color: #229954;
+    color: #ffffff;
 }
 
 .profile-content {
-    width: 50%; /* Keep the content half the page */
-    margin: 0 auto; /* Center the content horizontally */
+    flex: 1;
+    padding: 20px 40px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    overflow-y: auto;
+}
+
+/* Responsive styles for mobile */
+@media (max-width: 768px) {
+    .profile-container {
+        flex-direction: column;
+    }
+    
+    .profile-navigator {
+        width: 100%;
+        position: sticky;
+        top: 0;
+        border-right: none;
+        border-bottom: 1px solid #dbdbdb;
+        padding: 10px 0;
+        height: auto;
+        overflow-x: auto;
+        overflow-y: visible;
+    }
+    
+    .profile-navigator h3 {
+        display: none;
+    }
+    
+    .profile-navigator hr {
+        display: none;
+    }
+    
+    .nav-menu {
+        flex-direction: row;
+        gap: 5px;
+        padding: 0 10px;
+        overflow-x: auto;
+        overflow-y: visible;
+        white-space: nowrap;
+        align-items: center;
+    }
+    
+    .nav-item {
+        padding: 10px 15px;
+        text-align: center;
+        white-space: nowrap;
+        flex-shrink: 0;
+        font-size: 0.9rem;
+    }
+    
+    .nav-item.logout {
+        margin-left: auto;
+    }
+    
+    .profile-content {
+        width: 100%;
+        padding: 20px;
+    }
+}
+
+.tab-content {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
 }
 
 .profile-header {
     text-align: center; /* Center the content of the header */
     margin-bottom: 2rem;
-    border-bottom: 3px solid #f1f1f1;
-    padding-bottom: 1rem;
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center; /* Center elements within the header */
 }
+.profile-header h1{
+    width:100%;
+    text-align: left;
+}
 
 .profile-picture-container {
-    width: 300px;
-    height: 300px;
+    width: 20rem;
+    height: 20rem;
     overflow: hidden;
-    border-radius: 0;
+    border-radius: 20rem;
+    border: 2px solid black;
     margin: 0 auto 1rem; /* Center the avatar */
     margin-top: 15px;
-    border: 3px solid #f1f1f1;
-    background:rgb(25, 51, 184);
+    background:rgb(0, 0, 0);
 }
 
 
@@ -354,7 +549,6 @@ body {
 .profile-info {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
 }
 
 .form-group {
@@ -391,6 +585,7 @@ body {
     background-color: #181818;
     color: #f1f1f1;
     border: 2px solid #f1f1f1;
+    width:max-content;
     cursor: pointer;
     transition: background-color 0.2s;
     font-weight: bold;
@@ -401,75 +596,6 @@ body {
     background-color: #f1f1f1;
     color: #181818;
 }
-
-/* Avatar Modal Styles */
-.avatar-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.avatar-modal-content {
-    background-color: #181818;
-    padding: 20px;
-    border: 5px solid #f1f1f1;
-    max-width: 600px;
-    width: 90%;
-    max-height: 80vh;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: #f1f1f1;
-}
-
-.avatar-modal-content::-webkit-scrollbar {
-    width: 12px;
-}
-
-.avatar-modal-content::-webkit-scrollbar-track {
-    background: #181818;
-    border: 3px solid #f1f1f1;
-}
-
-.avatar-modal-content::-webkit-scrollbar-thumb {
-    background: #f1f1f1;
-    border: 3px solid #181818;
-    cursor: pointer;
-}
-
-.avatars-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin: 20px 0;
-    width: 100%;
-}
-
-.avatar-item {
-    cursor: pointer;
-    border: 2px solid #f1f1f1;
-    padding: 5px;
-    transition: background-color 0.2s;
-}
-
-.avatar-item img {
-    width: 100%;
-    height: 80px;
-    object-fit: cover;
-}
-
-.avatar-item:hover {
-    background-color: #f1f1f1;
-    color: #181818;
-}
-
 .close-modal-btn {
     background-color: #f1f1f1;
     color: #181818;
@@ -483,13 +609,19 @@ body {
 
 
 
+hr{
+    border:none;
+    border-bottom: solid #dbdbdb 1px;
+    margin-bottom: 8px;
+}
 
 
-
-
+h3{
+    padding:20px;
+}
 
 .user-games {
-  background:  #dbdbdb;
+  background:  #dbdbdb00;
   padding: 25px;
   width: 100%;
   margin-top: 50px;
@@ -617,6 +749,30 @@ body {
 .not-logged-in-message p {
     font-size: 1.2rem;
     color: #000000;
+}
+
+.no-games-message {
+    text-align: center;
+    padding: 2rem;
+    background: #dbdbdb;
+    margin-top: 2rem;
+}
+
+.no-games-message p {
+    font-size: 1.2rem;
+    color: #000000;
+}
+
+.settings-content {
+    background: #dbdbdb;
+    padding: 25px;
+    margin-top: 20px;
+}
+
+.settings-content p {
+    font-size: 1.2rem;
+    color: #000000;
+    text-align: center;
 }
 </style>
 
