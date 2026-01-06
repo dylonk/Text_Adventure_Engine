@@ -133,9 +133,7 @@ onBeforeUnmount(() => {
 <style scoped>
 .toolbar {
   display: flex;
-  background-color: #4f4d56;
-  border-bottom: solid black 1px;
-  border-top: solid black 1px;
+  background-color: #b2b0ba;
 }
 .project-info {
   margin-left: auto;
@@ -158,10 +156,8 @@ onBeforeUnmount(() => {
   font-size: 12px;
   border: none;
   cursor: pointer;
-  border-right: black 1px solid;
 }
 .dropdown-content {
-  border: black 1px solid;
   display: none;
   position: absolute;
   background-color: #f1f1f1;

@@ -37,10 +37,11 @@ function updateAssets(){
 </template>
 
 <style scoped>
-* {
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 12px;
-  color: black;
+@import 'https://fonts.googleapis.com/css2?family=Syne+Mono&display=swap';
+*{
+  font-family:Scada, Geneva, Tahoma, sans-serif;
+  color:black;
+  text-rendering: optimizeLegibility;
 }
 
 

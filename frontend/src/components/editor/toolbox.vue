@@ -12,32 +12,38 @@ import tbMid from '../../assets/Images/editor/toolbox-mid-posterized.png'
 </script>
 <template>
     <div class="toolbox">
-        <a class="tb_title">Toolbox</a>
         <div class="tb-items">
             <a class="tb_subtitle">Objects</a>
+                <div class="tb-group">
                     <TBNode type="room" display_type="Room"/>
                     <TBNode type="item" display_type="Item"/>
                     <TBNode type="npc" display_type="NPC"/>
                     <TBNode type="pathway" display_type="Pathway"/>
                     <TBNode type="custom" display_type="Custom"/>
+                </div>
             <a class="tb_subtitle">Interactive</a>
+                <div class="tb-group">
                     <TBNode type="consoleoutput" display_type="Console Output"/>
                     <TBNode type="prompt" display_type="Prompt"/>
                     <!-- <TBNode type="inventoryMessage" display_type="Inventory Message"/>
                     <TBNode type="showInventoryMessages" display_type="Show Inventory Messages"/> -->
                     <TBNode type="wait" display_type="Wait"/>
                     <TBNode type="image" display_type="Image"/>
-                    <!-- <TBNode type="modifyimage" display_type="Modify Image"/> -->
+                </div>
             <a class="tb_subtitle">Path Control</a>
+            <div class="tb-group">
                 <TBNode type="await" display_type="Await"/>
                 <TBNode type="playerenter" display_type="On Player Enter"/>
                 <TBNode type="returnplayer" display_type="Return Player"/>
                 <TBNode type="repeater" display_type="Repeater"/>
                 <TBNode type="if" display_type="If"/>
+            </div>
             <a class="tb_subtitle">Value</a>
+            <div class="tb-group">
                 <TBNode type="setproperty" display_type="Set Property"/>
                 <TBNode type="setlocation" display_type="Set Player Location"/>
-            <!-- <a class="tb_subtitle">TO IMPLEMENT</a>
+            </div>
+                <!-- <a class="tb_subtitle">TO IMPLEMENT</a>
                 <TBNode type="unimplemented" display_type="Extend Scope"/>
                 <TBNode type="unimplemented" display_type="Background"/>
                 <TBNode type="unimplemented" display_type="Sound"/>
@@ -56,11 +62,16 @@ import tbMid from '../../assets/Images/editor/toolbox-mid-posterized.png'
     width:fit-content;
     height:100%;
     background:#5d5d5d;
-    border-right:#5d5d5d88 2px solid;
 }
 
 .tb-items>*{
     margin:6px;
+}
+.tb-group{
+    display:flex;
+    flex-direction: column;
+    gap:0.75rem;
+    margin:0.75rem;
 }
 
 .tb_title{
@@ -81,20 +92,18 @@ import tbMid from '../../assets/Images/editor/toolbox-mid-posterized.png'
     padding:4px;
     margin: 0 auto;
     margin-bottom:0px;
-
+    font-family: 'RetroQuill';
     width: 100%;
     height:min-content;
+    background:black;
     color:rgb(255, 255, 255);
 }
 .tb-items{
     display:flex;
     flex-direction: column;
     min-width:max-content;
-    margin: 8px;
-    background: #383838;
-    border-radius:10px;
-    margin-bottom:0px;
-    margin-top:12px;
+    background: #383838;    
+
     overflow:auto;
     scrollbar-gutter: stable;
     height:100%;

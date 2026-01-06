@@ -38,7 +38,6 @@ const canvasName = computed(() => {
 }
 
 .selector-text{
-    font-family: "Eagle Lake", serif;
     position:relative;
     font-size:small;
     background:rgb(0, 0, 0);
