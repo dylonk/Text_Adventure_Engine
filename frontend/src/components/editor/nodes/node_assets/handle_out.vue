@@ -31,16 +31,16 @@ function deleteEdges(){
     position:absolute;
     margin:0px;
     padding:0px;
-    right:10px;
+    right:12px;
     width: 0px;
     height: 0px;
 }
 .vue-flow__handle{
     position:relative;
-    border: solid blue 2px;
+    outline: solid rgb(0, 0, 0) 2px;
     background:rgb(255, 255, 255);
-    height:24px;
-    width:10px;
-    border-radius:4px
+    height:16px;
+    width:12px;
+    border-radius:100%;
 }
-</style>
+    </style>

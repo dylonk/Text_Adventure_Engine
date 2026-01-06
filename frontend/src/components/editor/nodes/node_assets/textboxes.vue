@@ -123,12 +123,16 @@ onMounted(() => {
         min-height: 48px;
         height: auto;
         overflow-y: auto;
+        color:rgb(0, 0, 0);
         background:rgb(255, 255, 255);
-        border:solid gray 1px;
-        border-radius:3px;
+        border:none;
+        outline:1px rgba(0, 0, 0, 0.134) solid;
         padding: 4px;
         box-sizing: border-box;
         line-height: 1.5;
+    }
+    .textbox_text:active{
+        background:rgb(236, 236, 236)
     }
     .textbox_container{
         /* color: v-bind('node_colors.prompt_fg'); */

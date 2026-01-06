@@ -62,6 +62,7 @@ import tbMid from '../../assets/Images/editor/toolbox-mid-posterized.png'
     width:fit-content;
     height:100%;
     background:#5d5d5d;
+
 }
 
 .tb-items>*{
@@ -95,14 +96,14 @@ import tbMid from '../../assets/Images/editor/toolbox-mid-posterized.png'
     font-family: 'RetroQuill';
     width: 100%;
     height:min-content;
-    background:black;
+    background:rgb(0, 0, 0);
     color:rgb(255, 255, 255);
 }
 .tb-items{
     display:flex;
     flex-direction: column;
     min-width:max-content;
-    background: #383838;    
+    background: rgb(89, 89, 89);    
 
     overflow:auto;
     scrollbar-gutter: stable;

@@ -198,14 +198,9 @@ li {
 .objects-container {
   height: 100%;
   overflow-y:scroll;
-  border: inset rgb(83, 83, 83) 2px;
   overflow-x:scroll;
   width:auto;
-
-  border-radius: 10px;
   background: rgb(56, 56, 56);
-  margin:10px;
-  margin-top:2px;
 }
 
 details div {

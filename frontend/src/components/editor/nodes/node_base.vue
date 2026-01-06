@@ -8,6 +8,7 @@ import ContextMenu from '../context_menu.vue'
 import { Position } from '@vue-flow/core';
 import { useNodesStore } from '../nodes/node_store.js'
 import { useVueFlow } from '@vue-flow/core';
+import { getNodeIcon } from './node-icons.js';
 
 const { screenToFlowCoordinate, updateNodeData, updateNode, findNode, updateNodeInternals } = useVueFlow()
 Position
@@ -141,6 +142,27 @@ function helpMessage(){
 const tooltip = ref(helpMessage());
 
 const { onDragStart } = useDragAndDrop();
+
+// Get the icon for this node type procedurally
+const nodeIcon = computed(() => getNodeIcon(props.type));
+
+// Computed style for the icon to use bg_color
+const iconStyle = computed(() => {
+  const bgColor = props.data?.bg_color || '#ffffff';
+  const iconUrl = nodeIcon.value;
+  return {
+    backgroundColor: bgColor,
+    maskImage: `url(${iconUrl})`,
+    WebkitMaskImage: `url(${iconUrl})`,
+    maskSize: 'contain',
+    WebkitMaskSize: 'contain',
+    maskRepeat: 'no-repeat',
+    WebkitMaskRepeat: 'no-repeat',
+    maskPosition: 'center',
+    WebkitMaskPosition: 'center'
+  };
+});
+
 // if(props.containHelp){
 //     watch(isDisplayTooltip);
 // }
@@ -158,15 +180,14 @@ onMounted(()=>{
 <template>
     <div v-if="data.tbStyle" class="node_container" :draggable="draggable" @dragstart="onDragStart($event, props.type)"
         @contextmenu.prevent.stop="showContextMenu($event, props.type, props.id)">
+        <div v-if="props.id!=-1" class="node-id-badge">{{ props.id }}</div>
         <div v-if="data.isObject"  class="node_title">
         
         
         <div>
         <HContainer outer-margin="">
+        <div class="node-icon" :style="iconStyle"></div>
           {{ data.display_type }}
-        <div v-if="props.id!=-1" class="node-id">
-        {{" ID:" + props.id}}
-        </div>
         </HContainer>
         </div>
         </div>
@@ -175,10 +196,8 @@ onMounted(()=>{
         
         <div>
         <HContainer outer-margin="">
+        <div class="node-icon" :style="iconStyle"></div>
           {{ data.display_type }}
-        <div v-if="props.id!=-1" class="node-id">
-        {{" ID:" + props.id}}
-        </div>
         </HContainer>
         </div>
         </div>
@@ -191,17 +210,16 @@ onMounted(()=>{
     />
       <slot></slot>
     </div>
-    <div v-else class="node_container tbStyle" :draggable="draggable" @dragstart="onDragStart($event, props.type)"
+    <div v-else class="node_container" style="background:none; box-shadow: none; outline: 3px #444 groove;" :draggable="draggable" @dragstart="onDragStart($event, props.type)"
         @contextmenu="showContextMenu($event, props.type, props.id)">
+        <div v-if="props.id!=-1" class="node-id-badge">{{ props.id }}</div>
         <div class="node_title tbStyle">
 
         
         <div>
         <HContainer outer-margin="">
+        <div class="node-icon" :style="iconStyle"></div>
           {{ data.display_type }}
-        <div v-if="props.id!=-1" class="node-id">
-        {{" ID:" + props.id}}
-        </div>
         </HContainer>
         </div>
         </div>
@@ -225,7 +243,8 @@ onMounted(()=>{
 }
 
 .node_container{
-    overflow:hidden;
+    position: relative;
+    overflow:visible;
     background:v-bind('data.bg_color');
     height:fit-content;
     width:fit-content;
@@ -233,7 +252,7 @@ onMounted(()=>{
     display:flex;
     flex-direction: column;
     border-radius: 2px;
-    box-shadow: 2px 6px 6px 0 rgba(0, 0, 0, 0.539), -2px 6px 20px 0 rgba(0, 0, 0, 0.203);
+    box-shadow: 2px 6px 6px 0 rgba(0, 0, 0, 0.351), -2px 6px 20px 0 rgba(0, 0, 0, 0.203);
 }
 
 .node_container:active{
@@ -241,27 +260,49 @@ onMounted(()=>{
 }
 
 
-.node-id{
-  margin-left:auto;
-  text-shadow:none;
-  color:white;
-  margin-right:0px;
+.node-id-badge{
+  position: absolute;
+  top: -24px;
+  left: 0;
+  width: fit-content;
+  height: 20px;
+  border-radius: 1rem;
+  padding: 0 0.4rem;
+  background-color: rgba(0, 0, 0, 0.717);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1 rem;
+  color: white;
+  font-weight:500;
+  z-index: 10;
+}
+
+.node-icon{
+  height: 1.2rem;
+  width: 1.2rem;
+  margin-right: 4px;
+  flex-shrink: 0;
 }
 .node_title{
     font-family: "Cascadia Mono", sans-serif;
     color:rgb(255, 255, 255);
     width:100%;
     font-weight: 800;
-    font-size:14px;
+    font-size:1rem;
+    height:fit-content;
     margin:0px;
     padding:0px;
     padding-left:5px;
     padding-right:5px;
+    border-radius: 2px 2px 0 0;
     background: v-bind('data.fg_color');
 }
 .node_title.tbStyle{
-  color:v-bind('data.fg_color');
-  background:v-bind('data.bg_color');
+  color:white;
+  background:v-bind('data.fg_color');
+  font-size:1rem;
+  border-radius:2px;
 }
 
 

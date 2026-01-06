@@ -35,7 +35,7 @@ const defaultObjData =  { //This is the data that this component contributes. An
         >
         <HContainer outerMargin="0px">
             <VContainer>
-            <div style="width:150px; color:purple;">Your adventure begins here!</div> <div style="width:150px; color:purple;">To direct the script, place down a node with an input (Try prompt!) and drag the Start node's output to the other node's input </div>
+            <div style="width:150px; color:purple;">Your adventure begins here!</div> <hr style=" border:none;border-bottom:dotted 2px purple;"> <div style="width:150px; color:purple;">To direct the script, place down a node with an input (Try prompt!) and drag the Start node's output to the other node's input </div>
             </VContainer>
             <HandleOut :id="id"></HandleOut>
         </HContainer>

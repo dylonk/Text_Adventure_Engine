@@ -123,7 +123,7 @@ function displayListToggle(){
         margin: 0px;
         border-radius: 2px gray solid;
         color:black;
-        border:solid gray 1px;
+        border:solid rgba(0, 0, 0, 0.165) 1px;
     }
     .dropdown-selected{
         color:black;

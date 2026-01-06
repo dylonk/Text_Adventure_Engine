@@ -64,7 +64,8 @@ function updateResponse(newResponse){
         height:20px;
         margin:none;
         background:rgb(255, 255, 255);
-        border:solid gray 1px;
+        border:none;
+        outline:1px rgba(0, 0, 0, 0.134) solid;
         border-radius:3px;
         
     }

@@ -133,7 +133,7 @@ onBeforeUnmount(() => {
 <style scoped>
 .toolbar {
   display: flex;
-  background-color: #b2b0ba;
+  background-color: #afafaf;
 }
 .project-info {
   margin-left: auto;

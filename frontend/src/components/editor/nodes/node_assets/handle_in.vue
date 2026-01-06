@@ -31,14 +31,15 @@ function deleteEdges(){
     height: 0px;
 }
 .vue-flow__handle{
+    cursor:help;
     position:relative;
-    border: solid blue 2px;
+    outline: solid rgb(0, 0, 0) 2px;
     background:rgb(255, 255, 255);
-    height:24px;
-    width:10px;
-    border-radius:4px
+    height:16px;
+    width:12px;
+    border-radius:100%;
 }
 .vue-flow__handle:hover{
-    border: solid red 2px;
+    outline: solid red 2px;
 }
 </style>
