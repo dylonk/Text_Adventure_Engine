@@ -248,12 +248,12 @@ onMounted(async() => {
                         <label for="profile-image-url">Profile Image URL</label>
                         <HContainer>
                             <input type="text" id="profile-image-url" v-model="profileImageField" placeholder="Enter image URL" />
-                            <button @click="updatePFP">Set Image</button>
+                            <button @click="updatePFP">Save Image</button>
                         </HContainer>
                     </div>
                     <div class="form-group">
                         <label for="username">Username</label>
-                        <input type="text" id="username" v-model="username" />
+                        <input style="max-width:30rem;" type="text" id="username" v-model="username" />
                     </div>  
                     <div class="form-group">
                         <label for="email">Email</label>
@@ -285,6 +285,7 @@ onMounted(async() => {
                 <div class="profile-header">
                     <h1>My Published Games</h1>
                 </div>
+                <hr style="border-color:black;">
                 <div class="user-games" v-if="isLoggedIn">
                     <div class="games-grid">
                         <div 
@@ -293,7 +294,9 @@ onMounted(async() => {
                             class="game-box"
                         >
                             <div class="game-title">{{ game.title }}</div>
-                            <img :src="game.thumbnail" alt="Game image" class="game-image" />
+                            <div class="game-image-container">
+                                <img :src="game.thumbnail" alt="Game image" class="game-image" />
+                            </div>
                             <div class="game-actions">
                                 <button class="action-button" @click="openGame(game.title)">Play</button>
                                 <button class="action-button delete" @click="deleteGame(game.id)">Delete</button>
@@ -492,7 +495,7 @@ body {
 
 .tab-content {
     width: 100%;
-    max-width: 800px;
+    max-width: 80rem;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
@@ -500,7 +503,6 @@ body {
 
 .profile-header {
     text-align: center; /* Center the content of the header */
-    margin-bottom: 2rem;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -508,6 +510,8 @@ body {
 }
 .profile-header h1{
     width:100%;
+    color:black;
+    font-weight:600;
     text-align: left;
 }
 
@@ -516,8 +520,8 @@ body {
     height: 20rem;
     overflow: hidden;
     border-radius: 20rem;
-    border: 2px solid black;
-    margin: 0 auto 1rem; /* Center the avatar */
+    border: 6px solid rgb(255, 255, 255);
+    margin: 0 0 1rem; /* Center the avatar */
     margin-top: 15px;
     background:rgb(0, 0, 0);
 }
@@ -561,6 +565,7 @@ body {
 
 .form-group label {
     font-weight: bold;
+    color:black;
     font-size: 14px;
 }
 
@@ -590,6 +595,7 @@ body {
     transition: background-color 0.2s;
     font-weight: bold;
     font-size: 14px;
+    white-space: nowrap;
 }
 
 .form-group button:hover {
@@ -624,7 +630,6 @@ h3{
   background:  #dbdbdb00;
   padding: 25px;
   width: 100%;
-  margin-top: 50px;
 }
 
 .section-title {
@@ -637,9 +642,9 @@ h3{
   width:100%;
   display: grid;
   flex: 1;
-  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr) );
+  grid-template-columns: repeat(auto-fill, 20rem );
   grid-auto-rows: auto;
-  grid-gap: 32px;
+  grid-gap: 2rem;
   justify-content: start;
   position: relative;
   box-sizing: border-box;
@@ -650,11 +655,15 @@ h3{
 
 .game-box {
   background: #ffffff;
-  width:fit-content;
-  border-radius: 0.5rem;
+  width:20rem;
+  height:23rem;
+  border-radius: 0.25rem;
   padding: 12px;
   text-align: center;
   box-shadow: 2px 2px 5px rgba(36, 29, 29, 0.426),-2px -2px 5px rgba(36, 29, 29, 0.426);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .game-box:hover {
@@ -663,15 +672,31 @@ h3{
 
 .game-title {
   font-size: 1rem;
+  font-weight:600;
+  text-align: left;
   margin-bottom: 10px;
-  padding: 6px;
+  line-height: 1.3rem;
+  padding: 1/4rem;
   background: #ffffff;
   color: #000000;
+  flex-shrink: 0;
+  min-height: fit-content;
+}
+
+.game-image-container {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  width: 100%;
 }
 
 .game-image {
-  width: 16rem;
-  height: 16rem;
+  width: 100%;
+  max-width: 19rem;
+  height: 100%;
   object-fit: cover;
   border-radius:0.5rem;
 }
@@ -680,15 +705,16 @@ h3{
   margin-top: 10px;
   display: flex;
   justify-content: space-around;
+  flex-shrink: 0;
 }
 
 .action-button {
   font-size: 1rem;
-  padding: 5px 10px;
+  padding: 0.5rem 1rem;
   border: none;
   background: #ffffff;
   color: rgb(0, 0, 0);
-  border-radius: 4px;
+  border-radius: 2px;
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
 }
@@ -705,8 +731,7 @@ h3{
 }
 
 .action-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 2px 2px 0 #000;
+  background:#dbdbdb;
 }
 .delete:hover   {
     background: #d4292e;
