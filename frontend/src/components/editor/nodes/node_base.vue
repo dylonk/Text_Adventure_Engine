@@ -220,8 +220,8 @@ onMounted(()=>{
 <style scoped>
 @import 'https://fonts.googleapis.com/css2?family=Syne+Mono&display=swap';
 *{
-        font-family: "Cascadia Mono", sans-serif;
-
+  font-family:Scada, Geneva, Tahoma, sans-serif;
+  text-rendering: optimizeLegibility;
 }
 
 .node_container{
@@ -232,8 +232,8 @@ onMounted(()=>{
     min-height: 4px;
     display:flex;
     flex-direction: column;
-    border-radius: 6px;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3), 0 6px 20px 0 rgba(0, 0, 0, 0.3);
+    border-radius: 2px;
+    box-shadow: 2px 6px 6px 0 rgba(0, 0, 0, 0.539), -2px 6px 20px 0 rgba(0, 0, 0, 0.203);
 }
 
 .node_container:active{

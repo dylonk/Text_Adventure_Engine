@@ -2,7 +2,22 @@ const express = require('express');
 const User = require('../models/user');
 const Project = require('../models/project');
 const Game = require('../models/game');
+const Rating = require('../models/rating');
 const router = express.Router();
+
+// Import authenticateToken middleware
+const jwt = require('jsonwebtoken');
+const jwtSecret = process.env.JWT_SECRET;
+const authenticateToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    if (!token) return res.sendStatus(401);
+    jwt.verify(token, jwtSecret, (err, user) => {
+        if (err) return res.sendStatus(403);
+        req.user = user;
+        next();
+    });
+};
 //const { v4: uuidv4 } = require('uuid'); //while users are found via unique usernames, projects get a uuid.
 
 
@@ -97,16 +112,91 @@ router.get('/', async (req, res) => {
     }
 
     const games = await Game.find(filter).populate('userId', 'username'); // Populate username from User model
-    // Transform the response to include username at the root level for easier frontend access
+    
+    // Get all game IDs to calculate average ratings
+    const gameIds = games.map(game => game.id);
+    const ratings = await Rating.find({ gameId: { $in: gameIds } });
+    
+    // Calculate average rating for each game
+    const ratingMap = {};
+    ratings.forEach(rating => {
+      if (!ratingMap[rating.gameId]) {
+        ratingMap[rating.gameId] = { sum: 0, count: 0 };
+      }
+      ratingMap[rating.gameId].sum += rating.rating;
+      ratingMap[rating.gameId].count += 1;
+    });
+    
+    // Transform the response to include username and average rating
     const gamesWithUsername = games.map(game => {
       const gameObj = game.toObject();
       gameObj.username = gameObj.userId?.username || 'unknown';
+      
+      // Calculate average rating
+      if (ratingMap[game.id]) {
+        gameObj.rating = ratingMap[game.id].sum / ratingMap[game.id].count;
+      } else {
+        gameObj.rating = 2.5; // Default rating if no ratings exist
+      }
+      
       return gameObj;
     });
     res.json(gamesWithUsername);
   } catch (error) {
     console.error('Error fetching games:', error);
     res.status(500).json({ message: 'Error fetching games', error });
+  }
+});
+
+// Route to submit a rating for a game
+router.post('/rate', authenticateToken, async (req, res) => {
+  try {
+    const { gameId, rating } = req.body;
+    const userId = req.user.id; // From authenticated token
+    
+    // Validate rating value
+    if (!gameId || rating === undefined || rating < 0 || rating > 5) {
+      return res.status(400).json({ message: 'Invalid rating data. Rating must be between 0 and 5.' });
+    }
+    
+    // Find or create rating (upsert)
+    const userRating = await Rating.findOneAndUpdate(
+      { userId: userId, gameId: gameId },
+      { rating: rating },
+      { upsert: true, new: true }
+    );
+    
+    // Calculate new average rating for the game
+    const allRatings = await Rating.find({ gameId: gameId });
+    const averageRating = allRatings.reduce((sum, r) => sum + r.rating, 0) / allRatings.length;
+    
+    res.json({ 
+      success: true, 
+      rating: userRating.rating,
+      averageRating: averageRating 
+    });
+  } catch (error) {
+    console.error('Error submitting rating:', error);
+    res.status(500).json({ message: 'Error submitting rating', error });
+  }
+});
+
+// Route to get user's rating for a specific game (optional, for displaying user's current rating)
+router.get('/rating/:gameId', authenticateToken, async (req, res) => {
+  try {
+    const { gameId } = req.params;
+    const userId = req.user.id;
+    
+    const rating = await Rating.findOne({ userId: userId, gameId: gameId });
+    
+    if (rating) {
+      res.json({ rating: rating.rating });
+    } else {
+      res.json({ rating: null });
+    }
+  } catch (error) {
+    console.error('Error fetching user rating:', error);
+    res.status(500).json({ message: 'Error fetching user rating', error });
   }
 });
 

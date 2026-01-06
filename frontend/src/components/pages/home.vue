@@ -54,15 +54,13 @@ onMounted(fetchGames);
 
 <template>
   <div id="home-container">    
-    <img class="background-image" src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/62508b06-f9a8-4fb5-a6f9-ac6a2f035569/d8l5iy6-0e7dcbf9-ae26-4131-91d5-8d9cd568d199.png/v1/fill/w_999,h_800/stock___stone_wall_and_arch_png_by_artreferencesource_d8l5iy6-pre.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9ODIwIiwicGF0aCI6IlwvZlwvNjI1MDhiMDYtZjlhOC00ZmI1LWE2ZjktYWM2YTJmMDM1NTY5XC9kOGw1aXk2LTBlN2RjYmY5LWFlMjYtNDEzMS05MWQ1LThkOWNkNTY4ZDE5OS5wbmciLCJ3aWR0aCI6Ijw9MTAyNCJ9XV0sImF1ZCI6WyJ1cm46c2VydmljZTppbWFnZS5vcGVyYXRpb25zIl19.BgITDiff1TAZ5siEbOt_hxvN2kHG_hDkGmqej83Z5tk">
-      <div class="main-grid">
-      <!-- Left Grid: Hero Section -->
-      <div class="right-grid">
-        <div id="hero">
-          <h1 class="hero-title">MagiQuill, a browser based text adventure engine!</h1>
+    <div id="hero">
+          <h1 class="hero-title"><a>MagiQuill</a>, a browser based text adventure engine and social platform</h1>
           <button class="explore-button" @click="goToExplore">Explore</button>
         </div>
-      </div>
+      <div class="main-grid">
+      <!-- Left Grid: Hero Section -->
+
 
       <!-- Right Grid: Popular Games Section -->
       <div class="right-grid">
@@ -96,7 +94,7 @@ onMounted(fetchGames);
   overflow-y:scroll;
   overflow-x:clip;
   font-family: 'RetroQuill', sans-serif;
-  background:rgb(25, 25, 25);
+  background:#dbdbdb;
 
 }
 
@@ -127,10 +125,13 @@ onMounted(fetchGames);
 }
 
 .hero-title {
-  font-size: 3em;
-  margin-bottom: 25px;
-  text-shadow: 5px 5px 0 #000;
-  color: #ffffff;
+  font-size: 2.5em;
+  margin: 2rem;
+  color: #000000;
+  text-align: left;
+}
+.hero-title a{
+  color:purple;
 }
 
 .explore-button {
@@ -140,8 +141,6 @@ onMounted(fetchGames);
   font-family: 'RetroQuill', sans-serif;
   border: 2px solid #ffffff;
   background: #7cbcbb;
-  text-shadow: 2px 2px 0 #000;
-
   box-shadow: 6px 6px 0 #000;
   color: #fff;
   cursor: pointer;

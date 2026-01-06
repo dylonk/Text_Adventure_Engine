@@ -67,24 +67,28 @@ const router = useRouter(); // Access the Vue Router for navigation
 .navbar {
     position:sticky;
     display: flex;
+    align-items: center;
     overflow-x:clip;
     align-self: flex-start;
     top: 0;
     width: 100vw;
     height: fit-content;
     padding: 0.625rem;
-    background-color: #182030;
-    font-family: Arial, Helvetica, sans-serif;
+    background-color: #181818;
+    font-family: 'Arial', Helvetica, sans-serif;
     font-weight: bold;
     z-index: 100;
 }
 
 
 .nav_btn {
-    font-family: "Scada", sans-serif;
+    font-family: 'RetroQuill';
     font-size: 1.5rem;
-    margin-left: 0.625rem;
-    color: rgb(212, 218, 222);
+    margin-left: 1rem;
+    color: rgb(255, 255, 255);
+    line-height: 0;
+    display: flex;
+    align-items: center;
 }
 
 .nav_btn:hover {
@@ -113,9 +117,11 @@ const router = useRouter(); // Access the Vue Router for navigation
     font-family: 'RetroQuill';
     align-items:center;
     font-size: 1.5rem;
-    color: rgb(212, 218, 222);
+    color: rgb(255, 255, 255);
     margin-left: auto;
     margin-right: 0.25rem;
+    line-height: 1;
+    display: flex;
 }
 .hello-user:hover{
     text-decoration: underline;
@@ -123,6 +129,7 @@ const router = useRouter(); // Access the Vue Router for navigation
 
 .profile-picture-link {
     display: inline-block;
+    transition: all 400ms;
     cursor: pointer;
 }
 
@@ -135,8 +142,6 @@ const router = useRouter(); // Access the Vue Router for navigation
     height: 2.5rem;
     border-radius: 50%;
     object-fit: cover;
-    background:rgb(206, 203, 21);
-    border: 2px solid rgb(206, 203, 21);
     display: block;
 }
 @media (max-width: 768px) {

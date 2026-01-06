@@ -12,8 +12,7 @@ import tbMid from '../../assets/Images/editor/toolbox-mid-posterized.png'
 </script>
 <template>
     <div class="toolbox">
-        <img onload="this.width*=0.8" :src="tbTop" class="tb-scroll-image-top">
-        <img class="tb_title" onload="this.width*=1" :src="tbTitle">
+        <a class="tb_title">Toolbox</a>
         <div class="tb-items">
             <a class="tb_subtitle">Objects</a>
                     <TBNode type="room" display_type="Room"/>
@@ -24,11 +23,11 @@ import tbMid from '../../assets/Images/editor/toolbox-mid-posterized.png'
             <a class="tb_subtitle">Interactive</a>
                     <TBNode type="consoleoutput" display_type="Console Output"/>
                     <TBNode type="prompt" display_type="Prompt"/>
-                    <TBNode type="inventoryMessage" display_type="Inventory Message"/>
-                    <TBNode type="showInventoryMessages" display_type="Show Inventory Messages"/>
+                    <!-- <TBNode type="inventoryMessage" display_type="Inventory Message"/>
+                    <TBNode type="showInventoryMessages" display_type="Show Inventory Messages"/> -->
                     <TBNode type="wait" display_type="Wait"/>
                     <TBNode type="image" display_type="Image"/>
-                    <TBNode type="modifyimage" display_type="Modify Image"/>
+                    <!-- <TBNode type="modifyimage" display_type="Modify Image"/> -->
             <a class="tb_subtitle">Path Control</a>
                 <TBNode type="await" display_type="Await"/>
                 <TBNode type="playerenter" display_type="On Player Enter"/>
@@ -37,14 +36,13 @@ import tbMid from '../../assets/Images/editor/toolbox-mid-posterized.png'
                 <TBNode type="if" display_type="If"/>
             <a class="tb_subtitle">Value</a>
                 <TBNode type="setproperty" display_type="Set Property"/>
-                <TBNode type="setlocation" display_type="Set Location"/>
-            <a class="tb_subtitle">TO IMPLEMENT</a>
+                <TBNode type="setlocation" display_type="Set Player Location"/>
+            <!-- <a class="tb_subtitle">TO IMPLEMENT</a>
                 <TBNode type="unimplemented" display_type="Extend Scope"/>
                 <TBNode type="unimplemented" display_type="Background"/>
                 <TBNode type="unimplemented" display_type="Sound"/>
-        
+         -->
             </div>
-        <img onload="this.width*=0.8" :src="tbBottom" class="tb-scroll-image-bottom">
     </div>
 </template>
 
@@ -55,12 +53,10 @@ import tbMid from '../../assets/Images/editor/toolbox-mid-posterized.png'
 .toolbox{
     display:flex;
     flex-direction: column;
-    width:11.2%;
-    min-width:min-content;
+    width:fit-content;
     height:100%;
-    background-image: url("@/assets/Images/editor/toolbox-mid-posterized.png");
-    background-repeat: repeat-y;
-    background-size:107%;
+    background:#5d5d5d;
+    border-right:#5d5d5d88 2px solid;
 }
 
 .tb-items>*{
@@ -69,55 +65,36 @@ import tbMid from '../../assets/Images/editor/toolbox-mid-posterized.png'
 
 .tb_title{
 
-    font-family: "Hurricane", serif;    
-    font-size: xx-large;
+    font-size:large;
     padding:0px;
-    text-align: center;
+    text-align: left;
     margin: 0 auto;
     margin-bottom:0px;
 
     width: 90%;
     height:min-content;
-    color:rgb(78, 81, 76);
+    color:rgb(255, 255, 255);
     font-weight:500;
 }
-
-.tb-scroll-image-top{
-    position:relative;
-    margin:0px;
-    width:106%;
-    z-index:3;
-    pointer-events: none;
-}
-.tb-scroll-image-bottom{
-    margin:0px;
-    width:106%;
-    margin-top:auto;
-    z-index:1;
-    pointer-events: none;
-
-}
 .tb_subtitle{
-    font-family: "Cascadia Mono", sans-serif;    
-    font-size:20px;
+    font-size:1rem;
     padding:4px;
     margin: 0 auto;
     margin-bottom:0px;
 
     width: 100%;
     height:min-content;
-    color:rgb(0, 0, 0);
+    color:rgb(255, 255, 255);
 }
 .tb-items{
     display:flex;
     flex-direction: column;
     min-width:max-content;
     margin: 8px;
-    background: rgba(154, 126, 73, 0.2);
+    background: #383838;
     border-radius:10px;
     margin-bottom:0px;
     margin-top:12px;
-    border:3px inset #f1b882;
     overflow:auto;
     scrollbar-gutter: stable;
     height:100%;

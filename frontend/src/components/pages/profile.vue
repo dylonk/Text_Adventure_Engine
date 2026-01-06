@@ -372,7 +372,7 @@ body {
     cursor: pointer;
     font-size: 1rem;
     color: #000000;
-    transition: all 0.2s;
+    transition: box-shadow 0.2s, background 0.2s;
     border-radius: 4px;
     font-weight: normal;
 }
@@ -716,7 +716,7 @@ h3{
   color: rgb(0, 0, 0);
   border-radius: 2px;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+  transition:  box-shadow 0.2s, background 0.2s;
 }
 .delete {
   font-size: 1rem;
@@ -727,7 +727,7 @@ h3{
 
   border-radius: 4px;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+  transition: box-shadow 0.2s, background 0.2s;
 }
 
 .action-button:hover {

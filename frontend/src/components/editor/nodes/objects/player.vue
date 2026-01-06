@@ -9,7 +9,7 @@ const props = defineProps({
 import { useNodesStore } from '@/components/editor/nodes/node_store'
 const NS = useNodesStore()
 const defaultObjData =  { //This is the data that this component contributes. Any existing properties within the functional node data will be replaced
-    display_type:"☆ Player ☆",
+    display_type:"Player",
     properties: {
       aliases: "hero",
       characterHealth:100,

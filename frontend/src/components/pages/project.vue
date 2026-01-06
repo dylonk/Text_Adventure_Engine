@@ -176,18 +176,20 @@ function loadProject(id) {
 
 #project-container {
   position: relative;
+  background:#dbdbdb;
   flex:1;
   font-family: 'RetroQuill', sans-serif;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   overflow-x: hidden;
   overflow-y: auto;
+  min-height: 0;
 }
 
 .background-overlay {
-  background: url('@/assets/Images/stars.jpg') repeat center center/cover;
+  background: black;
   width: 100%;
   height: 100%;
   position: absolute;
@@ -196,10 +198,13 @@ function loadProject(id) {
 
 .main-grid {
   display: flex;
-  grid-template-columns: 50% 50%;
+  flex-direction: column;
   gap: 30px;
   width: 70%;
+  max-width: 100%;
+  min-width: 0;
   margin: 120px auto 0 auto;
+  flex-shrink: 0;
 }
 
 .left-container, .right-container {
@@ -212,7 +217,10 @@ function loadProject(id) {
   padding: 25px;
   border-radius: 10px;
   text-align: center;
-  width:100%;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .left-container {
@@ -236,7 +244,10 @@ function loadProject(id) {
   justify-items: center;
   text-align: center;
   width: 70%;
+  max-width: 100%;
+  min-width: 0;
   margin-top: 50px;
+  flex-shrink: 0;
 }
 
 .section-title {
@@ -247,21 +258,26 @@ function loadProject(id) {
 
 .projects-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(235px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 15px 10px;
   justify-content: center;
-
+  width: 100%;
+  max-width: 100%;
+  overflow: visible;
 }
 
 .project-box {
   background: #e74c3c;
   border: 2px solid #e0e0e0;
-  width:min-content;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   box-shadow: 4px 4px 0 #000;
   border-radius: 6px;
   padding: 12px;
   text-align: center;
   transition: transform 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
 }
 
 .project-box:hover {
