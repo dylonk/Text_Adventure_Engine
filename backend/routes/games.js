@@ -20,13 +20,76 @@ const authenticateToken = (req, res, next) => {
 };
 //const { v4: uuidv4 } = require('uuid'); //while users are found via unique usernames, projects get a uuid.
 
+// route to get games from the database. Used in the explore page. optional query param userId
+router.get('/', async (req, res) => {
+  try {
+    const { userId } = req.query;
 
+    let filter = {};
+    if (userId) {
+      filter.userId = userId; // Only add this filter if userId is present
+    }
 
+    const games = await Game.find(filter).populate('userId', 'username'); // Populate username from User model
+    
+    // Get all game IDs to calculate average ratings
+    const gameIds = games.map(game => game.id);
+    const ratings = await Rating.find({ gameId: { $in: gameIds } });
+    
+    // Calculate average rating for each game
+    const ratingMap = {};
+    ratings.forEach(rating => {
+      if (!ratingMap[rating.gameId]) {
+        ratingMap[rating.gameId] = { sum: 0, count: 0 };
+      }
+      ratingMap[rating.gameId].sum += rating.rating;
+      ratingMap[rating.gameId].count += 1;
+    });
+    
+    // Transform the response to include username and average rating
+    const gamesWithUsername = games.map(game => {
+      const gameObj = game.toObject();
+      gameObj.username = gameObj.userId?.username || 'unknown';
+      
+      // Calculate average rating
+      if (ratingMap[game.id]) {
+        gameObj.rating = ratingMap[game.id].sum / ratingMap[game.id].count;
+      } else {
+        gameObj.rating = 2.5; // Default rating if no ratings exist
+      }
+      
+      return gameObj;
+    });
+    res.json(gamesWithUsername);
+  } catch (error) {
+    console.error('Error fetching games:', error);
+    res.status(500).json({ message: 'Error fetching games', error });
+  }
+});
 
+// Route to get user's rating for a specific game (MUST be before /:gameTitle route)
+router.get('/rating/:gameId', authenticateToken, async (req, res) => {
+  try {
+    const { gameId } = req.params;
+    const userId = req.user.id;
+    
+    const rating = await Rating.findOne({ userId: userId, gameId: gameId });
+    
+    if (rating) {
+      res.json({ rating: rating.rating });
+    } else {
+      res.json({ rating: null });
+    }
+  } catch (error) {
+    console.error('Error fetching user rating:', error);
+    res.status(500).json({ message: 'Error fetching user rating', error });
+  }
+});
 
  //this route will be used to play a game from the database! 
  // It's role is to fetch a game from the database based on it's title in the route.
  //If I'm right, this means game links will work
+ // NOTE: This must be AFTER more specific routes like /rating/:gameId
  router.get('/:gameTitle', async (req, res) => {
   console.log("Play request received");
 
@@ -99,55 +162,6 @@ const authenticateToken = (req, res, next) => {
     }
   });
 
-
-
-// route to get games from the database. Used in the explore page. optional query param userId
-router.get('/', async (req, res) => {
-  try {
-    const { userId } = req.query;
-
-    let filter = {};
-    if (userId) {
-      filter.userId = userId; // Only add this filter if userId is present
-    }
-
-    const games = await Game.find(filter).populate('userId', 'username'); // Populate username from User model
-    
-    // Get all game IDs to calculate average ratings
-    const gameIds = games.map(game => game.id);
-    const ratings = await Rating.find({ gameId: { $in: gameIds } });
-    
-    // Calculate average rating for each game
-    const ratingMap = {};
-    ratings.forEach(rating => {
-      if (!ratingMap[rating.gameId]) {
-        ratingMap[rating.gameId] = { sum: 0, count: 0 };
-      }
-      ratingMap[rating.gameId].sum += rating.rating;
-      ratingMap[rating.gameId].count += 1;
-    });
-    
-    // Transform the response to include username and average rating
-    const gamesWithUsername = games.map(game => {
-      const gameObj = game.toObject();
-      gameObj.username = gameObj.userId?.username || 'unknown';
-      
-      // Calculate average rating
-      if (ratingMap[game.id]) {
-        gameObj.rating = ratingMap[game.id].sum / ratingMap[game.id].count;
-      } else {
-        gameObj.rating = 2.5; // Default rating if no ratings exist
-      }
-      
-      return gameObj;
-    });
-    res.json(gamesWithUsername);
-  } catch (error) {
-    console.error('Error fetching games:', error);
-    res.status(500).json({ message: 'Error fetching games', error });
-  }
-});
-
 // Route to submit a rating for a game
 router.post('/rate', authenticateToken, async (req, res) => {
   try {
@@ -178,25 +192,6 @@ router.post('/rate', authenticateToken, async (req, res) => {
   } catch (error) {
     console.error('Error submitting rating:', error);
     res.status(500).json({ message: 'Error submitting rating', error });
-  }
-});
-
-// Route to get user's rating for a specific game (optional, for displaying user's current rating)
-router.get('/rating/:gameId', authenticateToken, async (req, res) => {
-  try {
-    const { gameId } = req.params;
-    const userId = req.user.id;
-    
-    const rating = await Rating.findOne({ userId: userId, gameId: gameId });
-    
-    if (rating) {
-      res.json({ rating: rating.rating });
-    } else {
-      res.json({ rating: null });
-    }
-  } catch (error) {
-    console.error('Error fetching user rating:', error);
-    res.status(500).json({ message: 'Error fetching user rating', error });
   }
 });
 
