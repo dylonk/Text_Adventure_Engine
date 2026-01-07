@@ -23,7 +23,7 @@ function deleteEdges(){
 
 <template>
     <div class="handle-container">
-        <Handle :id="handleTitle" class="vue-flow__handle" type="source" :position="Position.Right" />
+        <Handle @mousedown="deleteEdges()" :id="handleTitle" class="vue-flow__handle" type="source" :position="Position.Right" />
     </div>
 </template>
 <style scoped>
@@ -37,10 +37,16 @@ function deleteEdges(){
 }
 .vue-flow__handle{
     position:relative;
-    outline: solid rgb(0, 0, 0) 2px;
+    outline: solid rgb(117, 117, 117) 2px;
     background:rgb(255, 255, 255);
     height:16px;
     width:12px;
     border-radius:100%;
+    transition: all 0.05s ease-in-out;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.486);
+
+}
+.vue-flow__handle:hover, .vue-flow__handle:active {
+    outline: solid rgb(44, 44, 255) 4px;
 }
     </style>

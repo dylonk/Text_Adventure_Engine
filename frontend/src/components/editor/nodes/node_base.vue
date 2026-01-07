@@ -210,7 +210,7 @@ onMounted(()=>{
     />
       <slot></slot>
     </div>
-    <div v-else class="node_container" style="background:none; box-shadow: none; outline: 3px #444 groove;" :draggable="draggable" @dragstart="onDragStart($event, props.type)"
+    <div v-else class="node_container" style="background:none;" :draggable="draggable" @dragstart="onDragStart($event, props.type)"
         @contextmenu="showContextMenu($event, props.type, props.id)">
         <div v-if="props.id!=-1" class="node-id-badge">{{ props.id }}</div>
         <div class="node_title tbStyle">

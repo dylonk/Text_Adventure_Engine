@@ -70,8 +70,8 @@ const defaultObjData =  { //This is the data that this component contributes. An
 
         <VContainer outerMargin="5px">
             <Dropdown :id="id" title="Target" defaultSelection="Global" dropdownType="objects"></Dropdown>
-            <Dropdown :id="id" title="property" defaultSelection="" dropdownType="custom" :defaultList="propertyList"></Dropdown>
-            <Textboxes :id="id" startingQuantity=1 allowButtons=false title="new value"></Textboxes>
+            <Dropdown :id="id" title="Property" defaultSelection="" dropdownType="custom" :defaultList="propertyList"></Dropdown>
+            <Textboxes :id="id" startingQuantity=1 allowButtons=false title="Value"></Textboxes>
         </VContainer>
         <HandleOut :id="id"></HandleOut>
         </HContainer>

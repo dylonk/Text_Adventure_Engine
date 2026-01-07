@@ -152,7 +152,7 @@ function switchCanvas(id, assetBrowserIndex){
 .asset_browser {
   height:auto;
   display: flex;
-  font-size:large;
+  font-size:1rem;
   width:250px;
   justify-content: center;
   flex-direction: column;
@@ -172,7 +172,7 @@ function switchCanvas(id, assetBrowserIndex){
 
 h3 {
   font-weight:100; 
-  font-size:20px;
+  font-size:1.25rem;
   color: rgb(156, 156, 156);
   
   padding-right:10px;

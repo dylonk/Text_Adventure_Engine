@@ -123,16 +123,22 @@ onMounted(() => {
         min-height: 48px;
         height: auto;
         overflow-y: auto;
-        color:rgb(0, 0, 0);
-        background:rgb(255, 255, 255);
+        color:rgb(35, 35, 76);
+        font-weight: 600;
+        background:rgb(232, 237, 234);
         border:none;
-        outline:1px rgba(0, 0, 0, 0.134) solid;
+        border-radius:2px;
+        outline:1px rgba(104, 97, 199, 0.403) solid;
         padding: 4px;
         box-sizing: border-box;
         line-height: 1.5;
     }
+    .textbox_text:focus{
+        background:rgb(237, 243, 241);
+        outline:1px rgba(94, 87, 188, 0.648) solid;
+    }
     .textbox_text:active{
-        background:rgb(236, 236, 236)
+        background:rgb(214, 220, 218);
     }
     .textbox_container{
         /* color: v-bind('node_colors.prompt_fg'); */
@@ -140,6 +146,7 @@ onMounted(() => {
         display:flex;
         flex-direction:column;
         margin: 0px;
+        
 
     }
     .response_title{

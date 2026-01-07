@@ -21,10 +21,9 @@ import tbMid from '../../assets/Images/editor/toolbox-mid-posterized.png'
                     <TBNode type="pathway" display_type="Pathway"/>
                     <TBNode type="custom" display_type="Custom"/>
                 </div>
-            <a class="tb_subtitle">Interactive</a>
+            <a class="tb_subtitle">Display</a>
                 <div class="tb-group">
                     <TBNode type="consoleoutput" display_type="Console Output"/>
-                    <TBNode type="prompt" display_type="Prompt"/>
                     <!-- <TBNode type="inventoryMessage" display_type="Inventory Message"/>
                     <TBNode type="showInventoryMessages" display_type="Show Inventory Messages"/> -->
                     <TBNode type="wait" display_type="Wait"/>
@@ -32,11 +31,16 @@ import tbMid from '../../assets/Images/editor/toolbox-mid-posterized.png'
                 </div>
             <a class="tb_subtitle">Path Control</a>
             <div class="tb-group">
+                <TBNode type="prompt" display_type="Prompt"/>
                 <TBNode type="await" display_type="Await"/>
                 <TBNode type="playerenter" display_type="On Player Enter"/>
                 <TBNode type="returnplayer" display_type="Return Player"/>
+
+            </div>
+            <a class="tb_subtitle">Logic</a>
+            <div class="tb-group">
                 <TBNode type="repeater" display_type="Repeater"/>
-                <TBNode type="if" display_type="If"/>
+                <TBNode type="if" display_type="If"/>                    
             </div>
             <a class="tb_subtitle">Value</a>
             <div class="tb-group">
@@ -61,8 +65,11 @@ import tbMid from '../../assets/Images/editor/toolbox-mid-posterized.png'
     flex-direction: column;
     width:fit-content;
     height:100%;
-    background:#5d5d5d;
-
+    background-color: #c8c3d8;
+    background-image: 
+        linear-gradient(rgba(53, 91, 104, 0.3) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(53, 91, 104, 0.3) 1px, transparent 1px);
+    background-size: 20px 20px;
 }
 
 .tb-items>*{
@@ -72,7 +79,8 @@ import tbMid from '../../assets/Images/editor/toolbox-mid-posterized.png'
     display:flex;
     flex-direction: column;
     gap:0.75rem;
-    margin:0.75rem;
+    padding:0.75rem;
+    margin:0;
 }
 
 .tb_title{
@@ -96,15 +104,14 @@ import tbMid from '../../assets/Images/editor/toolbox-mid-posterized.png'
     font-family: 'RetroQuill';
     width: 100%;
     height:min-content;
-    background:rgb(0, 0, 0);
+    background:rgb(6, 0, 34);
     color:rgb(255, 255, 255);
+    box-shadow: 0 5px 3px rgba(0, 0, 0, 0.297);
 }
 .tb-items{
     display:flex;
     flex-direction: column;
     min-width:max-content;
-    background: rgb(89, 89, 89);    
-
     overflow:auto;
     scrollbar-gutter: stable;
     height:100%;
