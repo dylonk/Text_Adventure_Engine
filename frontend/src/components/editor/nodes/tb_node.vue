@@ -28,7 +28,7 @@ const { onDragStart } = useDragAndDrop();
     </div>
 </template>
 <style scoped>
-@import 'https://fonts.googleapis.com/css2?family=Syne+Mono&display=swap';
+@import 'https://fonts.googleapis.com/css2?family=Cascadia+Mono&display=swap';
 .tb_node_container{
     height:fit-content;
     width:fit-content;

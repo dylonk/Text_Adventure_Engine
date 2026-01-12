@@ -32,6 +32,7 @@
         isDragging.value = true
         console.log("dragging", draggedType.value)
 
+        document.addEventListener('dragend', onDragEnd)
         document.addEventListener('drop', onDragEnd)
     }
 
@@ -55,6 +56,7 @@
         isDragging.value = false
         isDragOver.value = false
         draggedType.value = null
+        document.removeEventListener('dragend', onDragEnd)
         document.removeEventListener('drop', onDragEnd)
     }
 

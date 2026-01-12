@@ -236,7 +236,7 @@ onMounted(()=>{
 </template>
 
 <style scoped>
-@import 'https://fonts.googleapis.com/css2?family=Syne+Mono&display=swap';
+@import 'https://fonts.googleapis.com/css2?family=Cascadia+Mono&display=swap';
 *{
   font-family:Scada, Geneva, Tahoma, sans-serif;
   text-rendering: optimizeLegibility;

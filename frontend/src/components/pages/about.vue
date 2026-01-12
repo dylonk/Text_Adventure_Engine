@@ -35,7 +35,7 @@ import windowsLogo from '@/assets/Images/windows.png'
 </template>
 
 <style scoped>
-@import 'https://fonts.googleapis.com/css2?family=Syne+Mono&display=swap';
+@import 'https://fonts.googleapis.com/css2?family=Cascadia+Mono&display=swap';
 @import 'https://fonts.googleapis.com/css2?family=Hurricane';
 
 

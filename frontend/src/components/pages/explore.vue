@@ -208,6 +208,14 @@ const paginatedGames = computed(() => {
   return filteredGames.value.slice(start, end);
 });
 
+// Computed property to get expanded title font size
+const expandedTitleFontSize = computed(() => {
+  if (expandedGame.value && expandedGame.value.title && expandedGame.value.title.length > 16) {
+    return '1.5rem';
+  }
+  return '2rem';
+});
+
 // Function to perform search (called on Enter or button click)
 const performSearch = () => {
   isSearching.value = true;
@@ -455,20 +463,17 @@ onUnmounted(() => {
       <div v-if="recentGames.length > 0 && filteredGames.length === 0" class="no-results-message">
         No results for this query
       </div>
-      <div style="width:100%;height:60px;"></div>  
         <!-- Pagination Controls -->
         <div v-if="totalPages > 1" class="pagination-container">
-
           <div class="pagination-numbers">
-          </div>
-          <button 
-            class="pagination-btn" 
-            @click="prevPage" 
-            :disabled="currentPage === 1"
-            :class="{ disabled: currentPage === 1 }"
-          >
-            ‹
-          </button>
+            <button 
+              class="pagination-btn" 
+              @click="prevPage" 
+              :disabled="currentPage === 1"
+              :class="{ disabled: currentPage === 1 }"
+            >
+              ‹
+            </button>
             <button
               v-for="page in totalPages"
               :key="page"
@@ -478,15 +483,15 @@ onUnmounted(() => {
             >
               {{ page }}
             </button>
-
-          <button 
-            class="pagination-btn" 
-            @click="nextPage" 
-            :disabled="currentPage === totalPages"
-            :class="{ disabled: currentPage === totalPages }"
-          >
-            ›
-          </button>
+            <button 
+              class="pagination-btn" 
+              @click="nextPage" 
+              :disabled="currentPage === totalPages"
+              :class="{ disabled: currentPage === totalPages }"
+            >
+              ›
+            </button>
+          </div>
         </div>
     </div>
 
@@ -499,7 +504,7 @@ onUnmounted(() => {
               <img :src="expandedGame.thumbnail||defaultThumb" class="expanded-thumbnail">
               <img :src="play" class="expanded-play">
             </div>
-            <h2 class="expanded-title">{{expandedGame.title}}</h2>
+            <h2 class="expanded-title" :style="{ fontSize: expandedTitleFontSize }">{{expandedGame.title}}</h2>
             <div class="expanded-author">by {{expandedGame.username || 'unknown'}}</div>
             <div class="expanded-rating-container">
               <div class="expanded-rating-label">Rate this game:</div>
@@ -597,6 +602,8 @@ input[type=search]:focus {
   position: relative;
   overflow-x: hidden;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .search-overlay {
@@ -676,10 +683,11 @@ input[type=search]:focus {
 .games-section {
   display: grid;
   flex: 1;
-  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr) );
+  grid-template-columns: repeat(4, minmax(15rem, 1fr) );
   grid-auto-rows: auto;
   grid-gap: 1.5rem;
-  padding: 4rem 20dvw;
+  padding: 4rem 0;
+  width:fit-content;
   margin: 0 auto;
   position: relative;
   box-sizing: border-box;
@@ -874,6 +882,7 @@ input[type=search]:focus {
   font-weight: 600;
   font-size: 2rem;
   text-align: center;
+  line-height: 1.2;
 }
 .expanded-author{
     font-size: 1rem;
@@ -984,32 +993,54 @@ input[type=search]:focus {
 /* Pagination Styles */
 .pagination-container {
   display: flex;
-  width:100%;
+  width: 100%;
   justify-content: center;
   align-items: center;
   gap: 10px;
-  padding: 0 0 2rem 0;
+  padding: 1rem 0;
   z-index: 10;
-  position: fixed;
-  bottom:0;
+  background-color: rgb(24, 24, 24);
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
 }
 
 .pagination-btn {
-  background-color: #181818;
+  background-color: transparent;
   font-weight: 1000;
   border: none;
-  border-radius: 32px;
+  border-radius: 0;
   padding: 8px 16px;
-  font-size: 16px;
+  font-size: 20px;
   height:40px;
   width:40px;
   cursor: pointer;
   color: #ffffff;
   transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.pagination-btn:first-child {
+  border-radius: 4px 0 0 4px;
+}
+
+.pagination-btn:last-child {
+  border-radius: 0 4px 4px 0;
+}
+
+.pagination-btn:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 20%;
+  height: 60%;
+  width: 1px;
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
 .pagination-btn:hover:not(.disabled) {
-  background-color: #e4e4e4;
+  background-color: rgba(255, 255, 255, 0.15);
 }
 
 .pagination-btn.disabled {
@@ -1019,34 +1050,59 @@ input[type=search]:focus {
 
 .pagination-numbers {
   display: flex;
-  gap: 5px;
+  gap: 0;
   align-items: center;
+  background-color: #181818;
+  border-radius: 4px;
+  padding: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .pagination-number {
-  background-color: #181818;
+  background-color: transparent;
   border: none;
-  border-radius: 32px;
-  padding: 8px 12px;
+  border-radius: 0;
+  padding: 8px 16px;
   font-size: 18px;
   font-family: 'Scada';
   cursor: pointer;
   color: #FFF;
-  
   min-width: 40px;
+  transition: all 0.2s;
+  position: relative;
+}
+
+
+.pagination-number:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 20%;
+  height: 60%;
+  width: 1px;
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
 .pagination-number:hover {
-  background-color: #f0f0f0;
+  background-color: rgba(255, 255, 255, 0.15);
 }
 
 .pagination-number.active {
-  background-color: #181818;
-  outline:2px #181818 solid;
+  background-color: rgba(255, 255, 255, 0.25);
   color: rgb(255, 255, 255);
-  border:white 2px solid;
-  font-weight: bold;
+  text-shadow: 
+    0.5px 0 0 rgba(255, 255, 255, 1),
+    -0.5px 0 0 rgba(255, 255, 255, 1),
+    0 0.5px 0 rgba(255, 255, 255, 1),
+    0 -0.5px 0 rgba(255, 255, 255, 1);
 }
+
+@media (max-width: 1100px) {
+  .games-section {
+    grid-template-columns: repeat(2, minmax(15rem, 1fr));
+  }
+}
+
 @media (max-width: 768px) {
   .cloud {
     transform: scale(0.5);
@@ -1055,7 +1111,7 @@ input[type=search]:focus {
   .games-section {
     padding: 2rem 2rem;
     grid-template-columns: repeat(2, 1fr);
-    grid-gap: 0;
+    grid-gap: 2rem;
     row-gap:2rem;
   }
   .game {

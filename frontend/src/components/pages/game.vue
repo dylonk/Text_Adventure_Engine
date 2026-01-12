@@ -497,6 +497,8 @@ const gamelogicOutput = ref("")
 </template>
 
 <style scoped>
+@import 'https://fonts.googleapis.com/css2?family=Cascadia+Mono&display=swap';
+
 .game-container {
   flex-grow:1;
   display: flex;
@@ -507,7 +509,7 @@ const gamelogicOutput = ref("")
   background-color: black;
   max-height:100%;
   color: white;
-  font-family: monospace;
+  font-family: 'Cascadia Mono', monospace;
   position: relative;
 }
 .game-playarea{

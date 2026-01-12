@@ -57,7 +57,7 @@ import tbMid from '../../assets/Images/editor/toolbox-mid-posterized.png'
 </template>
 
 <style>
-@import 'https://fonts.googleapis.com/css2?family=Syne+Mono&display=swap';
+@import 'https://fonts.googleapis.com/css2?family=Cascadia+Mono&display=swap';
 @import 'https://fonts.googleapis.com/css2?family=Hurricane';
 
 .toolbox{
