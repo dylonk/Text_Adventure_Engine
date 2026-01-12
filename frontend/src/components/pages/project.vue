@@ -1,10 +1,9 @@
 <script setup>
 import { useRouter } from 'vue-router';
 import { ref, onMounted } from 'vue';
-import clickSound from '@/assets/sounds/click.wav';
-import moreSound from '@/assets/sounds/more.wav';
 import { useProjectStore } from '../editor/project_store';
 import loadCircle from '@/assets/Images/loading.gif';
+import editIcon from '@/assets/Images/projects/edit.png';
 import tutorial from '../editor/tutorial.vue';
 import axios from 'axios';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // for Vite
@@ -136,20 +135,13 @@ function loadProject(id) {
 
 <template>
   <div id="project-container">
-    <div class="background-overlay"></div>
-    
-    <div class="main-grid">
-      <div class="left-container">
+  
         <p>Welcome to our project creation tool!</p>
-      </div>
-      
-      <div class="right-container">
+
         <button class="project-button" style="background:#7fb723" @click="newProject">New Project</button>
         <button class="project-button" style="background:cadetblue" @click="loadProjectFile">Load Project From File</button>
         <button class="project-button" style="background:cadetblue" @click="startTutorial">Tutorial</button>
 
-      </div>
-    </div>
 
     <div class="recent-projects">
       <h2 class="section-title">Open Recents</h2>
@@ -160,11 +152,20 @@ function loadProject(id) {
           :key="project.id" 
           class="project-box"
         >
-          <div class="project-title">{{ project.title }}</div>
+          <div class="project-title">
+            <button class="title-button" @click="loadProject(project.id)">            <span>{{ project.title || 'NULL PROJECTNAME' }}</span>
+            </button>
+
+            <img 
+              :src="editIcon" 
+              alt="Edit" 
+              class="edit-icon" 
+              @click="renameProject(project.id)"
+            />
+          </div>
+          <div style="width:100%"></div>
           <div class="project-actions">
-            <button class="action-button" @click="loadProject(project.id)">Open</button>
             <button class="action-button delete" @click="deleteProject(project.id)">Delete</button>
-            <button class="action-button rename"  @click="renameProject(project.id)">Rename</button>
           </div>
         </div>
       </div>
@@ -178,7 +179,6 @@ function loadProject(id) {
   position: relative;
   background:#dbdbdb;
   flex:1;
-  font-family: 'RetroQuill', sans-serif;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -188,65 +188,21 @@ function loadProject(id) {
   min-height: 0;
 }
 
-.background-overlay {
-  background: black;
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  z-index: -1;
+.title-button{
+  width:max-content;
+  background:none;
+  border:none;
 }
-
-.main-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-  width: 70%;
-  max-width: 100%;
-  min-width: 0;
-  margin: 120px auto 0 auto;
-  flex-shrink: 0;
+.title-button:hover{
+  cursor:pointer;
+  text-decoration: underline;
+  color:blue;
 }
-
-.left-container, .right-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(44, 47, 51, 0.9);
-  border: 2px solid #e0e0e0;
-  box-shadow: 6px 6px 0 #000;
-  padding: 25px;
-  border-radius: 10px;
-  text-align: center;
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-  box-sizing: border-box;
-}
-
-.left-container {
-  font-size: 3rem;
-  color: #e0e0e0;
-  text-shadow: 4px 4px 0 #000;
-}
-
-.right-container {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
 .recent-projects {
-  background: rgba(44, 47, 51, 0.9);
-  border: 2px solid #e0e0e0;
-  box-shadow: 6px 6px 0 #000;
-  padding: 25px;
-  border-radius: 10px;
+  background: rgb(44, 47, 51);
   justify-items: center;
   text-align: center;
-  width: 70%;
-  max-width: 100%;
-  min-width: 0;
-  margin-top: 50px;
+  width: 100%;
   flex-shrink: 0;
 }
 
@@ -258,8 +214,7 @@ function loadProject(id) {
 
 .projects-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 15px 10px;
+  grid-template-columns: repeat(1, 1fr);
   justify-content: center;
   width: 100%;
   max-width: 100%;
@@ -267,57 +222,55 @@ function loadProject(id) {
 }
 
 .project-box {
-  background: #e74c3c;
-  border: 2px solid #e0e0e0;
+  display:flex;
+  background: #cacaca;
   width: 100%;
   max-width: 100%;
   min-width: 0;
-  box-shadow: 4px 4px 0 #000;
-  border-radius: 6px;
   padding: 12px;
   text-align: center;
   transition: transform 0.2s, box-shadow 0.2s;
   box-sizing: border-box;
 }
 
-.project-box:hover {
-  transform: translateY(-5px);
-  box-shadow: 6px 6px 0 #000;
-}
-
 .project-title {
-  font-size: 1rem;
-  
-  margin-bottom: 10px;
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
   padding: 6px;
-  background: #c0392b;
-  color: #fff;
-  border: 2px solid #e0e0e0;
-  box-shadow: 2px 2px 0 #000;
+  color: #000000;
 }
 
-.project-image {
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-  border: 2px solid #e0e0e0;
-  box-shadow: inset 2px 2px 0 #000;
+.edit-icon {
+  width: 1rem;
+  height: 1rem;
+  cursor: pointer;
+  opacity: 0.7;
+  box-sizing: border-box;
+  transition: opacity 0.2s;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
 }
+
+.edit-icon:hover {
+  opacity: 1;
+}
+
 
 .project-actions {
-  margin-top: 10px;
   display: flex;
   justify-content: space-around;
 }
 
 .action-button {
-  font-size: 0.9rem;
-  padding: 5px 10px;
-  border: 2px solid white;
-  background: #c0392b;
+  font-size: 0.75rem;
+  padding: 0.5rem 0.5rem;
   color: white;
   border-radius: 4px;
   cursor: pointer;
+  height:fit-content;
+  background:gray;
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
@@ -325,8 +278,6 @@ function loadProject(id) {
   font-size: 0.9rem;
   padding: 20px 10px;
   border: 2px solid white;
-  box-shadow: 4px 4px 0 #000;
-
   background: #c0392b;
   color: white;
   width:100%;
@@ -337,13 +288,4 @@ function loadProject(id) {
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.project-button:hover {
-  transform: translateY(-5px);
-  box-shadow: 6px 6px 0 #000;
-}
-
-.action-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 2px 2px 0 #000;
-}
 </style>
