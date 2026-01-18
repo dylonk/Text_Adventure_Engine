@@ -38,7 +38,7 @@ const registerSchema = Joi.object({
 });
 
 const loginSchema = Joi.object({
-  username: Joi.string().alphanum().min(3).max(30).required(),
+  email: Joi.string().email().min(3).max(90).required(),
   password: Joi.string().required()
 });
 
@@ -70,7 +70,7 @@ const updateLimiter = rateLimit({
 });
 const registerLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // Limit each IP to 5 requests per window
+  max: 20, // Limit each IP to 5 requests per window
   message: 'Too many registration attempts. Please try again later.',
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false,  // Disable the `X-RateLimit-*` headers
@@ -112,28 +112,37 @@ router.post('/register', registerLimiter, async (req, res) => {
 
 
 // Login route (authentication)
-router.post('/login', loginLimiter,async (req, res) => {
-    const { username, password } = req.body;
-  
-    try {
-      const user = await User.findOne({ username });
-      if (!user) return res.status(400).send('Invalid credentials');
-  
+router.post('/login', loginLimiter, async (req, res) => {
+  // ✅ Validate first
+  const { error } = loginSchema.validate(req.body);
+  if (error) return res.status(400).json({ error: error.details[0].message });
 
-      const isMatch = await bcrypt.compare(password, user.password); //  Secure
-      if (!isMatch) return res.status(400).send('incorrect password');  // Passwords don't match
-      // Validate user data
-      const { error } = loginSchema.validate(req.body);
-      if (error) return res.status(400).json({ error: error.details[0].message });
-  
-      const token = jwt.sign({ id: user._id, username: user.username }, jwtSecret, { expiresIn: '1h' });
-  
-      res.json({ token, user: { username: user.username, email: user.email } });
-    } catch (error) {
-      console.log(error);
-      res.status(500).send('Server error');
-    }
-  });
+  const { email, password } = req.body;
+
+  try {
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const user = await User.findOne({ email: normalizedEmail });
+    if (!user) return res.status(400).send('Invalid credentials');
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(400).send('Incorrect password');
+
+    const token = jwt.sign(
+      { id: user._id, username: user.username },
+      jwtSecret,
+      { expiresIn: '1h' }
+    );
+
+    res.json({
+      token,
+      user: { username: user.username, email: user.email }
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server error');
+  }
+});
 
 router.post('/update', updateLimiter, authenticateToken, async (req, res) => { //this updates the user profile non password fields
     const { username, email, profileImage } = req.body;   //right now just updates username and email. But we'll make it update everything

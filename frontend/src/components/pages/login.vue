@@ -8,7 +8,7 @@ const refreshNavbar = inject('refreshNavbar', null);
 
 
 const formData = ref({
-  username: '',
+  email: '',
   password: ''
 });
 
@@ -22,6 +22,7 @@ const registrationData = ref({
 const router = useRouter();
 
 const onLoginSubmit = async (event) => {
+  console.log('Form data being sent for login:', formData.value);
   event.preventDefault();
   const plainFormData = { ...formData.value };
   try {
@@ -85,8 +86,8 @@ const onRegisterSubmit = async (event) => {
       <form @submit.prevent="onLoginSubmit">
         <input
           type="text"
-          v-model="formData.username"
-          placeholder="Username"
+          v-model="formData.email"
+          placeholder="Email"
           required
         />
         <input
