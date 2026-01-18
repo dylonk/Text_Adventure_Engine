@@ -5,7 +5,7 @@ import { stringify, parse,toJSON,fromJSON } from 'flatted';
 import node_colors from './node-colors.js'
 import cloneDeep from 'lodash/cloneDeep'
 import { inventoryMessageNode } from './n-imports';
-import { add } from 'lodash';
+import { add, forEach } from 'lodash';
 
 
 
@@ -206,12 +206,55 @@ const renameNode = (id) => {
     }
 
     console.log("[EDITOR]🦠🔤 this node exists at", nodeExists.position);
-    const newName = prompt(`Enter a new name for node ${id}:`); // !!NEED TO IMPLEMENT CHECK FOR OBJECT NAME UNIQUENESS
-    if (newName !== null) { 
+    
+    // Store the old name before changing it
+    const oldName = nodeExists.data.object_name;
+    console.log("[DEBUG] Old name:", oldName);
+    
+    const newName = prompt(`Enter a new name for node ${id}:`);
+    console.log("[DEBUG] New name:", newName);
+    
+    if (newName !== null && newName !== oldName) { 
       nodeExists.data.object_name = newName;
+      
+      // Update all Set Property nodes that reference this renamed node
+      const allNodes = getAllNodes(false, "node");
+      console.log("[DEBUG] Total nodes to check:", allNodes.length);
+      
+      allNodes.forEach(node => {
+        console.log("[DEBUG] Checking node:", node.id, "function_name:", node.data?.function_name);
+        console.log("[DEBUG] Function params:", node.data?.function_params);
+        
+        // Check if this is a Set Property node
+        if (node.data?.function_name === 'setproperty' && 
+            node.data?.function_params) {
+          
+          console.log("[DEBUG] Found dropdown node:", node.id);
+          
+          // Find the Target_dropdown parameter
+          const targetParam = node.data.function_params.find(
+            param => param.name === 'Target_dropdown'
+          );
+          
+          console.log("[DEBUG] Target param:", targetParam);
+          
+          // If the Target_dropdown contains the old name, update it
+          if (targetParam && 
+              targetParam.vals && 
+              targetParam.vals.length > 0) {
+            console.log("[DEBUG] Current target value:", targetParam.vals[0]);
+            if (targetParam.vals[0] === oldName) {
+              targetParam.vals[0] = newName;
+              console.log(`[EDITOR]🦠🔤 Updated Set Property node ${node.id} target from "${oldName}" to "${newName}"`);
+            }
+          }
+        }
+      });
+      
+      globalSync(true);
     }
 
-    if(dataHas(nodeExists.data,"parentID") == canvasID.value ){ //if node has parent equal to current canvas
+    if(dataHas(nodeExists.data,"parentID") == canvasID.value ){ 
       localSync();
     }
   };
