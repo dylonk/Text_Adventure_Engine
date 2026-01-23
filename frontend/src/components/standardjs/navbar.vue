@@ -252,7 +252,7 @@ const router = useRouter(); // Access the Vue Router for navigation
 }
 
 .login_btn {
-    font-family: "Scada";
+    font-family: "Josefin Sans";
     font-size: 1.25rem;
     font-weight: 400;
     padding:0.3rem 0.75rem;

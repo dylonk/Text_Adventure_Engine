@@ -12,7 +12,7 @@
 </template>
 
 <style scoped>
-@import url("https://fonts.googleapis.com/css2?family=Scada");
+@import url("https://fonts.googleapis.com/css2?family=Josefin+Sans");
 
 .content {
     width: 100vw;
@@ -20,7 +20,7 @@
     padding: 20px;
     background: white;
     color: black;
-    font-family: 'Scada', sans-serif;
+    font-family: 'Josefin Sans', sans-serif;
     font-size: 16px;
     line-height: 1.6;
 }

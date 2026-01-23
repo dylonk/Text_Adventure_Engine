@@ -208,6 +208,55 @@ const paginatedGames = computed(() => {
   return filteredGames.value.slice(start, end);
 });
 
+// Computed property to get pagination numbers with ellipses
+const paginationNumbers = computed(() => {
+  const total = totalPages.value;
+  const current = currentPage.value;
+  const pages = [];
+  
+  if (total <= 6) {
+    // Show all pages if 6 or fewer
+    for (let i = 1; i <= total; i++) {
+      pages.push({ type: 'number', value: i });
+    }
+  } else {
+    // Always show first page
+    pages.push({ type: 'number', value: 1 });
+    
+    // Determine which pages to show around current page
+    let startPage = Math.max(2, current - 1);
+    let endPage = Math.min(total - 1, current + 1);
+    
+    // Adjust if we're near the beginning
+    if (current <= 3) {
+      endPage = Math.min(4, total - 1);
+    }
+    
+    // Adjust if we're near the end
+    if (current >= total - 2) {
+      startPage = Math.max(2, total - 3);
+    }
+    
+    // Add ellipses and pages
+    if (startPage > 2) {
+      pages.push({ type: 'ellipsis', value: '...' });
+    }
+    
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push({ type: 'number', value: i });
+    }
+    
+    if (endPage < total - 1) {
+      pages.push({ type: 'ellipsis', value: '...' });
+    }
+    
+    // Always show last page
+    pages.push({ type: 'number', value: total });
+  }
+  
+  return pages;
+});
+
 // Computed property to get expanded title font size
 const expandedTitleFontSize = computed(() => {
   if (expandedGame.value && expandedGame.value.title && expandedGame.value.title.length > 16) {
@@ -412,12 +461,46 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <form id="section-bar" @submit.prevent="performSearch">
-        <input type="search" name="search-bar" placeholder="Find your next adventure!" v-model="searchInput" @keyup.enter="performSearch">
-        <button type="button" class="search-button" @click="performSearch">
-          <img :src="searchIcon" alt="Search" class="search-icon">
-        </button>
-    </form>
+    <div class="search-bar-wrapper">
+        <form id="section-bar" @submit.prevent="performSearch">
+            <input type="search" name="search-bar" placeholder="Find your next adventure!" v-model="searchInput" @keyup.enter="performSearch">
+            <button type="button" class="search-button" @click="performSearch">
+              <img :src="searchIcon" alt="Search" class="search-icon">
+            </button>
+        </form>
+        <!-- Pagination for landscape mode -->
+        <div v-if="totalPages > 1" class="pagination-container pagination-landscape">
+          <div class="pagination-numbers">
+            <button 
+              class="pagination-btn" 
+              @click="prevPage" 
+              :disabled="currentPage === 1"
+              :class="{ disabled: currentPage === 1 }"
+            >
+              ‹
+            </button>
+            <template v-for="item in paginationNumbers" :key="item.value">
+              <button
+                v-if="item.type === 'number'"
+                class="pagination-number"
+                :class="{ active: item.value === currentPage }"
+                @click="goToPage(item.value)"
+              >
+                {{ item.value }}
+              </button>
+              <span v-else class="pagination-ellipsis">{{ item.value }}</span>
+            </template>
+            <button 
+              class="pagination-btn" 
+              @click="nextPage" 
+              :disabled="currentPage === totalPages"
+              :class="{ disabled: currentPage === totalPages }"
+            >
+              ›
+            </button>
+          </div>
+        </div>
+    </div>
     <div class="game-page">
       <div class="cloud-container">
         <div 
@@ -463,8 +546,8 @@ onUnmounted(() => {
       <div v-if="recentGames.length > 0 && filteredGames.length === 0" class="no-results-message">
         No results for this query
       </div>
-        <!-- Pagination Controls -->
-        <div v-if="totalPages > 1" class="pagination-container">
+        <!-- Pagination Controls for portrait mode -->
+        <div v-if="totalPages > 1" class="pagination-container pagination-portrait">
           <div class="pagination-numbers">
             <button 
               class="pagination-btn" 
@@ -474,15 +557,17 @@ onUnmounted(() => {
             >
               ‹
             </button>
-            <button
-              v-for="page in totalPages"
-              :key="page"
-              class="pagination-number"
-              :class="{ active: page === currentPage }"
-              @click="goToPage(page)"
-            >
-              {{ page }}
-            </button>
+            <template v-for="item in paginationNumbers" :key="item.value">
+              <button
+                v-if="item.type === 'number'"
+                class="pagination-number"
+                :class="{ active: item.value === currentPage }"
+                @click="goToPage(item.value)"
+              >
+                {{ item.value }}
+              </button>
+              <span v-else class="pagination-ellipsis">{{ item.value }}</span>
+            </template>
             <button 
               class="pagination-btn" 
               @click="nextPage" 
@@ -538,21 +623,33 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-@import url("https://fonts.googleapis.com/css2?family=Scada");
+@import url("https://fonts.googleapis.com/css2?family=Josefin+Sans");
+
+.search-bar-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 1rem;
+    height:3rem;
+    padding: 0 0.5rem 0.5rem 0.5rem;
+    background-color: #181818;
+    z-index: 13;
+    flex-wrap: wrap;
+}
 
 #section-bar {
     position: relative;
     display: flex;
     flex-direction: row;
-    padding: 0 0.5rem 0.5rem 0.5rem;
     font-size: 2rem;
     letter-spacing: 2px;
-    background-color: #181818;
-    z-index:13;
+    flex-shrink: 0;
   }
 
 input[type=search] {
-    font-family: 'Scada';
+    font-family: 'Josefin Sans';
     border: none;
     padding: 0.6rem;
     width: 25rem;
@@ -569,7 +666,7 @@ input[type=search]:focus {
 
 .search-button{
   color:rgb(0, 0, 0);
-  font-family:"Scada";
+  font-family:"Josefin Sans";
   font-size:1rem;
   font-weight: 400;
   width:2.5rem;
@@ -734,7 +831,7 @@ input[type=search]:focus {
 .gametitle {
     max-width: 100%;
     font-size: 1.25rem;
-    font-family:'Scada';
+    font-family:'Josefin Sans';
     margin-bottom: 0;
     white-space: nowrap;
     min-height: 1.2rem;
@@ -877,7 +974,7 @@ input[type=search]:focus {
 }
 
 .expanded-title {
-  font-family: 'Scada';
+  font-family: 'Josefin Sans';
   color:black;
   font-weight: 600;
   font-size: 2rem;
@@ -901,7 +998,7 @@ input[type=search]:focus {
   margin-top: 1rem;
 }
 .expanded-rating-label {
-  font-family: 'Scada';
+  font-family: 'Josefin Sans';
   font-size: 0.9rem;
   color: #666;
 }
@@ -920,7 +1017,7 @@ input[type=search]:focus {
   transition: transform 0.1s ease;
 }
 .expanded-star:hover {
-  transform: scale(1.2);
+  transform: scale(1.1);
 }
 .expanded-thumbnail-container {
   position: relative;
@@ -964,7 +1061,7 @@ input[type=search]:focus {
   display:flex;
 }
 .desc-header {
-  font-family: 'Scada';
+  font-family: 'Josefin Sans';
   font-size: 1.5rem;
   color: #9d9d9d;
   margin-bottom: 0.25rem;
@@ -978,7 +1075,7 @@ input[type=search]:focus {
   margin: 1rem 0;
   height: 100%;
   border-radius: 8px;
-  font-family: 'Scada';
+  font-family: 'Josefin Sans';
   font-size: 18px;
   line-height: 1.6;
   overflow-x: hidden;
@@ -993,14 +1090,57 @@ input[type=search]:focus {
 /* Pagination Styles */
 .pagination-container {
   display: flex;
-  width: 100%;
   justify-content: center;
   align-items: center;
   gap: 10px;
-  padding: 1rem 0;
   z-index: 10;
+}
+
+/* Portrait pagination (at bottom) */
+.pagination-portrait {
+  width: 100%;
+  padding: 1rem 0;
   background-color: rgb(24, 24, 24);
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Landscape pagination (next to search bar) */
+.pagination-landscape {
+  flex-shrink: 0;
+  padding: 0;
+  background-color: transparent;
+}
+
+/* Hide landscape pagination in portrait mode */
+@media (orientation: portrait) {
+  .pagination-landscape {
+    display: none !important;
+  }
+}
+
+/* Hide portrait pagination in landscape mode */
+@media (orientation: landscape) {
+  .pagination-portrait {
+    display: none !important;
+  }
+}
+
+/* Also handle based on width for better responsiveness */
+@media (max-width: 768px) {
+  .pagination-landscape {
+    display: none !important;
+  }
+  .pagination-portrait {
+    display: flex !important;
+  }
+}
+
+@media (min-width: 769px) and (orientation: landscape) {
+  .pagination-landscape {
+    display: flex !important;
+  }
+  .pagination-portrait {
+    display: none !important;
+  }
 }
 
 .pagination-btn {
@@ -1010,8 +1150,8 @@ input[type=search]:focus {
   border-radius: 0;
   padding: 8px 16px;
   font-size: 20px;
-  height:40px;
-  width:40px;
+  height:30px;
+  width:20px;
   cursor: pointer;
   color: #ffffff;
   transition: all 0.2s;
@@ -1023,25 +1163,17 @@ input[type=search]:focus {
 
 .pagination-btn:first-child {
   border-radius: 4px 0 0 4px;
+  color: #d26cb7;
+
 }
 
 .pagination-btn:last-child {
   border-radius: 0 4px 4px 0;
+  color: #d26cb7;
+
 }
 
-.pagination-btn:not(:last-child)::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  top: 20%;
-  height: 60%;
-  width: 1px;
-  background-color: rgba(255, 255, 255, 0.2);
-}
 
-.pagination-btn:hover:not(.disabled) {
-  background-color: rgba(255, 255, 255, 0.15);
-}
 
 .pagination-btn.disabled {
   opacity: 0.5;
@@ -1052,49 +1184,47 @@ input[type=search]:focus {
   display: flex;
   gap: 0;
   align-items: center;
-  background-color: #181818;
-  border-radius: 4px;
-  padding: 4px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .pagination-number {
   background-color: transparent;
   border: none;
+  text-decoration: underline;
   border-radius: 0;
-  padding: 8px 16px;
+  padding: 8px 0;
   font-size: 18px;
-  font-family: 'Scada';
+  font-family: 'Josefin Sans';
   cursor: pointer;
-  color: #FFF;
-  min-width: 40px;
+  color: #d26cb7;
+  width: 30px;
   transition: all 0.2s;
   position: relative;
 }
 
 
-.pagination-number:not(:last-child)::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  top: 20%;
-  height: 60%;
-  width: 1px;
-  background-color: rgba(255, 255, 255, 0.2);
-}
 
-.pagination-number:hover {
-  background-color: rgba(255, 255, 255, 0.15);
-}
 
 .pagination-number.active {
-  background-color: rgba(255, 255, 255, 0.25);
   color: rgb(255, 255, 255);
+  text-decoration: none;
   text-shadow: 
     0.5px 0 0 rgba(255, 255, 255, 1),
     -0.5px 0 0 rgba(255, 255, 255, 1),
     0 0.5px 0 rgba(255, 255, 255, 1),
     0 -0.5px 0 rgba(255, 255, 255, 1);
+}
+
+.pagination-ellipsis {
+  padding: 8px 8px;
+  font-size: 18px;
+  font-family: 'Josefin Sans';
+  color: #d26cb7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  user-select: none;
+  pointer-events: none;
 }
 
 @media (max-width: 1100px) {
@@ -1148,6 +1278,14 @@ input[type=search]:focus {
 
   input[type=search]{
     width:100%;
+    height:30px;
+  }
+  .search-bar-wrapper {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  #section-bar {
+    width: 100%;
   }
 }
 </style>  

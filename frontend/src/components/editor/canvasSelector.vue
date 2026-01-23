@@ -9,30 +9,41 @@ const canvasName = computed(() => {
 });
 </script>
 <template>
+        <div class="canvas-selector-container">
         <div class="selector-text">Current Canvas</div>
-        <div class="selector-text">{{ canvasName }}</div>
+        <div class="selected">{{ canvasName }}</div>
+        </div>
 </template>
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Eagle+Lake&display=swap");
 .canvas-selector-container{
-    position:relative;
-    pointer-events: none;
-    overflow:visible;
-}
-.canvas-selector{
-    position: relative;
-    width:250px;
-    z-index:1;
+    background:rgb(0, 0, 0);
+    padding: 0 0 0.4rem 0;
 }
 
 .selector-text{
     position:relative;
+    font-size:0.8rem;
+    width:fit-content;
+    padding: 0 0.5rem;
+    background:rgb(211, 255, 35);
+    white-space: nowrap;
+    color:rgb(0, 0, 0);
+    text-overflow:ellipsis;
+    z-index:4;
+    font-family: 'RetroQuill', sans-serif;
+}
+.selected{
+    position:relative;
+    border: 2px rgb(211, 255, 35) solid;
     font-size:1rem;
     background:rgb(0, 0, 0);
     width:100%;
+    padding:0 0.5rem;
     white-space: nowrap;
     color:rgb(255, 255, 255);
     text-overflow:ellipsis;
     z-index:4;
+    font-family: 'RetroQuill', sans-serif;
 }
 </style>

@@ -30,7 +30,7 @@ const OVUpdater = computed(()=>{
 
 
 <style scoped>
-@import url("https://fonts.googleapis.com/css2?family=Scada");
+@import url("https://fonts.googleapis.com/css2?family=Josefin+Sans");
 .asset_browser {
   height:100%;
   width:250px;

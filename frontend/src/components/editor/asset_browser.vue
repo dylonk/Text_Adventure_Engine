@@ -148,7 +148,7 @@ function switchCanvas(id, assetBrowserIndex){
 </template>
 
 <style scoped>
-@import url("https://fonts.googleapis.com/css2?family=Scada");
+@import url("https://fonts.googleapis.com/css2?family=Josefin+Sans");
 .asset_browser {
   height:auto;
   display: flex;
@@ -158,6 +158,7 @@ function switchCanvas(id, assetBrowserIndex){
   flex-direction: column;
   background: rgb(93, 93, 93);
   justify-content: space-between;
+  border: 0.4rem black solid;
 }
 
 .asset-browser-hr{

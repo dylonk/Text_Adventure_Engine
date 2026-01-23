@@ -2,7 +2,6 @@
 import { useRouter } from 'vue-router';
 import { ref, onMounted } from 'vue';
 import { useProjectStore } from '../editor/project_store';
-import loadCircle from '@/assets/Images/loading.gif';
 import editIcon from '@/assets/Images/projects/edit.png';
 import tutorial from '../editor/tutorial.vue';
 import axios from 'axios';
@@ -135,25 +134,26 @@ function loadProject(id) {
 
 <template>
   <div id="project-container">
-  
-        <p>Welcome to our project creation tool!</p>
-
-        <button class="project-button" style="background:#7fb723" @click="newProject">New Project</button>
-        <button class="project-button" style="background:cadetblue" @click="loadProjectFile">Load Project From File</button>
-        <button class="project-button" style="background:cadetblue" @click="startTutorial">Tutorial</button>
-
-
-    <div class="recent-projects">
-      <h2 class="section-title">Open Recents</h2>
-      <img v-if="!isProjectsLoaded" :src="loadCircle" style="height:30%;">
-      <div v-else class="projects-grid">
+  <div class="projects-layout">
+    <div class="sidebar">        
+        <p class="welcome-title">Welcome to our text adventure engine!</p>
+        <div class="action-buttons-container">
+          <button class="primary-action-button" style="background:green" @click="newProject">New Project</button>
+          <button class="primary-action-button" style="background:cadetblue" @click="loadProjectFile">Load Project From File</button>
+          <button class="primary-action-button" style="background:royalblue" @click="startTutorial">Tutorial</button>
+        </div>
+      </div>
+    <div class="projects-panel">
+    <div class="projects-section">
+      <h2 class="projects-section-title">My Projects</h2>
+      <div class="projects-list">
         <div 
           v-for="project in recentProjects" 
           :key="project.id" 
-          class="project-box"
+          class="project-item"
         >
-          <div class="project-title">
-            <button class="title-button" @click="loadProject(project.id)">            <span>{{ project.title || 'NULL PROJECTNAME' }}</span>
+          <div class="project-item-header">
+            <button class="project-name-button" @click="loadProject(project.id)">            <span>{{ project.title || 'NULL PROJECTNAME' }}</span>
             </button>
 
             <img 
@@ -164,12 +164,14 @@ function loadProject(id) {
             />
           </div>
           <div style="width:100%"></div>
-          <div class="project-actions">
-            <button class="action-button delete" @click="deleteProject(project.id)">Delete</button>
+          <div class="project-item-actions">
+            <button class="delete-button" @click="deleteProject(project.id)">Delete</button>
           </div>
         </div>
       </div>
     </div>
+  </div>
+  </div>
   </div>
 </template>
 
@@ -185,57 +187,68 @@ function loadProject(id) {
   justify-content: flex-start;
   overflow-x: hidden;
   overflow-y: auto;
-  min-height: 0;
 }
 
-.title-button{
+.project-name-button{
+  font-size:1rem;
   width:max-content;
   background:none;
   border:none;
 }
-.title-button:hover{
+.project-name-button:hover{
   cursor:pointer;
   text-decoration: underline;
   color:blue;
 }
-.recent-projects {
+.projects-section {
   background: rgb(44, 47, 51);
-  justify-items: center;
-  text-align: center;
+  font-family:'Josefin Sans';
+  height:100%;
   width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.projects-section-title {
+  font-size: 1rem;
+  color: #e0e0e0;
+  margin: 8px;
   flex-shrink: 0;
 }
 
-.section-title {
-  font-size: 2rem;
-  margin-bottom: 20px;
-  color: #e0e0e0;
-}
-
-.projects-grid {
-  display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  justify-content: center;
+.projects-list {
+  display: flex;
+  flex-direction: column;
+  background: #c0c0c0;
+  flex: 1;
+  min-height: 0;
   width: 100%;
-  max-width: 100%;
-  overflow: visible;
+  box-sizing: border-box;
+  overflow-y:scroll;
 }
 
-.project-box {
+.project-item {
   display:flex;
   background: #cacaca;
   width: 100%;
   max-width: 100%;
+  transition: color 0.2s;
   min-width: 0;
-  padding: 12px;
+  padding: 1/8rem;
   text-align: center;
   transition: transform 0.2s, box-shadow 0.2s;
   box-sizing: border-box;
 }
 
-.project-title {
+.project-item:nth-child(odd){
+  background:#c0c0c0;
+}
+
+.project-item-header {
   font-size: 2rem;
   display: flex;
+  height: fit-content;
   align-items: center;
   padding: 6px;
   color: #000000;
@@ -257,35 +270,101 @@ function loadProject(id) {
   opacity: 1;
 }
 
+.welcome-title{
+  font-size:2rem;
+}
 
-.project-actions {
+.project-item-actions {
   display: flex;
   justify-content: space-around;
 }
 
-.action-button {
+.delete-button {
   font-size: 0.75rem;
-  padding: 0.5rem 0.5rem;
-  color: white;
-  border-radius: 4px;
+  margin: 0.25rem;
+  padding:0.25rem;
+  color: rgba(255, 255, 255, 0);
   cursor: pointer;
-  height:fit-content;
-  background:gray;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.project-button {
-  font-size: 0.9rem;
-  padding: 20px 10px;
-  border: 2px solid white;
-  background: #c0392b;
-  color: white;
-  width:100%;
+  border:none;
   border-radius: 4px;
+  height:fit-content;
+  background:none;
+}
+.project-item:hover{
+  filter:brightness(90%);
+}
+.project-item:hover .delete-button{
+  color:rgb(54, 54, 54);
+  font-weight: 800;
+}
+.project-item:hover .delete-button:hover{
+  color:rgb(202, 0, 0);
+}
+.primary-action-button {
+  font-size: 1.1rem;
+  padding: 16px 24px;
+  border: none;
+  background: #4a7603;
+  color: white;
+  width: 100%;
+  border-radius: 8px;
   cursor: pointer;
   font-family: 'RetroQuill', sans-serif;
-  font-size:large;
-  transition: transform 0.2s, box-shadow 0.2s;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+  position: relative;
+  overflow: hidden;
+}
+
+.primary-action-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15), 0 4px 6px rgba(0, 0, 0, 0.1);
+  filter: brightness(1.1);
+}
+
+.primary-action-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+.projects-layout{
+  display:flex;
+  width:50rem;
+  height:100%;
+}
+.action-buttons-container{
+  display:flex;
+  flex-direction: column;
+  margin:2rem;
+  margin-top:auto;
+  gap:0.5rem;
+}
+
+.sidebar{
+  width:max-content;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.projects-panel{
+  width:100%;
+  height:100%;
+  background: #cacaca;
+}
+
+@media (max-width: 768px) {
+  .projects-layout {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .sidebar {
+    width: 100%;
+  }
+  
+  .projects-panel {
+    width: 100%;
+  }
 }
 
 </style>

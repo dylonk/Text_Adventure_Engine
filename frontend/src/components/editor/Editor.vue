@@ -39,7 +39,7 @@ function updateAssets(){
 <style scoped>
 @import 'https://fonts.googleapis.com/css2?family=Cascadia+Mono&display=swap';
 *{
-  font-family:Scada, Geneva, Tahoma, sans-serif;
+  font-family:'Josefin Sans', Geneva, Tahoma, sans-serif;
   color:black;
   text-rendering: optimizeLegibility;
 }

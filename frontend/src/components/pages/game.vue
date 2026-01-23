@@ -324,7 +324,7 @@ const toggleTTS = () => {
       newWords = newWords + GameLogic.output;
       words.value = displayText.value;
       newWords = newWords.split('<br>').join('');
-      newWords = newWords.split('<span class=\'user-input\'>>').join('');
+      newWords = newWords.split('<span class=\'user-input\'>').join('');
       newWords = newWords.split('<span class=\'highlight\'>').join('');
       newWords = newWords.split('</span>').join('');
       speechSynthesis.cancel();
@@ -350,7 +350,7 @@ async function handleInput(){
       GameLogic.userResponse(userInput.value);
       nextTick(() => {
       });
-      GameLogic.outputQueue.push(">> "+userInput.value)
+      GameLogic.outputQueue.push("> "+userInput.value)
 
       nextTick(() => {
       });
@@ -632,7 +632,7 @@ const gamelogicOutput = ref("")
   padding: 10px;
   background: #e74c3c;
   border: none;
-  color: #fff;
+  color: #000000;
   font-size: 1rem;
   font-weight: bold;
   height:50px;

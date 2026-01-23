@@ -32,8 +32,8 @@ function deleteEdges(){
 }
 .vue-flow__handle{
     position:relative;
-    outline: solid #434343 2px;
-    background:rgb(216, 216, 216);
+    outline: solid #a852ac 2px;
+    background:rgb(255, 255, 255);
     height:16px;
     width:12px;
     border-radius:100%;

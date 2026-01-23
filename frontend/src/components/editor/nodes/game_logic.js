@@ -453,8 +453,7 @@ const processNode = (iNode) =>{ //bleh
 }
 
 const outputText = (text) =>{
-  if(output.value!="")output.value += `\n• `+text
-  else output.value += '• '+text
+  if(output.value=="")output.value += text
 }
 const archiveOutput = () =>{
   outputQueue.value.push(output.value)

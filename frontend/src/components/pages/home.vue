@@ -4,13 +4,9 @@ import { useRouter } from 'vue-router';
 import axios from 'axios';
 
 // Components and assets
-import clickSound from '@/assets/sounds/click.wav';
-import moreSound from '@/assets/sounds/more.wav';
 import explorer from '@/assets/Images/defaultgameimage.jpg';
-import play from '@/assets/Images/play.png';
 import splashpond from '@/assets/Images/splashpond.png';
 
-const playButton = ref(play)
 const explorerImage = ref(explorer)
 
 const router = useRouter();
@@ -55,7 +51,6 @@ onMounted(fetchGames);
 
 <template>
   <div id="home-container">
-    <div class="marquee-right"></div>
     <div id="hero">
           <h1 class="hero-title"><a>MagiQuill</a>, a browser based text adventure engine and social platform</h1>
           <img class="splashpond-image" :src="splashpond" alt="Splash Pond" />
@@ -65,7 +60,7 @@ onMounted(fetchGames);
 
 
       <!-- Right Grid: Popular Games Section -->
-      <div class="right-grid">
+      <div class="popular-games-container">
         <div class="section-header">
           <h2 class="section-title">Popular Games</h2>
           <a class="explore-link" @click="goToExplore">Explore</a>
@@ -86,14 +81,14 @@ onMounted(fetchGames);
         </div>
       </div>
       <div class="test-element">
-        <p>Test content to see what it looks like underneath the background bar</p>
+        <p>.</p>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-@import url("https://fonts.googleapis.com/css2?family=Scada");
+@import url("https://fonts.googleapis.com/css2?family=Josefin+Sans");
 
 #home-container {
   position: relative;
@@ -101,60 +96,7 @@ onMounted(fetchGames);
   max-width:100dvw;
   overflow-y:scroll;
   overflow-x:clip;
-  font-family: 'RetroQuill', sans-serif;
-  background: #9f9fba;
-
-}
-
-#home-container::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 500px;
-  background: linear-gradient(to bottom, #dbdbdb, #9f9fba);
-  pointer-events: none;
-  z-index: 0;
-}
-
-#home-container::after {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 40px;
-  height: 100vh;
-  background-image: 
-    radial-gradient(circle, rgba(74, 85, 104, 0.3) 1px, transparent 1px),
-    linear-gradient(to left, transparent, rgba(74, 85, 104, 0.4));
-  background-size: 4px 4px, 100% 100%;
-  background-position: 0 0, 0 0;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.marquee-right {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 40px;
-  height: 100vh;
-  background-image: 
-    radial-gradient(circle, rgba(74, 85, 104, 0.3) 1px, transparent 1px),
-    linear-gradient(to right, transparent, rgba(74, 85, 104, 0.4));
-  background-size: 4px 4px, 100% 100%;
-  background-position: 0 0, 0 0;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.background-image{
-  position:absolute;
-  right:20%;
-  top:100px;
-  width:100vmin;
-  
+  background: #33385e;
 }
 /* Main Grid */
 .main-grid {
@@ -179,13 +121,15 @@ onMounted(fetchGames);
 }
 
 .hero-title {
+  
   font-size: 2.5em;
   margin: 2rem;
   color: #000000;
   text-align: left;
 }
 .hero-title a{
-  color:purple;
+  font-family: 'RetroQuill', sans-serif;
+  color:rgb(255, 255, 255);
 }
 
 .splashpond-image {
@@ -193,7 +137,6 @@ onMounted(fetchGames);
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
-  margin: 1rem 2rem;
   transform: scale(2);
   transform-origin: left top;
 }
@@ -206,20 +149,20 @@ onMounted(fetchGames);
 
 
 /* Right Grid: Popular Games Section */
-.right-grid {
+.popular-games-container {
   width: 100%;
   padding: 25px 0;
   position: relative;
 }
 
-.right-grid::before {
+.popular-games-container::before {
   content: '';
   position: absolute;
   top: 0;
   left: calc(-50vw + 50%);
   width: 100vw;
   height: 100%;
-  background: rgba(60, 60, 60, 0.3);
+  background: rgba(255, 255, 255, 0.3);
   z-index: 0;
   pointer-events: none;
 }
@@ -236,6 +179,7 @@ onMounted(fetchGames);
   font-size: 2rem;
   margin: 0;
   color: #000000;
+  z-index:1;
 }
 
 .explore-link {
@@ -244,6 +188,7 @@ onMounted(fetchGames);
   cursor: pointer;
   font-size: 1.2rem;
   transition: color 0.2s;
+  z-index:1;
 }
 
 .explore-link:hover {
@@ -308,7 +253,7 @@ onMounted(fetchGames);
 .gametitle {
     max-width: 100%;
     font-size: 1.25rem;
-    font-family:'Scada';
+    font-family:'Josefin Sans';
     margin-bottom: 0;
     white-space: nowrap;
     min-height: 1.2rem;
