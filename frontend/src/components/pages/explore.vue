@@ -621,6 +621,7 @@ onUnmounted(() => {
     <!-- Expanded Game Overlay -->
     <div v-if="expandedGame" class="overlay" @click.self="closeExpanded">
       <div class="expanded-card" ref="expandedCardRef">
+        <button class="close-btn" :class="{ 'scrolled': isScrolled }" @click="closeExpanded">×</button>
         <div class="expanded-content">
           <div class="expanded-left">
             <div class="expanded-thumbnail-container">
@@ -642,7 +643,6 @@ onUnmounted(() => {
               </button>
             </div>
           </div>
-          <button class="close-btn" :class="{ 'scrolled': isScrolled }" @click="closeExpanded">×</button>
           <div class="expanded-right" ref="expandedRightRef">
             <div class="desc-header-container">
               <h3 class="desc-header">Description</h3>
@@ -974,8 +974,8 @@ input[type=search]:focus {
 
 .expanded-card {
   position: relative;
-  background: white;
-  border-radius: 4px;
+  background: #d8e0e8;
+  border-radius: 8px;
   width: 80vw;
   max-width: 1000px;
   box-sizing: border-box;
@@ -989,12 +989,13 @@ input[type=search]:focus {
 .close-btn {
   outline:none;
   border:none;
+  z-index:500;
   background:#d8e0e8;
   text-align:center;
   color: rgb(98, 98, 98);
-  font-size: 32px;
-  width: 40px;
-  height: 40px;
+  font-size: 2rem;
+  width: 2.5rem;
+  height: 2.5rem;
   border-radius: 50%;
   cursor: pointer;
   position:absolute;
@@ -1011,6 +1012,7 @@ input[type=search]:focus {
 }
 
 .close-btn:hover {
+
   color: rgb(0, 0, 0);
   transform:scale(1.05);
 }
@@ -1031,20 +1033,13 @@ input[type=search]:focus {
   position: relative;
   width: 20rem;
   min-width: 0;
+  border-radius:8px;
+  background:white;
+  margin:1rem;
   overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06), 0 8px 16px rgba(0, 0, 0, 0.15);
 }
 
-.expanded-left::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: -50px;
-  width: 50px;
-  height: 100%;
-  background: linear-gradient(to left, transparent, rgba(0, 0, 0, 0.058));
-  pointer-events: none;
-  z-index: 10;
-}
 
 .expanded-title {
   margin-top:0.5rem;
@@ -1370,7 +1365,12 @@ input[type=search]:focus {
 
 @media (max-width: 768px) {
   .close-btn{
-    background:white;
+    background: transparent;
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    color: white;
+    z-index: 1001;
   }
   .cloud {
     transform: scale(0.5);
@@ -1420,14 +1420,17 @@ input[type=search]:focus {
     justify-content: center;
     overflow:visible;
     align-items: center;
-    width:100%;
-  }
-  .expanded-left::after {
-    display: none;
+    width: calc(100% - 2rem);
+    margin: 1rem;
   }
   .expanded-thumbnail-container {
     width: 100%;
     height: 20rem;
+    border-radius: 8px 8px 0 0;
+    overflow: hidden;
+  }
+  .expanded-thumbnail {
+    border-radius: 8px 8px 0 0;
   }
   .expanded-title {
     width: 100%;

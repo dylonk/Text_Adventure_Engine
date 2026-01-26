@@ -206,12 +206,15 @@ function loadProject(id) {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  height: 100%;
+  min-height: 0;
 }
 
 .projects-section-title {
   font-size: 1rem;
   color: #e0e0e0;
   margin: 8px;
+  flex-shrink: 0;
 }
 
 .projects-list {
@@ -219,7 +222,9 @@ function loadProject(id) {
   flex-direction: column;
   background: #c0c0c0;
   box-sizing: border-box;
-  overflow-y:scroll;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
 }
 
 .project-item {
@@ -266,6 +271,8 @@ function loadProject(id) {
 
 .welcome-title{
   font-size:2rem;
+  margin:2rem;
+  font-family: 'RetroQuill', sans-serif;
 }
 
 .project-item-actions {
@@ -323,9 +330,10 @@ function loadProject(id) {
 }
 .projects-layout{
   display:flex;
-  width:50rem;
-  
-  height:100%;
+  justify-content: space-evenly;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
 }
 .action-buttons-container{
   display:flex;
@@ -336,30 +344,48 @@ function loadProject(id) {
 }
 
 .sidebar{
-  width:max-content;
+  width: clamp(250px, 40vw, 600px);
   display: flex;
   flex-direction: column;
   height: 100%;
+  min-height: 0;
 }
 .projects-panel{
-  width:80rem;
-  margin:2rem;
+  width: clamp(250px, 50vw, 1000px);
   box-sizing: border-box;
+  margin:2rem;
+  border-radius:8px;
+  overflow:hidden;
   background: #cacaca;
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 4rem);
+  max-height: calc(100vh - 4rem);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06), 0 8px 16px rgba(0, 0, 0, 0.15);
 }
 
 @media (max-width: 768px) {
   .projects-layout {
     flex-direction: column;
     width: 100%;
+    margin-left: clamp(0.5rem, 2vw, 1rem);
+    margin-right: clamp(0.5rem, 2vw, 1rem);
+    gap: clamp(0.5rem, 2vw, 1rem);
   }
   
   .sidebar {
     width: 100%;
+    min-width: 100%;
   }
   
   .projects-panel {
     width: 100%;
+    margin:0;
+    border-radius:0;
+    box-shadow: none;
+  }
+  .projects-list {
+    overflow-y:scroll;
   }
 }
 
