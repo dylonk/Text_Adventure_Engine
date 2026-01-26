@@ -14,6 +14,7 @@ import cloud4 from '@/assets/Images/clouds/cloud4LQ.png'
 import cloud5 from '@/assets/Images/clouds/cloud5LQ.png'
 import cloud6 from '@/assets/Images/clouds/cloud6LQ.png'
 import searchIcon from '@/assets/Images/editor/searchicon.png'
+import playButtonIcon from '@/assets/Images/playbutton.png'
 
 import game from './game.vue';
 import { useRouter } from 'vue-router';
@@ -296,27 +297,18 @@ watch(filteredGames, () => {
 const goToPage = (page) => {
   if (page >= 1 && page <= totalPages.value) {
     currentPage.value = page;
-    nextTick(() => {
-      adjustTitleFontSizes();
-    });
   }
 };
 
 const nextPage = () => {
   if (currentPage.value < totalPages.value) {
     currentPage.value++;
-    nextTick(() => {
-      adjustTitleFontSizes();
-    });
   }
 };
 
 const prevPage = () => {
   if (currentPage.value > 1) {
     currentPage.value--;
-    nextTick(() => {
-      adjustTitleFontSizes();
-    });
   }
 };
 
@@ -461,8 +453,6 @@ const fetchGames = async () => {
       rating: game.rating || 2.5, // Default to 2.5 stars if not in database
     }));
     console.log(recentGames.value)
-    // Adjust font sizes after games are loaded
-    await nextTick();
   } catch (error) {
     console.warn('Error fetching projects:', error);
   }
@@ -645,7 +635,12 @@ onUnmounted(() => {
               />
               <span>by {{expandedGame.username || 'unknown'}}</span>
             </div>
-            <button class="play-game-button" @click="goToGame(expandedGame.title)">Play game</button>
+            <div class="play-game-button-container">
+              <button class="play-game-button" @click="goToGame(expandedGame.title)">
+                <img :src="playButtonIcon" alt="Play" class="play-button-icon" />
+                Play game
+              </button>
+            </div>
           </div>
           <button class="close-btn" :class="{ 'scrolled': isScrolled }" @click="closeExpanded">×</button>
           <div class="expanded-right" ref="expandedRightRef">
@@ -764,7 +759,7 @@ input[type=search]:focus {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.701);
+  background-color: rgba(0, 0, 0, 0.872);
   z-index: 12;
   pointer-events: none;
 }
@@ -969,7 +964,8 @@ input[type=search]:focus {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.817);
+  backdrop-filter: blur(2px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -979,13 +975,12 @@ input[type=search]:focus {
 .expanded-card {
   position: relative;
   background: white;
-  border-radius: 8px;
+  border-radius: 4px;
   width: 80vw;
   max-width: 1000px;
   box-sizing: border-box;
-  height: 70vh;
+  height: 80vh;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
-
   max-height: 600px;
   overflow: hidden;
   overflow-y:scroll
@@ -994,7 +989,7 @@ input[type=search]:focus {
 .close-btn {
   outline:none;
   border:none;
-  background:#f4f4f4;
+  background:#d8e0e8;
   text-align:center;
   color: rgb(98, 98, 98);
   font-size: 32px;
@@ -1034,6 +1029,9 @@ input[type=search]:focus {
   box-sizing: border-box;
   flex-direction: column;
   position: relative;
+  width: 20rem;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .expanded-left::after {
@@ -1043,7 +1041,7 @@ input[type=search]:focus {
   right: -50px;
   width: 50px;
   height: 100%;
-  background: linear-gradient(to left, transparent, rgba(0, 0, 0, 0.089));
+  background: linear-gradient(to left, transparent, rgba(0, 0, 0, 0.058));
   pointer-events: none;
   z-index: 10;
 }
@@ -1056,21 +1054,30 @@ input[type=search]:focus {
   width:18rem;
   font-weight: 600;
   font-size: 2rem;
-  text-align: justify;
+  text-align: left;
   line-height: 1.2;
 }
 .expanded-author{
     font-size: 1rem;
     font-family: 'RetroQuill', sans-serif;
     color: #666;
-    margin:0.5rem;
-    white-space: nowrap;
-    overflow: show;
-    text-overflow: ellipsis;
+    margin:1rem;
+    margin-top:0;
     text-align:left;
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.expanded-author span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+    flex: 1 1 0;
 }
 
 .expanded-author-pfp {
@@ -1117,40 +1124,57 @@ input[type=search]:focus {
 }
 .expanded-thumbnail-container {
   position: relative;
-  width: 20rem;
-  height: 100%;
-  max-height: 20rem;
+  width:20rem;
+  height: 20rem;
 }
 
 .expanded-thumbnail {
-  width: 100%;
   height: 100%;
+  width:100%;
   object-fit: cover;
+}
+
+.play-game-button-container {
+  padding: 1rem;
+  margin-top: auto;
+  box-sizing: border-box;
 }
 
 .play-game-button {
   font-size: 1.1rem;
   padding: 16px 24px;
   border: none;
-  background: #4a7603;
+  background: #3d3d3d;
   color: white;
   border-radius: 8px;
   cursor: pointer;
   font-family: 'RetroQuill', sans-serif;
   font-weight: 600;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
-  position: absolute;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.185), 0 2px 4px rgba(0, 0, 0,  0.185);
+  position: relative;
   overflow: hidden;
-  margin:1rem;
-  margin-top: 1rem;
-  bottom:0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.play-button-icon {
+  width: 1.2rem;
+  height: 1.2rem;
+  object-fit: contain;
+  flex-shrink: 0;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
 }
 
 .play-game-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15), 0 4px 6px rgba(0, 0, 0, 0.1);
-  filter: brightness(1.1);
+  filter: brightness(1.05);
 }
 
 .play-game-button:active {
@@ -1163,9 +1187,10 @@ input[type=search]:focus {
   display: flex;
   min-width: 0;
   padding:1rem;
+  gap:0.5rem;
   flex-direction: column;
   overflow:scroll;
-  background:#f4f4f4;
+  background:rgb(216, 224, 232);
 }
 .desc-header-container{
   display:flex;
@@ -1392,14 +1417,29 @@ input[type=search]:focus {
   }
   .expanded-left{
     box-sizing: border-box;
-    padding:1rem;
-    width:20rem;
     justify-content: center;
+    overflow:visible;
     align-items: center;
+    width:100%;
+  }
+  .expanded-left::after {
+    display: none;
+  }
+  .expanded-thumbnail-container {
+    width: 100%;
+    height: 20rem;
   }
   .expanded-title {
     width: 100%;
+    margin:1rem;
     text-align: center;
+  }
+  .play-game-button-container {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .play-game-button {
+    width: 100%;
   }
   .expanded-right {
     overflow:visible;
