@@ -8,6 +8,7 @@ import CanvasSelector from './canvasSelector.vue'
 import gamePreview from '@/components/pages/game.vue'
 import { useProjectStore } from './project_store'
 import Tutorial from '@/components/editor/tutorial.vue'
+import PublishModal from '@/components/pages/publish.vue'
 
 function updateAssets(){
   // Placeholder for update logic
@@ -33,7 +34,7 @@ function updateAssets(){
       <Canvas v-if="!useProjectStore().showPreview" />
       <AssetBrowser v-if="!useProjectStore().showPreview" />
     </div>
-
+    <PublishModal />
 </template>
 
 <style scoped>

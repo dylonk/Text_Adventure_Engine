@@ -17,6 +17,7 @@
     //project settings This one doesn't really need to be arrayed because it doesn't need to persist through sessions
     const showPreview = ref(false);
     const projectIsSaved = ref(false);
+    const showPublishModal = ref(false);
 
 
     // Method to rename the project
@@ -438,6 +439,7 @@
       projectName,
       projectId,
       showPreview,
+      showPublishModal,
       renameProject,
       exportProject,
       saveProjectToFile,

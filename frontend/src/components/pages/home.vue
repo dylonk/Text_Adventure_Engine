@@ -52,8 +52,8 @@ onMounted(fetchGames);
 <template>
   <div id="home-container">
     <div id="hero">
-          <h1 class="hero-title"><a>MagiQuill</a>, a browser based text adventure engine and social platform</h1>
           <img class="splashpond-image" :src="splashpond" alt="Splash Pond" />
+          <h1 class="hero-title">><a>MagiQuill</a>, a browser based text adventure engine and social platform</h1>
         </div>
       <div class="main-grid">
       <!-- Left Grid: Hero Section -->
@@ -96,7 +96,7 @@ onMounted(fetchGames);
   max-width:100dvw;
   overflow-y:scroll;
   overflow-x:clip;
-  background: #33385e;
+  background: #b9b9bc;
 }
 /* Main Grid */
 .main-grid {
@@ -121,24 +121,22 @@ onMounted(fetchGames);
 }
 
 .hero-title {
-  
+  font-family: 'RetroQuill', sans-serif;
+  color:rgb(0, 0, 0);
   font-size: 2.5em;
   margin: 2rem;
-  color: #000000;
   text-align: left;
 }
-.hero-title a{
-  font-family: 'RetroQuill', sans-serif;
-  color:rgb(255, 255, 255);
-}
+
 
 .splashpond-image {
   display: block;
+  margin: 5rem auto;
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
-  transform: scale(2);
-  transform-origin: left top;
+  transform: scale(1);
+  transform-origin: center top;
 }
 
 @media (max-width: 768px) {
@@ -151,8 +149,9 @@ onMounted(fetchGames);
 /* Right Grid: Popular Games Section */
 .popular-games-container {
   width: 100%;
-  padding: 25px 0;
+  padding: 2rem;
   position: relative;
+  overflow:visible;
 }
 
 .popular-games-container::before {
@@ -162,7 +161,7 @@ onMounted(fetchGames);
   left: calc(-50vw + 50%);
   width: 100vw;
   height: 100%;
-  background: rgba(255, 255, 255, 0.3);
+  background: rgb(255, 255, 255);
   z-index: 0;
   pointer-events: none;
 }
@@ -171,7 +170,7 @@ onMounted(fetchGames);
   display: flex;
   align-items: baseline;
   gap: 15px;
-  margin-bottom: 25px;
+  margin-bottom: 1rem;
 }
 
 .section-title {

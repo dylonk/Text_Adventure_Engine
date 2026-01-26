@@ -90,7 +90,7 @@ onBeforeUnmount(() => {
         <a @click.prevent="projectStore.renameProject()">Rename</a>
         <a @click.prevent="projectStore.saveProjectToFile()">Export Project</a>
         <a @click.prevent="projectStore.openProjectFromFile()">Import Project</a>
-        <a @click.prevent="router.push('/publish')">Publish</a>
+        <a @click.prevent="projectStore.showPublishModal = true">Publish</a>
       </div>
     </div>
 
