@@ -2,7 +2,7 @@
 import axios from 'axios';
 import { ref, onMounted, watch, onUnmounted, nextTick, computed } from 'vue';   
 import defaultThumbnail from '@/assets/Images/defaultgameimage.jpg'
-import playButton from '@/assets/Images/play.png'
+import wizardPfp from '@/assets/Images/wizardpfp.png'
 import { HContainer,VContainer } from '../editor/nodes/node_assets/n-component-imports';
 import fullStar from '@/assets/Images/stars/fullstar.png'
 import emptyStar from '@/assets/Images/stars/emptystar.png'
@@ -22,7 +22,6 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // for Vite
 
 const router = useRouter();
 const defaultThumb = ref(defaultThumbnail)
-const play = ref(playButton)
 
 
 const recentGames = ref([]);
@@ -31,9 +30,13 @@ const searchInput = ref(''); // Separate ref for the input field
 const expandedGame = ref(null);
 const userRating = ref(null); // User's current rating for the expanded game
 const hoveredRating = ref(null); // For hover effect on stars
+const expandedProfileImage = ref(null); // Profile image for the expanded game's creator
 const currentPage = ref(1);
 const itemsPerPage = ref(8); // Set to 1 for testing
 const isSearching = ref(false);
+const expandedCardRef = ref(null);
+const expandedRightRef = ref(null);
+const isScrolled = ref(false);
 
 // Cloud images array
 const cloudImages = [cloud1, cloud2, cloud3, cloud4, cloud5, cloud6];
@@ -321,8 +324,27 @@ const expandGame = async (game) => {
   expandedGame.value = game;
   userRating.value = null;
   hoveredRating.value = null;
+  expandedProfileImage.value = null; // Reset profile image
   // Fetch user's current rating for this game
   await fetchUserRating(game.id);
+  // Fetch creator's profile image
+  await fetchCreatorProfileImage(game.userid);
+};
+
+// Fetch creator's profile image by user ID
+const fetchCreatorProfileImage = async (userId) => {
+  if (!userId || !userId._id) {
+    expandedProfileImage.value = null;
+    return;
+  }
+  
+  try {
+    const response = await axios.get(`${API_BASE_URL}/users/${userId._id}`);
+    expandedProfileImage.value = response.data.profileImage || null;
+  } catch (error) {
+    console.warn('Error fetching creator profile image:', error);
+    expandedProfileImage.value = null;
+  }
 };
 
 // Fetch user's current rating for a game
@@ -390,7 +412,33 @@ const submitRating = async (rating) => {
 
 const closeExpanded = () => {
   expandedGame.value = null;
+  expandedProfileImage.value = null;
+  isScrolled.value = false;
 };
+
+// Handle scroll on expanded card right section
+const handleCardScroll = () => {
+  if (expandedRightRef.value) {
+    const scrollTop = expandedRightRef.value.scrollTop;
+    isScrolled.value = scrollTop > 20; // Show shadow after scrolling 20px
+  }
+};
+
+// Watch for expanded game changes to set up scroll listener
+watch(expandedGame, async (newValue) => {
+  if (newValue) {
+    await nextTick();
+    if (expandedRightRef.value) {
+      expandedRightRef.value.addEventListener('scroll', handleCardScroll);
+      handleCardScroll(); // Check initial scroll position
+    }
+  } else {
+    if (expandedRightRef.value) {
+      expandedRightRef.value.removeEventListener('scroll', handleCardScroll);
+    }
+    isScrolled.value = false;
+  }
+});
 
 //yeah, we're doing it by title not id. it makes the links prettier and we're making titles unique anyway.
 const goToGame = (async (title) => {
@@ -582,17 +630,34 @@ onUnmounted(() => {
 
     <!-- Expanded Game Overlay -->
     <div v-if="expandedGame" class="overlay" @click.self="closeExpanded">
-      <div class="expanded-card">
+      <div class="expanded-card" ref="expandedCardRef">
         <div class="expanded-content">
           <div class="expanded-left">
-            <div class="expanded-thumbnail-container" @click="goToGame(expandedGame.title)">
+            <div class="expanded-thumbnail-container">
               <img :src="expandedGame.thumbnail||defaultThumb" class="expanded-thumbnail">
-              <img :src="play" class="expanded-play">
             </div>
             <h2 class="expanded-title" :style="{ fontSize: expandedTitleFontSize }">{{expandedGame.title}}</h2>
-            <div class="expanded-author">by {{expandedGame.username || 'unknown'}}</div>
+            <div class="expanded-author">
+              <img 
+                :src="expandedProfileImage && expandedProfileImage !== '' ? expandedProfileImage : wizardPfp" 
+                alt="Profile Picture" 
+                class="expanded-author-pfp"
+              />
+              <span>by {{expandedGame.username || 'unknown'}}</span>
+            </div>
+            <button class="play-game-button" @click="goToGame(expandedGame.title)">Play game</button>
+          </div>
+          <button class="close-btn" :class="{ 'scrolled': isScrolled }" @click="closeExpanded">×</button>
+          <div class="expanded-right" ref="expandedRightRef">
+            <div class="desc-header-container">
+              <h3 class="desc-header">Description</h3>
+            </div>
+            <!-- <hr class="hr-desc"></hr> -->
+            <div class="expanded-description">
+              {{ expandedGame.description }}
+            </div>
             <div class="expanded-rating-container">
-              <div class="expanded-rating-label">Rate this game:</div>
+              <div class="expanded-rating-label">Rate this experience</div>
               <div class="expanded-stars" @mouseleave="hoveredRating = null">
                 <img 
                   v-for="i in 5" 
@@ -604,16 +669,6 @@ onUnmounted(() => {
                   @mouseenter="hoveredRating = i"
                 />
               </div>
-            </div>
-          </div>
-          <button class="close-btn" @click="closeExpanded">×</button>
-          <div class="expanded-right">
-            <div class="desc-header-container">
-              <h3 class="desc-header">Description</h3>
-            </div>
-            <!-- <hr class="hr-desc"></hr> -->
-            <div class="expanded-description">
-              {{ expandedGame.description }}
             </div>
           </div>
         </div>
@@ -927,9 +982,11 @@ input[type=search]:focus {
   border-radius: 8px;
   width: 80vw;
   max-width: 1000px;
+  box-sizing: border-box;
   height: 70vh;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+
   max-height: 600px;
-  padding: 1.5rem;
   overflow: hidden;
   overflow-y:scroll
 }
@@ -937,7 +994,8 @@ input[type=search]:focus {
 .close-btn {
   outline:none;
   border:none;
-  background:none;
+  background:#f4f4f4;
+  text-align:center;
   color: rgb(98, 98, 98);
   font-size: 32px;
   width: 40px;
@@ -953,54 +1011,92 @@ input[type=search]:focus {
   font-weight: bold;
   line-height: 1;
   margin-left:auto;
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  transition: box-shadow 0.3s ease;
 }
 
 .close-btn:hover {
   color: rgb(0, 0, 0);
-  transform: scale(1.1);
+  transform:scale(1.05);
+}
+
+.close-btn.scrolled {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .expanded-content {
   display: flex;
-  gap: 30px;
   height: 100%;
 }
 
 .expanded-left {
-  width:20rem;
   display: flex;
+  box-sizing: border-box;
   flex-direction: column;
-  align-items: center;
+  position: relative;
+}
+
+.expanded-left::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: -50px;
+  width: 50px;
+  height: 100%;
+  background: linear-gradient(to left, transparent, rgba(0, 0, 0, 0.089));
+  pointer-events: none;
+  z-index: 10;
 }
 
 .expanded-title {
+  margin-top:0.5rem;
   font-family: 'Josefin Sans';
   color:black;
+  margin:1rem;
+  width:18rem;
   font-weight: 600;
   font-size: 2rem;
-  text-align: center;
+  text-align: justify;
   line-height: 1.2;
 }
 .expanded-author{
     font-size: 1rem;
     font-family: 'RetroQuill', sans-serif;
     color: #666;
+    margin:0.5rem;
     white-space: nowrap;
-    overflow: hidden;
+    overflow: show;
     text-overflow: ellipsis;
     text-align:left;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.expanded-author-pfp {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
 }
 .expanded-rating-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  margin-top: 1rem;
+  align-items: flex-start;
+  width:fit-content;
+  margin-top: 0.5rem;
+  border-radius: 8px;
+  padding:1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+
+  background:#ffffff;
 }
 .expanded-rating-label {
   font-family: 'Josefin Sans';
+  font-weight:600;
   font-size: 0.9rem;
-  color: #666;
+  color: #000000;
 }
 .expanded-stars {
   display: flex;
@@ -1022,40 +1118,54 @@ input[type=search]:focus {
 .expanded-thumbnail-container {
   position: relative;
   width: 20rem;
-  height: 20rem;
-  cursor: pointer;
+  height: 100%;
+  max-height: 20rem;
 }
 
 .expanded-thumbnail {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.play-game-button {
+  font-size: 1.1rem;
+  padding: 16px 24px;
+  border: none;
+  background: #4a7603;
+  color: white;
   border-radius: 8px;
-}
-
-.expanded-play {
-  display: none;
+  cursor: pointer;
+  font-family: 'RetroQuill', sans-serif;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
   position: absolute;
-  width: 120px;
-  height: 120px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  overflow: hidden;
+  margin:1rem;
+  margin-top: 1rem;
+  bottom:0;
 }
 
-.expanded-thumbnail-container:hover .expanded-play {
-  display: block;
+.play-game-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15), 0 4px 6px rgba(0, 0, 0, 0.1);
+  filter: brightness(1.1);
 }
 
-.expanded-thumbnail-container:hover .expanded-thumbnail {
-  filter: brightness(50%);
+.play-game-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
 }
 
 .expanded-right {
   flex: 1;
   display: flex;
   min-width: 0;
+  padding:1rem;
   flex-direction: column;
+  overflow:scroll;
+  background:#f4f4f4;
 }
 .desc-header-container{
   display:flex;
@@ -1063,8 +1173,8 @@ input[type=search]:focus {
 .desc-header {
   font-family: 'Josefin Sans';
   font-size: 1.5rem;
-  color: #9d9d9d;
-  margin-bottom: 0.25rem;
+  color: #606060;
+  margin-top: 1rem;
 }
 .hr-desc{
   border:none;
@@ -1072,16 +1182,16 @@ input[type=search]:focus {
 }
 
 .expanded-description {
-  margin: 1rem 0;
-  height: 100%;
   border-radius: 8px;
   font-family: 'Josefin Sans';
   font-size: 18px;
+  background:rgb(232, 237, 234);
   line-height: 1.6;
-  overflow-x: hidden;
-  overflow-y: auto;
+  outline:1px rgba(104, 97, 199, 0.403) solid;
+
   color: #333;
   text-wrap: wrap;
+  padding:1rem;
   width: 100%;
   box-sizing: border-box;
   word-wrap: break-word;
@@ -1234,6 +1344,9 @@ input[type=search]:focus {
 }
 
 @media (max-width: 768px) {
+  .close-btn{
+    background:white;
+  }
   .cloud {
     transform: scale(0.5);
     transform-origin: center center;
@@ -1263,19 +1376,34 @@ input[type=search]:focus {
   .gamepic .thumbnail {
     width: 100%;
     height: 100%;
+    
   }
   .gamepic:hover .overlay-play {
     width:100%;
     height:auto;
     aspect-ratio: 1;
   }
+  .expanded-card{
+    overflow:scroll;
+    height:90dvh;
+  }
   .expanded-content {
     flex-direction: column;
   }
   .expanded-left{
-    width:100%;
+    box-sizing: border-box;
+    padding:1rem;
+    width:20rem;
+    justify-content: center;
+    align-items: center;
   }
-
+  .expanded-title {
+    width: 100%;
+    text-align: center;
+  }
+  .expanded-right {
+    overflow:visible;
+  }
   input[type=search]{
     width:100%;
     height:30px;

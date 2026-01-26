@@ -184,7 +184,6 @@ function loadProject(id) {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
   overflow-x: hidden;
   overflow-y: auto;
 }
@@ -203,8 +202,7 @@ function loadProject(id) {
 .projects-section {
   background: rgb(44, 47, 51);
   font-family:'Josefin Sans';
-  height:100%;
-  width: 100%;
+  width: 100%;  
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -214,16 +212,12 @@ function loadProject(id) {
   font-size: 1rem;
   color: #e0e0e0;
   margin: 8px;
-  flex-shrink: 0;
 }
 
 .projects-list {
   display: flex;
   flex-direction: column;
   background: #c0c0c0;
-  flex: 1;
-  min-height: 0;
-  width: 100%;
   box-sizing: border-box;
   overflow-y:scroll;
 }
@@ -330,6 +324,7 @@ function loadProject(id) {
 .projects-layout{
   display:flex;
   width:50rem;
+  
   height:100%;
 }
 .action-buttons-container{
@@ -347,8 +342,9 @@ function loadProject(id) {
   height: 100%;
 }
 .projects-panel{
-  width:100%;
-  height:100%;
+  width:80rem;
+  margin:2rem;
+  box-sizing: border-box;
   background: #cacaca;
 }
 

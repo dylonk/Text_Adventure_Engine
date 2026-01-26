@@ -429,14 +429,14 @@ const gamelogicOutput = ref("")
         <button @click="downloadGame" style="background:steelblue">Download</button>
         <button @click="saveJSON()" >Save</button>
         <button @click="loadGame()">Load</button>
-        <button @click="commands_help">Help/Commands</button>
+        <button @click="commands_help">Commands</button>
         <button @click="toggleTTS"><img :src="speakerIcon" style="height:100%;padding:0rem; padding-top:0.25rem"/></button>
       </HContainer>
       <HContainer v-else spacing="10px">
         <button @click="saveJSON()" >Save</button>
         <button @click="loadGame()">Load</button>
         <button @click="restartGame">Restart</button>
-        <button @click="commands_help">Help/Commands</button>
+        <button @click="commands_help">Commands</button>
         <button @click="toggleTTS"><img :src="speakerIcon" style="height:100%;padding:0rem; padding-top:0.25rem"/></button>
       </HContainer>
 
@@ -630,21 +630,17 @@ const gamelogicOutput = ref("")
 
 .game-controls button {
   padding: 10px;
-  background: #e74c3c;
   border: none;
+  outline:none;
   color: #000000;
   font-size: 1rem;
   font-weight: bold;
   height:50px;
   cursor: pointer;
-  border: 2px solid #e0e0e0;
-  box-shadow: 4px 4px 0 #000;
-  border-radius: 4px;
   transition: background 0.2s;
 }
 
 .game-controls button:hover {
-  background: #c0392b;
 }
 
 .highlight {
@@ -672,8 +668,7 @@ const gamelogicOutput = ref("")
 
 .game-image-display {
   width: 100%;
-  background-color: #252525;
-  border-bottom: 1px solid #404040;
+  background-color: #000000;
   display: flex;
   flex-shrink:0;
   justify-content: center;
