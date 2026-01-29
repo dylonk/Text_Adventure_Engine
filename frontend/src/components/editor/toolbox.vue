@@ -13,7 +13,7 @@ import tbMid from '../../assets/Images/editor/toolbox-mid-posterized.png'
 <template>
     <div class="toolbox">
         <div class="tb-items">
-            <a class="tb_subtitle">Objects</a>
+            <a class="tb_subtitle" style="color:lightcyan;">Objects</a>
                 <div class="tb-group">
                     <TBNode type="room" display_type="Room"/>
                     <TBNode type="item" display_type="Item"/>
@@ -65,11 +65,12 @@ import tbMid from '../../assets/Images/editor/toolbox-mid-posterized.png'
     flex-direction: column;
     width:fit-content;
     height:100%;
-    background-color: #c8c3d8;
+    background-color: #d3d0de;
     background-image: 
         linear-gradient(rgba(53, 91, 104, 0.3) 1px, transparent 1px),
         linear-gradient(90deg, rgba(53, 91, 104, 0.3) 1px, transparent 1px);
     background-size: 20px 20px;
+
 }
 
 .tb-items>*{
@@ -106,7 +107,7 @@ import tbMid from '../../assets/Images/editor/toolbox-mid-posterized.png'
     height:min-content;
     background:rgb(6, 0, 34);
     color:rgb(255, 255, 255);
-    box-shadow: 0 5px 3px rgba(0, 0, 0, 0.297);
+    box-shadow: 0 8px 6px rgba(0, 0, 0, 0.14);
 }
 .tb-items{
     display:flex;

@@ -252,7 +252,7 @@ onMounted(()=>{
     display:flex;
     flex-direction: column;
     border-radius: 2px;
-    box-shadow: 2px 6px 6px 0 rgba(0, 0, 0, 0.351), -2px 6px 20px 0 rgba(0, 0, 0, 0.203);
+    box-shadow: 2px 6px 10px 0 rgba(0, 0, 0, 0.175), -2px 6px 20px 0 rgba(0, 0, 0, 0.203);
 }
 
 .node_container:active{

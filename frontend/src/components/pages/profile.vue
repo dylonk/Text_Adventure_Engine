@@ -167,6 +167,18 @@ function updatePFP(){
   }
 }
 
+function promptForImageURL() {
+    const url = prompt("Enter profile image URL:");
+    if (url) {
+        if (isValidURL(url)) {
+            profileImage.value = url;
+            profileImageField.value = url;
+        } else {
+            alert("Invalid image URL");
+        }
+    }
+}
+
 // Function to log out the user
 function logOut() {
     localStorage.removeItem('token'); // Remove token from localStorage
@@ -237,20 +249,16 @@ onMounted(async() => {
                 <div class="profile-header">
                     <h1>Profile Settings</h1>
                 </div>
-                <div class="profile-picture-container" v-if="isLoggedIn">
+                <div class="profile-picture-container" v-if="isLoggedIn" @click="promptForImageURL">
                     <img v-if="!isMounted" :src="loadCircle"  style="width:20%; height:20%; position: relative; top:38%; left:38%;" alt="Profile Picture">
                     <img v-else-if="profileImage!=''&&profileImage!=null" :src="profileImage" alt="Profile Picture" />
                     <img v-else :src="wizardPfp" alt="Profile Picture" />
+                    <div class="profile-image-overlay" v-if="isMounted">
+                        <div class="plus-icon">+</div>
+                    </div>
                 </div>
 
                 <div class="profile-info" v-if="isLoggedIn">
-                    <div class="form-group">
-                        <label for="profile-image-url">Profile Image URL</label>
-                        <HContainer>
-                            <input type="text" id="profile-image-url" v-model="profileImageField" placeholder="Enter image URL" />
-                            <button @click="updatePFP">Save Image</button>
-                        </HContainer>
-                    </div>
                     <div class="form-group">
                         <label for="username">Username</label>
                         <input style="max-width:30rem;" type="text" id="username" v-model="username" />
@@ -520,17 +528,53 @@ body {
     height: 20rem;
     overflow: hidden;
     border-radius: 20rem;
-    border: 6px solid rgb(255, 255, 255);
+    outline: 4px solid rgb(206, 206, 206);
     margin: 0 0 1rem; /* Center the avatar */
     margin-top: 15px;
     background:rgb(0, 0, 0);
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s;
 }
 
+.profile-picture-container:hover {
+    transform: scale(1.02);
+    outline: 4px solid transparent;
+}
 
 .profile-picture-container img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: filter 0.3s;
+}
+
+.profile-picture-container:hover img {
+    filter: brightness(0.5);
+}
+
+.profile-image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
+
+.profile-picture-container:hover .profile-image-overlay {
+    opacity: 1;
+}
+
+.plus-icon {
+    font-size: 4rem;
+    color: white;
+    font-weight: bold;
 }
 
 .change-avatar-btn {

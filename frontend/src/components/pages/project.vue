@@ -5,6 +5,7 @@ import { useProjectStore } from '../editor/project_store';
 import editIcon from '@/assets/Images/projects/edit.png';
 import tutorial from '../editor/tutorial.vue';
 import axios from 'axios';
+import cogGif from '@/assets/Images/cog.gif';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // for Vite
 
 
@@ -134,9 +135,10 @@ function loadProject(id) {
 
 <template>
   <div id="project-container">
+    <img :src="cogGif" alt="Cog" class="cog-background" />
   <div class="projects-layout">
     <div class="sidebar">        
-        <p class="welcome-title">Welcome to our text adventure engine!</p>
+        <p class="welcome-title">Welcome to our text adventure scripting engine! To start, create a new project, or return to an existing project</p>
         <div class="action-buttons-container">
           <button class="primary-action-button" style="background:green" @click="newProject">New Project</button>
           <button class="primary-action-button" style="background:cadetblue" @click="loadProjectFile">Load Project From File</button>
@@ -188,6 +190,21 @@ function loadProject(id) {
   overflow-y: auto;
 }
 
+.cog-background {
+  position: absolute;
+  top: 0;
+  left: 128px;
+  width: auto;
+  height: auto;
+  transform: scale(4) rotate(90deg);
+  transform-origin: top left;
+  z-index: 0;
+  pointer-events: none;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
 .project-name-button{
   font-size:1rem;
   width:max-content;
@@ -208,6 +225,8 @@ function loadProject(id) {
   flex-direction: column;
   height: 100%;
   min-height: 0;
+  position: relative;
+  z-index: 1;
 }
 
 .projects-section-title {
@@ -270,9 +289,13 @@ function loadProject(id) {
 }
 
 .welcome-title{
-  font-size:2rem;
+  font-size:1.5rem;
   margin:2rem;
-  font-family: 'RetroQuill', sans-serif;
+  padding:1rem;
+  border-radius:8px;
+  background:rgb(232, 237, 234);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+  font-family:'Josefin Sans';
 }
 
 .project-item-actions {
@@ -334,6 +357,8 @@ function loadProject(id) {
   width: 100%;
   height: 100%;
   min-height: 0;
+  position: relative;
+  z-index: 1;
 }
 .action-buttons-container{
   display:flex;
@@ -349,6 +374,8 @@ function loadProject(id) {
   flex-direction: column;
   height: 100%;
   min-height: 0;
+  position: relative;
+  z-index: 1;
 }
 .projects-panel{
   width: clamp(250px, 50vw, 1000px);
@@ -362,6 +389,8 @@ function loadProject(id) {
   height: calc(100% - 4rem);
   max-height: calc(100vh - 4rem);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06), 0 8px 16px rgba(0, 0, 0, 0.15);
+  position: relative;
+  z-index: 1;
 }
 
 @media (max-width: 768px) {

@@ -623,6 +623,7 @@ onUnmounted(() => {
       <div class="expanded-card" ref="expandedCardRef">
         <button class="close-btn" :class="{ 'scrolled': isScrolled }" @click="closeExpanded">×</button>
         <div class="expanded-content">
+          <div style="padding:1rem;">
           <div class="expanded-left">
             <div class="expanded-thumbnail-container">
               <img :src="expandedGame.thumbnail||defaultThumb" class="expanded-thumbnail">
@@ -641,6 +642,7 @@ onUnmounted(() => {
                 <img :src="playButtonIcon" alt="Play" class="play-button-icon" />
                 Play game
               </button>
+            </div>
             </div>
           </div>
           <div class="expanded-right" ref="expandedRightRef">
@@ -682,7 +684,7 @@ onUnmounted(() => {
     align-items: center;
     justify-content: flex-start;
     gap: 1rem;
-    height:3rem;
+    height:min-content;
     padding: 0 0.5rem 0.5rem 0.5rem;
     background-color: #181818;
     z-index: 13;
@@ -974,16 +976,15 @@ input[type=search]:focus {
 
 .expanded-card {
   position: relative;
+  overflow:hidden;
   background: #d8e0e8;
   border-radius: 8px;
   width: 80vw;
   max-width: 1000px;
   box-sizing: border-box;
-  height: 80vh;
+  height: auto;
+  max-height:95dvh;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
-  max-height: 600px;
-  overflow: hidden;
-  overflow-y:scroll
 }
 
 .close-btn {
@@ -1023,7 +1024,8 @@ input[type=search]:focus {
 
 .expanded-content {
   display: flex;
-  height: 100%;
+  align-items:stretch;
+  height: fit-content;
 }
 
 .expanded-left {
@@ -1031,11 +1033,11 @@ input[type=search]:focus {
   box-sizing: border-box;
   flex-direction: column;
   position: relative;
+  gap:1rem;
   width: 20rem;
-  min-width: 0;
   border-radius:8px;
+  height:fit-content;
   background:white;
-  margin:1rem;
   overflow: hidden;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06), 0 8px 16px rgba(0, 0, 0, 0.15);
 }
@@ -1045,7 +1047,7 @@ input[type=search]:focus {
   margin-top:0.5rem;
   font-family: 'Josefin Sans';
   color:black;
-  margin:1rem;
+  margin:0 1rem;
   width:18rem;
   font-weight: 600;
   font-size: 2rem;
@@ -1056,7 +1058,7 @@ input[type=search]:focus {
     font-size: 1rem;
     font-family: 'RetroQuill', sans-serif;
     color: #666;
-    margin:1rem;
+    margin:0 1rem;
     margin-top:0;
     text-align:left;
     display: flex;
@@ -1130,14 +1132,13 @@ input[type=search]:focus {
 }
 
 .play-game-button-container {
-  padding: 1rem;
-  margin-top: auto;
+  padding: 0 1rem 1rem 1rem;
   box-sizing: border-box;
 }
 
 .play-game-button {
   font-size: 1.1rem;
-  padding: 16px 24px;
+  padding: 16px;
   border: none;
   background: #3d3d3d;
   color: white;
@@ -1148,9 +1149,9 @@ input[type=search]:focus {
   transition: all 0.3s ease;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.185), 0 2px 4px rgba(0, 0, 0,  0.185);
   position: relative;
-  overflow: hidden;
   width: 100%;
   display: flex;
+  box-sizing: border-box;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
@@ -1178,14 +1179,14 @@ input[type=search]:focus {
 }
 
 .expanded-right {
-  flex: 1;
   display: flex;
-  min-width: 0;
+  width: 40rem;
   padding:1rem;
   gap:0.5rem;
+  overflow-y: auto;
+  flex:1;
+  max-height:100%;
   flex-direction: column;
-  overflow:scroll;
-  background:rgb(216, 224, 232);
 }
 .desc-header-container{
   display:flex;
@@ -1221,6 +1222,7 @@ input[type=search]:focus {
 .pagination-container {
   display: flex;
   justify-content: center;
+  height:28px;
   align-items: center;
   gap: 10px;
   z-index: 10;
@@ -1410,31 +1412,32 @@ input[type=search]:focus {
   }
   .expanded-card{
     overflow:scroll;
+    gap:1rem;
     height:90dvh;
   }
   .expanded-content {
+    display:flex;
+    gap:0rem;
     flex-direction: column;
+
   }
   .expanded-left{
     box-sizing: border-box;
     justify-content: center;
-    overflow:visible;
     align-items: center;
-    width: calc(100% - 2rem);
-    margin: 1rem;
+    overflow:visible;
+    height:fit-content;
+    width:100%;
   }
   .expanded-thumbnail-container {
-    width: 100%;
-    height: 20rem;
     border-radius: 8px 8px 0 0;
-    overflow: hidden;
+    width:100%;
   }
   .expanded-thumbnail {
     border-radius: 8px 8px 0 0;
   }
   .expanded-title {
     width: 100%;
-    margin:1rem;
     text-align: center;
   }
   .play-game-button-container {
@@ -1446,6 +1449,8 @@ input[type=search]:focus {
   }
   .expanded-right {
     overflow:visible;
+    padding-top:0;
+    padding-bottom:1rem;
   }
   input[type=search]{
     width:100%;

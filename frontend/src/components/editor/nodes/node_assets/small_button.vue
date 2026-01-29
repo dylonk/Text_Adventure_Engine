@@ -18,15 +18,12 @@ const NS = useNodesStore()
         height:20px;
         min-width:20px;
         width:max-content;
-        color: v-bind('NS.getNode(id).data.fg_color');
-        font-weight: 800;
-        background:v-bind('NS.getNode(id).data.bg_color');
-        border:v-bind('NS.getNode(id).data.fg_color') solid 1px;
-        border-top:white solid 1px;
-        border-left: white solid 1px;
+        color: rgb(35, 35, 76);
+        font-weight: 200;
+        background:#e8edea;
+        border:none;
+        outline:1px solid rgba(104, 97, 199, 0.403);
         border-radius: 3px;
-        filter: brightness(120%);
-        text-shadow: 1px 1px white; 
     }
     .small_button:hover{
         filter: brightness(140%);
