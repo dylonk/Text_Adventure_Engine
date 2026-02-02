@@ -37,6 +37,7 @@ const itemsPerPage = ref(8); // Set to 1 for testing
 const isSearching = ref(false);
 const expandedCardRef = ref(null);
 const expandedRightRef = ref(null);
+const expandedLeftRef = ref(null);
 const isScrolled = ref(false);
 
 // Cloud images array
@@ -416,7 +417,34 @@ const handleCardScroll = () => {
   }
 };
 
-// Watch for expanded game changes to set up scroll listener
+// Function to set card height based on left panel height
+const setCardHeight = () => {
+  if (!expandedCardRef.value) return;
+  
+  // Check if in mobile mode (max-width: 768px)
+  const isMobile = window.innerWidth <= 768;
+  
+  // Check if in landscape orientation
+  const isLandscape = window.matchMedia('(orientation: landscape)').matches;
+  
+  // Get 1rem in pixels
+  const remInPixels = parseFloat(getComputedStyle(document.documentElement).fontSize);
+  
+  if (isMobile) {
+    // In mobile mode, set height to 90dvh
+    expandedCardRef.value.style.height = '90dvh';
+  } else {
+    // In desktop mode, use left panel height
+    if (expandedLeftRef.value) {
+      const leftHeight = expandedLeftRef.value.offsetHeight;
+      // Add 1rem to height if in landscape mode
+      const additionalHeight = isLandscape ? remInPixels : 0;
+      expandedCardRef.value.style.height = `${leftHeight + additionalHeight*2}px`;
+    }
+  }
+};
+
+// Watch for expanded game changes to set up scroll listener and set card height
 watch(expandedGame, async (newValue) => {
   if (newValue) {
     await nextTick();
@@ -424,11 +452,20 @@ watch(expandedGame, async (newValue) => {
       expandedRightRef.value.addEventListener('scroll', handleCardScroll);
       handleCardScroll(); // Check initial scroll position
     }
+    // Set card height based on left panel after DOM updates
+    setCardHeight();
+    // Also set height on window resize
+    window.addEventListener('resize', setCardHeight);
   } else {
     if (expandedRightRef.value) {
       expandedRightRef.value.removeEventListener('scroll', handleCardScroll);
     }
+    window.removeEventListener('resize', setCardHeight);
     isScrolled.value = false;
+    // Reset card height
+    if (expandedCardRef.value) {
+      expandedCardRef.value.style.height = '';
+    }
   }
 });
 
@@ -494,6 +531,7 @@ onUnmounted(() => {
   if (cloudSpawnInterval) {
     clearInterval(cloudSpawnInterval);
   }
+  window.removeEventListener('resize', setCardHeight);
 });
 
 </script>
@@ -624,7 +662,7 @@ onUnmounted(() => {
         <button class="close-btn" :class="{ 'scrolled': isScrolled }" @click="closeExpanded">×</button>
         <div class="expanded-content">
           <div style="padding:1rem;">
-          <div class="expanded-left">
+          <div class="expanded-left" ref="expandedLeftRef">
             <div class="expanded-thumbnail-container">
               <img :src="expandedGame.thumbnail||defaultThumb" class="expanded-thumbnail">
             </div>
@@ -985,6 +1023,8 @@ input[type=search]:focus {
   height: auto;
   max-height:95dvh;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
 }
 
 .close-btn {
@@ -1025,7 +1065,9 @@ input[type=search]:focus {
 .expanded-content {
   display: flex;
   align-items:stretch;
-  height: fit-content;
+  height: 100%;
+  flex: 1;
+  min-height: 0;
 }
 
 .expanded-left {
@@ -1187,6 +1229,7 @@ input[type=search]:focus {
   flex:1;
   max-height:100%;
   flex-direction: column;
+  min-height: 0;
 }
 .desc-header-container{
   display:flex;
@@ -1449,6 +1492,7 @@ input[type=search]:focus {
   }
   .expanded-right {
     overflow:visible;
+    width:100%;
     padding-top:0;
     padding-bottom:1rem;
   }
