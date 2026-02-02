@@ -53,7 +53,14 @@ onMounted(fetchGames);
   <div id="home-container">
     <div id="hero">
           <img class="splashpond-image" :src="splashpond" alt="Splash Pond" />
-          <h1 class="hero-title">><a>MagiQuill</a>, a browser based text adventure engine and social platform</h1>
+          <div class="window-border">
+            <div class="window-top">
+              <div class="window-button"/><div class="window-button"/><div class="window-button"/>|| 
+            </div>
+            <div class="window-content">
+              <h1 class="hero-title">><a>MagiQuill</a>, a browser based text adventure engine and social platform</h1>
+            </div>
+          </div>
         </div>
       <div class="main-grid">
       <!-- Left Grid: Hero Section -->
@@ -102,7 +109,6 @@ onMounted(fetchGames);
 .main-grid {
   position:relative;
   margin:auto;
-  top:120px;
   justify-content: center;
   display:flex;
   height:fit-content;
@@ -114,44 +120,101 @@ onMounted(fetchGames);
   /* margin: 120px auto 0 auto; */
 }
 
+.window-top{
+  background:rgb(195, 197, 197);
+  display:flex;
+  flex-direction: row-reverse;
+  width:100%;
+  vertical-align:middle;
+  align-items: center;
+  height:16px;
+  color:#888;
+  gap:2px;
+  font-family: 'RetroQuill', sans-serif;
+  font-size:12px;
+}
+
+.window-button{
+  height:12px;
+  width:12px;
+  background:rgb(171, 171, 172);
+  color:gray;
+  border:outset 2px rgb(165, 165, 165);
+}
+
+.window-border{
+
+  border:rgb(226, 229, 229) 2px outset;
+  background:gray;
+  width:50dvw;
+  flex-shrink: 0;
+  margin: 3rem 1rem;
+}
+.window-content{
+  height:100%;
+  width:100%;
+  min-height: 500px;
+  border:0.125rem rgb(79, 79, 79) solid;
+  background:black;
+  padding:1rem;
+}
+
 #hero {
   text-align: center;
   position: relative;
+  height:fit-content;
   z-index: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
 }
 
 .hero-title {
   font-family: 'RetroQuill', sans-serif;
-  color:rgb(0, 0, 0);
-  font-size: 2.5em;
-  margin: 2rem;
+  color:rgb(255, 255, 255);
+  font-size: 1.5rem;
   text-align: left;
 }
 
 
 .splashpond-image {
   display: block;
-  margin: 5rem auto;
+  margin: 5rem 0;
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
   transform: scale(1);
   transform-origin: center top;
+  flex-shrink: 0;
 }
 
 @media (max-width: 768px) {
+  #hero {
+    flex-direction: column;
+  }
   .splashpond-image {
     transform: scale(1);
+    margin: 2rem 0;
+  }
+  .window-border {
+    margin: 2rem 0;
+    width: 90dvw;
   }
 }
 
 
 /* Right Grid: Popular Games Section */
 .popular-games-container {
-  width: 100%;
-  padding: 2rem;
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  padding: 1rem;
+  padding-left: calc(50vw - 50% + 2rem);
   position: relative;
   overflow:visible;
+  box-sizing: border-box;
 }
 
 .popular-games-container::before {
@@ -161,7 +224,6 @@ onMounted(fetchGames);
   left: calc(-50vw + 50%);
   width: 100vw;
   height: 100%;
-  background: rgb(255, 255, 255);
   z-index: 0;
   pointer-events: none;
 }
@@ -176,6 +238,7 @@ onMounted(fetchGames);
 .section-title {
   text-align: left;
   font-size: 2rem;
+  font-weight:600;
   margin: 0;
   color: #000000;
   z-index:1;
@@ -196,7 +259,30 @@ onMounted(fetchGames);
 
 .games-grid-wrapper {
   position: relative;
-  width: 100%;
+  width: 100vw;
+  margin-left: calc(-50vw + 50% - 2rem);
+  overflow-x: visible;
+}
+
+.games-grid-wrapper::before,
+.games-grid-wrapper::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 150px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.games-grid-wrapper::before {
+  left: 0;
+  background: linear-gradient(to right, #b9b9bc, transparent);
+}
+
+.games-grid-wrapper::after {
+  right: 0;
+  background: linear-gradient(to left, #b9b9bc, transparent);
 }
 
 .games-grid {
@@ -207,8 +293,11 @@ onMounted(fetchGames);
   overflow-x: auto;
   overflow-y: hidden;
   padding-bottom: 10px;
+  padding-left: calc(50vw - 50% + 2rem);
+  padding-right: calc(50vw - 50% + 2rem);
   scrollbar-width: thin;
   -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
 }
 
 .games-grid::-webkit-scrollbar {

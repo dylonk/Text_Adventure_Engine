@@ -52,9 +52,7 @@ onMounted(()=>{
 
 <template>
   <FunctionBase :id="id">
-    <HContainer outerMargin="5px">
       <HandleIn :id="id" />
-    <VContainer spacing="10px">
       <div style="border:#808080 solid 1px;background:white;border-radius:5px;">
           <VContainer style="padding:10px;">
           <div style="color:black;">Add a new image to assets</div>
@@ -80,16 +78,8 @@ onMounted(()=>{
           No image set. Select an image below.
         </div>
       </div>
-      <VContainer spacing="0px">
       <Dropdown dropdownType="images" :id="id" title="Image Selection" @dropdown-updated="(name) => updateImgSrc(name)" displayHorizontal="true"></Dropdown>
-      <hr style="border-top:none; margin-top:10px;">
-      <InputField title="x position" :id="id"></InputField>
-      <InputField title="y position" :id="id"></InputField>
-
-      </VContainer>
-    </VContainer>
     <HandleOut :id="id" />
-  </HContainer>
   </FunctionBase>
 </template>
 

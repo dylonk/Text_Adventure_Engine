@@ -33,12 +33,8 @@ const defaultObjData =  { //This is the data that this component contributes. An
     <FunctionBase
         :id="id"
         >
-        <HContainer outerMargin="0px">
-            <VContainer>
             <div style="width:150px; color:green;">When the player enters this room, this node will trigger</div> 
-            </VContainer>
             <HandleOut :id="id"></HandleOut>
-        </HContainer>
     </FunctionBase>
 
 

@@ -1150,8 +1150,8 @@ input[type=search]:focus {
   align-items: center;
 }
 .expanded-star {
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   cursor: pointer;
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
@@ -1248,7 +1248,7 @@ input[type=search]:focus {
 .expanded-description {
   border-radius: 8px;
   font-family: 'Josefin Sans';
-  font-size: 18px;
+  font-size: 1rem;
   background:rgb(232, 237, 234);
   line-height: 1.6;
   outline:1px rgba(104, 97, 199, 0.403) solid;

@@ -39,19 +39,13 @@ function autoResize() {
 
 
 
-    <FunctionBase
-        :id="id"
-        >
-        <HContainer>
+    <FunctionBase :id="id">
         <HandleIn :id="id"></HandleIn>
 
-        <VContainer outerMargin="5px">
             <Dropdown :id="id" title="Target" defaultSelection="Global" dropdownType="objects"></Dropdown>
             <Dropdown :id="id" title="Location" defaultSelection="player" dropdownType="objects" :defaultList="['Global']"></Dropdown>
-        </VContainer>
 
         <HandleOut :id="id"></HandleOut>
-        </HContainer>
     </FunctionBase>
 
 

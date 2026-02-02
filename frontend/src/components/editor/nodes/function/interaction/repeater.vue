@@ -34,17 +34,11 @@ const defaultObjData =  { //This is the data that this component contributes. An
     <FunctionBase
         :id="id"
         >
-        <VContainer>
-            <HContainer outer-margin="5px">
-                <HandleIn :id="id"></HandleIn>
-                <InputField title="Quantity" :id="id"></InputField>
-                <HandleOut :id="id"></HandleOut>
-            </HContainer>
-            <HContainer outer-margin="5px">
+            <InputField handleOutput=true handleInput=true title="Quantity" :id="id"></InputField>
+            <HContainer outer-margin="0px">
                 <div>Loop Exit</div>
                 <HandleOut :id="id"></HandleOut>
             </HContainer>
-        </VContainer>
     </FunctionBase>
 </template>
 

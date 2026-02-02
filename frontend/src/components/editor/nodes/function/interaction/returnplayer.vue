@@ -34,10 +34,8 @@ const defaultObjData =  { //This is the data that this component contributes. An
     <FunctionBase
         :id="id"
         >
-        <HContainer outer-margin="5px">
         <HandleIn :id="id"></HandleIn>
-            <Dropdown :id="id" title="Return Location" defaultSelection="Room Beginning" dropdownType="custom" :defaultList="['Room Beginning','Previous Set Location']"></Dropdown>
-        </HContainer>
+        <Dropdown :id="id" title="Return Location" defaultSelection="Room Beginning" dropdownType="custom" :defaultList="['Room Beginning','Previous Set Location']"></Dropdown>
     </FunctionBase>
 </template>
 

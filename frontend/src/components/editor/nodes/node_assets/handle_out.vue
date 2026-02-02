@@ -5,6 +5,7 @@ import { ref, defineProps, computed } from 'vue';
 const props = defineProps({
     id: -10,
     hasConnection: false,
+    offsetY: {type:String,default:"0px"}
 })
 import { useNodesStore } from '@/components/editor/nodes/node_store'
 const NS = useNodesStore()
@@ -31,9 +32,9 @@ function deleteEdges(){
     position:absolute;
     margin:0px;
     padding:0px;
-    right:12px;
+    right:8px;    
     width: 0px;
-    height: 0px;
+    height:50%;
 }
 .vue-flow__handle{
     position:relative;
@@ -41,6 +42,7 @@ function deleteEdges(){
     background:rgb(255, 255, 255);
     height:16px;
     width:12px;
+    bottom:-8px;
     border-radius:100%;
     transition: all 0.05s ease-in-out;
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.486);

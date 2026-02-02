@@ -1,6 +1,6 @@
 <script setup>
 import { ref, defineProps, computed ,onMounted, nextTick} from 'vue';
-import { SmallButton, HContainer, HandleIn, HandleOut } from './n-component-imports.js';
+import { SmallButton, HContainer, HandleIn, HandleOut, VContainer } from './n-component-imports.js';
 
 let response_id = 0;
 const handleIds = ref([]);//tracking the handle ids for the purpose of edge deletion by handle
@@ -10,6 +10,7 @@ const props = defineProps({
     allowButtons: false,
     handleInput: false,
     handleOutput: false,
+    spacing:{type:String,default:"12px"},
     startingQuantity:1,
     defaultHeight:1,
     title: "",
@@ -85,16 +86,16 @@ onMounted(() => {
 
 
 <template>
-    <div>
-        <HContainer outer-margin="5px">
+    <VContainer spacing="6px">
+        <HContainer outer-margin="0" spacing="4px">
         <div v-if="title!=''"> {{ title }}</div>
         <SmallButton v-if="allowButtons=='true'" :id="id" text="+" @click="addResponse()"></SmallButton>
         <SmallButton v-if="allowButtons=='true'" :id="id" text="-" @click="removeResponse(index)"></SmallButton>
         </HContainer>
 
-        <div class="nodrag nowheel">
+        <VContainer v-if="NS.getParam(props.id,convertedTitle)?.length > 0" class="nodrag nowheel" :spacing="spacing">
             <div v-for="(textbox,index) in NS.getParam(props.id,convertedTitle)" class="textbox_container">
-                <HContainer outer-margin="5px">
+                <HContainer outer-margin="0">
                     <HandleIn v-if="handleInput=='true'" :id="id" />
                         <div style="display: flex; flex-direction: column; width: 100%;">
                             <slot name="per-textbox-label" :index="index"> </slot>
@@ -109,8 +110,8 @@ onMounted(() => {
 />
                 </HContainer>
             </div>
-        </div>
-    </div>
+        </VContainer>
+    </VContainer>
 
 
 </template>
@@ -146,7 +147,7 @@ onMounted(() => {
         display:flex;
         flex-direction:column;
         margin: 0px;
-        
+        gap:v-bind('spacing');
 
     }
     .response_title{

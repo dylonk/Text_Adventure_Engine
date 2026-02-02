@@ -17,31 +17,33 @@ const canvasName = computed(() => {
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Eagle+Lake&display=swap");
 .canvas-selector-container{
-    background:rgb(0, 0, 0);
-    padding: 0 0 0.4rem 0;
+    background:#060022;
+
+    /* border: 2px rgb(40, 40, 45) solid; */
+    padding: 0.25rem ;
 }
 
 .selector-text{
     position:relative;
+    
     font-size:0.8rem;
-    width:fit-content;
-    padding: 0 0.5rem;
-    background:rgb(211, 255, 35);
+    padding: 0 0.25rem;
     white-space: nowrap;
-    color:rgb(0, 0, 0);
+    color:rgb(255, 255, 255);
     text-overflow:ellipsis;
     z-index:4;
     font-family: 'RetroQuill', sans-serif;
 }
 .selected{
     position:relative;
-    border: 2px rgb(211, 255, 35) solid;
     font-size:1rem;
-    background:rgb(0, 0, 0);
+    background:rgb(154, 153, 162);
+
+    border-radius:4px;
+    padding:0.125rem 0.5rem 0 0.5rem  ;
     width:100%;
-    padding:0 0.5rem;
     white-space: nowrap;
-    color:rgb(255, 255, 255);
+    color:rgb(0, 0, 0);
     text-overflow:ellipsis;
     z-index:4;
     font-family: 'RetroQuill', sans-serif;

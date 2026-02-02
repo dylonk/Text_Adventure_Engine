@@ -37,9 +37,7 @@ const defaultObjData =  { //This is the data that this component contributes. An
     <FunctionBase
         :id="id"
         >
-        <HContainer outerMargin="10px">
         <InputField type="number" handleOutput=true handleInput=true :id="id" title="Time"/>
-        </HContainer>
 
     </FunctionBase>
 

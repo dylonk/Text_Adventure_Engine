@@ -45,7 +45,7 @@ import tbMid from '../../assets/Images/editor/toolbox-mid-posterized.png'
             <a class="tb_subtitle">Value</a>
             <div class="tb-group">
                 <TBNode type="setproperty" display_type="Set Property"/>
-                <TBNode type="setlocation" display_type="Set Player Location"/>
+                <TBNode type="setlocation" display_type="Set Location"/>
             </div>
                 <!-- <a class="tb_subtitle">TO IMPLEMENT</a>
                 <TBNode type="unimplemented" display_type="Extend Scope"/>

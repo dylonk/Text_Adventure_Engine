@@ -63,7 +63,7 @@ const elseHandleIndex = computed(() => {
         </HContainer>
         
         <!-- Dedicated Else handle (not a textbox) -->
-        <HContainer outerMargin="5px">
+        <HContainer>
                 <div class="else-label">Else</div>
                 <HandleOut :id="id" />
         </HContainer>

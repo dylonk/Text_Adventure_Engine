@@ -45,7 +45,7 @@ function autoResize() {
         <Textboxes handleOutput=true handleInput=true :id="id" startingQuantity=1 allowButtons=false title="Console Output"></Textboxes>
         </HContainer>
         <HContainer outerMargin="0px">
-        <Textboxes handleOutput=true :id="id" startingQuantity=1 allowButtons=true title="Response"></Textboxes>
+        <Textboxes handleOutput=true :id="id" startingQuantity=0 allowButtons=true title="Response"></Textboxes>
         </HContainer>
     </FunctionBase>
 

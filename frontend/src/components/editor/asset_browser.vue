@@ -156,9 +156,8 @@ function switchCanvas(id, assetBrowserIndex){
   width:250px;
   justify-content: center;
   flex-direction: column;
-  background: rgb(93, 93, 93);
+  background:#060022;
   justify-content: space-between;
-  border: 0.4rem black solid;
 }
 
 .asset-browser-hr{
@@ -201,7 +200,7 @@ li {
   overflow-y:scroll;
   overflow-x:scroll;
   width:auto;
-  background: rgb(56, 56, 56);
+  background:#060022;
 }
 
 details div {

@@ -8,6 +8,8 @@ const props = defineProps({
     title: "",
     dropdownType: "objects",
     defaultSelection: "",
+    handleInput: false,
+    handleOutput: false,
     defaultList:[],
     exclusionList:[],
     displayHorizontal:false,
@@ -73,7 +75,7 @@ function displayListToggle(){
 
 
 <template>
-        <HContainer v-if="displayHorizontal">
+        <HContainer v-if="displayHorizontal" outer-margin="0">
         <div class="dropdown-title">{{ title }}</div>
         <div class="nodrag" style="width:100%;">
             <div  class="dropdown-container">
@@ -91,7 +93,7 @@ function displayListToggle(){
             </div>
         </div>
         </HContainer>
-        <VContainer v-else>
+        <VContainer v-else outer-margin="0">
         <div class="dropdown-title">{{ title }}</div>
         <div class="nodrag">
             <div  class="dropdown-container">
@@ -107,6 +109,7 @@ function displayListToggle(){
             </div>
         </div>
         </VContainer>
+
 </template>
 
 
@@ -122,17 +125,19 @@ function displayListToggle(){
         flex-direction:column;
         margin: 0px;
         border-radius: 2px gray solid;
+        background:rgb(232, 237, 234);
+        outline:1px rgba(104, 97, 199, 0.403) solid;
+        width:100%;
         color:black;
-        border:solid rgba(0, 0, 0, 0.165) 1px;
+        border:none;
     }
     .dropdown-selected{
         color:black;
-        background:white;
-        width:100%;
+        background:rgb(232, 237, 234);
         height:20px;
     }
     .dropdown-listentry{
-        background:rgb(232, 232, 232);
+        background:rgb(255, 255, 255);
         z-index:auto;
 
     }
@@ -140,10 +145,10 @@ function displayListToggle(){
         background:rgb(236, 239, 240);
     }
     .dropdown-list{
-        position:relative;
+        position:absolute;
         display:flex;
         flex-direction:column;
-        background:rgb(221, 221, 221);
+        background:rgb(255, 255, 255);
     }
     .response_title{
         display:flex;

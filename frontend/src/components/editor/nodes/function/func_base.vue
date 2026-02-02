@@ -40,6 +40,7 @@ const debug_message = "ID:"+props.id;   //whats displayed in the innermost part 
   width:100%;
   display:flex;
   flex-direction: column;
-  padding:5px;
+  padding:12px;
+  gap:16px;
 }
 </style>

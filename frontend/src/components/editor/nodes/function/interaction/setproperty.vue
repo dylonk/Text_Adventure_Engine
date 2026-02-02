@@ -43,6 +43,7 @@ const propertyList = computed(() => {
 // Component MUST have props.id for this to work, and it needs to be passed down through each component
 // Parent component must also have @init-node-id listener
 import { useNodesStore } from '@/components/editor/nodes/node_store'
+import Handle_in from '../../node_assets/handle_in.vue';
 const NS = useNodesStore()
 const defaultObjData =  { //This is the data that this component contributes. Any existing properties within the functional node data will be replaced
     display_type:"Set Property",
@@ -65,16 +66,11 @@ const defaultObjData =  { //This is the data that this component contributes. An
     <FunctionBase
         :id="id"
         >
-        <HContainer>
-        <HandleIn :id="id"></HandleIn>
-
-        <VContainer outerMargin="5px">
+            <HandleIn :id="id"></HandleIn>
+            <HandleOut :id="id"></HandleOut>
             <Dropdown :id="id" title="Target" defaultSelection="Global" dropdownType="objects"></Dropdown>
             <Dropdown :id="id" title="Property" defaultSelection="" dropdownType="custom" :defaultList="propertyList"></Dropdown>
-            <Textboxes :id="id" startingQuantity=1 allowButtons=false title="Value"></Textboxes>
-        </VContainer>
-        <HandleOut :id="id"></HandleOut>
-        </HContainer>
+            <Textboxes :id="id" startingQuantity=1 allowButtons=false title="New Value"></Textboxes>
     </FunctionBase>
 
 

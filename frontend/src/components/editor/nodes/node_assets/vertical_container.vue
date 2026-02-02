@@ -1,7 +1,7 @@
 <script setup>
 import { ref, defineProps, computed } from 'vue';
 const props = defineProps({
-    spacing:{type:String,default:"5px"},
+    spacing:{type:String,default:"0px"},
     outerMargin:{type:String,default:"0px"},
     justifyContent:{type:String,default:"center"}
 
@@ -9,13 +9,13 @@ const props = defineProps({
 </script>
 
 <template>
-<div class="h-container">
+<div class="v-container">
     <slot></slot>
 </div>
 </template>
 
 <style scoped>
-.h-container{
+.v-container{
     margin: v-bind('outerMargin');
     width:100%;
     height:max-content;

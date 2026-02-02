@@ -63,9 +63,9 @@ function updateResponse(newResponse){
         overflow-x:scroll;
         height:20px;
         margin:none;
-        background:rgb(255, 255, 255);
+        background:rgb(232, 237, 234);
         border:none;
-        outline:1px rgba(0, 0, 0, 0.134) solid;
+        outline:1px rgba(104, 97, 199, 0.403) solid;
         border-radius:3px;
         
     }
