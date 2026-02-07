@@ -21,6 +21,12 @@ const registrationData = ref({
 
 const router = useRouter();
 
+const showLogin = ref(true);
+
+const toggleForm = () => {
+  showLogin.value = !showLogin.value;
+};
+
 const onLoginSubmit = async (event) => {
   console.log('Form data being sent for login:', formData.value);
   event.preventDefault();
@@ -81,8 +87,14 @@ const onRegisterSubmit = async (event) => {
 
 <template>
   <div id="page">
-    <div id="login">
-      <div class="login-title">Login</div>
+    <!-- Login Form -->
+    <div v-if="showLogin" id="login" class="auth-card">
+      <div class="title-container">
+        <div class="login-title">Login</div>
+        <button type="button" class="swap-button" @click="toggleForm">
+          Or create a new account!
+        </button>
+      </div>
       <form @submit.prevent="onLoginSubmit">
         <input
           type="text"
@@ -100,10 +112,14 @@ const onRegisterSubmit = async (event) => {
       </form>
     </div>
 
-    <div id="separator"></div>
-
-    <div id="registration">
-      <div class="registration-title">Register</div>
+    <!-- Registration Form -->
+    <div v-else id="registration" class="auth-card">
+      <div class="title-container">
+        <div class="registration-title">Register</div>
+        <button type="button" class="swap-button" @click="toggleForm">
+          Log into an existing account
+        </button>
+      </div>
       <form @submit.prevent="onRegisterSubmit">
         <input
           type="text"
@@ -136,79 +152,156 @@ const onRegisterSubmit = async (event) => {
 </template>
 
 <style scoped>
-/* For demonstration only. For a site-wide font, move the @import and body font-family
-   rules to a global CSS file (e.g., frontend/src/assets/base.css or a global style in App.vue). */
+@import url("https://fonts.googleapis.com/css2?family=Josefin+Sans");
 
 #page {
   display: flex;
   flex-direction: row;
-  flex:1;
-  background: #1d1f21;
-  color: #e0e0e0;
-  font-family: 'RetroQuill', sans-serif;
-  padding: 20px;
-}
-
-#login,
-#registration {
   flex: 1;
-  display: flex;
-  flex-direction: column;
+  background: linear-gradient(0deg, rgb(194, 215, 217) 0%, rgba(126, 128, 232, 0.645) 80%);
+  color: #000;
+  font-family: 'RetroQuill', sans-serif;
+  padding: 2rem;
   align-items: center;
   justify-content: center;
-  margin: 10px;
-  background: #2c2f33;
-  border: 2px solid #e0e0e0;
-  box-shadow: 6px 6px 0 #000;
-  padding: 20px;
+  box-sizing: border-box;
+}
+
+.auth-card {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  width: 100%;
+  max-width: 500px;
+  background: #d8e0e8;
   border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.title-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0.5rem 1rem;
 }
 
 .login-title,
 .registration-title {
+  font-family: 'Josefin Sans';
   font-size: 2rem;
-  margin-bottom: 1rem;
-  text-shadow: 2px 2px 0 #000;
+  font-weight: 600;
+  margin: 0;
+  color: #000;
+  text-align: left;
+  flex-shrink: 0;
+}
+
+.swap-button {
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: none;
+  color: rgba(104, 97, 199, 0.8);
+  font-size: 0.9rem;
+  font-family: 'Josefin Sans';
+  font-weight: 400;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  text-align: right;
+  margin: 0;
+  margin-top: 0;
+  box-shadow: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.swap-button:hover {
+  color: rgba(104, 97, 199, 1);
+  background: rgba(104, 97, 199, 0.1);
+  transform: none;
+  box-shadow: none;
+  filter: none;
+}
+
+.swap-button:active {
+  transform: none;
+  box-shadow: none;
 }
 
 form {
   display: flex;
   flex-direction: column;
-  width: 80%;
+  width: 100%;
+  gap: 1rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06), 0 8px 16px rgba(0, 0, 0, 0.15);
+  box-sizing: border-box;
 }
 
 input {
-  margin-bottom: 10px;
-  padding: 10px;
-  background: #1d1f21;
-  border: 2px solid #e0e0e0;
-  color: #e0e0e0;
+  margin-bottom: 0;
+  padding: 0.75rem;
+  background: rgb(232, 237, 234);
+  border: 1px solid rgba(104, 97, 199, 0.403);
+  color: #333;
   font-size: 1rem;
-  border-radius: 4px;
-  box-shadow: inset 2px 2px 0 #000;
+  font-family: 'Josefin Sans';
+  border-radius: 8px;
+  box-sizing: border-box;
+  outline: none;
+  transition: all 0.2s ease;
 }
 
-button {
-  padding: 10px;
-  background: #e74c3c;
+input:focus {
+  outline: 2px solid rgba(104, 97, 199, 0.6);
+  background: white;
+}
+
+input::placeholder {
+  color: #666;
+}
+
+form button[type="submit"] {
+  padding: 16px;
+  background: #3d3d3d;
   border: none;
   color: #fff;
-  font-size: 1rem;
-  font-weight: bold;
+  font-size: 1.1rem;
+  font-family: 'RetroQuill', sans-serif;
+  font-weight: 600;
   cursor: pointer;
-  border: 2px solid #e0e0e0;
-  box-shadow: 4px 4px 0 #000;
-  border-radius: 4px;
-  transition: background 0.2s;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.185), 0 2px 4px rgba(0, 0, 0, 0.185);
+  transition: all 0.3s ease;
+  margin-top: 0.5rem;
 }
 
-button:hover {
-  background: #c0392b;
+form button[type="submit"]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15), 0 4px 6px rgba(0, 0, 0, 0.1);
+  filter: brightness(1.05);
 }
 
-#separator {
-  width: 2px;
-  background: #e0e0e0;
-  margin: 0 10px;
+form button[type="submit"]:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+@media (max-width: 768px) {
+  #page {
+    padding: 1rem;
+  }
+
+  .auth-card {
+    max-width: 100%;
+    width: 100%;
+  }
 }
 </style>

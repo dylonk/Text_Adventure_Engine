@@ -100,21 +100,21 @@ function handleContextMenu(event, id) {
         -ms-user-select: none; /* IE 10 and IE 11 */
         user-select: none; /* Standard syntax */
         width:auto;
-        background:rgb(126, 126, 126);
+        background:rgba(255, 255, 255, 0.469);
     }
     .row{
         -webkit-user-select: none; /* Safari */
         -ms-user-select: none; /* IE 10 and IE 11 */
         user-select: none; /* Standard syntax */
         width:auto;
-        background:rgb(88, 88, 88);
+        background:rgba(0, 191, 255, 0.469);
     }
     .row-isOdd{
         -webkit-user-select: none; /* Safari */
         -ms-user-select: none; /* IE 10 and IE 11 */
         user-select: none; /* Standard syntax */
         width:auto;
-        background:rgb(76, 76, 76);
+        background:rgba(0, 191, 255, 0.242);
     }
     .row:hover{
         background:rgb(111, 111, 142);

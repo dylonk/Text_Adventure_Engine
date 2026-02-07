@@ -10,30 +10,18 @@ const canvasName = computed(() => {
 </script>
 <template>
         <div class="canvas-selector-container">
-        <div class="selector-text">Current Canvas</div>
         <div class="selected">{{ canvasName }}</div>
         </div>
 </template>
 <style scoped>
-@import url("https://fonts.googleapis.com/css2?family=Eagle+Lake&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Josefin+Sans");
 .canvas-selector-container{
     background:#060022;
 
     /* border: 2px rgb(40, 40, 45) solid; */
-    padding: 0.25rem ;
+    padding: 0.5rem ;
 }
 
-.selector-text{
-    position:relative;
-    
-    font-size:0.8rem;
-    padding: 0 0.25rem;
-    white-space: nowrap;
-    color:rgb(255, 255, 255);
-    text-overflow:ellipsis;
-    z-index:4;
-    font-family: 'RetroQuill', sans-serif;
-}
 .selected{
     position:relative;
     font-size:1rem;
@@ -46,6 +34,6 @@ const canvasName = computed(() => {
     color:rgb(0, 0, 0);
     text-overflow:ellipsis;
     z-index:4;
-    font-family: 'RetroQuill', sans-serif;
+    font-family: 'Josefin Sans', sans-serif;
 }
 </style>

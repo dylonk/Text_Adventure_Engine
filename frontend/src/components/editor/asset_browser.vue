@@ -131,7 +131,9 @@ function switchCanvas(id, assetBrowserIndex){
 <template>
   <div style="display: none">{{ syn }}</div>
     <div class="asset_browser">
+      <div class="selector-text">Current Canvas</div>
       <CanvasSelector></CanvasSelector>
+      <div class="selector-text">Object Tree</div>
       <div class="objects-container">
         <NestedObject :n="objects"  @ov-context-clicked="showContextMenu($event)" 
         />
@@ -170,17 +172,30 @@ function switchCanvas(id, assetBrowserIndex){
   height:min-height;
 }
 
-h3 {
-  font-weight:100; 
-  font-size:1.25rem;
-  color: rgb(156, 156, 156);
-  
-  padding-right:10px;
-  padding-left:10px;
-  text-align: center;
-  width:auto;
-  border-bottom: rgb(109, 109, 109) 3px groove;
+.selector-text{
+    position:relative;
+    font-size:0.8rem;
+    padding: 0 0.5rem;
+    white-space: nowrap;
+    color:rgb(255, 255, 255);
+    text-overflow:ellipsis;
+    z-index:4;
+    font-family: 'Josefin Sans', sans-serif;
+}
 
+h3 {
+  position:relative;
+  font-size:0.8rem;
+  padding: 0 0.5rem;
+  white-space: nowrap;
+  color:rgb(255, 255, 255);
+  text-overflow:ellipsis;
+  z-index:4;
+  font-family: 'Josefin Sans', sans-serif;
+  font-weight: normal;
+  text-align: left;
+  width:auto;
+  border-bottom: none;
 }
 
 ul {
