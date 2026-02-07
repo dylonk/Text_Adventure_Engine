@@ -38,6 +38,14 @@ defineExpose({
 })
 
 const router = useRouter(); // Access the Vue Router for navigation
+
+// Handle Create button click - redirect to login if not logged in
+function handleCreateClick(event) {
+    if (!loggedIn.value) {
+        event.preventDefault();
+        router.push('/auth');
+    }
+}
 </script>
 
 <template>
@@ -61,7 +69,7 @@ const router = useRouter(); // Access the Vue Router for navigation
                     <div class="sword-tip"></div>
                 </div>
             </RouterLink> 
-            <RouterLink class="nav_btn" to="/project" active-class="active" v-if="loggedIn">
+            <RouterLink class="nav_btn" to="/project" active-class="active" @click="handleCreateClick">
                 <span>Create</span>
                 <div class="sword-container">
                     <div class="sword-hilt"></div>
@@ -69,7 +77,7 @@ const router = useRouter(); // Access the Vue Router for navigation
                     <div class="sword-raised-right"></div>
                     <div class="sword-tip"></div>
                 </div>
-            </RouterLink><!-- I think they should be rendered conditionally-->
+            </RouterLink>
             <RouterLink class="nav_btn" to="/about" active-class="active">
                 <span>Download</span>
                 <div class="sword-container">

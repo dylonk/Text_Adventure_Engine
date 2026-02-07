@@ -785,7 +785,7 @@ input[type=search]:focus {
 .game-page{
   flex: 1; 
   height: '100%';
-  background:linear-gradient(0deg,rgb(194, 215, 217) 0%, rgba(135, 99, 227, 0.645) 80%);
+  background:linear-gradient(0deg,rgb(194, 215, 217) 0%, rgba(126, 128, 232, 0.645) 80%);
   position: relative;
   overflow-x: hidden;
   overflow-y: auto;

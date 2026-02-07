@@ -1,11 +1,13 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 
 // Components and assets
 import explorer from '@/assets/Images/defaultgameimage.jpg';
 import splashpond from '@/assets/Images/splashpond.png';
+import homeTopSvg from '@/assets/Images/home-top.svg';
+import editorDisplay from '@/assets/Images/home-editordisplay.gif';
 
 const explorerImage = ref(explorer)
 
@@ -13,6 +15,8 @@ const router = useRouter();
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const games = ref([]);
+const editorDisplaySrc = ref(editorDisplay);
+let gifReloadInterval = null;
 
 const fetchGames = async () => {
   try {
@@ -46,11 +50,25 @@ function goToExplore() {
   router.push('/explore');
 }
 
-onMounted(fetchGames);
+onMounted(() => {
+  fetchGames();
+  // Reload GIF every 5 seconds to ensure it loops (adjust based on GIF duration)
+  // This ensures the animation restarts even if the GIF is set to play once
+  gifReloadInterval = setInterval(() => {
+    editorDisplaySrc.value = editorDisplay + '?t=' + Date.now();
+  }, 5000);
+});
+
+onUnmounted(() => {
+  if (gifReloadInterval) {
+    clearInterval(gifReloadInterval);
+  }
+});
 </script>
 
 <template>
   <div id="home-container">
+    <img class="home-top-svg" :src="homeTopSvg" alt="" />
     <div id="hero">
           <img class="splashpond-image" :src="splashpond" alt="Splash Pond" />
           <div class="window-border">
@@ -62,6 +80,19 @@ onMounted(fetchGames);
             </div>
           </div>
         </div>
+      <div class="editor-display-section">
+        <div class="editor-description">
+          <h2 class="editor-title">Visual Programming Interface</h2>
+          <p class="editor-text">Create interactive text adventures with our intuitive visual programming system. Connect blocks to build complex narratives and game logic.</p>
+        </div>
+        <div class="editor-image-container">
+          <img 
+            class="editor-display-image" 
+            :src="editorDisplaySrc" 
+            alt="Editor Display"
+          />
+        </div>
+      </div>
       <div class="main-grid">
       <!-- Left Grid: Hero Section -->
 
@@ -74,6 +105,7 @@ onMounted(fetchGames);
         </div>
         <div class="games-grid-wrapper">
           <div class="games-grid">
+            <div class="games-grid-spacer"></div>
             <div
               v-for="(game, index) in games.slice(0, 6)"
               :key="game.id"
@@ -103,7 +135,17 @@ onMounted(fetchGames);
   max-width:100dvw;
   overflow-y:scroll;
   overflow-x:clip;
-  background: #b9b9bc;
+  background: #b8bed4;
+}
+
+.home-top-svg {
+  position: absolute;
+  top:-5rem;
+  width: 110vw;
+  height: auto;
+  z-index: 0;
+  pointer-events: none;
+  object-fit: contain;
 }
 /* Main Grid */
 .main-grid {
@@ -112,9 +154,9 @@ onMounted(fetchGames);
   justify-content: center;
   display:flex;
   height:fit-content;
-  gap: 10%;
+  gap: 1rem;
   align-items: stretch;
-  width: 90%;
+  width: 100dvw;
   z-index:2;
   flex-direction: column;
   /* margin: 120px auto 0 auto; */
@@ -147,8 +189,10 @@ onMounted(fetchGames);
   border:rgb(226, 229, 229) 2px outset;
   background:gray;
   width:50dvw;
+  max-width: 900px;
   flex-shrink: 0;
   margin: 3rem 1rem;
+  box-shadow: 4px 4px 12px rgba(36, 29, 29, 0.41) ;
 }
 .window-content{
   height:100%;
@@ -167,7 +211,7 @@ onMounted(fetchGames);
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
+  justify-content: space-evenly;
   gap: 2rem;
   flex-wrap: wrap;
 }
@@ -191,17 +235,86 @@ onMounted(fetchGames);
   flex-shrink: 0;
 }
 
+.editor-display-section {
+  text-align: center;
+  position: relative;
+  height: fit-content;
+  z-index: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin: 3rem 1rem;
+  padding: 0 1rem;
+}
+
+.editor-description {
+  flex: 1;
+  min-width: 300px;
+  max-width: 500px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.editor-title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #000000;
+  margin-bottom: 1rem;
+}
+
+.editor-text {
+  font-size: 1.2rem;
+  color: #000000;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.editor-image-container {
+  flex: 1;
+  min-width: 300px;
+  max-width: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.editor-display-image {
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  border-radius: 8px;
+  box-shadow: 4px 4px 12px rgba(36, 29, 29, 0.41);
+  image-rendering: auto;
+}
+
 @media (max-width: 768px) {
   #hero {
     flex-direction: column;
   }
   .splashpond-image {
-    transform: scale(1);
+    transform: scale(0.5) translateY(50%);
     margin: 2rem 0;
   }
   .window-border {
     margin: 2rem 0;
     width: 90dvw;
+  }
+  .editor-display-section {
+    flex-direction: column;
+    margin: 2rem 1rem;
+  }
+  .editor-description {
+    text-align: center;
+    max-width: 100%;
+  }
+  .editor-title {
+    text-align: center;
   }
 }
 
@@ -209,9 +322,6 @@ onMounted(fetchGames);
 /* Right Grid: Popular Games Section */
 .popular-games-container {
   width: 100vw;
-  margin-left: calc(-50vw + 50%);
-  padding: 1rem;
-  padding-left: calc(50vw - 50% + 2rem);
   position: relative;
   overflow:visible;
   box-sizing: border-box;
@@ -221,7 +331,6 @@ onMounted(fetchGames);
   content: '';
   position: absolute;
   top: 0;
-  left: calc(-50vw + 50%);
   width: 100vw;
   height: 100%;
   z-index: 0;
@@ -230,14 +339,19 @@ onMounted(fetchGames);
 
 .section-header {
   display: flex;
-  align-items: baseline;
+  align-items:center;
   gap: 15px;
   margin-bottom: 1rem;
+  margin-left:60px;
+  width:fit-content;
+  padding:0.5rem 1rem;
+  border-radius: 16px;
+  background:#dfecf0;
 }
 
 .section-title {
   text-align: left;
-  font-size: 2rem;
+  font-size: 1.75rem;
   font-weight:600;
   margin: 0;
   color: #000000;
@@ -259,8 +373,7 @@ onMounted(fetchGames);
 
 .games-grid-wrapper {
   position: relative;
-  width: 100vw;
-  margin-left: calc(-50vw + 50% - 2rem);
+  width: 100%;
   overflow-x: visible;
 }
 
@@ -270,19 +383,19 @@ onMounted(fetchGames);
   position: absolute;
   top: 0;
   bottom: 0;
-  width: 150px;
+  width: 5dvw;
   z-index: 10;
   pointer-events: none;
 }
 
 .games-grid-wrapper::before {
   left: 0;
-  background: linear-gradient(to right, #b9b9bc, transparent);
+  background: linear-gradient(to right, #b8bed4, transparent);
 }
 
 .games-grid-wrapper::after {
   right: 0;
-  background: linear-gradient(to left, #b9b9bc, transparent);
+  background: linear-gradient(to left, #b8bed4, transparent);
 }
 
 .games-grid {
@@ -293,30 +406,55 @@ onMounted(fetchGames);
   overflow-x: auto;
   overflow-y: hidden;
   padding-bottom: 10px;
-  padding-left: calc(50vw - 50% + 2rem);
-  padding-right: calc(50vw - 50% + 2rem);
-  scrollbar-width: thin;
+  height:fit-content;
+  padding:10px;
+  scrollbar-width: none; /* Hide scrollbar by default */
   -webkit-overflow-scrolling: touch;
   box-sizing: border-box;
 }
 
+/* Hide scrollbar by default */
 .games-grid::-webkit-scrollbar {
-  height: 8px;
+  height: 0px;
+  background: transparent;
 }
 
 .games-grid::-webkit-scrollbar-track {
-  background: #dbdbdb;
+  background: transparent;
 }
 
 .games-grid::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+
+/* Show scrollbar on hover */
+.games-grid-wrapper:hover .games-grid {
+  scrollbar-width: thin;
+}
+
+.games-grid-wrapper:hover .games-grid::-webkit-scrollbar {
+  height: 8px;
+}
+
+.games-grid-wrapper:hover .games-grid::-webkit-scrollbar-track {
+  background: #dbdbdb;
+}
+
+.games-grid-wrapper:hover .games-grid::-webkit-scrollbar-thumb {
   background: #888;
   border-radius: 4px;
 }
 
-.games-grid::-webkit-scrollbar-thumb:hover {
+.games-grid-wrapper:hover .games-grid::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
 
+.games-grid-spacer {
+  width: calc(2.5dvw-1rem);
+  min-width: 50px;
+  flex-shrink: 0;
+  height: 1px;
+}
 
 .game {
     display: flex;

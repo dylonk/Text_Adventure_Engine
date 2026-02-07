@@ -400,11 +400,20 @@ function loadProject(id) {
     margin-left: clamp(0.5rem, 2vw, 1rem);
     margin-right: clamp(0.5rem, 2vw, 1rem);
     gap: clamp(0.5rem, 2vw, 1rem);
+    height: 100%;
   }
   
   .sidebar {
     width: 100%;
     min-width: 100%;
+    height: fit-content;
+    flex-shrink: 0;
+  }
+  
+
+  
+  .action-buttons-container {
+    margin-top: 0;
   }
   
   .projects-panel {
@@ -412,6 +421,10 @@ function loadProject(id) {
     margin:0;
     border-radius:0;
     box-shadow: none;
+    flex: 1;
+    min-height: 0;
+    height: auto;
+    max-height: none;
   }
   .projects-list {
     overflow-y:scroll;

@@ -56,6 +56,10 @@
             "folderPath": "vue",
             "color": "foldercolorizer.color_33cc99",
             "isForExtension": true
+        },
+        {
+            "folderPath": "Text_Adventure_Engine\\frontend\\src\\assets\\Images\\",
+            "color": "foldercolorizer.color_cc0000"
         }
     ]
 }

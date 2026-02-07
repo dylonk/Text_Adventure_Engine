@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, inject } from 'vue';
+import { ref, onMounted, onUnmounted, inject } from 'vue';
 import Toastify from 'toastify-js';
 import 'toastify-js/src/toastify.css';
 import wizardPfp from '@/assets/Images/wizardpfp.png';
@@ -26,6 +26,7 @@ const myGames = ref([]);
 const userID=ref('');
 const router = useRouter();
 const activeTab = ref('user'); // Track which tab is active: 'user', 'games', 'settings'
+const openMenuId = ref(null); // Track which game's menu is open
 
 
 async function fetchMyGames() {
@@ -69,6 +70,20 @@ async function deleteGame(gameId) {
 async function openGame(title) {
     router.push('/game/' + title);//takes you to the player screen
 };
+
+// Toggle menu for a specific game
+function toggleMenu(gameId) {
+    if (openMenuId.value === gameId) {
+        openMenuId.value = null;
+    } else {
+        openMenuId.value = gameId;
+    }
+}
+
+// Close menu when clicking outside
+function closeMenu() {
+    openMenuId.value = null;
+}
 
 
 // Function to change the password
@@ -210,6 +225,13 @@ onMounted(async() => {
             router.push('/auth');
         }
         isMounted.value = true;
+        // Close menu when clicking outside
+        document.addEventListener('click', closeMenu);
+});
+
+onUnmounted(() => {
+    // Clean up event listener
+    document.removeEventListener('click', closeMenu);
 });
 </script>
 <template>
@@ -293,7 +315,6 @@ onMounted(async() => {
                 <div class="profile-header">
                     <h1>My Published Games</h1>
                 </div>
-                <hr style="border-color:black;">
                 <div class="user-games" v-if="isLoggedIn">
                     <div class="games-grid">
                         <div 
@@ -301,13 +322,22 @@ onMounted(async() => {
                             :key="game.id" 
                             class="game-box"
                         >
-                            <div class="game-title">{{ game.title }}</div>
+                            <div class="game-title-container">
+                                <div class="game-title">{{ game.title }}</div>
+                                <div class="game-menu-wrapper">
+                                    <button class="game-menu-button" @click.stop="toggleMenu(game.id)">
+                                        <span class="menu-dot"></span>
+                                        <span class="menu-dot"></span>
+                                        <span class="menu-dot"></span>
+                                    </button>
+                                    <div v-if="openMenuId === game.id" class="game-menu-dropdown" @click.stop>
+                                        <button class="menu-item" @click="openGame(game.title); closeMenu()">Play</button>
+                                        <button class="menu-item delete" @click="deleteGame(game.id); closeMenu()">Delete</button>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="game-image-container">
                                 <img :src="game.thumbnail" alt="Game image" class="game-image" />
-                            </div>
-                            <div class="game-actions">
-                                <button class="action-button" @click="openGame(game.title)">Play</button>
-                                <button class="action-button delete" @click="deleteGame(game.id)">Delete</button>
                             </div>
                         </div>
                     </div>
@@ -686,21 +716,24 @@ h3{
   width:100%;
   display: grid;
   flex: 1;
-  grid-template-columns: repeat(auto-fill, 20rem );
+  grid-template-columns: repeat(auto-fill, 15rem );
   grid-auto-rows: auto;
-  grid-gap: 2rem;
+  grid-gap: 1rem;
   justify-content: start;
   position: relative;
   box-sizing: border-box;
   z-index: 10; /* Ensure games appear above clouds */
   overflow-y: visible;
   min-height: fit-content;
+  background:rgba(0, 0, 0, 0.223);
+  border-radius: 16px;
+  padding:1rem;
 }
 
 .game-box {
   background: #ffffff;
-  width:20rem;
-  height:23rem;
+  width:15rem;
+  height:17.5rem;
   border-radius: 0.25rem;
   padding: 12px;
   text-align: center;
@@ -714,17 +747,100 @@ h3{
   box-shadow: 2px 2px 5px rgba(36, 29, 29, 0.426),-2px -2px 5px rgba(36, 29, 29, 0.426);
 }
 
+.game-title-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  position: relative;
+  flex-shrink: 0;
+}
+
 .game-title {
   font-size: 1rem;
   font-weight:600;
   text-align: left;
-  margin-bottom: 10px;
   line-height: 1.3rem;
-  padding: 1/4rem;
+  padding: 0;
   background: #ffffff;
   color: #000000;
-  flex-shrink: 0;
+  flex: 1;
   min-height: fit-content;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-right: 8px;
+}
+
+.game-menu-wrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.game-menu-button {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background 0.2s;
+  align-items: center;
+  justify-content: center;
+}
+
+.game-menu-button:hover {
+  background: #dbdbdb;
+}
+
+.menu-dot {
+  width: 3px;
+  height: 3px;
+  background: #000000;
+  border-radius: 50%;
+  display: block;
+}
+
+.game-menu-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: #ffffff;
+  border: 1px solid #dbdbdb;
+  border-radius: 4px;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  min-width: 100px;
+  margin-top: 4px;
+  overflow: hidden;
+}
+
+.menu-item {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  text-align: left;
+  background: #ffffff;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #000000;
+  transition: background 0.2s;
+}
+
+.menu-item:hover {
+  background: #dbdbdb;
+}
+
+.menu-item.delete {
+  color: #d4292e;
+}
+
+.menu-item.delete:hover {
+  background: #d4292e;
+  color: #ffffff;
 }
 
 .game-image-container {
@@ -745,42 +861,6 @@ h3{
   border-radius:0.5rem;
 }
 
-.game-actions {
-  margin-top: 10px;
-  display: flex;
-  justify-content: space-around;
-  flex-shrink: 0;
-}
-
-.action-button {
-  font-size: 1rem;
-  padding: 0.5rem 1rem;
-  border: none;
-  background: #ffffff;
-  color: rgb(0, 0, 0);
-  border-radius: 2px;
-  cursor: pointer;
-  transition:  box-shadow 0.2s, background 0.2s;
-}
-.delete {
-  font-size: 1rem;
-  padding: 5px 10px;
-  border: none;
-  background:white;
-  color:#d4292e;
-
-  border-radius: 4px;
-  cursor: pointer;
-  transition: box-shadow 0.2s, background 0.2s;
-}
-
-.action-button:hover {
-  background:#dbdbdb;
-}
-.delete:hover   {
-    background: #d4292e;
-    color: rgb(255, 255, 255);
-}
 
 .logout-btn {
     background-color: #d4292e !important;
