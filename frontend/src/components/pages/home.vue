@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, onUnmounted, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 
@@ -7,7 +7,7 @@ import axios from 'axios';
 import explorer from '@/assets/Images/defaultgameimage.jpg';
 import splashpond from '@/assets/Images/splashpond.png';
 import homeTopSvg from '@/assets/Images/home-top.svg';
-import editorDisplay from '@/assets/Images/home-editordisplay.gif';
+import editorDisplay from '@/assets/Images/home-editordemo.mp4';
 
 const explorerImage = ref(explorer)
 
@@ -15,8 +15,6 @@ const router = useRouter();
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const games = ref([]);
-const editorDisplaySrc = ref(editorDisplay);
-let gifReloadInterval = null;
 
 const fetchGames = async () => {
   try {
@@ -50,20 +48,7 @@ function goToExplore() {
   router.push('/explore');
 }
 
-onMounted(() => {
-  fetchGames();
-  // Reload GIF every 5 seconds to ensure it loops (adjust based on GIF duration)
-  // This ensures the animation restarts even if the GIF is set to play once
-  gifReloadInterval = setInterval(() => {
-    editorDisplaySrc.value = editorDisplay + '?t=' + Date.now();
-  }, 5000);
-});
-
-onUnmounted(() => {
-  if (gifReloadInterval) {
-    clearInterval(gifReloadInterval);
-  }
-});
+onMounted(fetchGames);
 </script>
 
 <template>
@@ -86,11 +71,14 @@ onUnmounted(() => {
           <p class="editor-text">Create interactive text adventures with our intuitive visual programming system. Connect blocks to build complex narratives and game logic.</p>
         </div>
         <div class="editor-image-container">
-          <img 
+          <video 
             class="editor-display-image" 
-            :src="editorDisplaySrc" 
-            alt="Editor Display"
-          />
+            :src="editorDisplay" 
+            autoplay
+            loop
+            muted
+            playsinline
+          ></video>
         </div>
       </div>
       <div class="main-grid">
