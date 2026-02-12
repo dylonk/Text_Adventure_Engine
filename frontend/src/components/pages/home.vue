@@ -163,6 +163,9 @@ onMounted(fetchGames);
   font-family: 'RetroQuill', sans-serif;
   font-size:12px;
 }
+.window-top:first-child{
+  margin-right: 2px;
+}
 
 .window-button{
   height:12px;
