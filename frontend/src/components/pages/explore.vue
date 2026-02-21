@@ -15,7 +15,6 @@ import cloud5 from '@/assets/Images/clouds/cloud5LQ.png'
 import cloud6 from '@/assets/Images/clouds/cloud6LQ.png'
 import searchIcon from '@/assets/Images/editor/searchicon.png'
 import playButtonIcon from '@/assets/Images/playbutton.png'
-import castleImage from '@/assets/Images/castle.png'
 
 import game from './game.vue';
 import { useRouter } from 'vue-router';
@@ -597,7 +596,7 @@ onUnmounted(() => {
           }"
           @animationend="handleCloudAnimationEnd(cloud.id)"
         ></div>
-      </div>
+      </div> 
       <div v-if="recentGames.length>0" class="games-section" >
             <div class="game" v-for="game in paginatedGames" :key="game.id" @click="expandGame(game)"> 
               <VContainer spacing="0px" style="width:min-content; max-width: 100%;">
@@ -655,11 +654,6 @@ onUnmounted(() => {
             </button>
           </div>
         </div>
-      <div class="castle-wrapper">
-        <div class="castle-container">
-          <img :src="castleImage" alt="Castle" class="castle-image" />
-        </div>
-      </div>
     </div>
 
     <!-- Expanded Game Overlay -->
@@ -869,45 +863,6 @@ input[type=search]:focus {
 .cloud-front {
   z-index: 3;
   filter: hue-rotate(20deg)
-}
-
-.castle-wrapper {
-  position: relative;
-  width: 100%;
-  margin-top: auto;
-  min-height: 0;
-  pointer-events: none;
-}
-
-.castle-container {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  z-index: 9; /* Above clouds (max z-index 3) and pagination-portrait, but below game cards (z-index 10) */
-  pointer-events: none;
-}
-
-.castle-image {
-  width: auto;
-  height: auto;
-  max-width: 300px;
-  max-height: 300px;
-  object-fit: contain;
-  display: block;
-  transform: scale(1.5);
-  transform-origin: bottom left;
-  image-rendering: pixelated;
-  image-rendering: -moz-crisp-edges;
-  image-rendering: crisp-edges;
-}
-
-@media (max-width: 768px) {
-  .castle-image {
-    max-width: 200px;
-    max-height: 200px;
-    transform: scale(1.5);
-    transform-origin: bottom left;
-  }
 }
 
 
@@ -1335,12 +1290,6 @@ input[type=search]:focus {
   .pagination-landscape {
     display: none !important;
   }
-  .pagination-container.pagination-portrait {
-    z-index: 11; /* Above castle in portrait mode */
-  }
-  .castle-container {
-    z-index: 5; /* Below pagination in portrait mode */
-  }
 }
 
 /* Hide portrait pagination in landscape mode */
@@ -1357,12 +1306,6 @@ input[type=search]:focus {
   }
   .pagination-portrait {
     display: flex !important;
-  }
-  .pagination-container.pagination-portrait {
-    z-index: 11; /* Above castle in mobile mode */
-  }
-  .castle-container {
-    z-index: 5; /* Below pagination in mobile mode */
   }
 }
 
