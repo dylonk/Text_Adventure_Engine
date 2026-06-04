@@ -20,7 +20,6 @@ const initialized = ref(false)
 const isOnline = ref(false)
 const allowUserInput = ref(false) // ensures that user input is only accepted during specific times (i.e path hits a prompt node) and not mid logic or something
 let debug = 5 // 0 is what the user should be able to see, 1 is light dev debugging, 2 is heavy debugging, 3 includes getnode and very spammy ones
-
 // Actual game stuff starts here
 let nodeMap = new Map() // map of nodes stored by ID not name!!
 let originalNodeMap = null // write only, is an OBJECT
@@ -35,6 +34,10 @@ let canvasesInScope = {}
 let activeNode = 1 // the node of which the path is currently on
 let prevPlayerPositions = [] // For SETLOCATION. Different from prevActiveNodes. So it knows where to return the player if a return node is called
 let prevActiveNodes = [] // For AWAIT. Logic may not necessarily be occurring in the same room as the player is in. Example: Check time is called on player's watch. You don't want to move player position to the watch, but you do want the watch logic to run. Once RETURNLOGIC is called, the original position the logic was in is returned to
+
+
+let errorcode = 0
+
 
 function serializableToMap(obj) {
   if(obj == null){
@@ -338,7 +341,7 @@ const extractVariableReferences = (inputText) => {
 
 
 //this is used for variables in output, as well as conditionals. It takes something like room1.cleanliness and finds the value.
-//something like room1.location will be a little different becuse it's not an acutal data property. Thats what the if statements are for
+//something like room1.location will be a little different becuse it's not an actutal data property. Thats what the if statements are for
 const getValueFromNode = (reference) => { 
 
   const parts = reference.split('.');
@@ -638,12 +641,8 @@ const nodeSwapLocation = (targetNode, destinationNode,useDestinationParent=false
   syncScope()
 
   if(useDestinationParent==false){ // assumes starting node is beginning bleh
-    console.log("THIS IS WHAT IS TRIGGERING")
     if(goToRoomBeginning){    
       nextNode = getNode(getChildrenOfType("playerenter",getNode(player.parentID))) // gets the first playerEnter node in the room
-      if(nextNode==null){
-        nextNode = getNode(1) // goes back to start node
-      }
     }
   }
   console.log("[GAME] Watch choices are", watchChoices)
@@ -724,8 +723,13 @@ const func = (iNode) => { // function node functions
 
 
       if(target.type=='player') {
+        if(!getChildrenOfType("playerenter",destination)){
+          console.log("[GAME] setlocation destination has no playerenter", destination);
+          errorcode = "your setlocation node goes to " + destination.name + " which has no playerenter node";
+        }
         const nextNodeId =  nextNodeFromHandle(0,iNode.id)
         if(nextNodeId == null){
+          if(debug>=1) console.log("[GAME] setlocation nextNodeId null")
           prevPlayerPositions.push(1) // FIXME, just goes back to start node if there is nothing afterwards.
         }
         else{

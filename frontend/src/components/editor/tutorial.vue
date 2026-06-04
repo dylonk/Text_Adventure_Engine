@@ -38,6 +38,7 @@ const tutorialTexts = [
     "Press the '+' button in the top right of the door node to add a property. Name it 'isOpen' and put the value as 'false'.",
     "Now navigate to the door's canvas and drag in an await node that waits for 'open door'. Then add an if statement that checks whether the player both has the key and the door is closed: door.isOpen==false&&key.location==player.",
     "now drag in a 'set property' node and hook it up to the top of the if statement. Set the target to the door, and the property to 'isOpen' and the new value to 'true'. Now when the player types 'open door', the door will open if they have the key. It's probably a good idea to also insert a console output node describing what happens in situtions like these, so the player knows they've done something!",
+    "Now this all works great if the player has the key in their inventory. But what if they don't? Or what if the door is already open? You might have noticed the little "+" and "-" buttons within the if node. Press the "+" button to add an alternative contingency, if the first one isn't fulfilled. For the first elseif, type door.isOpen==true. You'll notice each else statement has its own output handle, so you can hook up a console log to this statement letting the player know just why they can't open the door."
 
 
 ]
