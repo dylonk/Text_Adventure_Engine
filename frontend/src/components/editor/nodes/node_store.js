@@ -37,9 +37,13 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
     return globalNodes;
   };
 
-  function setGlobalNodes(newNodes)
-  {
-    globalNodes=newNodes;
+  const setGlobalNodes = (newNodes) => {
+    // Normalize all keys to numbers on load
+    const normalized = new Map();
+    for (const [key, value] of newNodes.entries()) {
+      normalized.set(Number(key), value);
+    }
+    globalNodes = normalized;
   }
 
 
@@ -90,7 +94,7 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
 
   // Add a node to the store. manually set parent id when you want the node placed somewhere other than the current canvas
   const addNode = (node,parentID=null) => {
-    console.log("[EDITOR]🦠➕ addNode: Before adding:", nodes);
+    console.log("[EDITOR]🦠➕ addNode: Before adding:", globalNodes);
     const nodeExists = nodes.value.find((n) => n.id === node.id);
     console.log("[EDITOR]🦠➕ addNode: Adding node:", {
       id: node.id,
@@ -105,24 +109,59 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
       return;
     }
     node.data.tbStyle= true,
-
     node.data.srcHandles = 0 //source handles
     node.data.tgtHandles = 0 //target handles
     node.data.inputEdges = {}
     node.data.outputEdges = {}
-    if(parentID!=null){ // if the node is being added automatically, give it the correct parent id and depth
-      node.data.nodeDepth = 8;
+    if(parentID!=null && parentID != canvasID.value ){ // if the node is being added automatically and it doesn't go on the current canvas, init parentid and depth properly
+      node.data.nodeDepth = getNode(parentID, true).data.nodeDepth + 1;
       node.data.parentID = parentID;
-      if(debug>=1) console.log("[EDITOR]🦠➕ parentID should be", node.data.parentID, "node depth should be", node.data.nodeDepth);
-
+      if(debug>=1) console.log("[EDITOR]🦠➕ parentID  should be", node.data.parentID, "node depth should be", node.data.nodeDepth);
+          //adds the default names
+    if (
+      node.type == "room" ||
+      node.type == "item" ||
+      node.type == "pathway" ||
+      node.type == "npc" ||
+      node.type == "custom"
+    ){
+      incrementCount(node.type);
+      console.log("[EDITOR]🦠➕ object name should be", node.type + object_count[node.type]);
+      node.data.object_name = node.type + object_count[node.type];
+      node.data.isObject = true;
+      console.log("[EDITOR]🦠➕ After adding:", nodes);
     }
-    else{
+    else if(node.type == "player"){
+      node.data.object_name = "player"
+      nodes.value.push(node);
+      console.log("[EDITOR]🦠➕ After adding:", nodes);
+    } 
+    else {  // function node going into non-active canvas
+      const targetCanvas = globalNodes.get(parentID);
+      if (targetCanvas) {
+        targetCanvas.n.push(node);
+        globalNodes.set(parentID, targetCanvas);  // may be redundant since it's a ref, but explicit
+      } else {
+        // canvas doesn't exist yet for this parent, initialize it
+        globalNodes.set(parentID, { n: [node], e: [] });
+      }
+      idCounter.value++;
+      globalSync();
+      console.log("globalNodes after inventoryMessage add:", 
+  [...globalNodes.entries()].map(([k,v]) => ({id:k, nodes:v.n.map(n=>n.id)}))
+)
+    }
+    idCounter.value++;
+    //if the node is an item, we're going to also add a default inventory message node.
+
+      
+    }
+    else{ //otherwise do the defaults
       node.data.parentID = canvasID.value;
       node.data.nodeDepth = 1;
-      if(canvasID.value != 0){
+      if(canvasID.value != 0){  //if it's not in global, calculate depth
         node.data.nodeDepth = getNode(canvasID.value, true).data.nodeDepth + 1
       }
-    }
 
 
     //adds the default names
@@ -151,8 +190,8 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
     }
     idCounter.value++;
     //if the node is an item, we're going to also add a default inventory message node.
-
-    /*
+  }
+    
     if(node.type == "item"){
       if(debug>=0) console.log("[EDITOR]🦠➕ Adding default inventory message");
           const inventoryMessageNode = {
@@ -160,8 +199,8 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
             position: {x:0,y:0},
             id:idCounter.value,    //increments id based on idcounter in node store
             data: {
-              bg_color:computed(()=>node_colors[inventoryMessageNode.type+'_bg'] || 'red'),
-              fg_color:computed(()=>node_colors[inventoryMessageNode.type+'_fg'] || 'blue'),
+              bg_color: node_colors['inventoryMessage_bg'] || 'red',  // ← resolve immediately
+              fg_color: node_colors['inventoryMessage_fg'] || 'blue', // ← resolve immediately
               nodeDepth: getNode(node.id, true).data.nodeDepth + 1
             },
             expandParent: true,
@@ -169,13 +208,13 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
           }
       //inventoryMessageNode.data.function_params[0]=  "You have a " + node.data.object_name;  //default inventory message
       addNode(inventoryMessageNode,node.id);
-      globalSync(true);
     };
-      */
+      
   };
 
 
 const swapCanvas = (newid) =>{
+  newid = Number(newid);  //make sure it's a number. sometimes it comes in as a string for some reason.
   globalSync(true);
   console.log("[EDITOR]🖼️↔️ swapCanvas(",newid,")")
 
@@ -192,7 +231,7 @@ const swapCanvas = (newid) =>{
   }
 
   canvasID.value = newid;
-  
+  localSync();
 };
 
 const renameNode = (id) => {
@@ -783,7 +822,7 @@ const getParam=(id,paramName)=>{
     console.log("[EDITOR]🦠🫴 initNodes()");
     nodes.value = [];
     edges.value = [];
-    setGlobalNodes(new Map());  //I added of this line of code because the player and it's children were being preserved on init of new project.
+    setGlobalNodes(new Map());  //I added of this line of code because the player and its children were being preserved on init of new project.
     object_count.total = 0;
     object_count.room = 0;
     object_count.item = 0;
