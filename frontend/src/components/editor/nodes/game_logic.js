@@ -465,12 +465,13 @@ const archiveOutput = () =>{
 }
 // CHOICES NEED TO BE INTERPRETED AT CALL TIME, SOME SITUATIONS MAY NOT ALLOW FOR PRECOMPUTATION, SUCH AS IF A CHOICE HAS AN ALIAS THAT CHANGES BETWEEN THE TIMES OF THE ROOM CALCULATION AND THE PLAYER INTERACTING
 
-const addChoice = (choiceText, originNodeID, originHandleID, isAwait=false) =>{
+const addChoice = (choiceText, originNodeID, originHandleID, isAwait=false, aliased=false) =>{
   if(debug>=3) console.log("[GAME] addChoice(text=",choiceText,"originID=",originNodeID,"handleID=",originHandleID)
   const choice = {
     text: choiceText,
     nodeID: originNodeID,
     handleID: originHandleID,
+    aliased: aliased
   }
   if(!isAwait){
     choices.push(choice)
@@ -482,24 +483,64 @@ const addChoice = (choiceText, originNodeID, originHandleID, isAwait=false) =>{
   return choice
 }
 
+function expandAliases(text, canonicalWord, aliases) {
+  const results = [text];
+
+  const regex = new RegExp(
+    `\\b${escapeRegExp(canonicalWord)}\\b`,
+    "gi"
+  );
+
+  for (const alias of aliases) {
+    results.push(text.replace(regex, alias));
+  }
+
+  if(debug>=3) console.log("[GAME] Aliases expanded for", text, "to", results)
+  return results;
+}
+
+function escapeRegExp(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+//calculateAwaits takes a node and returns all await choices that are in scope. 
 function calculateAwaits(node){
   if(node==null) return []
-  //if(node.hasOwnProperty('awaitChoices')) return node.awaitChoices;  // awaitChoices have already been calculated, just returning the precalculated choices
   if(!node.hasOwnProperty('isObject') || !node.isObject) return [];
+  let aliases = node.properties["aliases"];
+
+  if (!aliases) {
+    aliases = "";
+  }
+  const aliasList = aliases
+  .split(",")
+  .map(x => x.trim())
+  .filter(Boolean);
+
+
+  let name = node.objectName;
   let nodeAwaitChoices = [] 
   const nodeChildren = node.n
   for(let i = 0; i < nodeChildren.length; i++){
     let child = getNode(nodeChildren[i])
     if(child==null) continue;
-    if(child.type == 'await'){
-      const choiceText = getParameter(child,0,false) // gets the first param
-      const nodeID = child.id
+    if (child.type === "await") {
+      const choiceText = getParameter(child, 0, false);
+      const nodeID = child.id;
       const handleID = 0;
-      nodeAwaitChoices.push(addChoice(choiceText,nodeID,handleID,true))
+      const texts = expandAliases(choiceText, name, aliasList);
+
+      for (const text of texts) {
+        nodeAwaitChoices.push(
+          addChoice(text, nodeID, handleID, true, true)
+        );
+        if(debug>=3) console.log("[GAME] addChoice(text=",text,"originID=",nodeID,"handleID=",handleID)
+      }
     }
   }
   return nodeAwaitChoices
 }
+
 
 const getChildrenOfType = (typeToRetrieve, parent, onlyRetrieveFirstInstance=true) => { // returns node id (or ids) of matching children. For use in nodes like PlayerEnter
   if(debug>=1) console.log("[GAME] getChildrenOfType", typeToRetrieve, "on parent",parent.objectName)
