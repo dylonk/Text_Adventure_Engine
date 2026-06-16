@@ -26,7 +26,7 @@ let originalNodeMap = null // write only, is an OBJECT
 let imageMap = {} // should NOT be edited during the game, its just for synchronizing the images to their respective links {key is name, value is link}
 const output = ref("This should not appear, output is not being set")
 const outputQueue = ref([])
-let choices = []
+let choices = []  //a choice is essentially anything a user can type to make things go forward. this includes awaits and prompts(when the prompt is active)
 let watchChoices = [] // calculated when rooms are entered for the first time (These values would never change in the same room, so we get to save some performance there)
 const currentImagePath = ref(null)
 const canvasID = ref(0)
@@ -475,6 +475,7 @@ const addChoice = (choiceText, originNodeID, originHandleID, isAwait=false) =>{
   if(!isAwait){
     choices.push(choice)
   } 
+  //if we're talking about an await node, we add it to watchchoices, because it's active as long as we're in the room'
   else{
     watchChoices.push(choice)
   }
@@ -991,7 +992,9 @@ const userResponse=(text)=>{ // Compares user text to possible choices
   console.log("[GAME] userResponse was", text)
   archiveOutput();
 
-  if(text == "commands") {
+  //"commands" is essentially a console log statement, one availible to the player. It prints out every possible thing one could do in the room
+  //it's designed for when a player is stuck. In a well designed game with good aliasing, this won't be used often.
+  if(text == "commands") {  
     let currChoices = "Available Commands: ";
     for(let i = 0; i < choices.length; i++){
       currChoices += interpretGameText(choices[i].text);

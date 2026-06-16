@@ -11,7 +11,7 @@ import { add, forEach } from 'lodash';
 
 export const useNodesStore = defineStore('nodes', () => {//nodes store will no longer seperate nodes by type
 
-  const debug = 1;
+  const debug = 0;
   const canvasID = ref(0);
   const nodes = ref([
   ]);
@@ -81,9 +81,9 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
   }
   const localSync = () => { //gets nodes as they are within the global map
 
-    console.log("[EDITOR]   🏠🔄 localSync()")
+    if(debug >= 1)console.log("[EDITOR]   🏠🔄 localSync()")
     const canvas = globalNodes.get(canvasID.value);
-    console.log("[EDITOR]   🏠🔄 localSync current canvas node =", canvas)
+    if(debug >= 1)console.log("[EDITOR]   🏠🔄 localSync current canvas node =", canvas)
     if(canvas == null || canvas.hasOwnProperty('n') == null){
       console.warn("   🏠🔄 localSync failed, null canvasID or property")
       return;
@@ -94,9 +94,9 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
 
   // Add a node to the store. manually set parent id when you want the node placed somewhere other than the current canvas
   const addNode = (node,parentID=null) => {
-    console.log("[EDITOR]🦠➕ addNode: Before adding:", globalNodes);
+    if(debug >= 1)console.log("[EDITOR]🦠➕ addNode: Before adding:", globalNodes);
     const nodeExists = nodes.value.find((n) => n.id === node.id);
-    console.log("[EDITOR]🦠➕ addNode: Adding node:", {
+    if(debug >= 1)console.log("[EDITOR]🦠➕ addNode: Adding node:", {
       id: node.id,
       type: node.type,
       idType: typeof node.id,
@@ -126,15 +126,15 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
       node.type == "custom"
     ){
       incrementCount(node.type);
-      console.log("[EDITOR]🦠➕ object name should be", node.type + object_count[node.type]);
+      if(debug >= 1)console.log("[EDITOR]🦠➕ object name should be", node.type + object_count[node.type]);
       node.data.object_name = node.type + object_count[node.type];
       node.data.isObject = true;
-      console.log("[EDITOR]🦠➕ After adding:", nodes);
+      if(debug >= 1)console.log("[EDITOR]🦠➕ After adding:", nodes);
     }
     else if(node.type == "player"){
       node.data.object_name = "player"
       nodes.value.push(node);
-      console.log("[EDITOR]🦠➕ After adding:", nodes);
+      if(debug >= 1)console.log("[EDITOR]🦠➕ After adding:", nodes);
     } 
     else {  // function node going into non-active canvas
       const targetCanvas = globalNodes.get(parentID);
@@ -147,7 +147,7 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
       }
       idCounter.value++;
       globalSync();
-      console.log("globalNodes after inventoryMessage add:", 
+      if(debug >= 1)console.log("globalNodes after inventoryMessage add:", 
   [...globalNodes.entries()].map(([k,v]) => ({id:k, nodes:v.n.map(n=>n.id)}))
 )
     }
@@ -173,27 +173,27 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
       node.type == "custom"
     ){
       incrementCount(node.type);
-      console.log("[EDITOR]🦠➕ object name should be", node.type + object_count[node.type]);
+      if(debug >= 1)console.log("[EDITOR]🦠➕ object name should be", node.type + object_count[node.type]);
       node.data.object_name = node.type + object_count[node.type];
       node.data.isObject = true;
       nodes.value.push(node);
-      console.log("[EDITOR]🦠➕ After adding:", nodes);
+      if(debug >= 1)console.log("[EDITOR]🦠➕ After adding:", nodes);
     }
     else if(node.type == "player"){
       node.data.object_name = "player"
       nodes.value.push(node);
-      console.log("[EDITOR]🦠➕ After adding:", nodes);
+      if(debug >= 1)console.log("[EDITOR]🦠➕ After adding:", nodes);
     } 
     else {  //if the node is a function
       nodes.value.push(node);
-      console.log("[EDITOR]🦠➕ function added with id", node.id);
+      if(debug >= 1)console.log("[EDITOR]🦠➕ function added with id", node.id);
     }
     idCounter.value++;
     //if the node is an item, we're going to also add a default inventory message node.
   }
     
     if(node.type == "item"){
-      if(debug>=0) console.log("[EDITOR]🦠➕ Adding default inventory message");
+      if(debug>=1) console.log("[EDITOR]🦠➕ Adding default inventory message");
           const inventoryMessageNode = {
             type: "inventoryMessage",
             position: {x:0,y:0},
@@ -213,18 +213,16 @@ export const useNodesStore = defineStore('nodes', () => {//nodes store will no l
   };
 
 
-const swapCanvas = (newid) =>{
-  newid = Number(newid);  //make sure it's a number. sometimes it comes in as a string for some reason.
+const swapCanvas = (newid) => {
   globalSync(true);
-  console.log("[EDITOR]🖼️↔️ swapCanvas(",newid,")")
+  newid = Number(newid);
 
+  const canvas = globalNodes.get(newid);
   nodes.value = [];
   edges.value = [];
 
-  const canvas = structuredClone(parse(stringify(toRaw(globalNodes.get(newid)))));
-
   if (canvas != null) {
-    nodes.value = parse(stringify(canvas.n)); 
+    nodes.value = parse(stringify(canvas.n));
     edges.value = parse(stringify(canvas.e));
   } else {
     console.warn(`🖼️↔️ swapCanvas: No node found for canvas ${newid}`);
@@ -232,10 +230,10 @@ const swapCanvas = (newid) =>{
 
   canvasID.value = newid;
   localSync();
-};
+}
 
 const renameNode = (id) => {
-    console.log("[EDITOR]🦠🔤 renameNode(id=",id,")")
+    if(debug >= 1)console.log("[EDITOR]🦠🔤 renameNode(id=",id,")")
     
     const nodeExists = getNode(id,true);
 
@@ -244,25 +242,25 @@ const renameNode = (id) => {
       return;
     }
 
-    console.log("[EDITOR]🦠🔤 this node exists at", nodeExists.position);
+    if(debug >= 1)console.log("[EDITOR]🦠🔤 this node exists at", nodeExists.position);
     
     // Store the old name before changing it
     const oldName = nodeExists.data.object_name;
     console.log("[DEBUG] Old name:", oldName);
     
     const newName = prompt(`Enter a new name for node ${id}:`);
-    console.log("[DEBUG] New name:", newName);
+    if(debug >= 1)console.log("[DEBUG] New name:", newName);
     
     if (newName !== null && newName !== oldName) { 
       nodeExists.data.object_name = newName;
       
       // Update all Set Property nodes that reference this renamed node
       const allNodes = getAllNodes(false, "node");
-      console.log("[DEBUG] Total nodes to check:", allNodes.length);
+      if(debug >= 1)console.log("[DEBUG] Total nodes to check:", allNodes.length);
       
       allNodes.forEach(node => {
-        console.log("[DEBUG] Checking node:", node.id, "function_name:", node.data?.function_name);
-        console.log("[DEBUG] Function params:", node.data?.function_params);
+        if(debug >= 1)console.log("[DEBUG] Checking node:", node.id, "function_name:", node.data?.function_name);
+        if(debug >= 1)console.log("[DEBUG] Function params:", node.data?.function_params);
         
         // Check if this is a Set Property node
         if (node.data?.function_name === 'setproperty' && 
@@ -318,9 +316,9 @@ const renameNode = (id) => {
 
 const contributeNodeData = (id, inputData) => { // For creating the data that will be with the node initially, only runs through once.
 
-    console.log("[EDITOR]💾🫳🏽 ContributeNodeData(id=",id,"inputData=,",inputData,")");
+    if(debug >= 1)console.log("[EDITOR]💾🫳🏽 ContributeNodeData(id=",id,"inputData=,",inputData,")");
     if(id==-1){
-      console.log("[EDITOR]💾🫳🏽 contributeNodeData called on toolbox node")
+      if(debug >= 1)console.log("[EDITOR]💾🫳🏽 contributeNodeData called on toolbox node")
       return;
     }
     const nodeExists = getNode(id);
@@ -333,14 +331,14 @@ const contributeNodeData = (id, inputData) => { // For creating the data that wi
       if(!nodeExists.data.hasOwnProperty(k)) nodeExists.data[k]=inputData[k];
     })
     
-    console.log("[EDITOR]💾🫳🏽 Data to input", inputData)
-    console.log("[EDITOR]💾🫳🏽 New data of node:", nodeExists.data)
+    if(debug >= 1)console.log("[EDITOR]💾🫳🏽 Data to input", inputData)
+    if(debug >= 1)console.log("[EDITOR]💾🫳🏽 New data of node:", nodeExists.data)
     globalSync();
     return;
   };
 
 const contributeFunctionParameters = (id,paramName, paramArray) => { 
-  console.log("[EDITOR]🔧🫳🏽 contributeFunctionParameters(",id,paramName,paramArray,")")
+  if(debug >= 1)console.log("[EDITOR]🔧🫳🏽 contributeFunctionParameters(",id,paramName,paramArray,")")
   let param = {name: paramName,vals: paramArray} // paramArray MUST ALWAYS BE AN ARRAY
   const nodeExists = getNode(id)
   if(!nodeExists){
@@ -349,20 +347,20 @@ const contributeFunctionParameters = (id,paramName, paramArray) => {
   if(nodeExists.data.hasOwnProperty("function_params")){
     for(const parameter of nodeExists.data.function_params){
       if(param.name == parameter.name){
-        console.log("[EDITOR] Parameter exists, ignoring")
+        if(debug >= 1)console.log("[EDITOR] Parameter exists, ignoring")
         return;
       }
     }
-    console.log("[EDITOR] Pushing param:", param)
+    if(debug >= 1)console.log("[EDITOR] Pushing param:", param)
     nodeExists.data.function_params.push(param)
-    console.log("[EDITOR] Node parameters after:", nodeExists.data.function_params)
+    if(debug >= 1)console.log("[EDITOR] Node parameters after:", nodeExists.data.function_params)
     globalSync();
     return;
   }
 }
 
 const getParam=(id,paramName)=>{
-  console.log("[EDITOR]🔧🔙 getParam(",id,paramName,")")
+  if(debug >= 1)console.log("[EDITOR]🔧🔙 getParam(",id,paramName,")")
 
   const nodeExists = getNode(id)
   if(!nodeExists || !nodeExists.data.hasOwnProperty("function_params")){
@@ -370,39 +368,39 @@ const getParam=(id,paramName)=>{
   }
   for(const parameter of nodeExists.data.function_params){
     if(paramName == parameter.name){
-      console.log("[EDITOR] Parameter exists:", parameter)
+      if(debug >= 1)console.log("[EDITOR] Parameter exists:", parameter)
       return parameter.vals;
     }
   }
 }
 
   const getNodeData = (id, dataProperty = "") => {  // DO NOT USE IN A WATCHER OR COMPUTE FUNCTION (spam) gets data of node safely. dataProperty to be subbed in instances where you'd do something like node.data.obj_name for safety
-    console.log("[EDITOR]💾🔙 getNodeData(id=",id,"dataProperty=",dataProperty,")")
+    if(debug >= 1)console.log("[EDITOR]💾🔙 getNodeData(id=",id,"dataProperty=",dataProperty,")")
     const nodeExists = getNode(id,true)
     if(nodeExists==null){
-      console.log("[EDITOR]💾🔙 Node does not exist")
+      if(debug >= 1)console.log("[EDITOR]💾🔙 Node does not exist")
       return null;
     }
     if(!nodeExists.hasOwnProperty("data")){
-      console.log("[EDITOR]💾🔙 Node does not have property data")
+      if(debug >= 1)console.log("[EDITOR]💾🔙 Node does not have property data")
       return null;
     }
     if(dataProperty==""){
-      console.log("[EDITOR]💾🔙 Node exists, data=", nodeExists.data)
+      if(debug >= 1)console.log("[EDITOR]💾🔙 Node exists, data=", nodeExists.data)
       return nodeExists.data
     }
     if(nodeExists.data.hasOwnProperty(dataProperty)){
-      console.log("[EDITOR]💾🔙 Node exists, data property ",dataProperty,"=", nodeExists.data[dataProperty])
+      if(debug >= 1)console.log("[EDITOR]💾🔙 Node exists, data property ",dataProperty,"=", nodeExists.data[dataProperty])
       return nodeExists.data[dataProperty]
     }
     else{
-      console.log("[EDITOR]💾🔙 Node data property does not exist")
+      if(debug >= 1)console.log("[EDITOR]💾🔙 Node data property does not exist")
       return null;
     }
   }
   // ONLY FOR USE IN OBJECTS, SETS DATA.PROPERTIES
   const setNodeProperty = (id, inputKey, inputValue) => {
-    console.log("[EDITOR]⚙️🟰 setNodeProperty(id=",id,"inputKey=",inputKey,"inputValue=",inputValue);
+    if(debug >= 1)console.log("[EDITOR]⚙️🟰 setNodeProperty(id=",id,"inputKey=",inputKey,"inputValue=",inputValue);
     const nodeExists = getNode(id);
     if (!nodeExists) {
       console.error(`setNodeProperty: Node with id ${id} does not exist`);
@@ -413,12 +411,12 @@ const getParam=(id,paramName)=>{
       return;
     }
     nodeExists.data.properties[inputKey]=inputValue
-    console.log("[EDITOR]⚙️🟰 New data of properties:", nodeExists.data.properties)
+    if(debug >= 1)console.log("[EDITOR]⚙️🟰 New data of properties:", nodeExists.data.properties)
     globalSync();
     return;
   };
   const setNodeData = (id, inputKey, inputValue) => {
-    console.log("[EDITOR]💾🟰 setNodeData(id=", id, "inputKey=",inputKey, "inputValue=", inputValue,")");
+    if(debug >= 1)console.log("[EDITOR]💾🟰 setNodeData(id=", id, "inputKey=",inputKey, "inputValue=", inputValue,")");
     const nodeExists = getNode(id);
     if (!nodeExists) {
       console.error(`setNodeData: Node with id ${id} does not exist`);
@@ -514,7 +512,7 @@ const getParam=(id,paramName)=>{
   }
 
   const getAllNodes = (onlyObjects=false, returnType="node") => {
-    console.log("[EDITOR]🦠💯 getAllNodes(onlyObjects=",onlyObjects,"returnType=",returnType,")")
+    if(debug >= 1)console.log("[EDITOR]🦠💯 getAllNodes(onlyObjects=",onlyObjects,"returnType=",returnType,")")
     let returnedNodes = Array.from(globalNodes.values()).flatMap(canv => canv.n)    
     let tReturnedNodes = []
     if(onlyObjects==true) returnedNodes = returnedNodes.filter((node)=>node.data.hasOwnProperty('isObject'))
@@ -524,7 +522,7 @@ const getParam=(id,paramName)=>{
       }
       returnedNodes = tReturnedNodes
     }
-    console.log("[EDITOR]🦠💯 returnedNodes=",returnedNodes)
+    if(debug >= 1)console.log("[EDITOR]🦠💯 returnedNodes=",returnedNodes)
     return returnedNodes
   };
 
@@ -554,7 +552,7 @@ const getParam=(id,paramName)=>{
         }
 
 
-    console.log("[EDITOR]🦠🎮 GameNode(",node,")")
+    if(debug >= 1)console.log("[EDITOR]🦠🎮 GameNode(",node,")")
     return gNode
   }
     
@@ -607,7 +605,7 @@ const getParam=(id,paramName)=>{
   }
 
   const getNode = (id, doGlobal=false) => {
-    console.log("[EDITOR]   🦠🫴 getNode(id=", id, "doGlobal=", doGlobal,")")
+    if(debug >= 1)console.log("[EDITOR]   🦠🫴 getNode(id=", id, "doGlobal=", doGlobal,")")
     if(id<-1){
       console.error(`   🦠🫴 getNode called with invalid id, id is ${id}`)
       return null;
@@ -624,9 +622,9 @@ const getParam=(id,paramName)=>{
       if(doGlobal == true){
         globalSync();
         const allNodes = getAllNodes()
-        console.log("[EDITOR]   🦠🫴 getNode(global): globalNodesArray",allNodes)
+        if(debug >= 1)console.log("[EDITOR]   🦠🫴 getNode(global): globalNodesArray",allNodes)
         nodeExists = allNodes.find((n) => n.id == id)
-        console.log("[EDITOR]   🦠🫴 getNode(global): node to return",nodeExists)
+        if(debug >= 1)console.log("[EDITOR]   🦠🫴 getNode(global): node to return",nodeExists)
         if (nodeExists == null) {
           console.warn(`   🦠🫴 getNode(global) Node with id ${id} does not exist`);
           return null;
@@ -639,10 +637,10 @@ const getParam=(id,paramName)=>{
         return null;
       }
     if (nodeExists.type == 'room' || nodeExists.type == 'item' || nodeExists.type == 'pathway' || nodeExists.type == 'player' || nodeExists.type == 'npc' || nodeExists.type == 'custom'){
-      console.log("[EDITOR]   🦠🫴 getNode(local) node exists", nodeExists, "title is", nodeExists.data.object_name);
+      if(debug >= 1)console.log("[EDITOR]   🦠🫴 getNode(local) node exists", nodeExists, "title is", nodeExists.data.object_name);
     }
     else {
-      console.log("[EDITOR]   🦠🫴 getNode(local) function node exists", nodeExists);
+      if(debug >= 1)console.log("[EDITOR]   🦠🫴 getNode(local) function node exists", nodeExists);
     }
       //globalSync(); // might be necessary? SHAKY
       return nodeExists

@@ -18,7 +18,6 @@ const authenticateToken = (req, res, next) => {
         next();
     });
 };
-//const { v4: uuidv4 } = require('uuid'); //while users are found via unique usernames, projects get a uuid.
 
 // route to get games from the database. Used in the explore page. optional query param userId
 router.get('/', async (req, res) => {
@@ -114,7 +113,7 @@ router.get('/rating/:gameId', authenticateToken, async (req, res) => {
   }
 });
 
- // Route to project to become a game
+ // Route for project to become a game
  router.post('/save', async (req, res) => {
     console.log("save request send");
     try {
